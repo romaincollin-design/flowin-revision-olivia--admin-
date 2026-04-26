@@ -315,23 +315,23 @@ canvas{width:100%!important}
       <div class="kpi-grid">
         <div class="kpi" style="--kpi-color:var(--accent)">
           <div class="kpi-label">Élèves actifs</div>
-          <div class="kpi-val">0</div>
-          <div class="kpi-sub">Aucun élève inscrit</div>
+          <div class="kpi-val" id="kpi-eleves">0</div>
+          <div class="kpi-sub" id="kpi-eleves-sub">Aucun élève inscrit</div>
         </div>
         <div class="kpi" style="--kpi-color:var(--green)">
           <div class="kpi-label">Établissements</div>
-          <div class="kpi-val">0</div>
+          <div class="kpi-val" id="kpi-ecoles">0</div>
           <div class="kpi-sub">Aucun établissement</div>
         </div>
         <div class="kpi" style="--kpi-color:var(--amber)">
           <div class="kpi-label">Quiz joués / jour</div>
-          <div class="kpi-val">0</div>
-          <div class="kpi-sub">Aucun quiz joué</div>
+          <div class="kpi-val" id="kpi-sessions">0</div>
+          <div class="kpi-sub" id="kpi-sessions-sub">Aucun quiz joué</div>
         </div>
         <div class="kpi" style="--kpi-color:var(--blue)">
-          <div class="kpi-label">MRR</div>
-          <div class="kpi-val">0 €</div>
-          <div class="kpi-sub">Aucun abonnement</div>
+          <div class="kpi-label">Score moyen</div>
+          <div class="kpi-val" id="kpi-score">—</div>
+          <div class="kpi-sub">Moyenne globale</div>
         </div>
       </div>
 
@@ -1821,14 +1821,22 @@ async function loadDashboard() {
     if (kpiScore) kpiScore.textContent = avgScore + '%';
     const ecoles = [...new Set(joueurs.map(j=>j.ecole).filter(Boolean))];
     if (kpiEcoles) kpiEcoles.textContent = ecoles.length || 0;
-    const tbody = document.getElementById('users-tbody');
+    const tbody = document.getElementById('user-table-body');
     if (tbody && joueurs.length) {
+      document.getElementById('empty-users-msg') && (document.getElementById('empty-users-msg').style.display='none');
+      document.getElementById('u-count') && (document.getElementById('u-count').textContent = joueurs.length + ' élèves');
       tbody.innerHTML = joueurs.map(j => {
         const us = sessions.filter(s=>s.pseudo===j.pseudo);
         const avg = us.length ? Math.round(us.reduce((a,s)=>a+(s.score_pct||0),0)/us.length) : 0;
-        const pts = us.reduce((a,s)=>a+(s.pts_total||0),0);
-        return '<tr><td><strong>'+(j.pseudo||j.prenom)+'</strong><br><small style="color:#888">'+j.prenom+' '+j.nom+'</small></td><td>'+(j.ecole||'—')+'</td><td>'+(j.classe||'—')+'</td><td>'+us.length+'</td><td>'+avg+'%</td><td>'+pts+' pts</td><td><small>'+new Date(j.ts).toLocaleDateString('fr-FR')+'</small></td></tr>';
+        const lastSession = us[0] ? new Date(us[0].ts).toLocaleDateString('fr-FR') : '—';
+        return '<tr data-etab="'+(j.ecole||'')+'" data-niv="'+(j.classe||'')+'" data-stat="Actif" data-name="'+(j.pseudo||j.prenom||'').toLowerCase()+'"><td><strong>'+(j.pseudo||j.prenom)+'</strong><br><small style="color:#888">'+j.prenom+' '+j.nom+'</small></td><td>'+(j.ecole||'—')+'</td><td>'+(j.classe||'—')+'</td><td>'+avg+'%</td><td>'+us.reduce((a,s)=>Math.max(a,s.streak||0),0)+'</td><td>'+lastSession+'</td><td><span style="background:#e8f5e9;color:#2e7d32;padding:2px 8px;border-radius:10px;font-size:11px">Actif</span></td><td></td></tr>';
       }).join('');
+      // Update KPIs
+      if(document.getElementById('kpi-eleves')) document.getElementById('kpi-eleves').textContent = joueurs.length;
+      if(document.getElementById('kpi-ecoles')) document.getElementById('kpi-ecoles').textContent = [...new Set(joueurs.map(j=>j.ecole).filter(Boolean))].length;
+      if(document.getElementById('kpi-sessions')) document.getElementById('kpi-sessions').textContent = sessions.length;
+      const avgScore = sessions.length ? Math.round(sessions.reduce((a,s)=>a+(s.score_pct||0),0)/sessions.length) : 0;
+      if(document.getElementById('kpi-score')) document.getElementById('kpi-score').textContent = avgScore+'%';
     }
   } catch(e) { console.error('Supabase:', e); }
 }
