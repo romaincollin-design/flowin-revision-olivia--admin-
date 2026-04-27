@@ -3102,73 +3102,142 @@ canvas{width:100%!important}
 const SUPABASE_URL = 'https://ywcqtupgoxfzkddqkztk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3F0dXBnb3hmemtkZHFrenRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjQ0MDUsImV4cCI6MjA5MjgwMDQwNX0.Y8sb7Faqlp-uFyUjGl013018RWP0MIbbWzPAVcTMIoI';
 
-async function supabaseFetch(table) {
-  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?order=ts.desc&limit=500', {
+// ── Cache global des données Supabase (partagé entre toutes les fonctions) ──
+let DB = { joueurs: [], sessions: [], parrainage: [] };
+
+async function supabaseFetch(table, limit = 1000) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?order=ts.desc&limit=' + limit, {
     headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
   });
+  if (!res.ok) throw new Error('Supabase ' + table + ' : ' + res.status);
   return res.json();
 }
 
-async function loadDashboard() {
+async function loadAllData() {
   try {
-    const [joueurs, sessions] = await Promise.all([supabaseFetch('joueurs'), supabaseFetch('sessions')]);
-    // Seulement mettre à jour si Supabase retourne des vraies données
-    if (!joueurs.length && !sessions.length) {
-      // Mode démo : DB vide, on garde les données statiques affichées
-      console.log('Flowin Admin : DB Supabase vide — affichage données démo');
-      return;
-    }
-    // Données réelles disponibles : on met à jour tout
-    const ecoles = [...new Set(joueurs.map(j=>j.ecole).filter(Boolean))];
-    const avgScore = sessions.length ? Math.round(sessions.reduce((a,s) => a+(s.score_pct||0),0)/sessions.length) : 0;
-    const actifs = joueurs.filter(j => {
-      const us = sessions.filter(s=>s.pseudo===j.pseudo);
-      return us.length > 0;
-    });
-    if(document.getElementById('kpi-eleves')) document.getElementById('kpi-eleves').textContent = joueurs.length;
-    if(document.getElementById('kpi-eleves-sub')) document.getElementById('kpi-eleves-sub').textContent = actifs.length + ' actifs · ' + (joueurs.length - actifs.length) + ' inactifs';
-    if(document.getElementById('kpi-sessions')) document.getElementById('kpi-sessions').textContent = sessions.length;
-    if(document.getElementById('kpi-sessions-sub')) document.getElementById('kpi-sessions-sub').textContent = 'depuis le lancement';
-    if(document.getElementById('kpi-score')) document.getElementById('kpi-score').textContent = avgScore + '%';
-    if(document.getElementById('kpi-ecoles')) document.getElementById('kpi-ecoles').textContent = ecoles.length || 1;
-    // Mise à jour table élèves
-    const tbody = document.getElementById('user-table-body');
-    if (tbody && joueurs.length) {
-      document.getElementById('u-count') && (document.getElementById('u-count').textContent = joueurs.length + ' élève' + (joueurs.length > 1 ? 's' : ''));
-      tbody.innerHTML = joueurs.map(j => {
-        const us = sessions.filter(s=>s.pseudo===j.pseudo);
-        const avg = us.length ? Math.round(us.reduce((a,s)=>a+(s.score_pct||0),0)/us.length) : 0;
-        const maxStreak = us.reduce((a,s)=>Math.max(a,s.streak||0),0);
-        const lastSession = us[0] ? new Date(us[0].ts).toLocaleDateString('fr-FR') : '—';
-        const isActif = us.length > 0;
-        const color = avg >= 70 ? 'var(--green)' : avg >= 50 ? 'var(--amber)' : 'var(--red)';
-        return `<tr class="u-row" data-etab="${j.ecole||''}" data-niv="${j.classe||''}" data-stat="${isActif?'Actif':'Inactif'}" data-name="${(j.pseudo||j.prenom||'').toLowerCase()}">
-          <td><div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0">${((j.prenom||'?').charAt(0)+(j.nom||'?').charAt(0)).toUpperCase()}</div><span style="color:var(--text);font-weight:500">${j.prenom||''} ${j.nom||''}</span></div></td>
-          <td>${j.ecole||'—'}</td>
-          <td>${j.classe||'—'}</td>
-          <td><span style="color:${color};font-weight:500">${avg}%</span></td>
-          <td>${maxStreak > 0 ? '🔥 '+maxStreak+'j' : '—'}</td>
-          <td>${lastSession}</td>
-          <td><span class="badge ${isActif?'badge-green':'badge-red'}">${isActif?'Actif':'Inactif'}</span></td>
-          <td style="color:var(--text3);font-size:11px">›</td>
-        </tr>`;
-      }).join('');
-    }
-    // Indicateur "données live" dans le topbar
-    const liveDot = document.createElement('div');
-    liveDot.style.cssText = 'display:flex;align-items:center;gap:5px;font-size:10px;color:var(--green);font-weight:600;flex-shrink:0';
-    liveDot.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite"></div>Live Supabase';
-    const topbar = document.getElementById('topbar');
-    if(topbar && !document.getElementById('live-badge')) {
-      liveDot.id = 'live-badge';
-      topbar.insertBefore(liveDot, topbar.firstChild.nextSibling);
-    }
+    const [joueurs, sessions, parrainage] = await Promise.all([
+      supabaseFetch('joueurs'),
+      supabaseFetch('sessions'),
+      supabaseFetch('parrainage')
+    ]);
+    DB.joueurs    = Array.isArray(joueurs)    ? joueurs    : [];
+    DB.sessions   = Array.isArray(sessions)   ? sessions   : [];
+    DB.parrainage = Array.isArray(parrainage) ? parrainage : [];
+    console.log('Flowin Admin — Supabase chargé :', DB.joueurs.length, 'joueurs,', DB.sessions.length, 'sessions,', DB.parrainage.length, 'parrainages');
+    renderDashboard();
+    setTimeout(function(){ renderParrainage(); }, 200);
+    addLiveBadge();
   } catch(e) {
-    console.error('Supabase:', e);
-    // Erreur réseau : on garde les données démo, pas de crash
+    console.error('Supabase loadAllData:', e);
+    // Fallback : on garde l'HTML statique, pas de crash
   }
 }
-window.addEventListener('DOMContentLoaded', loadDashboard);
+
+function addLiveBadge() {
+  const topbar = document.getElementById('topbar');
+  if (topbar && !document.getElementById('live-badge')) {
+    const dot = document.createElement('div');
+    dot.id = 'live-badge';
+    dot.style.cssText = 'display:flex;align-items:center;gap:5px;font-size:10px;color:var(--green);font-weight:600;flex-shrink:0';
+    dot.innerHTML = '<div style="width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite"></div>Live Supabase';
+    topbar.insertBefore(dot, topbar.firstChild.nextSibling);
+  }
+}
+
+function renderDashboard() {
+  const { joueurs, sessions } = DB;
+  if (!joueurs.length && !sessions.length) return;
+
+  // ── KPIs ──
+  const aujourd = new Date().toISOString().slice(0, 10);
+  const sessionsAujourd = sessions.filter(s => s.ts && s.ts.slice(0, 10) === aujourd);
+  const actifs = joueurs.filter(j => sessions.some(s => s.pseudo === j.pseudo));
+  const avgScore = sessions.length ? Math.round(sessions.reduce((a, s) => a + (s.score_pct || 0), 0) / sessions.length) : 0;
+  const ecoles = [...new Set(joueurs.map(j => j.ecole).filter(Boolean))];
+
+  const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  setText('kpi-eleves',      joueurs.length);
+  setText('kpi-eleves-sub',  actifs.length + ' actifs · ' + (joueurs.length - actifs.length) + ' inactifs');
+  setText('kpi-sessions',    sessionsAujourd.length || sessions.length);
+  setText('kpi-sessions-sub','depuis le lancement');
+  setText('kpi-score',       avgScore + '%');
+  setText('kpi-ecoles',      ecoles.length || 1);
+
+  // ── Table élèves ──
+  const tbody = document.getElementById('user-table-body');
+  if (tbody && joueurs.length) {
+    const uCount = document.getElementById('u-count');
+    if (uCount) uCount.textContent = joueurs.length + ' élève' + (joueurs.length > 1 ? 's' : '');
+    tbody.innerHTML = joueurs.map(j => {
+      const us = sessions.filter(s => s.pseudo === j.pseudo);
+      const avg = us.length ? Math.round(us.reduce((a, s) => a + (s.score_pct || 0), 0) / us.length) : 0;
+      const maxStreak = us.reduce((a, s) => Math.max(a, s.streak || 0), 0);
+      const lastSession = us[0] ? new Date(us[0].ts).toLocaleDateString('fr-FR') : '—';
+      const isActif = us.length > 0;
+      const color = avg >= 70 ? 'var(--green)' : avg >= 50 ? 'var(--amber)' : 'var(--red)';
+      const ini = ((j.prenom || '?').charAt(0) + (j.nom || '?').charAt(0)).toUpperCase();
+      return `<tr class="u-row" data-etab="${j.ecole||''}" data-niv="${j.classe||''}" data-stat="${isActif?'Actif':'Inactif'}" data-name="${(j.pseudo||j.prenom||'').toLowerCase()}">
+        <td><div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0">${ini}</div><span style="color:var(--text);font-weight:500">${j.prenom||''} ${j.nom||''}</span></div></td>
+        <td>${j.ecole||'—'}</td>
+        <td>${j.classe||'—'}</td>
+        <td><span style="color:${color};font-weight:500">${avg}%</span></td>
+        <td>${maxStreak > 0 ? '🔥 '+maxStreak+'j' : '—'}</td>
+        <td>${lastSession}</td>
+        <td><span class="badge ${isActif?'badge-green':'badge-red'}">${isActif?'Actif':'Inactif'}</span></td>
+        <td style="color:var(--text3);font-size:11px">›</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ── Table Top établissements (dashboard) ──
+  const etabTbody = document.querySelector('#v-dashboard table tbody');
+  if (etabTbody && ecoles.length) {
+    const etabStats = ecoles.map(ecole => {
+      const eleves = joueurs.filter(j => j.ecole === ecole);
+      const sesEcole = sessions.filter(s => s.ecole === ecole);
+      const avgE = sesEcole.length ? Math.round(sesEcole.reduce((a, s) => a + (s.score_pct || 0), 0) / sesEcole.length) : 0;
+      const sesAuj = sesEcole.filter(s => s.ts && s.ts.slice(0, 10) === aujourd);
+      return { ecole, nb: eleves.length, quizAuj: sesAuj.length, avg: avgE };
+    }).sort((a, b) => b.nb - a.nb);
+
+    const planColors = { 'Lycée Masséna Nice': 'badge-purple', 'Lycée de Vence': 'badge-green', 'Lycée Cézanne Aix': 'badge-blue', 'Collège Grasse': 'badge-amber' };
+    const planNames  = { 'Lycée Masséna Nice': 'Pro', 'Lycée de Vence': 'Pro', 'Lycée Cézanne Aix': 'Starter', 'Collège Grasse': 'Starter' };
+    etabTbody.innerHTML = etabStats.map(e => {
+      const scoreColor = e.avg >= 70 ? 'var(--green)' : e.avg >= 50 ? 'var(--amber)' : 'var(--red)';
+      const plan = planNames[e.ecole] || 'Starter';
+      const planBadge = planColors[e.ecole] || 'badge-blue';
+      return `<tr>
+        <td style="font-weight:500;color:var(--text)">${e.ecole}</td>
+        <td>${e.nb}</td>
+        <td>${e.quizAuj}</td>
+        <td><span class="badge ${planBadge}">${plan}</span></td>
+        <td><span style="color:${scoreColor};font-weight:600">${e.avg}%</span></td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ── Graphique matières (doughnut) ──
+  if (sessions.length) {
+    const matieres = {};
+    sessions.forEach(s => { if (s.matiere) matieres[s.matiere] = (matieres[s.matiere] || 0) + 1; });
+    const total = sessions.length;
+    const matiereDiv = document.querySelector('#v-dashboard .panel:last-child .panel-body > div:last-child');
+    if (matiereDiv) {
+      matiereDiv.innerHTML = Object.entries(matieres).sort((a,b)=>b[1]-a[1]).map(([m, n]) => {
+        const pct = Math.round(n / total * 100);
+        const col = m === 'Histoire' ? '#7B6FFF' : m === 'Géographie' ? '#22C9A0' : '#E040A0';
+        return `<div style="display:flex;align-items:center;justify-content:space-between;font-size:12px">
+          <div style="display:flex;align-items:center;gap:6px"><div style="width:8px;height:8px;border-radius:2px;background:${col}"></div><span style="color:var(--text2)">${m}</span></div>
+          <span style="color:var(--text);font-weight:700">${pct}%</span>
+        </div>`;
+      }).join('');
+    }
+  }
+}
+
+// Compatibilité : loadDashboard appelé ailleurs dans le code
+async function loadDashboard() { await loadAllData(); }
+window.addEventListener('DOMContentLoaded', loadAllData);
 
 // ── NAVIGATION ──
 let currentView = 'dashboard';
@@ -3309,10 +3378,13 @@ function showUser(userId) {
   document.getElementById('ud-etab-hidden').textContent = u.etab;
   document.getElementById('ud-inscription').textContent = u.inscription;
 
-  // Parrainages effectués par cet élève
-  const myParr = (typeof PARR_DEMO !== 'undefined' ? PARR_DEMO : []).filter(p => p.sender === u.name);
+  // Parrainages effectués par cet élève (Supabase + live postMessage)
+  const supaParr = DB.parrainage.filter(p => p.sender === u.name).map(p => ({
+    sender: p.sender, senderEtab: p.sender_etab, destinataire: p.destinataire,
+    channel: p.channel, pts: p.pts, date: p.ts ? p.ts.slice(0,16).replace('T',' ') : ''
+  }));
   const liveParr = (typeof PARR_LIVE !== 'undefined' ? PARR_LIVE : []).filter(p => p.sender === u.name);
-  const allParr = myParr.concat(liveParr);
+  const allParr = supaParr.concat(liveParr);
   document.getElementById('ud-parr-count').textContent = allParr.length;
   const ptsGain = allParr.length * 100;
   document.getElementById('ud-parr-summary').textContent = allParr.length + ' filleul' + (allParr.length>1?'s':'') + ' · +' + ptsGain + ' pts gagnés';
@@ -3750,7 +3822,15 @@ window.addEventListener('message', function(e){
 });
 
 function getAllParrainage(){
-  return PARR_DEMO.concat(PARR_LIVE);
+  const supaData = (DB.parrainage||[]).map(p => ({
+    date:        (p.ts||'').slice(0,16).replace('T',' '),
+    sender:      p.sender       || '?',
+    senderEtab:  p.sender_etab  || '—',
+    destinataire:p.destinataire || '?',
+    channel:     p.channel      || 'whatsapp',
+    pts:         Number(p.pts)  || 100
+  })).filter(p => p.sender && p.sender !== '?');
+  return supaData.concat(PARR_LIVE||[]);
 }
 
 function channelLabel(c){
@@ -3812,6 +3892,7 @@ function renderParrainage(){
     // ── TABLE DES PARRAINS (cliquable) ──
     const medals = ['🥇','🥈','🥉'];
     const tbody = document.getElementById('parr-table-body');
+    if(!tbody) return;
     if(!parrains.length){
       tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3)"><div style="font-size:22px;margin-bottom:6px">🔍</div>Aucun résultat</td></tr>';
     } else {
@@ -3822,7 +3903,7 @@ function renderParrainage(){
         const medal = rank <= 3 ? medals[rank-1] : '#'+rank;
         const channelIcons = [...p.channels].map(c => channelLabel(c).split(' ')[0]).join(' ');
         const pts = p.invites.reduce((s,e) => s+e.pts, 0);
-        const lastDate = p.lastDate.slice(0,16).replace('T',' ');
+        const lastDate = (p.lastDate||'').slice(0,16).replace('T',' ') || '—';
         // Couleur avatar basée sur le nom
         const colors = ['#7B6FFF','#22C9A0','#E040A0','#F4A83A','#4A9FE0','#B06CE4','#16A37B','#D4880A','#D63E3E','#9096B2'];
         const col = colors[p.name.charCodeAt(0) % colors.length];
@@ -4526,13 +4607,7 @@ function exportParrainageCSV(){
   URL.revokeObjectURL(url);
 }
 
-// Initialiser le badge sidebar au chargement + pré-render parrainage
-setTimeout(function(){
-  const sb = document.getElementById('sb-parr-count');
-  if(sb) sb.textContent = PARR_DEMO.length;
-  // Pré-render de la vue parrainage pour qu'elle soit prête au premier clic
-  if(typeof renderParrainage === 'function') renderParrainage();
-}, 100);
+// Le badge parrainage et le render sont appelés par loadAllData() au DOMContentLoaded
 
 </script>
 </body>
