@@ -1111,106 +1111,47 @@ async function loadData() {
     }
   } catch(e) {
     liveMode = false;
+    dot.className = 'live-dot';
+    lbl.className = 'live-label';
     lbl.textContent = '⚠ Demo mode';
-    console.warn('Supabase unreachable — chargement données démo:', e);
+    console.warn('Supabase unreachable — données démo actives:', e);
     const today = new Date().toISOString().slice(0,10);
     const d = (daysAgo, h=10, m=0) => { const dt=new Date(); dt.setDate(dt.getDate()-daysAgo); dt.setHours(h,m,0,0); return dt.toISOString(); };
     DB.joueurs = [
-      {id:'1',ts:d(45),pseudo:'OliviaLaurent',prenom:'Olivia',nom:'Laurent',email:'olivia.laurent@lycee-vence.fr',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',genre:'F',ref:''},
-      {id:'2',ts:d(40),pseudo:'ChloeRoux',prenom:'Chloé',nom:'Roux',email:'chloe.roux@lycee-massena.fr',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',genre:'F',ref:'OliviaLaurent'},
-      {id:'3',ts:d(38),pseudo:'EmmaDubois',prenom:'Emma',nom:'Dubois',email:'emma.dubois@lycee-massena.fr',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',genre:'F',ref:''},
-      {id:'4',ts:d(35),pseudo:'LinaGarcia',prenom:'Lina',nom:'Garcia',email:'lina.garcia@lycee-vence.fr',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',genre:'F',ref:'OliviaLaurent'},
-      {id:'5',ts:d(30),pseudo:'LucasMartin',prenom:'Lucas',nom:'Martin',email:'lucas.martin@lycee-cezanne.fr',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',genre:'M',ref:''},
-      {id:'6',ts:d(28),pseudo:'TheoPetit',prenom:'Théo',nom:'Petit',email:'theo.petit@lycee-cezanne.fr',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',genre:'M',ref:'LucasMartin'},
-      {id:'7',ts:d(25),pseudo:'SarahLeclerc',prenom:'Sarah',nom:'Leclerc',email:'sarah.leclerc@college-grasse.fr',ecole:'Collège Grasse',classe:'Terminale Bac Pro',genre:'F',ref:''},
-      {id:'8',ts:d(22),pseudo:'HugoBernard',prenom:'Hugo',nom:'Bernard',email:'hugo.bernard@college-grasse.fr',ecole:'Collège Grasse',classe:'Terminale Bac Pro',genre:'M',ref:'SarahLeclerc'},
-      {id:'9',ts:d(60),pseudo:'NathanMoreau',prenom:'Nathan',nom:'Moreau',email:'nathan.moreau@lycee-vence.fr',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',genre:'M',ref:''},
-      {id:'10',ts:d(55),pseudo:'YanisFerreira',prenom:'Yanis',nom:'Ferreira',email:'yanis.ferreira@lycee-cezanne.fr',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',genre:'M',ref:''},
-      {id:'11',ts:d(10),pseudo:'MaevaKlein',prenom:'Maeva',nom:'Klein',email:'maeva.klein@lycee-massena.fr',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',genre:'F',ref:'ChloeRoux'},
-      {id:'12',ts:d(8),pseudo:'RomaneVidal',prenom:'Romane',nom:'Vidal',email:'romane.vidal@lycee-vence.fr',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',genre:'F',ref:'OliviaLaurent'},
+      {id:'demo-1',ts:d(45),pseudo:'OliviaLaurent',prenom:'Olivia',nom:'Laurent',email:'olivia.laurent@lycee-vence.fr',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',genre:'F',ref:'',_demo:true},
+      {id:'demo-2',ts:d(40),pseudo:'ChloeRoux',prenom:'Chloé',nom:'Roux',email:'chloe.roux@lycee-massena.fr',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',genre:'F',ref:'OliviaLaurent',_demo:true},
+      {id:'demo-3',ts:d(38),pseudo:'EmmaDubois',prenom:'Emma',nom:'Dubois',email:'emma.dubois@lycee-massena.fr',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',genre:'F',ref:'',_demo:true},
+      {id:'demo-4',ts:d(35),pseudo:'LinaGarcia',prenom:'Lina',nom:'Garcia',email:'lina.garcia@lycee-vence.fr',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',genre:'F',ref:'OliviaLaurent',_demo:true},
+      {id:'demo-5',ts:d(30),pseudo:'LucasMartin',prenom:'Lucas',nom:'Martin',email:'lucas.martin@lycee-cezanne.fr',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',genre:'M',ref:'',_demo:true},
+      {id:'demo-6',ts:d(28),pseudo:'TheoPetit',prenom:'Théo',nom:'Petit',email:'theo.petit@lycee-cezanne.fr',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',genre:'M',ref:'LucasMartin',_demo:true},
+      {id:'demo-7',ts:d(25),pseudo:'SarahLeclerc',prenom:'Sarah',nom:'Leclerc',email:'sarah.leclerc@college-grasse.fr',ecole:'Collège Grasse',classe:'Terminale Bac Pro',genre:'F',ref:'',_demo:true},
+      {id:'demo-8',ts:d(22),pseudo:'HugoBernard',prenom:'Hugo',nom:'Bernard',email:'hugo.bernard@college-grasse.fr',ecole:'Collège Grasse',classe:'Terminale Bac Pro',genre:'M',ref:'SarahLeclerc',_demo:true},
+      {id:'demo-9',ts:d(60),pseudo:'NathanMoreau',prenom:'Nathan',nom:'Moreau',email:'nathan.moreau@lycee-vence.fr',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',genre:'M',ref:'',_demo:true},
+      {id:'demo-10',ts:d(55),pseudo:'YanisFerreira',prenom:'Yanis',nom:'Ferreira',email:'yanis.ferreira@lycee-cezanne.fr',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',genre:'M',ref:'',_demo:true},
+      {id:'demo-11',ts:d(10),pseudo:'MaevaKlein',prenom:'Maeva',nom:'Klein',email:'maeva.klein@lycee-massena.fr',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',genre:'F',ref:'ChloeRoux',_demo:true},
+      {id:'demo-12',ts:d(8),pseudo:'RomaneVidal',prenom:'Romane',nom:'Vidal',email:'romane.vidal@lycee-vence.fr',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',genre:'F',ref:'OliviaLaurent',_demo:true},
     ];
     DB.sessions = [
-      // Olivia — 14 sessions variées
-      {ts:d(0,8,30),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'La guerre froide',matiere:'Histoire',score_pct:80,pts_round:70,pts_total:1340,streak:8,nb_questions:5},
-      {ts:d(1,9,0),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:72,pts_round:55,pts_total:1270,streak:7,nb_questions:5},
-      {ts:d(2,18,30),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'EMC citoyenneté',matiere:'EMC',score_pct:70,pts_round:50,pts_total:1215,streak:6,nb_questions:5},
-      {ts:d(3,20,0),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:85,pts_round:75,pts_total:1165,streak:5,nb_questions:5},
-      {ts:d(5,17,0),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:68,pts_round:45,pts_total:1090,streak:4,nb_questions:5},
-      {ts:d(7,10,0),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'La guerre froide',matiere:'Histoire',score_pct:75,pts_round:60,pts_total:1045,streak:3,nb_questions:5},
-      {ts:d(9,19,0),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'EMC citoyenneté',matiere:'EMC',score_pct:90,pts_round:85,pts_total:985,streak:2,nb_questions:5},
-      {ts:d(12,8,0),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Géographie',score_pct:65,pts_round:40,pts_total:900,streak:1,nb_questions:5},
-      {ts:d(14,9,30),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:78,pts_round:65,pts_total:860,streak:1,nb_questions:5},
-      {ts:d(17,18,0),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'EMC citoyenneté',matiere:'EMC',score_pct:88,pts_round:80,pts_total:795,streak:2,nb_questions:5},
-      {ts:d(20,10,0),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'La guerre froide',matiere:'Histoire',score_pct:60,pts_round:35,pts_total:715,streak:1,nb_questions:5},
-      {ts:d(23,9,0),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:82,pts_round:72,pts_total:680,streak:3,nb_questions:5},
-      {ts:d(27,11,0),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:74,pts_round:58,pts_total:608,streak:2,nb_questions:5},
-      {ts:d(30,15,0),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'EMC citoyenneté',matiere:'EMC',score_pct:55,pts_round:25,pts_total:550,streak:1,nb_questions:5},
-      // Chloé — top scorer
-      {ts:d(0,9,0),pseudo:'ChloeRoux',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:92,pts_round:90,pts_total:3320,streak:16,nb_questions:5},
-      {ts:d(1,18,30),pseudo:'ChloeRoux',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'La guerre froide',matiere:'Histoire',score_pct:88,pts_round:82,pts_total:3230,streak:15,nb_questions:5},
-      {ts:d(2,20,0),pseudo:'ChloeRoux',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:95,pts_round:95,pts_total:3148,streak:14,nb_questions:5},
-      {ts:d(3,9,0),pseudo:'ChloeRoux',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'EMC citoyenneté',matiere:'EMC',score_pct:90,pts_round:87,pts_total:3053,streak:13,nb_questions:5},
-      {ts:d(4,17,30),pseudo:'ChloeRoux',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:85,pts_round:78,pts_total:2966,streak:12,nb_questions:5},
-      {ts:d(6,10,0),pseudo:'ChloeRoux',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'La guerre froide',matiere:'Histoire',score_pct:91,pts_round:88,pts_total:2888,streak:11,nb_questions:5},
-      {ts:d(8,19,0),pseudo:'ChloeRoux',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:87,pts_round:80,pts_total:2800,streak:10,nb_questions:5},
-      // Emma
-      {ts:d(0,9,30),pseudo:'EmmaDubois',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:85,pts_round:76,pts_total:2250,streak:12,nb_questions:5},
-      {ts:d(1,20,0),pseudo:'EmmaDubois',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'EMC citoyenneté',matiere:'EMC',score_pct:82,pts_round:71,pts_total:2174,streak:11,nb_questions:5},
-      {ts:d(3,17,0),pseudo:'EmmaDubois',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:78,pts_round:65,pts_total:2103,streak:10,nb_questions:5},
-      {ts:d(5,9,0),pseudo:'EmmaDubois',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'La guerre froide',matiere:'Histoire',score_pct:90,pts_round:85,pts_total:2038,streak:9,nb_questions:5},
-      {ts:d(8,11,0),pseudo:'EmmaDubois',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Géographie',score_pct:70,pts_round:52,pts_total:1953,streak:7,nb_questions:5},
-      // Lina
-      {ts:d(0,10,0),pseudo:'LinaGarcia',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:77,pts_round:65,pts_total:1640,streak:9,nb_questions:5},
-      {ts:d(1,13,0),pseudo:'LinaGarcia',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'EMC citoyenneté',matiere:'EMC',score_pct:75,pts_round:62,pts_total:1575,streak:8,nb_questions:5},
-      {ts:d(2,19,30),pseudo:'LinaGarcia',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'La guerre froide',matiere:'Histoire',score_pct:80,pts_round:68,pts_total:1513,streak:7,nb_questions:5},
-      {ts:d(4,10,0),pseudo:'LinaGarcia',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Géographie',score_pct:72,pts_round:57,pts_total:1445,streak:6,nb_questions:5},
-      // Lucas
-      {ts:d(1,11,0),pseudo:'LucasMartin',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:68,pts_round:50,pts_total:980,streak:5,nb_questions:5},
-      {ts:d(3,18,0),pseudo:'LucasMartin',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:64,pts_round:44,pts_total:930,streak:4,nb_questions:5},
-      {ts:d(6,9,0),pseudo:'LucasMartin',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',theme:'EMC citoyenneté',matiere:'EMC',score_pct:72,pts_round:55,pts_total:886,streak:3,nb_questions:5},
-      // Théo
-      {ts:d(0,11,30),pseudo:'TheoPetit',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:61,pts_round:40,pts_total:720,streak:3,nb_questions:5},
-      {ts:d(2,20,0),pseudo:'TheoPetit',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',theme:'La guerre froide',matiere:'Histoire',score_pct:55,pts_round:30,pts_total:680,streak:2,nb_questions:5},
-      // Sarah
-      {ts:d(0,12,0),pseudo:'SarahLeclerc',ecole:'Collège Grasse',classe:'Terminale Bac Pro',theme:'EMC citoyenneté',matiere:'EMC',score_pct:73,pts_round:60,pts_total:1100,streak:6,nb_questions:5},
-      {ts:d(1,17,0),pseudo:'SarahLeclerc',ecole:'Collège Grasse',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:78,pts_round:66,pts_total:1040,streak:5,nb_questions:5},
-      {ts:d(3,10,0),pseudo:'SarahLeclerc',ecole:'Collège Grasse',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:69,pts_round:52,pts_total:974,streak:4,nb_questions:5},
-      // Hugo
-      {ts:d(0,11,45),pseudo:'HugoBernard',ecole:'Collège Grasse',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:54,pts_round:30,pts_total:450,streak:2,nb_questions:5},
-      {ts:d(5,9,0),pseudo:'HugoBernard',ecole:'Collège Grasse',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:48,pts_round:20,pts_total:420,streak:1,nb_questions:5},
-      // Nathan — inactif depuis longtemps
-      {ts:d(28,12,0),pseudo:'NathanMoreau',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:45,pts_round:20,pts_total:250,streak:0,nb_questions:5},
-      // Yanis — inactif
-      {ts:d(35,14,0),pseudo:'YanisFerreira',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:38,pts_round:15,pts_total:130,streak:0,nb_questions:5},
-      // Maeva
-      {ts:d(0,8,0),pseudo:'MaevaKlein',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'EMC citoyenneté',matiere:'EMC',score_pct:82,pts_round:72,pts_total:520,streak:4,nb_questions:5},
-      {ts:d(1,19,0),pseudo:'MaevaKlein',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'La guerre froide',matiere:'Histoire',score_pct:75,pts_round:62,pts_total:448,streak:3,nb_questions:5},
-      // Romane
-      {ts:d(0,9,15),pseudo:'RomaneVidal',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:70,pts_round:55,pts_total:310,streak:2,nb_questions:5},
-      {ts:d(2,18,0),pseudo:'RomaneVidal',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:65,pts_round:45,pts_total:255,streak:1,nb_questions:5},
+      {ts:d(0,8,30),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'La guerre froide',matiere:'Histoire',score_pct:80,pts_round:70,pts_total:1340,streak:8,nb_questions:5,_demo:true},
+      {ts:d(1,9,0),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:72,pts_round:55,pts_total:1270,streak:7,nb_questions:5,_demo:true},
+      {ts:d(0,9,0),pseudo:'ChloeRoux',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:92,pts_round:90,pts_total:3320,streak:16,nb_questions:5,_demo:true},
+      {ts:d(1,18,30),pseudo:'ChloeRoux',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'La guerre froide',matiere:'Histoire',score_pct:88,pts_round:82,pts_total:3230,streak:15,nb_questions:5,_demo:true},
+      {ts:d(0,9,30),pseudo:'EmmaDubois',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:85,pts_round:76,pts_total:2250,streak:12,nb_questions:5,_demo:true},
+      {ts:d(0,10,0),pseudo:'LinaGarcia',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:77,pts_round:65,pts_total:1640,streak:9,nb_questions:5,_demo:true},
+      {ts:d(1,11,0),pseudo:'LucasMartin',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:68,pts_round:50,pts_total:980,streak:5,nb_questions:5,_demo:true},
+      {ts:d(0,11,30),pseudo:'TheoPetit',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:61,pts_round:40,pts_total:720,streak:3,nb_questions:5,_demo:true},
+      {ts:d(0,12,0),pseudo:'SarahLeclerc',ecole:'Collège Grasse',classe:'Terminale Bac Pro',theme:'EMC citoyenneté',matiere:'EMC',score_pct:73,pts_round:60,pts_total:1100,streak:6,nb_questions:5,_demo:true},
+      {ts:d(0,11,45),pseudo:'HugoBernard',ecole:'Collège Grasse',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:54,pts_round:30,pts_total:450,streak:2,nb_questions:5,_demo:true},
+      {ts:d(28,12,0),pseudo:'NathanMoreau',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:45,pts_round:20,pts_total:250,streak:0,nb_questions:5,_demo:true},
+      {ts:d(0,8,0),pseudo:'MaevaKlein',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'EMC citoyenneté',matiere:'EMC',score_pct:82,pts_round:72,pts_total:520,streak:4,nb_questions:5,_demo:true},
+      {ts:d(0,9,15),pseudo:'RomaneVidal',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:70,pts_round:55,pts_total:310,streak:2,nb_questions:5,_demo:true},
     ];
     DB.parrainage = [
-      {ts:d(0,9,45),sender:'Chloé Roux',sender_etab:'Lycée Masséna Nice',destinataire:'Inès',channel:'whatsapp',pts:100},
-      {ts:d(1,17,15),sender:'Chloé Roux',sender_etab:'Lycée Masséna Nice',destinataire:'Marius',channel:'whatsapp',pts:100},
-      {ts:d(2,21,8),sender:'Chloé Roux',sender_etab:'Lycée Masséna Nice',destinataire:'Léa',channel:'telegram',pts:100},
-      {ts:d(4,14,33),sender:'Chloé Roux',sender_etab:'Lycée Masséna Nice',destinataire:'Romane',channel:'whatsapp',pts:100},
-      {ts:d(6,19,51),sender:'Chloé Roux',sender_etab:'Lycée Masséna Nice',destinataire:'Tom',channel:'native',pts:100},
-      {ts:d(0,20,12),sender:'Emma Dubois',sender_etab:'Lycée Masséna Nice',destinataire:'Camille',channel:'whatsapp',pts:100},
-      {ts:d(1,16,40),sender:'Emma Dubois',sender_etab:'Lycée Masséna Nice',destinataire:'Antoine',channel:'whatsapp',pts:100},
-      {ts:d(4,11,20),sender:'Emma Dubois',sender_etab:'Lycée Masséna Nice',destinataire:'Sophie',channel:'copy',pts:100},
-      {ts:d(5,22,5),sender:'Emma Dubois',sender_etab:'Lycée Masséna Nice',destinataire:'Jules',channel:'whatsapp',pts:100},
-      {ts:d(0,13,28),sender:'Lina Garcia',sender_etab:'Lycée de Vence',destinataire:'Amine',channel:'whatsapp',pts:100},
-      {ts:d(1,19,14),sender:'Lina Garcia',sender_etab:'Lycée de Vence',destinataire:'Yasmine',channel:'whatsapp',pts:100},
-      {ts:d(3,17,55),sender:'Lina Garcia',sender_etab:'Lycée de Vence',destinataire:'Karim',channel:'telegram',pts:100},
-      {ts:d(0,9,45),sender:'Olivia Laurent',sender_etab:'Lycée de Vence',destinataire:'Marine',channel:'whatsapp',pts:100},
-      {ts:d(2,18,22),sender:'Olivia Laurent',sender_etab:'Lycée de Vence',destinataire:'Léo',channel:'native',pts:100},
-      {ts:d(6,20,11),sender:'Olivia Laurent',sender_etab:'Lycée de Vence',destinataire:'Sarah',channel:'whatsapp',pts:100},
-      {ts:d(1,14,8),sender:'Lucas Martin',sender_etab:'Lycée Cézanne Aix',destinataire:'Maxime',channel:'whatsapp',pts:100},
-      {ts:d(3,21,33),sender:'Lucas Martin',sender_etab:'Lycée Cézanne Aix',destinataire:'Élise',channel:'copy',pts:100},
-      {ts:d(0,16,50),sender:'Sarah Leclerc',sender_etab:'Collège Grasse',destinataire:'Noé',channel:'whatsapp',pts:100},
-      {ts:d(2,19,18),sender:'Sarah Leclerc',sender_etab:'Collège Grasse',destinataire:'Lola',channel:'telegram',pts:100},
-      {ts:d(1,17,42),sender:'Hugo Bernard',sender_etab:'Collège Grasse',destinataire:'Mathis',channel:'whatsapp',pts:100},
-      {ts:d(3,15,9),sender:'Théo Petit',sender_etab:'Lycée Cézanne Aix',destinataire:'Anaïs',channel:'native',pts:100},
+      {ts:d(0,9,45),sender:'Chloé Roux',sender_etab:'Lycée Masséna Nice',destinataire:'Inès',channel:'whatsapp',pts:100,_demo:true},
+      {ts:d(1,17,15),sender:'Chloé Roux',sender_etab:'Lycée Masséna Nice',destinataire:'Marius',channel:'whatsapp',pts:100,_demo:true},
+      {ts:d(0,20,12),sender:'Emma Dubois',sender_etab:'Lycée Masséna Nice',destinataire:'Camille',channel:'whatsapp',pts:100,_demo:true},
+      {ts:d(0,13,28),sender:'Lina Garcia',sender_etab:'Lycée de Vence',destinataire:'Amine',channel:'whatsapp',pts:100,_demo:true},
+      {ts:d(0,9,45),sender:'Olivia Laurent',sender_etab:'Lycée de Vence',destinataire:'Marine',channel:'whatsapp',pts:100,_demo:true},
     ];
   }
   updateBadges();
