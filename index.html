@@ -395,7 +395,7 @@ canvas{width:100%!important}
           </div>
           <div class="panel-body" style="padding:0">
             <table>
-              <thead><tr><th>Établissement</th><th>Élèves</th><th>Quiz/j</th><th>Plan</th><th>Score moy.</th></tr></thead>
+              <thead id="etab-table-head"><tr><th>Établissement</th><th>Élèves</th><th>Quiz/j</th><th>Plan</th><th>Score moy.</th></tr></thead>
               <tbody>
                 <tr><td colspan="5" style="text-align:center;padding:28px;color:var(--text3)">
                   <div style="font-size:22px;margin-bottom:6px">🏫</div>
@@ -3190,7 +3190,7 @@ function renderDashboard() {
   }
 
   // ── Table Top établissements (dashboard) ──
-  const etabTbody = document.querySelector('#v-dashboard table tbody');
+  const etabTbody = document.querySelector('#etab-table-head + tbody') || document.querySelector('#v-dashboard .row2 table tbody');
   if (etabTbody && ecoles.length) {
     const etabStats = ecoles.map(ecole => {
       const eleves = joueurs.filter(j => j.ecole === ecole);
@@ -3239,6 +3239,53 @@ function renderDashboard() {
 async function loadDashboard() { await loadAllData(); }
 window.addEventListener('DOMContentLoaded', loadAllData);
 
+// ── RENDER USERS : vue Élèves alimentée depuis DB.joueurs + DB.sessions ──
+function renderUsers() {
+  const { joueurs, sessions } = DB;
+  const tbody = document.getElementById('user-table-body');
+  const uCount = document.getElementById('u-count');
+  if (!tbody) return;
+
+  // Si pas encore de données, charger
+  if (!joueurs.length && !sessions.length) {
+    loadAllData();
+    return;
+  }
+
+  if (uCount) uCount.textContent = joueurs.length + ' élève' + (joueurs.length > 1 ? 's' : '');
+
+  tbody.innerHTML = joueurs.map(j => {
+    const us = sessions.filter(s => s.pseudo === j.pseudo);
+    const avg = us.length ? Math.round(us.reduce((a, s) => a + (s.score_pct || 0), 0) / us.length) : 0;
+    const maxStreak = us.reduce((a, s) => Math.max(a, s.streak || 0), 0);
+    const lastSession = us[0] ? new Date(us[0].ts).toLocaleDateString('fr-FR') : '—';
+    const isActif = us.length > 0;
+    const color = avg >= 70 ? 'var(--green)' : avg >= 50 ? 'var(--amber)' : 'var(--red)';
+    const ini = ((j.prenom || '?').charAt(0) + (j.nom || '?').charAt(0)).toUpperCase();
+    return `<tr class="u-row" data-etab="${j.ecole||''}" data-niv="${j.classe||''}" data-stat="${isActif?'Actif':'Inactif'}" data-name="${(j.pseudo||j.prenom||'').toLowerCase()}">
+      <td><div style="display:flex;align-items:center;gap:10px"><div style="width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0">${ini}</div><span style="color:var(--text);font-weight:500">${j.prenom||''} ${j.nom||''}</span></div></td>
+      <td>${j.ecole||'—'}</td>
+      <td>${j.classe||'—'}</td>
+      <td><span style="color:${color};font-weight:500">${avg}%</span></td>
+      <td>${maxStreak > 0 ? '🔥 '+maxStreak+'j' : '—'}</td>
+      <td>${lastSession}</td>
+      <td><span class="badge ${isActif?'badge-green':'badge-red'}">${isActif?'Actif':'Inactif'}</span></td>
+      <td style="color:var(--text3);font-size:11px">›</td>
+    </tr>`;
+  }).join('');
+
+  // Peupler les filtres établissements si vides
+  const etabSelect = document.getElementById('u-filter-etab');
+  if (etabSelect && etabSelect.options.length <= 1) {
+    const ecoles = [...new Set(joueurs.map(j => j.ecole).filter(Boolean))].sort();
+    ecoles.forEach(e => {
+      const opt = document.createElement('option');
+      opt.value = e; opt.textContent = e;
+      etabSelect.appendChild(opt);
+    });
+  }
+}
+
 // ── NAVIGATION ──
 let currentView = 'dashboard';
 function nav(id, el) {
@@ -3251,7 +3298,17 @@ function nav(id, el) {
   document.getElementById('page-title').textContent = titles[id] || id;
   const btns = {dashboard:'+ Nouveau',analytics:'Exporter',questions:'+ Ajouter des questions',cours:'+ Importer un cours',users:'+ Ajouter un élève',profs:'+ Créer un prof',etablissements:'+ Créer un établissement',saas:'Configurer',multiplay:'📥 Exporter',parrainage:'📥 Exporter',settings:'Sauvegarder'};
   document.getElementById('topbar-primary-btn').textContent = btns[id] || '+ Nouveau';
-  if(id === 'parrainage') renderParrainage();
+  if(id === 'parrainage') {
+    if(DB.parrainage.length > 0) {
+      renderParrainage();
+    } else {
+      supabaseFetch('parrainage').then(data => {
+        DB.parrainage = Array.isArray(data) ? data : [];
+        renderParrainage();
+      }).catch(() => renderParrainage());
+    }
+  }
+  if(id === 'users') { renderUsers(); }
   if(id === 'analytics') { try { anaTab('trafic'); } catch(e){} }
   if(id === 'saas') { try { saasTab('plans'); } catch(e){} }
   try { document.getElementById("content").scrollTop = 0; } catch(e){}
@@ -3843,6 +3900,7 @@ function channelColor(c){
 function renderParrainage(){
   try {
     const all = getAllParrainage();
+    console.log('renderParrainage: all=', all.length, 'DB.parrainage=', DB.parrainage.length);
     const search = (document.getElementById('parr-search')?.value || '').toLowerCase();
     const channelFilter = document.getElementById('parr-channel-filter')?.value || '';
     const etabFilter = document.getElementById('parr-etab-filter')?.value || '';
