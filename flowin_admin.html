@@ -418,7 +418,7 @@ tbody tr:last-child td{border-bottom:none}
         <input class="filter-input" type="text" id="eleves-search" placeholder="Rechercher…" oninput="renderEleves()">
         <select class="filter-select" id="eleves-etab" onchange="renderEleves()"><option value="">Tous établissements</option></select>
         <select class="filter-select" id="eleves-stat" onchange="renderEleves()"><option value="">Tous statuts</option><option value="Actif">Actif</option><option value="Inactif">Inactif</option></select>
-        <select class="filter-select" id="eleves-sort" onchange="renderEleves()"><option value="pts">↓ Points</option><option value="score">↓ Score</option><option value="streak">↓ Streak</option><option value="name">A–Z</option></select>
+        <select class="filter-select" id="eleves-sort" onchange="renderEleves()"><option value="date">↓ Plus récents</option><option value="pts">↓ Points</option><option value="score">↓ Score</option><option value="streak">↓ Streak</option><option value="name">A–Z</option></select>
         <span class="filter-count" id="eleves-count"></span>
       </div>
       <div class="panel">
@@ -1358,6 +1358,19 @@ function buildElevs() {
   });
 }
 
+function isFakeAccount(j) {
+  const email = (j.email||'').toLowerCase();
+  const ecole = (j.ecole||'').toLowerCase();
+  const nom = (j.nom||'').toLowerCase();
+  const prenom = (j.prenom||'').toLowerCase();
+  const fakeEmails = ['test','example','fake','demo','admin','trial'];
+  const fakeEcoles = ['test','demo','exemple'];
+  const fakeNoms = ['test','test test','fake','demo'];
+  return fakeEmails.some(f=>email.includes(f))
+    || fakeEcoles.some(f=>ecole===f)
+    || (prenom.toLowerCase()==='test' && nom.toLowerCase()==='test');
+}
+
 // ── ÉLÈVES ──
 function renderEleves() {
   const elevs = buildElevs();
@@ -1379,12 +1392,16 @@ function renderEleves() {
   if(etab)   data = data.filter(d=>d.j.ecole===etab);
   if(stat==='Actif')   data = data.filter(d=>d.isActif);
   if(stat==='Inactif') data = data.filter(d=>!d.isActif);
-  data.sort((a,b)=>sort==='pts'?b.totalPts-a.totalPts:sort==='score'?b.avg-a.avg:sort==='streak'?b.maxStreak-a.maxStreak:`${a.j.prenom} ${a.j.nom}`.localeCompare(`${b.j.prenom} ${b.j.nom}`));
+  data.sort((a,b)=>sort==='pts'?b.totalPts-a.totalPts:sort==='score'?b.avg-a.avg:sort==='streak'?b.maxStreak-a.maxStreak:sort==='date'?new Date(b.j.ts||0)-new Date(a.j.ts||0):`${a.j.prenom} ${a.j.nom}`.localeCompare(`${b.j.prenom} ${b.j.nom}`));
 
   document.getElementById('eleves-count').textContent = `${data.length} élève${data.length>1?'s':''}`;
-  document.getElementById('eleves-tbody').innerHTML = data.length ? data.map(d => `
-    <tr onclick="openEleve('${d.pseudo}')">
-      <td><div style="display:flex;align-items:center;gap:9px">${ava(d.j.prenom,d.j.nom,d.idx,30)}<div><div style="font-size:12px;font-weight:600;color:var(--t)">${d.j.prenom} ${d.j.nom}</div><div style="font-size:9px;color:var(--t3)">${d.j.email||'—'}</div></div></div></td>
+  document.getElementById('eleves-tbody').innerHTML = data.length ? data.map(d => {
+    const fake = isFakeAccount(d.j);
+    const rowStyle = fake ? 'opacity:0.38;filter:grayscale(1);' : '';
+    const fakeBadge = fake ? `<span style="background:#e5e7eb;color:#9ca3af;border-radius:5px;font-size:9px;font-weight:700;padding:2px 6px;margin-left:6px;text-transform:uppercase">Test</span>` : '';
+    return `
+    <tr onclick="openEleve('${d.pseudo}')" style="${rowStyle}">
+      <td><div style="display:flex;align-items:center;gap:9px">${ava(d.j.prenom,d.j.nom,d.idx,30)}<div><div style="font-size:12px;font-weight:600;color:var(--t)">${d.j.prenom} ${d.j.nom}${fakeBadge}</div><div style="font-size:9px;color:var(--t3)">${d.j.email||'—'}</div></div></div></td>
       <td style="font-size:11px">${d.j.ecole||'—'}</td>
       <td style="font-size:11px">${d.j.classe||'—'}</td>
       <td>${scorePill(d.avg)}</td>
@@ -1393,7 +1410,8 @@ function renderEleves() {
       <td>${lguePill(d.totalPts)}</td>
       <td style="font-size:10px;color:var(--t3)">${d.last?ago(d.last):'—'}</td>
       <td>${bdg(d.isActif?'green':'amber',d.isActif?'Actif':'Inactif')}</td>
-    </tr>`).join('') : `<tr><td colspan="9"><div class="empty"><div class="empty-icon">👤</div><div class="empty-text">Aucun élève trouvé</div></div></td></tr>`;
+    </tr>`;
+  }).join('') : `<tr><td colspan="9"><div class="empty"><div class="empty-icon">👤</div><div class="empty-text">Aucun élève trouvé</div></div></td></tr>`;
 }
 
 // ── FICHE ÉLÈVE ──
@@ -1404,7 +1422,17 @@ function openEleve(pseudo) {
   const lg = getLg(d.totalPts);
   const lgNext = LEAGUES[LEAGUES.indexOf(lg)+1];
   const lgPct = lg.max>lg.min ? Math.min(100,Math.round((d.totalPts-lg.min)/(lg.max-lg.min)*100)) : 100;
-  const parr = DB.parrainage.filter(p=>p.sender===`${d.j.prenom} ${d.j.nom}`||p.sender===d.pseudo);
+  const parr = DB.parrainage.filter(p => {
+    const email = (d.j.email||'').toLowerCase();
+    const fullName = `${d.j.prenom} ${d.j.nom}`.toLowerCase();
+    const prenom = (d.j.prenom||'').toLowerCase();
+    const ps = (p.sender||'').toLowerCase();
+    const pe = (p.sender_email||'').toLowerCase();
+    return pe && email && pe===email
+      || ps===fullName
+      || ps===prenom
+      || ps===d.pseudo.toLowerCase();
+  });
   const chIc = {whatsapp:'💬',telegram:'✈️',copy:'📋',native:'↗️'};
 
   // Heatmap 30j
@@ -4542,19 +4570,19 @@ function renderTopEtabs() {
 
 // ── BARÈME ──
 const BAREME = {
-  pts_bonne_reponse:   { label:'Bonne réponse',        val:10, min:1,  max:50,  step:1,  unit:'pts' },
-  pts_streak_bonus:    { label:'Bonus streak (x jours)',val:5,  min:0,  max:20,  step:1,  unit:'pts/j' },
-  pts_quiz_complet:    { label:'Quiz complété',         val:20, min:0,  max:100, step:5,  unit:'pts' },
-  pts_parrainage:      { label:'Parrainage réussi',     val:100,min:10, max:500, step:10, unit:'pts' },
-  pts_perfect_score:   { label:'Score parfait (100%)',  val:50, min:0,  max:200, step:10, unit:'pts bonus' },
-  nb_questions_quiz:   { label:'Questions par quiz',    val:5,  min:3,  max:20,  step:1,  unit:'questions' },
+  pts_bonne_reponse:    { label:'Bonne réponse (base)',        val:15, min:1,  max:50,  step:1,  unit:'pts' },
+  pts_streak_bonus_2e:  { label:'Bonus streak (2e bonne)',     val:5,  min:0,  max:20,  step:1,  unit:'pts' },
+  pts_streak_bonus_sup: { label:'Bonus streak (3e+/bonne)',    val:2,  min:0,  max:10,  step:1,  unit:'pts' },
+  pts_perfect_bonus:    { label:'Quiz parfait (100%)',         val:10, min:0,  max:100, step:5,  unit:'pts bonus' },
+  pts_parrainage:       { label:'Parrainage réussi',          val:100,min:10, max:500, step:10, unit:'pts' },
+  nb_questions_quiz:    { label:'Questions par quiz',          val:5,  min:3,  max:20,  step:1,  unit:'questions' },
 };
 
 const LIGUES_SEUILS = [
-  { name:'Bronze',  icon:'🥉', color:'#9A6B3A', bg:'#F5EDE3', min:0,    max:500   },
-  { name:'Argent',  icon:'🥈', color:'#6B7280', bg:'#F0F1F4', min:500,  max:1500  },
-  { name:'Or',      icon:'🥇', color:'#B87A10', bg:'#FEF3DC', min:1500, max:3000  },
-  { name:'Platine', icon:'💎', color:'#2478CC', bg:'#E8F2FC', min:3000, max:5000  },
+  { name:'Bronze',  icon:'🥉', color:'#9A6B3A', bg:'#F5EDE3', min:0,    max:499   },
+  { name:'Argent',  icon:'🥈', color:'#6B7280', bg:'#F0F1F4', min:500,  max:1499  },
+  { name:'Or',      icon:'🥇', color:'#B87A10', bg:'#FEF3DC', min:1500, max:2999  },
+  { name:'Platine', icon:'💎', color:'#2478CC', bg:'#E8F2FC', min:3000, max:4999  },
   { name:'Légende', icon:'👑', color:'#6C5FE8', bg:'#EEECFC', min:5000, max:99999 },
 ];
 
@@ -4634,20 +4662,53 @@ function openBareme() {
 
     <div style="display:flex;justify-content:flex-end;gap:8px;padding-top:14px;border-top:1px solid var(--b);margin-top:14px">
       <button onclick="resetBareme()" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:8px 14px;font-size:11px;cursor:pointer">↺ Réinitialiser</button>
-      <button onclick="closeBareme();renderBareme()" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:8px 16px;font-size:11px;font-weight:600;cursor:pointer">✓ Appliquer</button>
+      <button onclick="closeBareme();renderBareme();saveBaremeToSupabase()" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:8px 16px;font-size:11px;font-weight:600;cursor:pointer">✓ Appliquer & Sauvegarder</button>
     </div>`;
   document.getElementById('modal-bareme').classList.add('open');
 }
 
 function closeBareme() { document.getElementById('modal-bareme').classList.remove('open'); }
 
+async function saveBaremeToSupabase() {
+  const baremePayload = {};
+  Object.entries(BAREME).forEach(([k,b]) => { baremePayload[k] = b.val; });
+
+  const liguesPayload = LIGUES_SEUILS.map(l => ({
+    name: l.name, key: l.name.toLowerCase()
+      .replace('é','e').replace('è','e').replace('ô','o')
+      .replace('bronze','bronze').replace('argent','silver')
+      .replace('or','gold').replace('platine','diamond').replace('legende','legend'),
+    min: l.min, max: l.max
+  }));
+  // Correction manuelle des clés
+  const keyMap = {bronze:'bronze',argent:'silver',or:'gold',platine:'diamond',legende:'legend',légende:'legend'};
+  liguesPayload.forEach(l => { l.key = keyMap[l.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')] || l.name.toLowerCase(); });
+
+  const hdrs = {
+    'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY,
+    'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates'
+  };
+  try {
+    await fetch(SB_URL + '/rest/v1/config', {
+      method: 'POST', headers: hdrs,
+      body: JSON.stringify([
+        {key:'bareme', value: baremePayload, updated_at: new Date().toISOString()},
+        {key:'ligues_seuils', value: liguesPayload, updated_at: new Date().toISOString()}
+      ])
+    });
+    alert('✅ Barème sauvegardé dans Supabase — actif pour tous les élèves');
+  } catch(e) {
+    alert('⚠️ Sauvegarde échouée — vérifier la connexion Supabase');
+  }
+}
+
 function resetBareme() {
-  BAREME.pts_bonne_reponse.val=10; BAREME.pts_streak_bonus.val=5;
-  BAREME.pts_quiz_complet.val=20; BAREME.pts_parrainage.val=100;
-  BAREME.pts_perfect_score.val=50; BAREME.nb_questions_quiz.val=5;
-  LIGUES_SEUILS[0].max=500; LIGUES_SEUILS[1].min=500; LIGUES_SEUILS[1].max=1500;
-  LIGUES_SEUILS[2].min=1500; LIGUES_SEUILS[2].max=3000;
-  LIGUES_SEUILS[3].min=3000; LIGUES_SEUILS[3].max=5000;
+  BAREME.pts_bonne_reponse.val=15; BAREME.pts_streak_bonus_2e.val=5;
+  BAREME.pts_streak_bonus_sup.val=2; BAREME.pts_perfect_bonus.val=10;
+  BAREME.pts_parrainage.val=100; BAREME.nb_questions_quiz.val=5;
+  LIGUES_SEUILS[0].max=499; LIGUES_SEUILS[1].min=500; LIGUES_SEUILS[1].max=1499;
+  LIGUES_SEUILS[2].min=1500; LIGUES_SEUILS[2].max=2999;
+  LIGUES_SEUILS[3].min=3000; LIGUES_SEUILS[3].max=4999;
   LIGUES_SEUILS[4].min=5000;
   closeBareme(); renderBareme();
 }
