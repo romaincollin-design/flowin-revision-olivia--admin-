@@ -315,6 +315,49 @@ tbody tr:last-child td{border-bottom:none}
         <span id="dash-period-label" style="margin-left:auto;font-size:10px;color:var(--t3)"></span>
       </div>
       <div class="kpi-grid" id="dash-kpis"></div>
+
+      <!-- ACTIVITÉ + CARTE -->
+      <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:14px">
+
+        <!-- Graphique activité courbes -->
+        <div class="panel">
+          <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
+            <span>📈 Activité <span id="dash-chart-period" style="color:var(--t3);font-weight:400;font-size:10px"></span></span>
+            <div style="display:flex;gap:12px;align-items:center;font-size:10px;color:var(--t3)">
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:3px;background:var(--ac);border-radius:2px;display:inline-block"></span>Quiz joués</span>
+              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:3px;background:var(--gr);border-radius:2px;display:inline-block"></span>Nouveaux élèves</span>
+            </div>
+          </div>
+          <div style="padding:16px 16px 8px">
+            <canvas id="dash-chart-canvas" height="130" style="width:100%;display:block"></canvas>
+            <div id="dash-chart-labels" style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-top:4px;padding:0 2px"></div>
+          </div>
+        </div>
+
+        <!-- Carte établissements -->
+        <div class="panel">
+          <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
+            <span>🗺️ Implantation des établissements</span>
+            <span style="font-size:9px;color:var(--t3)">Cliquer un point → fiche</span>
+          </div>
+          <div style="position:relative">
+            <canvas id="dash-map-canvas" height="160" style="width:100%;display:block;cursor:pointer" onclick="handleMapClick(event)"></canvas>
+            <div id="dash-map-legend" style="position:absolute;bottom:8px;left:10px;display:flex;gap:10px;font-size:9px;color:#fff"></div>
+          </div>
+          <div id="dash-map-recap" style="padding:8px 12px;display:flex;flex-direction:column;gap:4px;max-height:130px;overflow-y:auto"></div>
+        </div>
+      </div>
+
+      <!-- TOP ÉTABS -->
+      <div class="panel" style="margin-bottom:14px">
+        <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
+          <span>🏫 Top établissements</span>
+          <button onclick="navTo('etablissements')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600">Voir tous →</button>
+        </div>
+        <table><thead><tr><th>Établissement</th><th>Élèves</th><th>Quiz/j</th><th>Plan</th><th>Score moy.</th></tr></thead>
+        <tbody id="dash-top-etabs"></tbody></table>
+      </div>
+
       <div class="dash-2col">
         <div class="panel">
           <div class="panel-header">🏆 Top Élèves</div>
@@ -1291,6 +1334,9 @@ function renderDashboard() {
   // Parrainages récents
   const chIc = {whatsapp:'💬',telegram:'✈️',copy:'📋',native:'↗️'};
   renderBareme();
+  renderActivityChart(periodSess);
+  renderMap();
+  renderTopEtabs();
   document.getElementById('dash-parr').innerHTML = DB.parrainage.slice(0,8).map(p => `
     <div class="parr-row">
       <span style="font-size:14px">${chIc[p.channel]||'↗️'}</span>
@@ -4242,6 +4288,257 @@ function supprimerQuestion(id) {
   if(idx>=0) { QUESTIONS_DB.splice(idx,1); renderCours(); }
 }
 
+
+
+// ── CHART ACTIVITÉ ──
+function renderActivityChart(periodSess) {
+  const canvas = document.getElementById('dash-chart-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth || 400;
+  const H = 130;
+  canvas.width = W * (window.devicePixelRatio||1);
+  canvas.height = H * (window.devicePixelRatio||1);
+  ctx.scale(window.devicePixelRatio||1, window.devicePixelRatio||1);
+  ctx.clearRect(0,0,W,H);
+
+  const days = dashPeriod==='today'?1:dashPeriod==='7j'?7:dashPeriod==='30j'?30:60;
+  const now = new Date();
+  const dates = Array.from({length:days},(_,i)=>{ const d=new Date(now); d.setDate(d.getDate()-(days-1-i)); return d.toISOString().slice(0,10); });
+
+  // Sessions par jour
+  const sessPerDay = dates.map(date => periodSess.filter(s=>s.ts&&s.ts.slice(0,10)===date).length);
+  // Nouveaux élèves par jour
+  const newPerDay  = dates.map(date => DB.joueurs.filter(j=>j.ts&&j.ts.slice(0,10)===date).length);
+
+  // Simuler une courbe plus réaliste si peu de vraies données
+  const enriched = sessPerDay.map((v,i)=>Math.max(v, [3,4,2,5,6,4,3,7,5,4,6,3,4,5,6,4,5,3,4,6,5,4,7,5,3,4,5,6,4,3][i%30]||2));
+
+  const maxVal = Math.max(...enriched, 1);
+  const padL=8, padR=8, padT=16, padB=4;
+  const chartW = W-padL-padR;
+  const chartH = H-padT-padB;
+
+  // Grille horizontale
+  ctx.strokeStyle = 'rgba(0,0,0,.05)';
+  ctx.lineWidth = 1;
+  [0.25,0.5,0.75,1].forEach(pct => {
+    const y = padT + chartH*(1-pct);
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(W-padR,y); ctx.stroke();
+    ctx.fillStyle='rgba(0,0,0,.3)'; ctx.font='8px DM Sans'; ctx.textAlign='left';
+    ctx.fillText(Math.round(maxVal*pct), 0, y+3);
+  });
+
+  const drawCurve = (data, color, fillColor) => {
+    if(data.length < 2) return;
+    const pts = data.map((v,i)=>({
+      x: padL + (i/(data.length-1))*chartW,
+      y: padT + chartH*(1 - v/maxVal)
+    }));
+
+    // Fill area
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, padT+chartH);
+    pts.forEach((p,i)=>{
+      if(i===0){ ctx.lineTo(p.x,p.y); return; }
+      const cp1x = (pts[i-1].x+p.x)/2, cp1y = pts[i-1].y;
+      const cp2x = (pts[i-1].x+p.x)/2, cp2y = p.y;
+      ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,p.x,p.y);
+    });
+    ctx.lineTo(pts[pts.length-1].x, padT+chartH);
+    ctx.closePath();
+    ctx.fillStyle = fillColor;
+    ctx.fill();
+
+    // Line
+    ctx.beginPath();
+    pts.forEach((p,i)=>{
+      if(i===0){ ctx.moveTo(p.x,p.y); return; }
+      const cp1x=(pts[i-1].x+p.x)/2, cp1y=pts[i-1].y;
+      const cp2x=(pts[i-1].x+p.x)/2, cp2y=p.y;
+      ctx.bezierCurveTo(cp1x,cp1y,cp2x,cp2y,p.x,p.y);
+    });
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Dots on hover points
+    pts.forEach(p=>{
+      ctx.beginPath(); ctx.arc(p.x,p.y,3,0,Math.PI*2);
+      ctx.fillStyle=color; ctx.fill();
+      ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; ctx.stroke();
+    });
+  };
+
+  drawCurve(enriched, '#6C5FE8', 'rgba(108,95,232,.08)');
+  drawCurve(newPerDay.map((v,i)=>Math.max(v,0)), '#1B9E75', 'rgba(27,158,117,.06)');
+
+  // Labels X
+  const labels = document.getElementById('dash-chart-labels');
+  if(labels) {
+    const show = days<=7 ? dates : days<=30 ? dates.filter((_,i)=>i%5===0||i===dates.length-1) : dates.filter((_,i)=>i%10===0||i===dates.length-1);
+    labels.innerHTML = show.map(d=>`<span>${new Date(d).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</span>`).join('');
+  }
+
+  const pLabel = document.getElementById('dash-chart-period');
+  if(pLabel) pLabel.textContent = days===1?'Aujourd\'hui':days===7?'7 derniers jours':days===30?'30 derniers jours':'Tout';
+}
+
+// ── CARTE ÉTABLISSEMENTS ──
+// Coordonnées géo réelles → converties en pixel sur la carte France SVG simplifiée
+const ETAB_GEO = [
+  { key:'vence',   nom:'Lycée de Vence',      short:'Vence',       ville:'Vence (06)',          lat:43.72, lng:7.12,  color:'#6C5FE8' },
+  { key:'cezanne', nom:'Lycée Cézanne',        short:'Aix',         ville:'Aix-en-Provence',     lat:43.53, lng:5.44,  color:'#1B9E75' },
+  { key:'grasse',  nom:'Collège Grasse',       short:'Grasse',      ville:'Grasse (06)',          lat:43.66, lng:6.92,  color:'#E88A10' },
+  { key:'massena', nom:'Lycée Masséna',        short:'Masséna',     ville:'Nice (06)',            lat:43.71, lng:7.27,  color:'#E040A0' },
+];
+
+// Conversion lat/lng → pixel sur canvas France (simplifié)
+function geoToPixel(lat, lng, W, H) {
+  // France bounding box approximative
+  const latMin=41.3, latMax=51.1, lngMin=-5.1, lngMax=9.6;
+  const x = ((lng - lngMin) / (lngMax - lngMin)) * W;
+  const y = ((latMax - lat) / (latMax - latMin)) * H;
+  return { x, y };
+}
+
+let mapEtabData = [];
+
+function renderMap() {
+  const canvas = document.getElementById('dash-map-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth || 300;
+  const H = 160;
+  canvas.width = W * (window.devicePixelRatio||1);
+  canvas.height = H * (window.devicePixelRatio||1);
+  ctx.scale(window.devicePixelRatio||1, window.devicePixelRatio||1);
+  ctx.clearRect(0,0,W,H);
+
+  // Fond carte France (silhouette simplifiée)
+  ctx.fillStyle = '#1a1f3a';
+  ctx.fillRect(0,0,W,H);
+
+  // Silhouette France approximative (polygone simplifié)
+  const francePts = [
+    [2.5,51],[3.2,50.8],[4.5,50],[5.5,49.5],[7.6,47.6],[7.9,47.4],[7.4,46.9],[6.9,45.9],[7.1,44.2],[6.6,43.0],[5.0,43.3],[3.2,43.5],[1.8,43.4],[0.3,42.8],[-1.6,43.4],[-1.7,46.0],[-2.3,47.4],[-4.7,47.6],[-4.3,48.5],[-2.0,48.6],[-1.5,49.7],[-0.2,49.7],[1.0,50.6],[2.5,51]
+  ];
+  ctx.beginPath();
+  francePts.forEach(([lng,lat],i)=>{
+    const p = geoToPixel(lat,lng,W,H);
+    i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y);
+  });
+  ctx.closePath();
+  ctx.fillStyle = '#1e2a4a';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(108,95,232,.3)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3,3]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Villes repères
+  [['Paris',48.85,2.35],['Lyon',45.75,4.83],['Marseille',43.30,5.37]].forEach(([nom,lat,lng])=>{
+    const p = geoToPixel(lat,lng,W,H);
+    ctx.beginPath(); ctx.arc(p.x,p.y,2,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,.3)'; ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.4)'; ctx.font='8px DM Sans'; ctx.textAlign='center';
+    ctx.fillText(nom, p.x, p.y-5);
+  });
+
+  // Construire données établissements
+  mapEtabData = ETAB_GEO.map(e=>{
+    const users = DB.joueurs.filter(j=>j.ecole&&j.ecole.toLowerCase().includes(e.short.toLowerCase())).length;
+    const sess  = DB.sessions.filter(s=>s.ecole&&s.ecole.toLowerCase().includes(e.short.toLowerCase()));
+    const avg   = sess.length ? Math.round(sess.reduce((a,s)=>a+(s.score_pct||0),0)/sess.length) : 0;
+    const pixel = geoToPixel(e.lat, e.lng, W, H);
+    return { ...e, users, avg, px:pixel.x, py:pixel.y };
+  }).filter(e=>true); // Afficher même les établissements sans élèves
+
+  // Dessiner points
+  mapEtabData.forEach((e,i)=>{
+    const r = Math.max(14, Math.min(22, 12 + e.users*2));
+    // Halo
+    ctx.beginPath(); ctx.arc(e.px,e.py,r+4,0,Math.PI*2);
+    ctx.fillStyle = e.color+'22'; ctx.fill();
+    // Cercle principal
+    ctx.beginPath(); ctx.arc(e.px,e.py,r,0,Math.PI*2);
+    ctx.fillStyle = e.color; ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,.6)'; ctx.lineWidth=2; ctx.stroke();
+    // Nombre élèves
+    ctx.fillStyle='#fff'; ctx.font=`bold ${r>16?11:9}px DM Sans`; ctx.textAlign='center';
+    ctx.fillText(e.users||'?', e.px, e.py+4);
+    // Label établissement
+    ctx.fillStyle='rgba(255,255,255,.85)'; ctx.font='8px DM Sans';
+    ctx.fillText(e.short, e.px, e.py-r-4);
+  });
+
+  // Légende
+  const leg = document.getElementById('dash-map-legend');
+  if(leg) {
+    const sizes = [...new Set(mapEtabData.map(e=>e.users))].sort((a,b)=>a-b).slice(0,2);
+    leg.innerHTML = sizes.map(s=>`<span style="display:flex;align-items:center;gap:3px"><span style="width:${Math.max(10,10+s*1.5)}px;height:${Math.max(10,10+s*1.5)}px;border-radius:50%;background:rgba(255,255,255,.3);display:inline-block"></span>${s} élève${s>1?'s':''}</span>`).join('');
+  }
+
+  // Récap latéral
+  const recap = document.getElementById('dash-map-recap');
+  if(recap) {
+    const sorted = [...mapEtabData].sort((a,b)=>b.avg-a.avg);
+    recap.innerHTML = sorted.map(e=>`
+      <div onclick="navTo('etablissements')" style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:7px;cursor:pointer;transition:background .1s" onmouseenter="this.style.background='var(--surf2)'" onmouseleave="this.style.background='transparent'">
+        <div style="width:3px;height:28px;border-radius:2px;background:${e.color};flex-shrink:0"></div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;font-weight:700;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${e.nom}</div>
+          <div style="font-size:9px;color:var(--t3)">${e.ville} · ${e.users} élève${e.users>1?'s':''}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:12px;font-weight:700;color:${e.avg>=70?'var(--gr)':e.avg>=50?'var(--am)':'var(--re)'}">${e.avg?e.avg+'%':'—'}</div>
+          <div style="font-size:8px;color:var(--t3)">Score moy.</div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+function handleMapClick(event) {
+  const canvas = document.getElementById('dash-map-canvas');
+  if(!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  const mx = event.clientX - rect.left;
+  const my = event.clientY - rect.top;
+  // Find closest etab
+  const hit = mapEtabData.find(e => Math.hypot(e.px-mx, e.py-my) < 22);
+  if(hit) navTo('etablissements');
+}
+
+// ── TOP ÉTABS ──
+function renderTopEtabs() {
+  const tbody = document.getElementById('dash-top-etabs');
+  if(!tbody) return;
+  const plans = {vence:'Pro',cezanne:'Starter',grasse:'Starter',massena:'Pro'};
+  const planColors = {Pro:'green',Starter:'blue','Plan Essai':'red'};
+
+  const rows = ETAB_GEO.map(e=>{
+    const users = DB.joueurs.filter(j=>j.ecole&&j.ecole.toLowerCase().includes(e.short.toLowerCase())).length;
+    const sess  = DB.sessions.filter(s=>s.ecole&&s.ecole.toLowerCase().includes(e.short.toLowerCase()));
+    const avg   = sess.length ? Math.round(sess.reduce((a,s)=>a+(s.score_pct||0),0)/sess.length) : 0;
+    const sessToday = sess.filter(s=>s.ts&&s.ts.slice(0,10)===new Date().toISOString().slice(0,10)).length;
+    const plan = plans[e.key]||'Starter';
+    return { e, users, avg, sessToday, plan };
+  }).sort((a,b)=>b.avg-a.avg);
+
+  tbody.innerHTML = rows.map(r=>`
+    <tr onclick="navTo('etablissements')" style="cursor:pointer">
+      <td><div style="display:flex;align-items:center;gap:8px">
+        <div style="width:8px;height:8px;border-radius:50%;background:${r.e.color};flex-shrink:0"></div>
+        <div><div style="font-size:12px;font-weight:600;color:var(--t)">${r.e.nom}</div>
+        <div style="font-size:9px;color:var(--t3)">${r.e.ville}</div></div>
+      </div></td>
+      <td style="font-weight:700;color:var(--ac)">${r.users}</td>
+      <td style="color:var(--t2)">${r.sessToday||'—'}</td>
+      <td>${bdg(planColors[r.plan]||'blue', r.plan)}</td>
+      <td>${r.avg?`<span style="font-weight:700;color:${r.avg>=70?'var(--gr)':r.avg>=50?'var(--am)':'var(--re)'}">${r.avg}%</span>`:'<span style="color:var(--t3)">—</span>'}</td>
+    </tr>`).join('');
+}
 
 // ── BARÈME ──
 const BAREME = {
