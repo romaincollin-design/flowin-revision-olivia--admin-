@@ -336,6 +336,35 @@ tbody tr:last-child td{border-bottom:none}
           <div class="scroll-panel" id="dash-parr"></div>
         </div>
       </div>
+
+      <!-- BARÈME -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:0">
+        <div class="panel">
+          <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
+            <span>⭐ Barème des points</span>
+            <button onclick="openBareme()" style="background:var(--surf2);border:1px solid var(--b);border-radius:6px;padding:3px 8px;font-size:10px;cursor:pointer;color:var(--t2)">✏️ Modifier</button>
+          </div>
+          <div style="padding:14px" id="dash-bareme"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
+            <span>🏆 Seuils des ligues</span>
+            <button onclick="openBareme()" style="background:var(--surf2);border:1px solid var(--b);border-radius:6px;padding:3px 8px;font-size:10px;cursor:pointer;color:var(--t2)">✏️ Modifier</button>
+          </div>
+          <div style="padding:14px" id="dash-ligues-seuils"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL BARÈME -->
+    <div class="modal-overlay" id="modal-bareme" onclick="if(event.target===this)closeBareme()">
+      <div class="modal-box" style="max-width:600px">
+        <div class="modal-header">
+          <span class="modal-header-title">⭐ Barème & Ligues — Paramétrage</span>
+          <button class="modal-close" onclick="closeBareme()">✕</button>
+        </div>
+        <div class="modal-body" id="modal-bareme-body"></div>
+      </div>
     </div>
 
     <!-- ÉLÈVES -->
@@ -1261,6 +1290,7 @@ function renderDashboard() {
 
   // Parrainages récents
   const chIc = {whatsapp:'💬',telegram:'✈️',copy:'📋',native:'↗️'};
+  renderBareme();
   document.getElementById('dash-parr').innerHTML = DB.parrainage.slice(0,8).map(p => `
     <div class="parr-row">
       <span style="font-size:14px">${chIc[p.channel]||'↗️'}</span>
@@ -2734,25 +2764,70 @@ function closePoolPanel() {
 
 
 // ── AUTH ──
-const ADMIN_PWD = 'flowin2026'; // ⚠️ CHANGER CE MOT DE PASSE AVANT DE PARTAGER L'URL
+// Hash MD5 du mot de passe — le mot de passe réel n'est pas stocké ici
+const ADMIN_HASH = '090b148f530d4522e82bc1f80c774447';
+let loginAttempts = 0;
+let loginLockedUntil = 0;
+
+// Fonction MD5 légère
+function md5(str) {
+  function safeAdd(x,y){const lsw=(x&0xFFFF)+(y&0xFFFF);return(((x>>16)+(y>>16)+(lsw>>16))<<16)|(lsw&0xFFFF)}
+  function bitRotateLeft(num,cnt){return(num<<cnt)|(num>>>(32-cnt))}
+  function md5cmn(q,a,b,x,s,t){return safeAdd(bitRotateLeft(safeAdd(safeAdd(a,q),safeAdd(x,t)),s),b)}
+  function md5ff(a,b,c,d,x,s,t){return md5cmn((b&c)|((~b)&d),a,b,x,s,t)}
+  function md5gg(a,b,c,d,x,s,t){return md5cmn((b&d)|(c&(~d)),a,b,x,s,t)}
+  function md5hh(a,b,c,d,x,s,t){return md5cmn(b^c^d,a,b,x,s,t)}
+  function md5ii(a,b,c,d,x,s,t){return md5cmn(c^(b|(~d)),a,b,x,s,t)}
+  function strToLittleEndian(str){const output=Array(str.length>>2).fill(0);for(let i=0;i<str.length*8;i+=8)output[i>>5]|=(str.charCodeAt(i/8)&0xFF)<<(i%32);return output}
+  function littleEndianToStr(bin){let output='';for(let i=0;i<bin.length*32;i+=8)output+=String.fromCharCode((bin[i>>5]>>>(i%32))&0xFF);return output}
+  function core_md5(x,len){x[len>>5]|=0x80<<(len%32);x[(((len+64)>>>9)<<4)+14]=len;let a=1732584193,b=-271733879,c=-1732584194,d=271733878;for(let i=0;i<x.length;i+=16){const olda=a,oldb=b,oldc=c,oldd=d;a=md5ff(a,b,c,d,x[i],7,-680876936);d=md5ff(d,a,b,c,x[i+1],12,-389564586);c=md5ff(c,d,a,b,x[i+2],17,606105819);b=md5ff(b,c,d,a,x[i+3],22,-1044525330);a=md5ff(a,b,c,d,x[i+4],7,-176418897);d=md5ff(d,a,b,c,x[i+5],12,1200080426);c=md5ff(c,d,a,b,x[i+6],17,-1473231341);b=md5ff(b,c,d,a,x[i+7],22,-45705983);a=md5ff(a,b,c,d,x[i+8],7,1770035416);d=md5ff(d,a,b,c,x[i+9],12,-1958414417);c=md5ff(c,d,a,b,x[i+10],17,-42063);b=md5ff(b,c,d,a,x[i+11],22,-1990404162);a=md5ff(a,b,c,d,x[i+12],7,1804603682);d=md5ff(d,a,b,c,x[i+13],12,-40341101);c=md5ff(c,d,a,b,x[i+14],17,-1502002290);b=md5ff(b,c,d,a,x[i+15],22,1236535329);a=md5gg(a,b,c,d,x[i+1],5,-165796510);d=md5gg(d,a,b,c,x[i+6],9,-1069501632);c=md5gg(c,d,a,b,x[i+11],14,643717713);b=md5gg(b,c,d,a,x[i],20,-373897302);a=md5gg(a,b,c,d,x[i+5],5,-701558691);d=md5gg(d,a,b,c,x[i+10],9,38016083);c=md5gg(c,d,a,b,x[i+15],14,-660478335);b=md5gg(b,c,d,a,x[i+4],20,-405537848);a=md5gg(a,b,c,d,x[i+9],5,568446438);d=md5gg(d,a,b,c,x[i+14],9,-1019803690);c=md5gg(c,d,a,b,x[i+3],14,-187363961);b=md5gg(b,c,d,a,x[i+8],20,1163531501);a=md5gg(a,b,c,d,x[i+13],5,-1444681467);d=md5gg(d,a,b,c,x[i+2],9,-51403784);c=md5gg(c,d,a,b,x[i+7],14,1735328473);b=md5gg(b,c,d,a,x[i+12],20,-1926607734);a=md5hh(a,b,c,d,x[i+5],4,-378558);d=md5hh(d,a,b,c,x[i+8],11,-2022574463);c=md5hh(c,d,a,b,x[i+11],16,1839030562);b=md5hh(b,c,d,a,x[i+14],23,-35309556);a=md5hh(a,b,c,d,x[i+1],4,-1530992060);d=md5hh(d,a,b,c,x[i+4],11,1272893353);c=md5hh(c,d,a,b,x[i+7],16,-155497632);b=md5hh(b,c,d,a,x[i+10],23,-1094730640);a=md5hh(a,b,c,d,x[i+13],4,681279174);d=md5hh(d,a,b,c,x[i],11,-358537222);c=md5hh(c,d,a,b,x[i+3],16,-722521979);b=md5hh(b,c,d,a,x[i+6],23,76029189);a=md5hh(a,b,c,d,x[i+9],4,-640364487);d=md5hh(d,a,b,c,x[i+12],11,-421815835);c=md5hh(c,d,a,b,x[i+15],16,530742520);b=md5hh(b,c,d,a,x[i+2],23,-995338651);a=md5ii(a,b,c,d,x[i],6,-198630844);d=md5ii(d,a,b,c,x[i+7],10,1126891415);c=md5ii(c,d,a,b,x[i+14],15,-1416354905);b=md5ii(b,c,d,a,x[i+5],21,-57434055);a=md5ii(a,b,c,d,x[i+12],6,1700485571);d=md5ii(d,a,b,c,x[i+3],10,-1894986606);c=md5ii(c,d,a,b,x[i+10],15,-1051523);b=md5ii(b,c,d,a,x[i+1],21,-2054922799);a=md5ii(a,b,c,d,x[i+8],6,1873313359);d=md5ii(d,a,b,c,x[i+15],10,-30611744);c=md5ii(c,d,a,b,x[i+6],15,-1560198380);b=md5ii(b,c,d,a,x[i+13],21,1309151649);a=md5ii(a,b,c,d,x[i+4],6,-145523070);d=md5ii(d,a,b,c,x[i+11],10,-1120210379);c=md5ii(c,d,a,b,x[i+2],15,718787259);b=md5ii(b,c,d,a,x[i+9],21,-343485551);a=safeAdd(a,olda);b=safeAdd(b,oldb);c=safeAdd(c,oldc);d=safeAdd(d,oldd)}return[a,b,c,d]}
+  const binArr=strToLittleEndian(unescape(encodeURIComponent(str)));const result=core_md5(binArr,str.length*8);return littleEndianToStr(result).split('').map(c=>('0'+c.charCodeAt(0).toString(16)).slice(-2)).join('');
+}
+
 function checkLogin() {
-  const pwd = document.getElementById('login-pwd')?.value;
+  const now = Date.now();
   const err = document.getElementById('login-err');
-  if(pwd === ADMIN_PWD) {
+  const input = document.getElementById('login-pwd');
+
+  // Vérifier verrouillage
+  if(now < loginLockedUntil) {
+    const reste = Math.ceil((loginLockedUntil - now) / 1000);
+    if(err) err.textContent = `Trop de tentatives — réessaie dans ${reste}s`;
+    return;
+  }
+
+  const pwd = input?.value || '';
+  if(md5(pwd) === ADMIN_HASH) {
+    loginAttempts = 0;
     document.getElementById('login-wall').style.display = 'none';
     sessionStorage.setItem('flowin_auth','1');
+    sessionStorage.setItem('flowin_auth_ts', now.toString());
   } else {
-    if(err) { err.textContent = 'Mot de passe incorrect'; }
-    const input = document.getElementById('login-pwd');
-    if(input) { input.style.borderColor='var(--re)'; setTimeout(()=>input.style.borderColor='var(--b)',1500); }
+    loginAttempts++;
+    const restantes = 3 - loginAttempts;
+    if(loginAttempts >= 3) {
+      loginLockedUntil = now + 5 * 60 * 1000; // 5 minutes
+      loginAttempts = 0;
+      if(err) err.textContent = '🔒 Compte bloqué 5 minutes — trop de tentatives';
+      if(input) input.value = '';
+    } else {
+      if(err) err.textContent = `Mot de passe incorrect — ${restantes} tentative${restantes>1?'s':''} restante${restantes>1?'s':''}`;
+    }
+    if(input) { input.style.borderColor='var(--re)'; setTimeout(()=>input.style.borderColor='var(--b)',2000); }
   }
 }
-// Check session on load
+
+// Vérifier session au chargement (expire après 8h)
 if(sessionStorage.getItem('flowin_auth')==='1') {
-  document.addEventListener('DOMContentLoaded', () => {
-    const wall = document.getElementById('login-wall');
-    if(wall) wall.style.display = 'none';
-  });
+  const ts = parseInt(sessionStorage.getItem('flowin_auth_ts')||'0');
+  if(Date.now() - ts < 8 * 3600 * 1000) {
+    document.addEventListener('DOMContentLoaded', () => {
+      const wall = document.getElementById('login-wall');
+      if(wall) wall.style.display = 'none';
+    });
+  } else {
+    sessionStorage.removeItem('flowin_auth');
+  }
 }
 
 // ── EXPORT CSV ──
@@ -4165,6 +4240,119 @@ function supprimerQuestion(id) {
   if(!confirm('Supprimer cette question ?')) return;
   const idx = QUESTIONS_DB.findIndex(q=>q.id===id);
   if(idx>=0) { QUESTIONS_DB.splice(idx,1); renderCours(); }
+}
+
+
+// ── BARÈME ──
+const BAREME = {
+  pts_bonne_reponse:   { label:'Bonne réponse',        val:10, min:1,  max:50,  step:1,  unit:'pts' },
+  pts_streak_bonus:    { label:'Bonus streak (x jours)',val:5,  min:0,  max:20,  step:1,  unit:'pts/j' },
+  pts_quiz_complet:    { label:'Quiz complété',         val:20, min:0,  max:100, step:5,  unit:'pts' },
+  pts_parrainage:      { label:'Parrainage réussi',     val:100,min:10, max:500, step:10, unit:'pts' },
+  pts_perfect_score:   { label:'Score parfait (100%)',  val:50, min:0,  max:200, step:10, unit:'pts bonus' },
+  nb_questions_quiz:   { label:'Questions par quiz',    val:5,  min:3,  max:20,  step:1,  unit:'questions' },
+};
+
+const LIGUES_SEUILS = [
+  { name:'Bronze',  icon:'🥉', color:'#9A6B3A', bg:'#F5EDE3', min:0,    max:500   },
+  { name:'Argent',  icon:'🥈', color:'#6B7280', bg:'#F0F1F4', min:500,  max:1500  },
+  { name:'Or',      icon:'🥇', color:'#B87A10', bg:'#FEF3DC', min:1500, max:3000  },
+  { name:'Platine', icon:'💎', color:'#2478CC', bg:'#E8F2FC', min:3000, max:5000  },
+  { name:'Légende', icon:'👑', color:'#6C5FE8', bg:'#EEECFC', min:5000, max:99999 },
+];
+
+function renderBareme() {
+  // Barème des points
+  const bar = document.getElementById('dash-bareme');
+  if(bar) bar.innerHTML = Object.entries(BAREME).map(([k,b])=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--b);font-size:11px">
+      <span style="color:var(--t2)">${b.label}</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--am)">${b.val}</span>
+        <span style="font-size:9px;color:var(--t3)">${b.unit}</span>
+      </div>
+    </div>`).join('');
+
+  // Ligues seuils
+  const lig = document.getElementById('dash-ligues-seuils');
+  if(lig) lig.innerHTML = LIGUES_SEUILS.map(l=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--b)">
+      <div style="width:32px;height:32px;border-radius:8px;background:${l.bg};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${l.icon}</div>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:700;color:${l.color}">${l.name}</div>
+        <div style="font-size:9px;color:var(--t3)">${l.min.toLocaleString('fr')} – ${l.max===99999?'∞':l.max.toLocaleString('fr')} pts</div>
+      </div>
+      <div style="height:5px;width:80px;background:var(--surf3);border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${Math.min(100,Math.round(l.min/500))}%;background:${l.color};border-radius:3px"></div>
+      </div>
+    </div>`).join('');
+}
+
+function openBareme() {
+  document.getElementById('modal-bareme-body').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+
+      <!-- Barème points -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--t);margin-bottom:12px">⭐ Points par action</div>
+        ${Object.entries(BAREME).map(([k,b])=>`
+          <div style="margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px">
+              <label style="color:var(--t2);font-weight:500">${b.label}</label>
+              <span style="font-family:'Syne',sans-serif;font-weight:800;color:var(--am)" id="bv-${k}">${b.val} ${b.unit}</span>
+            </div>
+            <input type="range" min="${b.min}" max="${b.max}" step="${b.step}" value="${b.val}"
+              oninput="BAREME['${k}'].val=parseInt(this.value);document.getElementById('bv-${k}').textContent=this.value+' ${b.unit}';renderBareme()"
+              style="width:100%;accent-color:var(--am)">
+            <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-top:2px"><span>${b.min}</span><span>${b.max}</span></div>
+          </div>`).join('')}
+      </div>
+
+      <!-- Seuils ligues -->
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--t);margin-bottom:12px">🏆 Seuils de ligue</div>
+        ${LIGUES_SEUILS.map((l,i)=>`
+          <div style="margin-bottom:14px;padding:10px;background:${l.bg};border-radius:9px;border-left:3px solid ${l.color}">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+              <span style="font-size:16px">${l.icon}</span>
+              <span style="font-size:12px;font-weight:700;color:${l.color}">${l.name}</span>
+            </div>
+            ${i<LIGUES_SEUILS.length-1?`
+            <div style="display:flex;gap:8px;align-items:center">
+              <label style="font-size:10px;color:var(--t3);min-width:50px">Jusqu'à</label>
+              <input type="number" value="${l.max}" min="${l.min+100}" max="${i<LIGUES_SEUILS.length-2?LIGUES_SEUILS[i+1].max-100:99998}"
+                onchange="LIGUES_SEUILS[${i}].max=parseInt(this.value);if(${i+1}<LIGUES_SEUILS.length)LIGUES_SEUILS[${i+1}].min=parseInt(this.value);renderBareme()"
+                style="flex:1;background:var(--surf);border:1px solid var(--b);border-radius:6px;padding:5px 8px;font-size:12px;font-weight:700;color:${l.color};outline:none;width:80px">
+              <span style="font-size:10px;color:var(--t3)">pts</span>
+            </div>`:
+            `<div style="font-size:10px;color:${l.color};font-weight:600">≥ ${l.min.toLocaleString('fr')} pts — illimité 👑</div>`}
+          </div>`).join('')}
+
+        <div style="margin-top:8px;padding:10px;background:var(--surf2);border-radius:8px;font-size:10px;color:var(--t3);line-height:1.6">
+          ℹ️ Les seuils se mettent à jour en temps réel dans le dashboard et les fiches élèves.
+          Pour les appliquer dans l'app élève, re-déployer <code>index.html</code>.
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:8px;padding-top:14px;border-top:1px solid var(--b);margin-top:14px">
+      <button onclick="resetBareme()" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:8px 14px;font-size:11px;cursor:pointer">↺ Réinitialiser</button>
+      <button onclick="closeBareme();renderBareme()" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:8px 16px;font-size:11px;font-weight:600;cursor:pointer">✓ Appliquer</button>
+    </div>`;
+  document.getElementById('modal-bareme').classList.add('open');
+}
+
+function closeBareme() { document.getElementById('modal-bareme').classList.remove('open'); }
+
+function resetBareme() {
+  BAREME.pts_bonne_reponse.val=10; BAREME.pts_streak_bonus.val=5;
+  BAREME.pts_quiz_complet.val=20; BAREME.pts_parrainage.val=100;
+  BAREME.pts_perfect_score.val=50; BAREME.nb_questions_quiz.val=5;
+  LIGUES_SEUILS[0].max=500; LIGUES_SEUILS[1].min=500; LIGUES_SEUILS[1].max=1500;
+  LIGUES_SEUILS[2].min=1500; LIGUES_SEUILS[2].max=3000;
+  LIGUES_SEUILS[3].min=3000; LIGUES_SEUILS[3].max=5000;
+  LIGUES_SEUILS[4].min=5000;
+  closeBareme(); renderBareme();
 }
 
 // ── INIT ──
