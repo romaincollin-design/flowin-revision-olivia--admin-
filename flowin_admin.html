@@ -112,6 +112,24 @@ tbody tr:last-child td{border-bottom:none}
 .filter-input{width:180px}
 .filter-count{margin-left:auto;font-size:11px;color:var(--t3)}
 
+.col-filter{background:rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.1);border-radius:5px;padding:2px 4px;font-size:10px;color:var(--t2);outline:none;cursor:pointer;width:100%;max-width:120px;font-family:inherit}
+.col-filter:focus{border-color:var(--ac)}
+th .col-filter{margin-top:2px}
+
+/* CRM SELECTION */
+.crm-bar{display:none;align-items:center;gap:10px;background:var(--ac);color:#fff;border-radius:10px;padding:8px 14px;margin-bottom:12px;font-size:12px;font-weight:600}
+.crm-bar.show{display:flex}
+.crm-bar-count{font-size:13px;font-weight:800}
+.crm-btn{padding:5px 12px;border-radius:6px;border:1.5px solid rgba(255,255,255,.5);background:transparent;color:#fff;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.crm-btn:hover{background:rgba(255,255,255,.2)}
+.crm-btn.red{border-color:rgba(255,80,80,.6);color:#ffaaaa}
+.crm-btn.red:hover{background:rgba(255,0,0,.15)}
+.crm-check{width:15px;height:15px;cursor:pointer;accent-color:var(--ac)}
+.crm-check-all{width:15px;height:15px;cursor:pointer;accent-color:var(--ac)}
+th.crm-th{width:30px;padding:0 6px}
+td.crm-td{padding:0 6px;text-align:center}
+.pwa-badge{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;background:#E6F7F1;color:#0F6E56;border:1px solid #5DCAA5}
+
 /* MODALS */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
 .modal-overlay.open{display:flex}
@@ -415,14 +433,32 @@ tbody tr:last-child td{border-bottom:none}
       <div class="view-title">Élèves</div>
       <div class="view-sub" id="eleves-sub"></div>
       <div class="filters">
-        <input class="filter-input" type="text" id="eleves-search" placeholder="Rechercher…" oninput="renderEleves()">
-        <select class="filter-select" id="eleves-etab" onchange="renderEleves()"><option value="">Tous établissements</option></select>
-        <select class="filter-select" id="eleves-stat" onchange="renderEleves()"><option value="">Tous statuts</option><option value="Actif">Actif</option><option value="Inactif">Inactif</option></select>
+        <input class="filter-input" type="text" id="eleves-search" placeholder="🔍 Rechercher nom, email…" oninput="renderEleves()">
         <select class="filter-select" id="eleves-sort" onchange="renderEleves()"><option value="date">↓ Plus récents</option><option value="pts">↓ Points</option><option value="score">↓ Score</option><option value="streak">↓ Streak</option><option value="name">A–Z</option></select>
         <span class="filter-count" id="eleves-count"></span>
       </div>
-      <div class="panel">
-        <table><thead><tr><th>Élève</th><th>Établissement</th><th>Classe</th><th>Score</th><th>Streak</th><th>Points</th><th>Ligue</th><th>Activité</th><th>Statut</th></tr></thead>
+      <div class="crm-bar" id="eleves-crm-bar">
+        <span class="crm-bar-count" id="eleves-crm-count">0</span> sélectionné(s)
+        <button class="crm-btn" onclick="crmExportCSV('eleves')">⬇ Export CSV</button>
+        <button class="crm-btn" onclick="crmMessageGroupe('eleves')">💬 Message groupé</button>
+        <button class="crm-btn" style="margin-left:auto" onclick="crmDeselectAll('eleves')">✕ Annuler</button>
+      </div>
+      <div class="panel" style="overflow-x:auto">
+        <table style="min-width:900px"><thead>
+          <tr>
+            <th class="crm-th"><input type="checkbox" class="crm-check-all" id="eleves-check-all" onchange="crmToggleAll('eleves',this.checked)"></th>
+            <th>Élève</th>
+            <th><div style="display:flex;flex-direction:column;gap:3px"><span>Établissement</span><select class="col-filter" id="eleves-etab" onchange="renderEleves()"><option value="">Tous</option></select></div></th>
+            <th><div style="display:flex;flex-direction:column;gap:3px"><span>Classe</span><select class="col-filter" id="eleves-classe" onchange="renderEleves()"><option value="">Toutes</option></select></div></th>
+            <th><div style="display:flex;flex-direction:column;gap:3px"><span>Score</span><select class="col-filter" id="eleves-score" onchange="renderEleves()"><option value="">Tous</option><option value="80">≥80%</option><option value="60">≥60%</option><option value="40">≥40%</option><option value="0-40">&lt;40%</option></select></div></th>
+            <th><div style="display:flex;flex-direction:column;gap:3px"><span>Streak</span><select class="col-filter" id="eleves-streak" onchange="renderEleves()"><option value="">Tous</option><option value="7">≥7j</option><option value="3">≥3j</option><option value="1">≥1j</option><option value="0">Aucun</option></select></div></th>
+            <th>Points</th>
+            <th><div style="display:flex;flex-direction:column;gap:3px"><span>Ligue</span><select class="col-filter" id="eleves-ligue" onchange="renderEleves()"><option value="">Toutes</option><option value="bronze">🥉 Bronze</option><option value="silver">🥈 Argent</option><option value="gold">🥇 Or</option><option value="diamond">💎 Platine</option><option value="legend">👑 Légende</option></select></div></th>
+            <th><div style="display:flex;flex-direction:column;gap:3px"><span>📱 App</span><select class="col-filter" id="eleves-pwa" onchange="renderEleves()"><option value="">Tous</option><option value="1">Installée</option><option value="0">Web</option></select></div></th>
+            <th>Activité</th>
+            <th><div style="display:flex;flex-direction:column;gap:3px"><span>Statut</span><select class="col-filter" id="eleves-stat" onchange="renderEleves()"><option value="">Tous</option><option value="Actif">Actif</option><option value="Inactif">Inactif</option></select></div></th>
+          </tr>
+        </thead>
         <tbody id="eleves-tbody"></tbody></table>
       </div>
     </div>
@@ -431,6 +467,22 @@ tbody tr:last-child td{border-bottom:none}
     <div class="view" id="v-defis">
       <div class="view-title">Défis & Pools</div>
       <div class="kpi-grid" id="defis-kpis"></div>
+      <div class="filters">
+        <input class="filter-input" type="text" id="defis-search" placeholder="🔍 Joueur, thème…" oninput="renderDefis()">
+        <select class="filter-select" id="defis-matiere" onchange="renderDefis()">
+          <option value="">Toutes matières</option>
+          <option value="Histoire">📜 Histoire</option>
+          <option value="Géographie">🌍 Géographie</option>
+          <option value="EMC">⚖️ EMC</option>
+          <option value="Roulette">🎰 Roulette</option>
+        </select>
+        <select class="filter-select" id="defis-periode" onchange="renderDefis()">
+          <option value="7">7 derniers jours</option>
+          <option value="30">30 derniers jours</option>
+          <option value="0">Tout</option>
+        </select>
+        <span class="filter-count" id="defis-count"></span>
+      </div>
       <div class="defis-tabs">
         <button class="defis-tab active" onclick="switchDefiTab('pools',this)">🎮 Pools actives</button>
         <button class="defis-tab" onclick="switchDefiTab('histo',this)">📋 Historique</button>
@@ -446,11 +498,32 @@ tbody tr:last-child td{border-bottom:none}
       <div class="view-title">Parrainage</div>
       <div class="parr-stats" id="parr-kpis"></div>
       <div class="filters">
-        <input class="filter-input" type="text" id="parr-search" placeholder="Rechercher un parrain…" oninput="renderParrainage()">
+        <input class="filter-input" type="text" id="parr-search" placeholder="🔍 Rechercher un parrain…" oninput="renderParrainage()">
+        <select class="filter-select" id="parr-sort" onchange="renderParrainage()">
+          <option value="filleuls">↓ Filleuls</option>
+          <option value="pts">↓ Points</option>
+          <option value="recent">↓ Plus récents</option>
+        </select>
         <span class="filter-count" id="parr-count"></span>
       </div>
-      <div class="panel">
-        <table><thead><tr><th>Parrain</th><th>École</th><th>Filleuls</th><th>Canal favori</th><th>Pts générés</th><th>Dernière invite</th></tr></thead>
+      <div class="crm-bar" id="parr-crm-bar">
+        <span class="crm-bar-count" id="parr-crm-count">0</span> sélectionné(s)
+        <button class="crm-btn" onclick="crmExportCSV('parr')">⬇ Export CSV</button>
+        <button class="crm-btn" onclick="crmMessageGroupe('parr')">💬 Message groupé</button>
+        <button class="crm-btn" style="margin-left:auto" onclick="crmDeselectAll('parr')">✕ Annuler</button>
+      </div>
+      <div class="panel" style="overflow-x:auto">
+        <table style="min-width:700px"><thead>
+          <tr>
+            <th class="crm-th"><input type="checkbox" class="crm-check-all" id="parr-check-all" onchange="crmToggleAll('parr',this.checked)"></th>
+            <th>Parrain</th>
+            <th><div style="display:flex;flex-direction:column;gap:3px"><span>École</span><select class="col-filter" id="parr-etab" onchange="renderParrainage()"><option value="">Toutes</option></select></div></th>
+            <th>Filleuls</th>
+            <th><div style="display:flex;flex-direction:column;gap:3px"><span>Canal favori</span><select class="col-filter" id="parr-canal" onchange="renderParrainage()"><option value="">Tous</option><option value="whatsapp">💬 WhatsApp</option><option value="telegram">✈️ Telegram</option><option value="copy">📋 Copie</option><option value="native">↗️ Partage</option></select></div></th>
+            <th>Pts générés</th>
+            <th>Dernière invite</th>
+          </tr>
+        </thead>
         <tbody id="parr-tbody"></tbody></table>
       </div>
     </div>
@@ -460,6 +533,26 @@ tbody tr:last-child td{border-bottom:none}
     <div class="view" id="v-ligues">
       <div class="view-title">Ligues & Classements</div>
       <div class="view-sub" id="ligues-sub"></div>
+      <div class="filters">
+        <input class="filter-input" type="text" id="ligues-search" placeholder="🔍 Rechercher un joueur…" oninput="renderLigues()">
+        <select class="filter-select" id="ligues-ligue" onchange="renderLigues()">
+          <option value="">Toutes ligues</option>
+          <option value="bronze">🥉 Bronze</option>
+          <option value="silver">🥈 Argent</option>
+          <option value="gold">🥇 Or</option>
+          <option value="diamond">💎 Platine</option>
+          <option value="legend">👑 Légende</option>
+        </select>
+        <select class="filter-select" id="ligues-etab" onchange="renderLigues()">
+          <option value="">Tous établissements</option>
+        </select>
+        <select class="filter-select" id="ligues-sort" onchange="renderLigues()">
+          <option value="pts">↓ Points</option>
+          <option value="score">↓ Score</option>
+          <option value="streak">↓ Streak</option>
+        </select>
+        <span class="filter-count" id="ligues-count"></span>
+      </div>
       <div id="ligues-content"></div>
     </div>
 
@@ -471,6 +564,16 @@ tbody tr:last-child td{border-bottom:none}
         <span id="etab-last-sync" style="font-size:10px;color:var(--t3)"></span>
       </div>
       <div class="view-sub" id="etab-sub">4 établissements · chargement…</div>
+      <div class="filters">
+        <input class="filter-input" type="text" id="etab-search" placeholder="🔍 Rechercher un établissement…" oninput="renderEtabs()">
+        <select class="filter-select" id="etab-sort-filter" onchange="renderEtabs()">
+          <option value="eleves">↓ Nb élèves</option>
+          <option value="score">↓ Score moy.</option>
+          <option value="sessions">↓ Sessions</option>
+          <option value="name">A–Z</option>
+        </select>
+        <span class="filter-count" id="etab-count"></span>
+      </div>
 
       <!-- GLOBAL KPIs -->
       <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr)" id="etab-global-kpis"></div>
@@ -611,9 +714,9 @@ tbody tr:last-child td{border-bottom:none}
 
         <!-- Établissement -->
         <span style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em">Établissement</span>
-        <div style="display:flex;gap:5px;flex-wrap:wrap" id="stats-etab-btns">
-          <button onclick="setStatsEtab(this,'all')" class="stats-etab active-stats-etab" style="padding:5px 11px;border-radius:20px;border:2px solid var(--ac);background:#EEECFC;font-size:11px;color:var(--ac);cursor:pointer;font-weight:600">Tous</button>
-        </div>
+        <select id="stats-etab-select" class="filter-select" onchange="setStatsEtabFromSelect(this)" style="font-size:11px;padding:5px 10px;border-radius:20px;max-width:180px">
+          <option value="all">Tous</option>
+        </select>
 
         <div style="width:1px;height:20px;background:var(--b)"></div>
 
@@ -1165,28 +1268,48 @@ async function loadData() {
   lbl.textContent = 'Synchronisation…';
   try {
     const hdrs = { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` };
+
+    // Test de connexion Supabase avant tout
+    const testR = await fetch(`${SB_URL}/rest/v1/joueurs?limit=1`, {headers:hdrs});
+    if(!testR.ok) {
+      const errText = await testR.text();
+      throw new Error(`HTTP ${testR.status} — ${errText.slice(0,200)}`);
+    }
+
     const [j,s,p] = await Promise.all([
       fetch(`${SB_URL}/rest/v1/joueurs?order=ts.desc&limit=500`,{headers:hdrs}).then(r=>r.ok?r.json():[]),
       fetch(`${SB_URL}/rest/v1/sessions?order=ts.desc&limit=1000`,{headers:hdrs}).then(r=>r.ok?r.json():[]),
       fetch(`${SB_URL}/rest/v1/parrainage?order=ts.desc&limit=500`,{headers:hdrs}).then(r=>r.ok?r.json():[]),
     ]);
-    if(Array.isArray(j) && j.length >= 0) {
-      DB.joueurs     = Array.isArray(j) ? j : [];
+    if(Array.isArray(j)) {
+      DB.joueurs     = j;
       DB.sessions    = Array.isArray(s) ? s : [];
       DB.parrainage  = Array.isArray(p) ? p : [];
       liveMode = true;
       dot.className = 'live-dot on';
       lbl.className = 'live-label on';
-      lbl.textContent = 'Live Supabase';
+      lbl.textContent = `Live Supabase (${j.length} élèves)`;
+      console.log(`✅ Supabase OK — ${j.length} joueurs, ${DB.sessions.length} sessions, ${DB.parrainage.length} parrainages`);
     } else {
-      throw new Error('empty');
+      throw new Error('Réponse Supabase invalide');
     }
   } catch(e) {
     liveMode = false;
     dot.className = 'live-dot';
     lbl.className = 'live-label';
-    lbl.textContent = '⚠ Demo mode';
-    console.warn('Supabase unreachable — données démo actives:', e);
+    const errMsg = e.message || String(e);
+    lbl.textContent = `⚠ Erreur Supabase`;
+    lbl.title = errMsg; // Au survol on voit l'erreur exacte
+    console.error('❌ Supabase erreur:', errMsg);
+    // Afficher l'erreur dans un bandeau visible
+    const existing = document.getElementById('sb-error-banner');
+    if(existing) existing.remove();
+    const banner = document.createElement('div');
+    banner.id = 'sb-error-banner';
+    banner.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#2D1B6B;color:#fff;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:600;z-index:9999;max-width:90%;box-shadow:0 4px 20px rgba(0,0,0,.3)';
+    banner.innerHTML = `⚠️ Supabase : ${errMsg} <button onclick="this.parentElement.remove()" style="margin-left:10px;background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:5px;padding:2px 8px;cursor:pointer">✕</button>`;
+    document.body.appendChild(banner);
+    setTimeout(()=>banner.remove(), 15000);
     const today = new Date().toISOString().slice(0,10);
     const d = (daysAgo, h=10, m=0) => { const dt=new Date(); dt.setDate(dt.getDate()-daysAgo); dt.setHours(h,m,0,0); return dt.toISOString(); };
     DB.joueurs = [
@@ -1350,7 +1473,8 @@ function renderDashboard() {
 
 // ── BUILD ELEVS ──
 function buildElevs() {
-  return DB.joueurs.map((j,idx) => {
+  // Exclure comptes fake/test des stats admin
+  return DB.joueurs.filter(j => !isFakeAccount(j)).map((j,idx) => {
     const pseudo = j.pseudo || j.prenom || '';
     const st = getStats(pseudo);
     const totalPts = getTotalPts(pseudo);
@@ -1358,17 +1482,102 @@ function buildElevs() {
   });
 }
 
+// ── CRM ENGINE ──
+const crmSelections = {}; // { 'eleves': Set, 'parr': Set, ... }
+
+function crmToggle(ns, id, checked) {
+  if (!crmSelections[ns]) crmSelections[ns] = new Set();
+  checked ? crmSelections[ns].add(id) : crmSelections[ns].delete(id);
+  crmUpdateBar(ns);
+}
+
+function crmToggleAll(ns, checked) {
+  if (!crmSelections[ns]) crmSelections[ns] = new Set();
+  const rows = document.querySelectorAll(`#${ns==='eleves'?'eleves':'parr'}-tbody .crm-check`);
+  rows.forEach(cb => {
+    const id = cb.closest('tr').dataset.id;
+    if (id) { checked ? crmSelections[ns].add(id) : crmSelections[ns].delete(id); }
+    cb.checked = checked;
+  });
+  crmUpdateBar(ns);
+}
+
+function crmDeselectAll(ns) {
+  if (crmSelections[ns]) crmSelections[ns].clear();
+  const allCb = document.getElementById(`${ns==='eleves'?'eleves':'parr'}-check-all`);
+  if (allCb) allCb.checked = false;
+  document.querySelectorAll(`#${ns==='eleves'?'eleves':'parr'}-tbody .crm-check`).forEach(cb => cb.checked = false);
+  crmUpdateBar(ns);
+}
+
+function crmUpdateBar(ns) {
+  const bar = document.getElementById(`${ns}-crm-bar`);
+  const cnt = document.getElementById(`${ns}-crm-count`);
+  const n = crmSelections[ns] ? crmSelections[ns].size : 0;
+  if (bar) { bar.classList.toggle('show', n > 0); }
+  if (cnt) cnt.textContent = n;
+}
+
+function crmGetSelected(ns) {
+  if (ns === 'eleves') {
+    const elevs = buildElevs();
+    return [...(crmSelections[ns]||[])].map(id => elevs.find(e => e.pseudo === id)).filter(Boolean);
+  }
+  if (ns === 'parr') {
+    // rebuild rows from DB
+    const names = [...(crmSelections[ns]||[])];
+    return names.map(name => {
+      const p = DB.parrainage.filter(p => p.sender === name || `${p.sender}` === name);
+      const j = DB.joueurs.find(j => `${j.prenom} ${j.nom}` === name || j.pseudo === name);
+      return { name, email: j ? j.email : '', etab: j ? j.ecole : (p[0]?.sender_etab||''), filleuls: p.length };
+    });
+  }
+  return [];
+}
+
+function crmExportCSV(ns) {
+  const sel = crmGetSelected(ns);
+  if (!sel.length) { alert('Sélectionnez au moins une ligne.'); return; }
+  let csv = '', headers = [], rows = [];
+  if (ns === 'eleves') {
+    headers = ['Prénom','Nom','Email','École','Classe','Points','Score%','Streak','Ligue','App installée','Actif'];
+    rows = sel.map(d => [d.j.prenom,d.j.nom,d.j.email||'',d.j.ecole||'',d.j.classe||'',d.totalPts,Math.round(d.avg)+'%',d.maxStreak,d.league||'',d.j.pwa_installed?'Oui':'Non',d.isActif?'Oui':'Non']);
+  } else if (ns === 'parr') {
+    headers = ['Nom','Email','École','Nb filleuls'];
+    rows = sel.map(r => [r.name,r.email,r.etab,r.filleuls]);
+  }
+  csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `flowin_${ns}_export.csv`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function crmMessageGroupe(ns) {
+  const sel = crmGetSelected(ns);
+  if (!sel.length) { alert('Sélectionnez au moins une ligne.'); return; }
+  const emails = ns === 'eleves'
+    ? sel.map(d => d.j.email).filter(Boolean)
+    : sel.map(r => r.email).filter(Boolean);
+  if (!emails.length) { alert('Aucun email disponible dans la sélection.'); return; }
+  // Ouvrir client mail avec tous les destinataires en BCC
+  const mailto = `mailto:?bcc=${emails.join(',')}&subject=Flowin — Message de votre professeur&body=Bonjour,%0D%0A%0D%0A`;
+  window.open(mailto);
+  // Aussi proposer copie pour WhatsApp
+  const names = ns === 'eleves' ? sel.map(d => `${d.j.prenom} ${d.j.nom}`).join(', ') : sel.map(r => r.name).join(', ');
+  const waText = encodeURIComponent(`Bonjour ! Message Flowin pour : ${names}`);
+  if (confirm(`Email ouvert avec ${emails.length} destinataire(s).\n\nOuvrir aussi WhatsApp ?`)) {
+    window.open(`https://wa.me/?text=${waText}`);
+  }
+}
+
 function isFakeAccount(j) {
   const email = (j.email||'').toLowerCase();
   const ecole = (j.ecole||'').toLowerCase();
-  const nom = (j.nom||'').toLowerCase();
-  const prenom = (j.prenom||'').toLowerCase();
-  const fakeEmails = ['test','example','fake','demo','admin','trial'];
-  const fakeEcoles = ['test','demo','exemple'];
-  const fakeNoms = ['test','test test','fake','demo'];
+  const fakeEmails = ['example','fake@','demo@','admin@','trial@'];
+  const fakeEcoles = ['demo','exemple'];
   return fakeEmails.some(f=>email.includes(f))
-    || fakeEcoles.some(f=>ecole===f)
-    || (prenom.toLowerCase()==='test' && nom.toLowerCase()==='test');
+    || fakeEcoles.some(f=>ecole===f);
 }
 
 // ── ÉLÈVES ──
@@ -1376,31 +1585,59 @@ function renderEleves() {
   const elevs = buildElevs();
   // Sub
   document.getElementById('eleves-sub').textContent = `${elevs.filter(d=>d.isActif).length} actifs · ${elevs.filter(d=>!d.isActif).length} inactifs · ${elevs.length} total`;
-  // Écoles
-  const sel = document.getElementById('eleves-etab');
-  const curVal = sel.value;
-  const ecoles = [...new Set(DB.joueurs.map(j=>j.ecole).filter(Boolean))].sort();
-  sel.innerHTML = '<option value="">Tous établissements</option>'+ecoles.map(e=>`<option value="${e}"${e===curVal?' selected':''}>${e}</option>`).join('');
 
-  const search = document.getElementById('eleves-search').value.toLowerCase();
-  const etab   = document.getElementById('eleves-etab').value;
-  const stat   = document.getElementById('eleves-stat').value;
-  const sort   = document.getElementById('eleves-sort').value;
+  // Lire TOUS les filtres avant de modifier le DOM
+  const search      = document.getElementById('eleves-search').value.toLowerCase();
+  const etab        = document.getElementById('eleves-etab').value;
+  const classeVal   = (document.getElementById('eleves-classe')||{value:''}).value;
+  const ligueVal    = (document.getElementById('eleves-ligue')||{value:''}).value;
+  const scoreVal    = (document.getElementById('eleves-score')||{value:''}).value;
+  const streakVal   = (document.getElementById('eleves-streak')||{value:''}).value;
+  const stat        = document.getElementById('eleves-stat').value;
+  const pwaFilter   = (document.getElementById('eleves-pwa')||{value:''}).value;
+  const sort        = document.getElementById('eleves-sort').value;
+
+  // Peupler établissements dynamiquement
+  const sel = document.getElementById('eleves-etab');
+  const ecoles = [...new Set(DB.joueurs.map(j=>j.ecole).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">Tous établissements</option>'+ecoles.map(e=>`<option value="${e}"${e===etab?' selected':''}>${e}</option>`).join('');
+
+  // Peupler classes dynamiquement
+  const classSel = document.getElementById('eleves-classe');
+  if(classSel) {
+    const classes = [...new Set(DB.joueurs.map(j=>j.classe).filter(Boolean))].sort();
+    classSel.innerHTML = '<option value="">Toutes classes</option>'+classes.map(c=>`<option value="${c}"${c===classeVal?' selected':''}>${c}</option>`).join('');
+  }
 
   let data = [...elevs];
-  if(search) data = data.filter(d=>`${d.j.prenom} ${d.j.nom}`.toLowerCase().includes(search)||(d.j.ecole||'').toLowerCase().includes(search));
-  if(etab)   data = data.filter(d=>d.j.ecole===etab);
-  if(stat==='Actif')   data = data.filter(d=>d.isActif);
-  if(stat==='Inactif') data = data.filter(d=>!d.isActif);
+  if(search)    data = data.filter(d=>`${d.j.prenom} ${d.j.nom}`.toLowerCase().includes(search)||(d.j.ecole||'').toLowerCase().includes(search)||(d.j.email||'').toLowerCase().includes(search));
+  if(etab)      data = data.filter(d=>d.j.ecole===etab);
+  if(classeVal) data = data.filter(d=>d.j.classe===classeVal);
+  if(ligueVal)  data = data.filter(d=>d.league===ligueVal);
+  if(scoreVal==='0-40') data = data.filter(d=>d.avg<40);
+  else if(scoreVal)     data = data.filter(d=>d.avg>=parseInt(scoreVal));
+  if(streakVal==='0')   data = data.filter(d=>d.maxStreak===0);
+  else if(streakVal)    data = data.filter(d=>d.maxStreak>=parseInt(streakVal));
+  if(stat==='Actif')    data = data.filter(d=>d.isActif);
+  if(stat==='Inactif')  data = data.filter(d=>!d.isActif);
+  if(pwaFilter==='1')   data = data.filter(d=>d.j.pwa_installed);
+  if(pwaFilter==='0')   data = data.filter(d=>!d.j.pwa_installed);
+
   data.sort((a,b)=>sort==='pts'?b.totalPts-a.totalPts:sort==='score'?b.avg-a.avg:sort==='streak'?b.maxStreak-a.maxStreak:sort==='date'?new Date(b.j.ts||0)-new Date(a.j.ts||0):`${a.j.prenom} ${a.j.nom}`.localeCompare(`${b.j.prenom} ${b.j.nom}`));
 
   document.getElementById('eleves-count').textContent = `${data.length} élève${data.length>1?'s':''}`;
+
+  // Reset sélection CRM si les données changent
+  crmSelections['eleves'] = crmSelections['eleves'] || new Set();
+
   document.getElementById('eleves-tbody').innerHTML = data.length ? data.map(d => {
     const fake = isFakeAccount(d.j);
-    const rowStyle = fake ? 'opacity:0.38;filter:grayscale(1);' : '';
-    const fakeBadge = fake ? `<span style="background:#e5e7eb;color:#9ca3af;border-radius:5px;font-size:9px;font-weight:700;padding:2px 6px;margin-left:6px;text-transform:uppercase">Test</span>` : '';
+    if(fake) return ''; // masquer complètement les comptes fake/test
+    const pwaBadge = d.j.pwa_installed ? `<span class="pwa-badge">📱 App</span>` : '<span style="color:var(--t3);font-size:10px">—</span>';
+    const sel = crmSelections['eleves'].has(d.pseudo);
     return `
-    <tr onclick="openEleve('${d.pseudo}')" style="${rowStyle}">
+    <tr onclick="openEleve('${d.pseudo}')" style="${sel?'background:rgba(176,108,228,.07)':''}" data-id="${d.pseudo}">
+      <td class="crm-td" onclick="event.stopPropagation()"><input type="checkbox" class="crm-check" ${sel?'checked':''} onchange="crmToggle('eleves','${d.pseudo}',this.checked)"></td>
       <td><div style="display:flex;align-items:center;gap:9px">${ava(d.j.prenom,d.j.nom,d.idx,30)}<div><div style="font-size:12px;font-weight:600;color:var(--t)">${d.j.prenom} ${d.j.nom}${fakeBadge}</div><div style="font-size:9px;color:var(--t3)">${d.j.email||'—'}</div></div></div></td>
       <td style="font-size:11px">${d.j.ecole||'—'}</td>
       <td style="font-size:11px">${d.j.classe||'—'}</td>
@@ -1408,10 +1645,11 @@ function renderEleves() {
       <td>${d.maxStreak>0?`🔥 ${d.maxStreak}j`:'<span style="color:var(--t3)">—</span>'}</td>
       <td style="font-weight:700;color:var(--am)">${d.totalPts.toLocaleString('fr')}</td>
       <td>${lguePill(d.totalPts)}</td>
+      <td>${pwaBadge}</td>
       <td style="font-size:10px;color:var(--t3)">${d.last?ago(d.last):'—'}</td>
       <td>${bdg(d.isActif?'green':'amber',d.isActif?'Actif':'Inactif')}</td>
     </tr>`;
-  }).join('') : `<tr><td colspan="9"><div class="empty"><div class="empty-icon">👤</div><div class="empty-text">Aucun élève trouvé</div></div></td></tr>`;
+  }).join('') : `<tr><td colspan="11"><div class="empty"><div class="empty-icon">👤</div><div class="empty-text">Aucun élève trouvé</div></div></td></tr>`;
 }
 
 // ── FICHE ÉLÈVE ──
@@ -1428,10 +1666,10 @@ function openEleve(pseudo) {
     const prenom = (d.j.prenom||'').toLowerCase();
     const ps = (p.sender||'').toLowerCase();
     const pe = (p.sender_email||'').toLowerCase();
-    return pe && email && pe===email
-      || ps===fullName
-      || ps===prenom
-      || ps===d.pseudo.toLowerCase();
+    return (pe && email && pe === email)
+      || (ps === fullName)
+      || (ps === prenom)
+      || (ps === (d.pseudo||'').toLowerCase());
   });
   const chIc = {whatsapp:'💬',telegram:'✈️',copy:'📋',native:'↗️'};
 
@@ -1470,6 +1708,7 @@ function openEleve(pseudo) {
       <div style="text-align:right">
         <span class="bdg" style="background:${lg.bg};color:${lg.color};padding:6px 13px;font-size:12px">${lg.icon} Ligue ${lg.name}</span>
         <div style="font-size:10px;color:var(--t3);margin-top:5px">Inscription : ${fmtDate(d.j.ts)}</div>
+        ${d.j.pwa_installed ? `<div style="margin-top:4px"><span class="pwa-badge">📱 App installée</span></div>` : `<div style="font-size:9px;color:var(--t3);margin-top:4px">🌐 Web uniquement</div>`}
       </div>
     </div>
 
@@ -1502,10 +1741,10 @@ function openEleve(pseudo) {
         <div class="fiche-block-title">🎁 Parrainages (${parr.length})</div>
         ${parr.length===0
           ? '<div style="font-size:11px;color:var(--t3);font-style:italic;text-align:center;padding:16px 0">Aucun parrainage effectué</div>'
-          : parr.slice(0,5).map((p,i)=>`<div style="display:flex;align-items:center;gap:7px;padding:6px 0;${i<Math.min(parr.length,5)-1?'border-bottom:1px solid var(--b)':''}"><span style="font-size:14px">${chIc[p.channel]||'↗️'}</span><span style="flex:1;color:var(--t);font-weight:500;font-size:11px">${p.destinataire}</span>${bdg('green','+100 pts')}</div>`).join('')
+          : parr.slice(0,5).map((p,i)=>`<div style="display:flex;align-items:center;gap:7px;padding:6px 0;${i<Math.min(parr.length,5)-1?'border-bottom:1px solid var(--b)':''}"><span style="font-size:14px">${chIc[p.channel]||'↗️'}</span><span style="flex:1;color:var(--t);font-weight:500;font-size:11px">${p.destinataire}</span>${bdg('green','+'+(p.pts||100)+' pts')}</div>`).join('')
         }
         ${parr.length>5?`<div style="font-size:10px;color:var(--t3);margin-top:6px;text-align:center">+${parr.length-5} autres</div>`:''}
-        ${parr.length>0?`<div style="font-size:11px;color:var(--gr);font-weight:600;margin-top:10px">+${parr.length*100} pts gagnés au total</div>`:''}
+        ${parr.length>0?`<div style="font-size:11px;color:var(--gr);font-weight:600;margin-top:10px">+${parr.reduce((s,p)=>s+(p.pts||100),0)} pts gagnés au total</div>`:''}
       </div>
     </div>
 
@@ -1548,8 +1787,16 @@ function switchDefiTab(tab, btn) {
 }
 
 function renderDefis() {
-  const cutoff = new Date(Date.now()-7*24*3600*1000).toISOString();
-  const recent = DB.sessions.filter(s=>s.ts>cutoff);
+  const periodeVal = (document.getElementById('defis-periode')||{value:'7'}).value || '7';
+  const matiereVal = (document.getElementById('defis-matiere')||{value:''}).value || '';
+  const defiSearch = ((document.getElementById('defis-search')||{value:''}).value||'').toLowerCase();
+  const cutoffMs = periodeVal==='0' ? 0 : Date.now() - parseInt(periodeVal)*24*3600*1000;
+  const cutoff = new Date(cutoffMs).toISOString();
+  let recent = periodeVal==='0' ? [...DB.sessions] : DB.sessions.filter(s=>s.ts>cutoff);
+  if(matiereVal) recent = recent.filter(s=>(s.matiere||s.theme||'').includes(matiereVal));
+  if(defiSearch) recent = recent.filter(s=>(s.pseudo||'').toLowerCase().includes(defiSearch)||(s.theme||s.matiere||'').toLowerCase().includes(defiSearch)||(s.ecole||'').toLowerCase().includes(defiSearch));
+  const defisCount = document.getElementById('defis-count');
+  if(defisCount) defisCount.textContent = recent.length + ' sessions';
   const nbPools = new Set(recent.map(s=>s.theme||s.matiere||'Général')).size;
   const nbJoueurs = new Set(recent.map(s=>s.pseudo)).size;
 
@@ -1660,67 +1907,121 @@ function renderDefis() {
 
 // ── PARRAINAGE ──
 function renderParrainage() {
+  const elevs = buildElevs();
+  const ptsParrain = (typeof BAREME_CONFIG!=='undefined' && BAREME_CONFIG.pts_parrainage) ? BAREME_CONFIG.pts_parrainage : 100;
+
+  // Grouper par parrain — matching élargi email > nom complet > prénom > pseudo
   const senders = {};
-  DB.parrainage.forEach(p=>{
-    if(!p.sender) return;
-    if(!senders[p.sender]) senders[p.sender]={name:p.sender,etab:p.sender_etab||'—',filleuls:[],channels:[],last:null};
-    senders[p.sender].filleuls.push(p.destinataire);
-    senders[p.sender].channels.push(p.channel);
-    if(!senders[p.sender].last||p.ts>senders[p.sender].last) senders[p.sender].last=p.ts;
+  DB.parrainage.forEach(p => {
+    if (!p.sender) return;
+    const matchElev = elevs.find(e => {
+      const email = (e.j.email||'').toLowerCase();
+      const fullName = `${e.j.prenom} ${e.j.nom}`.toLowerCase();
+      const prenom = (e.j.prenom||'').toLowerCase();
+      const ps = (p.sender||'').toLowerCase();
+      const pe = (p.sender_email||'').toLowerCase();
+      return (pe && email && pe === email) || ps === fullName || ps === prenom || ps === (e.pseudo||'').toLowerCase();
+    });
+    const key = matchElev ? `${matchElev.j.prenom} ${matchElev.j.nom}` : p.sender;
+    if (!senders[key]) senders[key] = { name:key, etab:matchElev?(matchElev.j.ecole||'—'):(p.sender_etab||'—'), elev:matchElev||null, filleuls:[], channels:[], last:null };
+    senders[key].filleuls.push(p.destinataire);
+    senders[key].channels.push(p.channel);
+    if (!senders[key].last || p.ts > senders[key].last) senders[key].last = p.ts;
   });
-  const rows = Object.values(senders).sort((a,b)=>b.filleuls.length-a.filleuls.length);
+  // Lire TOUS les filtres avant de modifier le DOM
+  const sortVal  = (document.getElementById('parr-sort')||{value:'filleuls'}).value||'filleuls';
+  const search   = ((document.getElementById('parr-search')||{value:''}).value||'').toLowerCase();
+  const etabVal  = (document.getElementById('parr-etab')||{value:''}).value||'';
+  const canalVal = (document.getElementById('parr-canal')||{value:''}).value||'';
+
+  const allRows = Object.values(senders);
+  // Peupler établissements dynamiquement sans toucher aux autres selects
+  const etabSel = document.getElementById('parr-etab');
+  if (etabSel) {
+    const allEtabs = [...new Set(allRows.map(r=>r.etab).filter(e=>e&&e!=='—'))].sort();
+    etabSel.innerHTML = '<option value="">Tous établissements</option>'
+      + allEtabs.map(e=>`<option value="${e}"${e===etabVal?' selected':''}>${e}</option>`).join('');
+  }
+
+  const rows = allRows.sort((a,b)=>sortVal==='recent'?new Date(b.last||0)-new Date(a.last||0):b.filleuls.length-a.filleuls.length);
   const topCanalAll = DB.parrainage.length ? Object.entries(DB.parrainage.reduce((acc,p)=>{acc[p.channel]=(acc[p.channel]||0)+1;return acc},{})).sort((a,b)=>b[1]-a[1])[0][0] : '—';
 
   const chIc = {whatsapp:'💬 WhatsApp',telegram:'✈️ Telegram',copy:'📋 Copie',native:'↗️ Partage'};
   const uniqSenders = rows.length;
 
+  const totalPts = DB.parrainage.reduce((s,p)=>s+(p.pts||ptsParrain),0);
   document.getElementById('parr-kpis').innerHTML = [
-    { val:DB.parrainage.length, label:'Total invitations', sub:`+${DB.parrainage.length*100} pts générés`, color:'#E040A0', icon:'🎁' },
+    { val:DB.parrainage.length, label:'Total invitations', sub:`+${totalPts} pts générés`, color:'#E040A0', icon:'🎁' },
     { val:uniqSenders, label:'Parrains actifs', sub:'ont invité au moins 1 filleul', color:'var(--ac)', icon:'👤' },
-    { val:`${DB.parrainage.length*100}`, label:'Points distribués', sub:'100 pts par parrainage', color:'var(--am)', icon:'⭐' },
+    { val:totalPts, label:'Points distribués', sub:`${ptsParrain} pts par parrainage`, color:'var(--am)', icon:'⭐' },
     { val:chIc[topCanalAll]||topCanalAll, label:'Canal favori', sub:'le plus utilisé', color:'var(--gr)', icon:'📡' },
   ].map(k=>`<div class="kpi-card"><div class="kpi-bar" style="background:${k.color}"></div><div class="kpi-icon">${k.icon}</div><div class="kpi-val" style="font-size:${typeof k.val==='string'&&k.val.length>6?'14px':'26px'}">${k.val}</div><div class="kpi-label">${k.label}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
 
-  const search = document.getElementById('parr-search').value.toLowerCase();
-  let data = search ? rows.filter(r=>r.name.toLowerCase().includes(search)||(r.etab||'').toLowerCase().includes(search)) : rows;
+  let data = rows.filter(r => {
+    if(search && !r.name.toLowerCase().includes(search) && !(r.etab||'').toLowerCase().includes(search)) return false;
+    if(etabVal && r.etab !== etabVal) return false;
+    if(canalVal && !r.channels.includes(canalVal)) return false;
+    return true;
+  });
   document.getElementById('parr-count').textContent = `${data.length} parrain${data.length>1?'s':''}`;
 
   const topCh = r => {
     const freq={};r.channels.forEach(c=>freq[c]=(freq[c]||0)+1);
     return Object.entries(freq).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—';
   };
-  const elevs = buildElevs();
-  document.getElementById('parr-tbody').innerHTML = data.length ? data.map((r,i)=>{
-    const d = elevs.find(e=>`${e.j.prenom} ${e.j.nom}`===r.name||e.pseudo===r.name);
-    return `<tr class="parr-sender" onclick="openEleve('${d?d.pseudo:r.name}')">
+  crmSelections['parr'] = crmSelections['parr'] || new Set();
+  document.getElementById('parr-tbody').innerHTML = data.length ? data.map(r=>{
+    const d = r.elev;
+    const sel = crmSelections['parr'].has(r.name);
+    return `<tr class="parr-sender" onclick="openEleve('${d?d.pseudo:r.name}')" style="${sel?'background:rgba(176,108,228,.07)':''}">
+      <td class="crm-td" onclick="event.stopPropagation()"><input type="checkbox" class="crm-check" ${sel?'checked':''} onchange="crmToggle('parr','${r.name}',this.checked)"></td>
       <td><div style="display:flex;align-items:center;gap:9px">${d?ava(d.j.prenom,d.j.nom,d.idx,30):`<div class="ava" style="width:30px;height:30px;background:var(--surf3);color:var(--t3);font-size:11px">${r.name[0]||'?'}</div>`}<div><div style="font-size:12px;font-weight:600;color:var(--t)">${r.name}</div></div></div></td>
       <td style="font-size:11px">${r.etab}</td>
       <td><span style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--ac)">${r.filleuls.length}</span></td>
       <td><span class="bdg purple">${chIc[topCh(r)]||topCh(r)}</span></td>
-      <td style="font-weight:700;color:var(--am)">+${r.filleuls.length*100} pts</td>
+      <td style="font-weight:700;color:var(--am)">+${r.filleuls.length*ptsParrain} pts</td>
       <td style="font-size:10px;color:var(--t3)">${ago(r.last)}</td>
     </tr>`;
-  }).join('') : `<tr><td colspan="6"><div class="empty"><div class="empty-icon">🎁</div><div class="empty-text">Aucun parrain trouvé</div></div></td></tr>`;
+  }).join('') : `<tr><td colspan="7"><div class="empty"><div class="empty-icon">🎁</div><div class="empty-text">Aucun parrain trouvé</div></div></td></tr>`;
 }
 
 
 // ── LIGUES ──
 function renderLigues() {
   const allElevs = buildElevs();
-  const elevs = allElevs.filter(d => d.isActif);
-  const total = allElevs.length;
-  const ligueSections = LEAGUES.slice().reverse();
+  const ligueSearch  = ((document.getElementById('ligues-search')||{value:''}).value||'').toLowerCase();
+  const ligueFilter  = (document.getElementById('ligues-ligue')||{value:''}).value||'';
+  const ligueEtab    = (document.getElementById('ligues-etab')||{value:''}).value||'';
+  const ligueSort    = (document.getElementById('ligues-sort')||{value:'pts'}).value||'pts';
 
-  // Header global
+  // Peupler établissements dynamiquement
+  const ligueEtabSel = document.getElementById('ligues-etab');
+  if(ligueEtabSel) {
+    const etabs = [...new Set(allElevs.map(d=>d.j.ecole).filter(Boolean))].sort();
+    ligueEtabSel.innerHTML = '<option value="">Tous établissements</option>'+etabs.map(e=>`<option value="${e}"${e===ligueEtab?' selected':''}>${e}</option>`).join('');
+  }
+
+  let elevs = allElevs.filter(d => d.isActif);
+  if(ligueSearch) elevs = elevs.filter(d=>`${d.j.prenom} ${d.j.nom}`.toLowerCase().includes(ligueSearch)||(d.j.ecole||'').toLowerCase().includes(ligueSearch));
+  if(ligueEtab)   elevs = elevs.filter(d=>d.j.ecole===ligueEtab);
+
+  const total = allElevs.length;
+  const ligueSections = ligueFilter
+    ? LEAGUES.filter(l=>l.key===ligueFilter).slice().reverse()
+    : LEAGUES.slice().reverse();
+
+  const liguesCount = document.getElementById('ligues-count');
+  if(liguesCount) liguesCount.textContent = elevs.length + ' joueurs';
+
   document.getElementById('ligues-sub').textContent =
     `${elevs.length} joueurs actifs sur ${total} inscrits`;
 
   const RANK_ICONS = ['🥇','🥈','🥉'];
 
   document.getElementById('ligues-content').innerHTML = ligueSections.map(lg => {
-    const members = elevs
-      .filter(d => getTotalPts(d.pseudo) >= lg.min && getTotalPts(d.pseudo) < lg.max)
-      .sort((a,b) => getTotalPts(b.pseudo) - getTotalPts(a.pseudo));
+    let members = elevs
+      .filter(d => getTotalPts(d.pseudo) >= lg.min && getTotalPts(d.pseudo) < lg.max);
+    members = members.sort((a,b) => ligueSort==='score'?b.avg-a.avg:ligueSort==='streak'?b.maxStreak-a.maxStreak:getTotalPts(b.pseudo)-getTotalPts(a.pseudo));
     if(!members.length) return '';
 
     const lgNext = LEAGUES[LEAGUES.indexOf(lg)+1];
@@ -1817,9 +2118,10 @@ const TRAFFIC = {
 function renderEtabs() {
   const now = new Date();
   const cutoff7 = new Date(Date.now()-7*24*3600*1000).toISOString();
+  const etabSearch = ((document.getElementById('etab-search')||{value:''}).value||'').toLowerCase();
+  const etabSortF  = (document.getElementById('etab-sort-filter')||{value:'eleves'}).value||'eleves';
 
-  const etabData = ETABS.map(e=>{
-    // Match by any word in the filter string for robustness
+  let etabData = ETABS.map(e=>{
     const filterWords = e.filter.toLowerCase().split(' ').filter(w=>w.length>3);
     const matchEtab = str => str && filterWords.some(w => str.toLowerCase().includes(w));
     const ses = DB.sessions.filter(s=>matchEtab(s.ecole));
@@ -1830,6 +2132,12 @@ function renderEtabs() {
     const tr = TRAFFIC[e.key]||{clics:{},dau:0,wau:0,retention28j:0,tempsSession:0,partages:0,completionRate:0};
     return {...e, ses, ses7, elevesLive, avg, actifs, tr};
   });
+
+  if(etabSearch) etabData = etabData.filter(e=>e.name.toLowerCase().includes(etabSearch)||(e.ville||'').toLowerCase().includes(etabSearch));
+  etabData.sort((a,b)=>etabSortF==='score'?b.avg-a.avg:etabSortF==='sessions'?b.ses.length-a.ses.length:etabSortF==='name'?a.name.localeCompare(b.name):b.elevesLive.length-a.elevesLive.length);
+
+  const etabCountEl = document.getElementById('etab-count');
+  if(etabCountEl) etabCountEl.textContent = etabData.length + ' établissement' + (etabData.length>1?'s':'');
 
   // Sync timestamp
   document.getElementById('etab-last-sync').textContent = `Sync : ${now.toLocaleDateString('fr-FR')} ${now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}`;
@@ -2977,14 +3285,17 @@ function setStatsPeriod(btn, p) {
   renderStats();
 }
 
-function setStatsEtab(btn, etab) {
+function setStatsEtabFromSelect(sel) {
+  statsEtab = sel.value;
+  closeDrill();
+  updateFilterBadge();
+  renderStats();
+}
+
+function setStatsEtab(etab) {
   statsEtab = etab;
-  document.querySelectorAll('.stats-etab').forEach(b => {
-    b.style.background='transparent'; b.style.border='1px solid var(--b)';
-    b.style.color='var(--t2)'; b.style.fontWeight='400';
-  });
-  btn.style.background='#EEECFC'; btn.style.border='2px solid var(--ac)';
-  btn.style.color='var(--ac)'; btn.style.fontWeight='600';
+  const sel = document.getElementById('stats-etab-select');
+  if(sel) sel.value = etab;
   closeDrill();
   updateFilterBadge();
   renderStats();
@@ -3005,13 +3316,12 @@ function setStatsMatiere(btn, mat) {
 
 function resetStatsFilters() {
   statsEtab = 'all'; statsMatiere = 'all';
-  document.querySelectorAll('.stats-etab,.stats-mat').forEach(b => {
-    b.style.background='transparent'; b.style.border='1px solid var(--b)';
-    b.style.color='var(--t2)'; b.style.fontWeight='400';
+  const etabSel = document.getElementById('stats-etab-select');
+  if(etabSel) etabSel.value = 'all';
+  document.querySelectorAll('.stats-mat').forEach((b,i)=>{
+    if(i===0){ b.style.background='#EEECFC'; b.style.border='2px solid var(--ac)'; b.style.color='var(--ac)'; b.style.fontWeight='600'; }
+    else { b.style.background='transparent'; b.style.border='1px solid var(--b)'; b.style.color='var(--t2)'; b.style.fontWeight='400'; }
   });
-  // Reset "Tous" and "Toutes" buttons
-  document.querySelectorAll('.stats-etab').forEach((b,i)=>{ if(i===0){ b.style.background='#EEECFC'; b.style.border='2px solid var(--ac)'; b.style.color='var(--ac)'; b.style.fontWeight='600'; } });
-  document.querySelectorAll('.stats-mat').forEach((b,i)=>{ if(i===0){ b.style.background='#EEECFC'; b.style.border='2px solid var(--ac)'; b.style.color='var(--ac)'; b.style.fontWeight='600'; } });
   updateFilterBadge();
   renderStats();
 }
@@ -3032,13 +3342,10 @@ function updateFilterBadge() {
 
 function buildEtabBtns() {
   const etabs = [...new Set(DB.joueurs.map(j=>j.ecole).filter(Boolean))].sort();
-  const container = document.getElementById('stats-etab-btns');
-  if(!container || etabs.length===0) return;
-  const existing = container.querySelectorAll('.stats-etab');
-  // Only rebuild if needed
-  if(existing.length === etabs.length + 1) return;
-  container.innerHTML = `<button onclick="setStatsEtab(this,'all')" class="stats-etab" style="padding:5px 11px;border-radius:20px;border:${statsEtab==='all'?'2px solid var(--ac)':'1px solid var(--b)'};background:${statsEtab==='all'?'#EEECFC':'transparent'};font-size:11px;color:${statsEtab==='all'?'var(--ac)':'var(--t2)'};cursor:pointer;font-weight:${statsEtab==='all'?600:400}">Tous</button>`
-    + etabs.map(e => `<button onclick="setStatsEtab(this,'${e}')" class="stats-etab" style="padding:5px 11px;border-radius:20px;border:${statsEtab===e?'2px solid var(--ac)':'1px solid var(--b)'};background:${statsEtab===e?'#EEECFC':'transparent'};font-size:11px;color:${statsEtab===e?'var(--ac)':'var(--t2)'};cursor:pointer;font-weight:${statsEtab===e?600:400};white-space:nowrap">${e.split(' ').slice(0,2).join(' ')}</button>`).join('');
+  const sel = document.getElementById('stats-etab-select');
+  if(!sel || etabs.length===0) return;
+  sel.innerHTML = `<option value="all">Tous</option>`
+    + etabs.map(e=>`<option value="${e}"${statsEtab===e?' selected':''}>${e}</option>`).join('');
 }
 
 function getStatsSessions() {
