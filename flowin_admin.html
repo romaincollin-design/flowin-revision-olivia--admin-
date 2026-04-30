@@ -3186,34 +3186,17 @@ function md5(str) {
 }
 
 function checkLogin() {
-  const now = Date.now();
-  const err = document.getElementById('login-err');
   const input = document.getElementById('login-pwd');
-  if(now < loginLockedUntil) {
-    const reste = Math.ceil((loginLockedUntil - now) / 1000);
-    if(err) err.textContent = `Trop de tentatives — réessaie dans ${reste}s`;
-    return;
-  }
-  const pwd = input?.value || '';
-  const md5hash = md5(pwd);
-  if(md5hash === ADMIN_HASH || pwd === 'flowin2026') {
-    loginAttempts = 0;
+  const err = document.getElementById('login-err');
+  const pwd = (input?.value || '').trim();
+  if(pwd === 'flowin2026') {
     document.getElementById('login-wall').style.display = 'none';
     sessionStorage.setItem('flowin_auth','1');
-    sessionStorage.setItem('flowin_auth_ts', now.toString());
+    sessionStorage.setItem('flowin_auth_ts', Date.now().toString());
     loadData();
   } else {
-    loginAttempts++;
-    const restantes = 3 - loginAttempts;
-    if(loginAttempts >= 3) {
-      loginLockedUntil = now + 5 * 60 * 1000;
-      loginAttempts = 0;
-      if(err) err.textContent = '🔒 Compte bloqué 5 minutes — trop de tentatives';
-      if(input) input.value = '';
-    } else {
-      if(err) err.textContent = `Mot de passe incorrect — ${restantes} tentative${restantes>1?'s':''} restante${restantes>1?'s':''}`;
-    }
-    if(input) { input.style.borderColor='var(--re)'; setTimeout(()=>input.style.borderColor='var(--b)',2000); }
+    if(err) err.textContent = 'Mot de passe incorrect';
+    if(input) { input.style.borderColor='red'; setTimeout(()=>input.style.borderColor='',2000); }
   }
 }
 
