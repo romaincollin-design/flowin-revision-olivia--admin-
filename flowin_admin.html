@@ -1638,7 +1638,7 @@ function renderEleves() {
     return `
     <tr onclick="openEleve('${d.pseudo}')" style="${sel?'background:rgba(176,108,228,.07)':''}" data-id="${d.pseudo}">
       <td class="crm-td" onclick="event.stopPropagation()"><input type="checkbox" class="crm-check" ${sel?'checked':''} onchange="crmToggle('eleves','${d.pseudo}',this.checked)"></td>
-      <td><div style="display:flex;align-items:center;gap:9px">${ava(d.j.prenom,d.j.nom,d.idx,30)}<div><div style="font-size:12px;font-weight:600;color:var(--t)">${d.j.prenom} ${d.j.nom}${fakeBadge}</div><div style="font-size:9px;color:var(--t3)">${d.j.email||'—'}</div></div></div></td>
+      <td><div style="display:flex;align-items:center;gap:9px">${ava(d.j.prenom,d.j.nom,d.idx,30)}<div><div style="font-size:12px;font-weight:600;color:var(--t)">${d.j.prenom} ${d.j.nom}</div><div style="font-size:9px;color:var(--t3)">${d.j.email||'—'}</div></div></div></td>
       <td style="font-size:11px">${d.j.ecole||'—'}</td>
       <td style="font-size:11px">${d.j.classe||'—'}</td>
       <td>${scorePill(d.avg)}</td>
