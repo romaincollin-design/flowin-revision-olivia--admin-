@@ -1636,7 +1636,7 @@ function renderEleves() {
   // Reset sélection CRM si les données changent
   crmSelections['eleves'] = crmSelections['eleves'] || new Set();
 
-  document.getElementById('eleves-tbody').innerHTML = data.length ? data.map(d => {
+  document.getElementById('eleves-tbody').innerHTML = data.map(d => {
     const fake = isFakeAccount(d.j);
     if(fake) return null;
     const pwaBadge = d.j.pwa_installed ? `<span class="pwa-badge">📱 App</span>` : '<span style="color:var(--t3);font-size:10px">—</span>';
@@ -1730,7 +1730,7 @@ function openEleve(pseudo) {
     <!-- Actions rapides -->
     <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
       <a href="mailto:${d.j.email||''}" style="padding:7px 14px;border-radius:7px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:11px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px">✉️ Email</a>
-      <a href="https://wa.me/?text=${encodeURIComponent(`Bonjour ${d.j.prenom}, un message de Flowin !')}" target="_blank" style="padding:7px 14px;border-radius:7px;border:1px solid var(--b);background:#E8F5E9;color:#1B5E20;font-size:11px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px">💬 WhatsApp</a>
+      <a href="https://wa.me/?text=${encodeURIComponent('Bonjour '+d.j.prenom+', un message de Flowin !')}" target="_blank" style="padding:7px 14px;border-radius:7px;border:1px solid var(--b);background:#E8F5E9;color:#1B5E20;font-size:11px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px">💬 WhatsApp</a>
       <button onclick="navTo('eleves')" style="padding:7px 14px;border-radius:7px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">👥 Tous les élèves</button>
       <button onclick="closeEleve();navTo('parrainage')" style="padding:7px 14px;border-radius:7px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">🎁 Parrainages</button>
     </div>
