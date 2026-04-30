@@ -1478,7 +1478,10 @@ function buildElevs() {
     const pseudo = j.pseudo || j.prenom || '';
     const st = getStats(pseudo);
     const totalPts = getTotalPts(pseudo);
-    return { j, idx, pseudo, ...st, totalPts, isActif: st.us.length>0 };
+    // Calculer la ligue
+    const lgMap = [{k:'bronze',min:0},{k:'silver',min:500},{k:'gold',min:1500},{k:'diamond',min:3000},{k:'legend',min:5000}];
+    const lg = lgMap.slice().reverse().find(l => totalPts >= l.min) || lgMap[0];
+    return { j, idx, pseudo, ...st, totalPts, isActif: st.us.length>0, league: lg.k };
   });
 }
 
@@ -1632,7 +1635,7 @@ function renderEleves() {
 
   document.getElementById('eleves-tbody').innerHTML = data.length ? data.map(d => {
     const fake = isFakeAccount(d.j);
-    if(fake) return ''; // masquer complètement les comptes fake/test
+    if(fake) return null;
     const pwaBadge = d.j.pwa_installed ? `<span class="pwa-badge">📱 App</span>` : '<span style="color:var(--t3);font-size:10px">—</span>';
     const sel = crmSelections['eleves'].has(d.pseudo);
     return `
@@ -1649,7 +1652,7 @@ function renderEleves() {
       <td style="font-size:10px;color:var(--t3)">${d.last?ago(d.last):'—'}</td>
       <td>${bdg(d.isActif?'green':'amber',d.isActif?'Actif':'Inactif')}</td>
     </tr>`;
-  }).join('') : `<tr><td colspan="11"><div class="empty"><div class="empty-icon">👤</div><div class="empty-text">Aucun élève trouvé</div></div></td></tr>`;
+  }).filter(Boolean).join('') || `<tr><td colspan="11"><div class="empty"><div class="empty-icon">👤</div><div class="empty-text">Aucun élève trouvé</div></div></td></tr>`;
 }
 
 // ── FICHE ÉLÈVE ──
