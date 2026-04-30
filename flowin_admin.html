@@ -16,16 +16,93 @@
 }
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--t);display:flex;height:100vh;overflow:hidden;font-size:13px}
 @media(max-width:768px){
-  #sidebar{width:56px}
-  .sb-logo-title,.sb-logo-sub,.sb-item>span:not(.sb-item-icon),.sb-badge,.sb-user-name,.sb-user-role,.sb-section{display:none}
-  .sb-item{justify-content:center;padding:10px 0}
-  #content{padding:12px}
-  .kpi-grid{grid-template-columns:repeat(2,1fr)!important}
+  /* Sidebar -> Menu hamburger */
+  #sidebar{
+    position:fixed;
+    top:0;left:0;bottom:0;
+    width:240px;
+    transform:translateX(-100%);
+    transition:transform .25s ease;
+    z-index:9998;
+    box-shadow:2px 0 16px rgba(0,0,0,.15);
+  }
+  #sidebar.mobile-open{transform:translateX(0)}
+  .sb-logo-title,.sb-logo-sub,.sb-item>span:not(.sb-item-icon),.sb-badge,.sb-user-name,.sb-user-role,.sb-section{display:initial}
+  .sb-item{justify-content:flex-start;padding:9px 14px}
+
+  /* Overlay quand menu ouvert */
+  #mobile-overlay{
+    display:none;
+    position:fixed;inset:0;
+    background:rgba(0,0,0,.4);
+    z-index:9997;
+  }
+  #mobile-overlay.active{display:block}
+
+  /* Bouton hamburger */
+  #mobile-menu-btn{
+    display:flex !important;
+    align-items:center;justify-content:center;
+    width:40px;height:40px;
+    background:var(--surf2);
+    border:1px solid var(--b);
+    border-radius:8px;
+    cursor:pointer;
+    margin-right:8px;
+  }
+
+  /* Topbar mobile */
+  #topbar{padding:0 12px;flex-wrap:wrap;height:auto;min-height:52px;gap:8px}
+  #topbar input{font-size:13px;flex:1;min-width:0}
+  .btn-sync{padding:6px 10px;font-size:10px}
+
+  /* Contenu */
+  #content{padding:12px;padding-bottom:60px}
+
+  /* KPIs */
+  .kpi-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px}
+  .kpi-card{padding:12px}
+  .kpi-val{font-size:22px}
+  .kpi-icon{font-size:18px}
+  .kpi-label{font-size:9px}
+  .kpi-sub{font-size:9px}
+
+  /* Layouts */
   .dash-2col,.dash-2eq,.settings-grid,.fiche-grid2,.fiche-stats{grid-template-columns:1fr!important}
+  .fiche-stats{grid-template-columns:repeat(2,1fr)!important;gap:8px}
+
+  /* Tableaux scrollables */
+  .panel{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{min-width:600px}
+
+  /* Filtres */
+  .filters{flex-direction:column;align-items:stretch;gap:8px}
+  .filter-input,.filter-select{width:100%;font-size:13px;padding:8px 12px}
+
+  /* Modals plein écran */
   #pool-panel{width:100vw}
-  .modal-box.wide{max-width:100%;margin:0;border-radius:16px 16px 0 0;max-height:95vh;align-self:flex-end}
+  .modal-box{max-width:100%!important;margin:0;border-radius:16px 16px 0 0;max-height:95vh;align-self:flex-end;width:100%}
+  .modal-box.wide{max-width:100%;margin:0;border-radius:16px 16px 0 0;max-height:95vh}
   .modal-overlay{align-items:flex-end;padding:0}
+  .modal-body{padding:16px}
+
+  /* Fiche élève mobile */
+  .fiche-header{flex-direction:column;align-items:flex-start;gap:10px}
+  .fiche-name{font-size:18px}
+
+  /* Boutons tactiles */
+  button,.crm-btn{min-height:36px}
+  .col-filter{font-size:11px;padding:4px 6px;max-width:100%}
+
+  /* Stats period buttons */
+  .period-btn,.stats-period,.stats-mat{padding:7px 12px!important;font-size:12px!important}
+
+  /* Cours tabs */
+  .defis-tabs{overflow-x:auto;padding-bottom:4px}
+  .defis-tab{flex-shrink:0;font-size:12px}
 }
+
+#mobile-menu-btn{display:none}
 input,select,button{font-family:inherit}
 
 /* SIDEBAR */
@@ -313,7 +390,11 @@ td.crm-td{padding:0 6px;text-align:center}
 
 <!-- MAIN -->
 <div id="main">
+  <div id="mobile-overlay" onclick="toggleMobileMenu(false)"></div>
   <header id="topbar">
+    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
     <div id="topbar-title">Dashboard</div>
     <input id="search-global" type="text" placeholder="🔍 Rechercher…" oninput="onGlobalSearch(this.value)">
     <div class="live-dot" id="live-dot"></div>
@@ -5066,6 +5147,21 @@ function resetBareme() {
 // ── INIT ──
 buildNav();
 loadData();
+
+// ── MENU MOBILE ──
+function toggleMobileMenu(force) {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('mobile-overlay');
+  const isOpen = typeof force === 'boolean' ? force : !sb.classList.contains('mobile-open');
+  sb.classList.toggle('mobile-open', isOpen);
+  ov.classList.toggle('active', isOpen);
+}
+// Auto-fermer le menu mobile au clic sur un item nav
+document.addEventListener('click', function(e) {
+  if(e.target.closest('#sidebar .sb-item') && window.innerWidth <= 768) {
+    setTimeout(() => toggleMobileMenu(false), 100);
+  }
+});
 
 // ── DÉLÉGATION GLOBALE — toutes les lignes cliquables ──
 document.addEventListener('click', function(e) {
