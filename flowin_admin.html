@@ -1822,6 +1822,15 @@ function switchDefiTab(tab, btn) {
   document.getElementById('defis-rank').style.display  = tab==='rank'?'block':'none';
 }
 
+function switchDefiTabById(tab) {
+  navTo('defis');
+  setTimeout(() => {
+    const tabs = document.querySelectorAll('.defis-tab');
+    const idx = tab==='pools'?0:tab==='histo'?1:2;
+    if(tabs[idx]) switchDefiTab(tab, tabs[idx]);
+  }, 50);
+}
+
 function renderDefis() {
   const periodeVal = (document.getElementById('defis-periode')||{value:'7'}).value || '7';
   const matiereVal = (document.getElementById('defis-matiere')||{value:''}).value || '';
@@ -1838,11 +1847,11 @@ function renderDefis() {
 
   // KPIs
   document.getElementById('defis-kpis').innerHTML = [
-    { val:nbPools, label:'Pools actives', sub:'7 derniers jours', color:'var(--ac)', icon:'🎮' },
-    { val:nbJoueurs, label:'Joueurs actifs', sub:'cette semaine', color:'var(--gr)', icon:'👥' },
-    { val:recent.length, label:'Parties jouées', sub:'sur 7 jours', color:'var(--am)', icon:'⚡' },
-    { val:recent.length?Math.round(recent.reduce((a,s)=>a+(s.score_pct||0),0)/recent.length)+'%':'—', label:'Score moy.', sub:'cette semaine', color:'var(--bl)', icon:'🎯' },
-  ].map(k=>`<div class="kpi-card"><div class="kpi-bar" style="background:${k.color}"></div><div class="kpi-icon">${k.icon}</div><div class="kpi-val">${k.val}</div><div class="kpi-label">${k.label}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+    { val:nbPools, label:'Pools actives', sub:'7 derniers jours', color:'var(--ac)', icon:'🎮', tab:'pools' },
+    { val:nbJoueurs, label:'Joueurs actifs', sub:'cette semaine', color:'var(--gr)', icon:'👥', tab:'rank' },
+    { val:recent.length, label:'Parties jouées', sub:'sur 7 jours', color:'var(--am)', icon:'⚡', tab:'histo' },
+    { val:recent.length?Math.round(recent.reduce((a,s)=>a+(s.score_pct||0),0)/recent.length)+'%':'—', label:'Score moy.', sub:'cette semaine', color:'var(--bl)', icon:'🎯', nav:'stats' },
+  ].map(k=>`<div class="kpi-card" onclick="${k.nav?`navTo('${k.nav}')`:k.tab?`switchDefiTabById('${k.tab}')`:'void(0)'}" style="cursor:pointer;transition:transform .14s,box-shadow .14s" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 18px rgba(0,0,0,.08)'" onmouseleave="this.style.transform='';this.style.boxShadow=''"><div class="kpi-bar" style="background:${k.color}"></div><div class="kpi-icon">${k.icon}</div><div class="kpi-val">${k.val}</div><div class="kpi-label">${k.label}</div><div class="kpi-sub">${k.sub} <span style="font-size:9px;color:var(--ac)">→</span></div></div>`).join('');
 
   // POOLS
   const pools = {};
