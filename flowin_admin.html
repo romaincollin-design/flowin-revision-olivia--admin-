@@ -1413,11 +1413,11 @@ function renderDashboard() {
 
   // KPIs
   document.getElementById('dash-kpis').innerHTML = [
-    { val:DB.joueurs.length, label:'Élèves inscrits', sub:`${actifs} actifs`, color:'var(--ac)', icon:'👤' },
-    { val:sessToday.length||DB.sessions.length, label:'Sessions', sub:sessToday.length?`aujourd\'hui · ${DB.sessions.length} total`:`${DB.sessions.length} total`, color:'var(--gr)', icon:'⚡' },
-    { val:avg+'%', label:'Score moyen global', sub:'Toutes matières', color:'var(--am)', icon:'🎯' },
-    { val:DB.parrainage.length, label:'Parrainages', sub:`${parrSenders} parrain${parrSenders>1?'s':''}`, color:'#E040A0', icon:'🎁' },
-  ].map(k => `<div class="kpi-card"><div class="kpi-bar" style="background:${k.color}"></div><div class="kpi-icon">${k.icon}</div><div class="kpi-val">${k.val}</div><div class="kpi-label">${k.label}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+    { val:DB.joueurs.length, label:'Élèves inscrits', sub:`${actifs} actifs`, color:'var(--ac)', icon:'👤', nav:'eleves' },
+    { val:sessToday.length||DB.sessions.length, label:'Sessions', sub:sessToday.length?`aujourd\'hui · ${DB.sessions.length} total`:`${DB.sessions.length} total`, color:'var(--gr)', icon:'⚡', nav:'defis' },
+    { val:avg+'%', label:'Score moyen global', sub:'Toutes matières', color:'var(--am)', icon:'🎯', nav:'stats' },
+    { val:DB.parrainage.length, label:'Parrainages', sub:`${parrSenders} parrain${parrSenders>1?'s':''}`, color:'#E040A0', icon:'🎁', nav:'parrainage' },
+  ].map(k => `<div class="kpi-card" onclick="${k.nav?`navTo('${k.nav}')`:'void(0)'}" style="${k.nav?'cursor:pointer;':''}transition:transform .14s,box-shadow .14s" onmouseenter="${k.nav?`this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 18px rgba(0,0,0,.08)'`:''}" onmouseleave="${k.nav?`this.style.transform='';this.style.boxShadow=''`:''}"><div class="kpi-bar" style="background:${k.color}"></div><div class="kpi-icon">${k.icon}</div><div class="kpi-val">${k.val}</div><div class="kpi-label">${k.label}</div><div class="kpi-sub">${k.sub}${k.nav?` <span style="font-size:9px;color:var(--ac)">→</span>`:''}</div></div>`).join('');
 
   // Top 5
   const elevs = buildElevs();
@@ -1444,7 +1444,7 @@ function renderDashboard() {
 
   // Sessions récentes
   document.getElementById('dash-sessions').innerHTML = periodSess.slice(0,8).map(s => `
-    <div class="session-row" onclick="openEleve('${s.pseudo}')" style="cursor:pointer">
+    <div class="session-row eleve-row" data-id="${s.pseudo}" style="cursor:pointer">
       <div class="session-dot" style="background:${scColor(s.score_pct||0)}"></div>
       <div style="flex:1;min-width:0">
         <div class="session-name">${s.pseudo||'—'}</div>
@@ -1460,15 +1460,18 @@ function renderDashboard() {
   renderActivityChart(periodSess);
   renderMap();
   renderTopEtabs();
-  document.getElementById('dash-parr').innerHTML = DB.parrainage.slice(0,8).map(p => `
-    <div class="parr-row">
+  const parrElevs = buildElevs();
+  document.getElementById('dash-parr').innerHTML = DB.parrainage.slice(0,8).map(p => {
+    const pe = parrElevs.find(e => (e.j.email||'').toLowerCase()===(p.sender_email||'').toLowerCase() || `${e.j.prenom} ${e.j.nom}`.toLowerCase()===(p.sender||'').toLowerCase() || (e.j.prenom||'').toLowerCase()===(p.sender||'').toLowerCase());
+    return `<div class="${pe?'parr-row eleve-row':'parr-row'}" data-id="${pe?pe.pseudo:''}" style="cursor:${pe?'pointer':'default'}">
       <span style="font-size:14px">${chIc[p.channel]||'↗️'}</span>
       <div style="flex:1;min-width:0">
         <div class="session-name">${p.sender||'—'} → <span style="color:var(--gr)">${p.destinataire||'—'}</span></div>
         <div class="session-meta">${p.sender_etab||'—'}</div>
       </div>
       <span class="session-ago">${ago(p.ts)}</span>
-    </div>`).join('') || '<div class="empty"><div class="empty-icon">🎁</div><div class="empty-text">Aucun parrainage</div></div>';
+    </div>`;
+  }).join('') || '<div class="empty"><div class="empty-icon">🎁</div><div class="empty-text">Aucun parrainage</div></div>';
 }
 
 // ── BUILD ELEVS ──
@@ -1658,17 +1661,19 @@ function renderEleves() {
   document.getElementById('eleves-tbody').querySelectorAll('.eleve-row').forEach(tr => {
     tr.style.cursor = 'pointer';
     tr.addEventListener('click', function(e) {
-      if(e.target.closest('.crm-td')) return;
-      openEleve(this.dataset.pseudo);
+      if(e.target.closest('.crm-td') || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+      openEleve(this.dataset.id);
     });
   });
 }
 
 // ── FICHE ÉLÈVE ──
 function openEleve(pseudo) {
+  console.log('[openEleve] pseudo:', pseudo);
   const elevs = buildElevs();
+  console.log('[openEleve] elevs:', elevs.length, elevs.map(e=>e.pseudo));
   const d = elevs.find(e=>e.pseudo===pseudo);
-  if(!d) return;
+  if(!d) { console.warn('[openEleve] NOT FOUND:', pseudo); return; }
   const lg = getLg(d.totalPts);
   const lgNext = LEAGUES[LEAGUES.indexOf(lg)+1];
   const lgPct = lg.max>lg.min ? Math.min(100,Math.round((d.totalPts-lg.min)/(lg.max-lg.min)*100)) : 100;
@@ -1709,7 +1714,26 @@ function openEleve(pseudo) {
     [parr.length,'Parrainages','var(--gr)','var(--grBg)'],
   ];
 
+  // Navigation élève suivant/précédent
+  const allElevs = buildElevs();
+  const currentIdx = allElevs.findIndex(e => e.pseudo === pseudo);
+  const prevElev = currentIdx > 0 ? allElevs[currentIdx - 1] : null;
+  const nextElev = currentIdx < allElevs.length - 1 ? allElevs[currentIdx + 1] : null;
+
   document.getElementById('modal-eleve-body').innerHTML = `
+    <!-- Barre navigation + actions -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--b);flex-wrap:wrap">
+      <button onclick="${prevElev?`openEleve('${prevElev.pseudo}')`:'void(0)'}" style="padding:6px 12px;border-radius:7px;border:1px solid var(--b);background:${prevElev?'var(--surf2)':'var(--surf3)'};color:${prevElev?'var(--t2)':'var(--t3)'};font-size:11px;cursor:${prevElev?'pointer':'default'};font-family:inherit">← ${prevElev?`${prevElev.j.prenom} ${prevElev.j.nom}`:'—'}</button>
+      <span style="font-size:10px;color:var(--t3);flex:1;text-align:center">${currentIdx+1} / ${allElevs.length}</span>
+      <button onclick="${nextElev?`openEleve('${nextElev.pseudo}')`:'void(0)'}" style="padding:6px 12px;border-radius:7px;border:1px solid var(--b);background:${nextElev?'var(--surf2)':'var(--surf3)'};color:${nextElev?'var(--t2)':'var(--t3)'};font-size:11px;cursor:${nextElev?'pointer':'default'};font-family:inherit">${nextElev?`${nextElev.j.prenom} ${nextElev.j.nom}`:'—'} →</button>
+    </div>
+    <!-- Actions rapides -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <a href="mailto:${d.j.email||''}" style="padding:7px 14px;border-radius:7px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:11px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px">✉️ Email</a>
+      <a href="https://wa.me/?text=${encodeURIComponent(`Bonjour ${d.j.prenom}, un message de Flowin !')}" target="_blank" style="padding:7px 14px;border-radius:7px;border:1px solid var(--b);background:#E8F5E9;color:#1B5E20;font-size:11px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px">💬 WhatsApp</a>
+      <button onclick="navTo('eleves')" style="padding:7px 14px;border-radius:7px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">👥 Tous les élèves</button>
+      <button onclick="closeEleve();navTo('parrainage')" style="padding:7px 14px;border-radius:7px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">🎁 Parrainages</button>
+    </div>
     <div class="fiche-header">
       ${ava(d.j.prenom,d.j.nom,d.idx,52)}
       <div style="flex:1">
@@ -1967,7 +1991,7 @@ function renderParrainage() {
     { val:uniqSenders, label:'Parrains actifs', sub:'ont invité au moins 1 filleul', color:'var(--ac)', icon:'👤' },
     { val:totalPts, label:'Points distribués', sub:`${ptsParrain} pts par parrainage`, color:'var(--am)', icon:'⭐' },
     { val:chIc[topCanalAll]||topCanalAll, label:'Canal favori', sub:'le plus utilisé', color:'var(--gr)', icon:'📡' },
-  ].map(k=>`<div class="kpi-card"><div class="kpi-bar" style="background:${k.color}"></div><div class="kpi-icon">${k.icon}</div><div class="kpi-val" style="font-size:${typeof k.val==='string'&&k.val.length>6?'14px':'26px'}">${k.val}</div><div class="kpi-label">${k.label}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+  ].map(k=>`<div class="kpi-card" style="cursor:default;"><div class="kpi-bar" style="background:${k.color}"></div><div class="kpi-icon">${k.icon}</div><div class="kpi-val" style="font-size:${typeof k.val==='string'&&k.val.length>6?'14px':'26px'}">${k.val}</div><div class="kpi-label">${k.label}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
 
   let data = rows.filter(r => {
     if(search && !r.name.toLowerCase().includes(search) && !(r.etab||'').toLowerCase().includes(search)) return false;
@@ -2000,8 +2024,8 @@ function renderParrainage() {
   // Délégation événements parrains
   document.getElementById('parr-tbody').querySelectorAll('.parr-row').forEach(tr => {
     tr.addEventListener('click', function(e) {
-      if(e.target.closest('.crm-td')) return;
-      openEleve(this.dataset.pseudo);
+      if(e.target.closest('.crm-td') || e.target.tagName === 'INPUT') return;
+      openEleve(this.dataset.id);
     });
   });
 }
@@ -2044,7 +2068,7 @@ function renderLigues() {
   // Attacher les clics après rendu
   setTimeout(() => {
     document.querySelectorAll('.ligue-row').forEach(el => {
-      el.addEventListener('click', function() { openEleve(this.dataset.pseudo); });
+      el.addEventListener('click', function() { openEleve(this.dataset.id || this.dataset.pseudo); });
     });
   }, 50);
     let members = elevs
