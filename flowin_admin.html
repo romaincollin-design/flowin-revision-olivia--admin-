@@ -1881,7 +1881,7 @@ function renderDefis() {
 
   // HISTORIQUE
   document.getElementById('defis-histo').innerHTML = `<div class="panel"><div class="panel-header">📋 Historique des sessions</div><table><thead><tr><th>Joueur</th><th>Thème</th><th>Matière</th><th>École</th><th>Score</th><th>Points</th><th>Date</th></tr></thead><tbody>${
-    DB.sessions.slice(0,30).map(s=>`<tr onclick="openEleve('${s.pseudo}')" style="cursor:pointer">
+    DB.sessions.slice(0,30).map(s=>`<tr class="eleve-row" data-pseudo="${s.pseudo}" style="cursor:pointer">
       <td><span style="font-weight:500;color:var(--t)">${s.pseudo||'—'}</span></td>
       <td style="font-size:11px">${s.theme||'—'}</td>
       <td style="font-size:11px">${s.matiere||'—'}</td>
@@ -1906,7 +1906,7 @@ function renderDefis() {
     ranking.slice(0,20).map((r,i)=>{
       const jd = DB.joueurs.find(j=>j.pseudo===r.pseudo);
       const fullName = jd ? jd.prenom+' '+jd.nom : r.pseudo;
-      return `<tr onclick="openEleve('${r.pseudo}')" style="cursor:pointer">
+      return `<tr class="eleve-row" data-pseudo="${r.pseudo}" style="cursor:pointer">
       <td style="font-weight:800">${['🥇','🥈','🥉'][i]||`#${i+1}`}</td>
       <td><div style="font-size:12px;font-weight:600;color:var(--t)">${fullName}</div><div style="font-size:9px;color:var(--t3)">${r.pseudo}</div></td>
       <td style="font-size:11px">${r.ecole||'—'}</td>
@@ -1985,8 +1985,9 @@ function renderParrainage() {
   document.getElementById('parr-tbody').innerHTML = data.length ? data.map(r=>{
     const d = r.elev;
     const sel = crmSelections['parr'].has(r.name);
-    return `<tr class="parr-sender" onclick="openEleve('${d?d.pseudo:r.name}')" style="${sel?'background:rgba(176,108,228,.07)':''}">
-      <td class="crm-td" onclick="event.stopPropagation()"><input type="checkbox" class="crm-check" ${sel?'checked':''} onchange="crmToggle('parr','${r.name}',this.checked)"></td>
+    const targetPseudo = d ? d.pseudo : r.name;
+    return `<tr class="parr-sender parr-row" data-pseudo="${targetPseudo}" style="${sel?'background:rgba(176,108,228,.07)':''}">
+      <td class="crm-td"><input type="checkbox" class="crm-check" ${sel?'checked':''} onchange="crmToggle('parr','${r.name}',this.checked)"></td>
       <td><div style="display:flex;align-items:center;gap:9px">${d?ava(d.j.prenom,d.j.nom,d.idx,30):`<div class="ava" style="width:30px;height:30px;background:var(--surf3);color:var(--t3);font-size:11px">${r.name[0]||'?'}</div>`}<div><div style="font-size:12px;font-weight:600;color:var(--t)">${r.name}</div></div></div></td>
       <td style="font-size:11px">${r.etab}</td>
       <td><span style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--ac)">${r.filleuls.length}</span></td>
@@ -1995,6 +1996,14 @@ function renderParrainage() {
       <td style="font-size:10px;color:var(--t3)">${ago(r.last)}</td>
     </tr>`;
   }).join('') : `<tr><td colspan="7"><div class="empty"><div class="empty-icon">🎁</div><div class="empty-text">Aucun parrain trouvé</div></div></td></tr>`;
+
+  // Délégation événements parrains
+  document.getElementById('parr-tbody').querySelectorAll('.parr-row').forEach(tr => {
+    tr.addEventListener('click', function(e) {
+      if(e.target.closest('.crm-td')) return;
+      openEleve(this.dataset.pseudo);
+    });
+  });
 }
 
 
@@ -5024,6 +5033,18 @@ function resetBareme() {
 // ── INIT ──
 buildNav();
 loadData();
+
+// ── DÉLÉGATION GLOBALE — toutes les lignes cliquables ──
+document.addEventListener('click', function(e) {
+  const row = e.target.closest('.eleve-row');
+  if(row && row.dataset.pseudo && !e.target.closest('.crm-td') && !e.target.closest('input') && !e.target.closest('select')) {
+    openEleve(row.dataset.pseudo);
+  }
+  const lrow = e.target.closest('.ligue-row');
+  if(lrow && lrow.dataset.pseudo) {
+    openEleve(lrow.dataset.pseudo);
+  }
+});
 </script>
 </body>
 </html>
