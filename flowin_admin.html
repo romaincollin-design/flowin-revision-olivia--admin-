@@ -1782,7 +1782,7 @@ function renderEleves() {
       <td style="font-size:10px;color:var(--t3)">${d.last?ago(d.last):'—'}</td>
       <td style="font-size:10px;color:${d.lastCnx?'var(--t)':'var(--t3)'};font-weight:${d.lastCnx?600:400}">
         ${d.lastCnx
-          ? '<span style="font-weight:700">'+ago(d.lastCnx)+'</span><div style="font-size:9px;color:var(--t3);font-weight:400;margin-top:1px">'+new Date(d.lastCnx).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'})+' · '+new Date(d.lastCnx).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+'</div>'
+          ? '<span style="font-weight:700">'+ago(d.lastCnx)+'</span><div style="font-size:9px;color:var(--t3);font-weight:400;margin-top:1px">'+new Date(d.lastCnx).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'})+' · '+new Date(d.lastCnx).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+(d.connexions[0]&&d.connexions[0].duree_min>0?' · '+d.connexions[0].duree_min+'min':'')+'</div>'
           : '<span style="color:var(--t3)">—</span>'}
       </td>
       <td>${bdg(d.isActif?'green':'amber',d.isActif?'Actif':'Inactif')}</td>
@@ -1953,7 +1953,7 @@ function openEleve(pseudo) {
               <span style="font-size:14px">${icon}</span>
               <div style="flex:1;min-width:0">
                 <div style="font-size:11px;font-weight:600;color:var(--t)">${dt.toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short',year:'numeric'})} · ${dt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div>
-                <div style="font-size:9px;color:var(--t3)">${c.device||'—'}${i===0?' · <span style="color:var(--gr);font-weight:600">Plus récente</span>':''}</div>
+                <div style="font-size:9px;color:var(--t3)">${c.device||'—'}${c.duree_min>0?' · <span style="color:var(--ac);font-weight:600">'+c.duree_min+' min</span>':''}${i===0?' · <span style="color:var(--gr);font-weight:600">Plus récente</span>':''}</div>
               </div>
               <span style="font-size:10px;color:var(--t3)">${ago(c.ts)}</span>
             </div>`;
