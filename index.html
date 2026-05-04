@@ -1070,10 +1070,10 @@ window.addEventListener('unhandledrejection', function(e){
     <div class="orb" style="width:500px;height:500px;background:rgba(176,108,228,.15);top:-120px;left:-150px"></div>
     <div class="orb" style="width:400px;height:400px;background:rgba(43,134,197,.12);bottom:-80px;right:-100px"></div>
 
-    <!-- NAV — sans bouton dupliqué -->
+    <!-- NAV -->
     <nav>
       <div class="lnav-logo">Flowin</div>
-      <button class="lnav-cta" onclick="switchMode('pwa')" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2)">📲 Installer l'app</button>
+      <button class="lnav-cta" onclick="switchMode('pwa')" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);font-size:13px">📲 Installer l'app</button>
     </nav>
 
     <!-- HERO -->
@@ -1084,10 +1084,8 @@ window.addEventListener('unhandledrejection', function(e){
         <span class="l2">comme t'as</span>
         <span class="l3">jamais révisé</span>
       </h1>
-      <p class="hero-sub" id="heroSub">23 fiches de révision · 230 questions QCM · Résultats sauvegardés · Accessible partout</p>
-      <div class="hero-btns">
-        <button class="btn-main" onclick="switchMode('inscription')">⚡ Commencer maintenant</button>
-      </div>
+      <p class="hero-sub" id="heroSub">23 fiches · 230 questions · Résultats sauvegardés · Accessible partout</p>
+
       <div class="stats-row" id="landingStatsRow">
         <div class="stat-item"><div class="stat-num" id="statThemes">23</div><div class="stat-lbl">Thèmes</div></div>
         <div class="stat-sep"></div>
@@ -1097,135 +1095,140 @@ window.addEventListener('unhandledrejection', function(e){
       </div>
     </div>
 
-    <!-- SECTION RÉVISION + JEU CÔTE À CÔTE -->
-    <div style="padding:40px 24px;background:#0d0120">
-      <div style="text-align:center;margin-bottom:28px">
-        <div style="font-size:12px;font-weight:800;color:#7B4FBF;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px">Comment ça marche ?</div>
-        <h2 style="color:#fff;font-size:clamp(20px,4vw,28px);font-weight:800;margin:0;line-height:1.2">Tu révises. Tu joues. Tu progresses.</h2>
+    <!-- COMMENT ÇA MARCHE — 2 BLOCS GAMING -->
+    <div style="padding:32px 20px;background:#0d0120">
+      <div style="text-align:center;margin-bottom:22px">
+        <div style="font-size:11px;font-weight:800;color:#7B4FBF;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:8px">● Le principe</div>
+        <div style="font-size:clamp(20px,4vw,26px);font-weight:800;color:#fff">Simple. Ludique. Efficace.</div>
       </div>
-      <div style="display:flex;gap:16px;flex-wrap:wrap">
-        <!-- RÉVISION -->
-        <div style="flex:1;min-width:260px;background:rgba(176,108,228,.08);border:1.5px solid rgba(176,108,228,.25);border-radius:20px;padding:20px 18px">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-            <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#B06CE4,#7B4FBF);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">📖</div>
-            <div>
-              <div style="font-weight:800;font-size:15px;color:#fff">Révision</div>
-              <div style="font-size:12px;color:rgba(255,255,255,.45)">Lis, comprends, mémorise</div>
+      <div style="display:flex;flex-direction:column;gap:12px;max-width:700px;margin:0 auto">
+
+        <!-- MODE RÉVISION -->
+        <div style="background:linear-gradient(135deg,#1a0535,#120025);border:1.5px solid rgba(176,108,228,.45);border-radius:20px;padding:18px 18px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;left:0;bottom:0;width:4px;background:linear-gradient(180deg,#B06CE4,#9B4FD4)"></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+            <div style="width:3px;height:16px;background:#B06CE4;border-radius:2px"></div>
+            <span style="font-size:11px;font-weight:800;color:#B06CE4;text-transform:uppercase;letter-spacing:1.2px">Mode révision</span>
+            <div style="margin-left:auto;display:flex;gap:4px">
+              <span style="width:7px;height:7px;border-radius:50%;background:#B06CE4;box-shadow:0 0 5px #B06CE4;display:inline-block"></span>
+              <span style="width:7px;height:7px;border-radius:50%;background:#B06CE4;box-shadow:0 0 5px #B06CE4;display:inline-block"></span>
+              <span style="width:7px;height:7px;border-radius:50%;background:rgba(176,108,228,.3);display:inline-block"></span>
             </div>
           </div>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border-radius:12px;padding:10px 12px">
-              <span style="font-size:18px">📚</span>
-              <div>
-                <div style="font-size:13px;font-weight:700;color:#fff">23 fiches structurées</div>
-                <div style="font-size:11px;color:rgba(255,255,255,.45)">Essentiel · Dates · Vocabulaire · Schémas</div>
-              </div>
+          <div style="display:flex;gap:10px">
+            <div style="flex:1;background:rgba(176,108,228,.12);border:1px solid rgba(176,108,228,.25);border-radius:14px;padding:14px 10px;text-align:center">
+              <div style="font-size:30px;margin-bottom:8px;filter:drop-shadow(0 0 8px rgba(176,108,228,.7))">📖</div>
+              <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:4px">Révise</div>
+              <div style="font-size:12px;color:rgba(255,255,255,.65);line-height:1.4">23 fiches · Essentiel · Dates · Vocabulaire</div>
             </div>
-            <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border-radius:12px;padding:10px 12px">
-              <span style="font-size:18px">📷</span>
-              <div>
-                <div style="font-size:13px;font-weight:700;color:#fff">Photos de tes cours</div>
-                <div style="font-size:11px;color:rgba(255,255,255,.45)">Tes photos de tableau intégrées</div>
-              </div>
+            <div style="flex:1;background:rgba(176,108,228,.12);border:1px solid rgba(176,108,228,.25);border-radius:14px;padding:14px 10px;text-align:center">
+              <div style="font-size:30px;margin-bottom:8px;filter:drop-shadow(0 0 8px rgba(176,108,228,.7))">🧠</div>
+              <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:4px">Mémorise</div>
+              <div style="font-size:12px;color:rgba(255,255,255,.65);line-height:1.4">Quiz · Feedback immédiat · Explication</div>
             </div>
-            <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border-radius:12px;padding:10px 12px">
-              <span style="font-size:18px">📊</span>
-              <div>
-                <div style="font-size:13px;font-weight:700;color:#fff">Frises & schémas SVG</div>
-                <div style="font-size:11px;color:rgba(255,255,255,.45)">Frise chronologique par thème</div>
-              </div>
-            </div>
+          </div>
+          <div style="margin-top:12px;display:flex;align-items:center;gap:6px;padding-left:4px">
+            <span style="width:5px;height:5px;border-radius:50%;background:#B06CE4;box-shadow:0 0 4px #B06CE4;display:inline-block"></span>
+            <span style="font-size:11px;color:rgba(255,255,255,.45);font-style:italic">Lis · Comprends · Teste-toi au quiz</span>
           </div>
         </div>
-        <!-- JEU -->
-        <div style="flex:1;min-width:260px;background:rgba(244,168,58,.08);border:1.5px solid rgba(244,168,58,.3);border-radius:20px;padding:20px 18px">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-            <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#F4A83A,#e8850a);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🎮</div>
-            <div>
-              <div style="font-weight:800;font-size:15px;color:#fff">Quiz & Défis</div>
-              <div style="font-size:12px;color:rgba(255,255,255,.45)">Teste-toi, défie, progresse</div>
+
+        <!-- MODE JEU -->
+        <div style="background:linear-gradient(135deg,#1a0800,#100400);border:1.5px solid rgba(244,168,58,.45);border-radius:20px;padding:18px 18px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:0;left:0;bottom:0;width:4px;background:linear-gradient(180deg,#F4A83A,#e8850a)"></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+            <div style="width:3px;height:16px;background:#F4A83A;border-radius:2px"></div>
+            <span style="font-size:11px;font-weight:800;color:#F4A83A;text-transform:uppercase;letter-spacing:1.2px">Mode jeu</span>
+            <div style="margin-left:auto;display:flex;gap:4px">
+              <span style="width:7px;height:7px;border-radius:50%;background:#F4A83A;box-shadow:0 0 5px #F4A83A;display:inline-block"></span>
+              <span style="width:7px;height:7px;border-radius:50%;background:#F4A83A;box-shadow:0 0 5px #F4A83A;display:inline-block"></span>
+              <span style="width:7px;height:7px;border-radius:50%;background:rgba(244,168,58,.3);display:inline-block"></span>
             </div>
           </div>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border-radius:12px;padding:10px 12px">
-              <span style="font-size:18px">🎡</span>
-              <div>
-                <div style="font-size:13px;font-weight:700;color:#fff">Roue de révision</div>
-                <div style="font-size:11px;color:rgba(255,255,255,.45)">Thème au sort · 5 questions · 30 sec</div>
-              </div>
+          <div style="display:flex;gap:10px">
+            <div style="flex:1;background:rgba(244,168,58,.12);border:1px solid rgba(244,168,58,.25);border-radius:14px;padding:14px 10px;text-align:center">
+              <div style="font-size:30px;margin-bottom:8px;filter:drop-shadow(0 0 8px rgba(244,168,58,.7))">🎡</div>
+              <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:4px">Quiz</div>
+              <div style="font-size:12px;color:rgba(255,255,255,.65);line-height:1.4">Roue · 5 questions · 30 sec · Points</div>
             </div>
-            <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border-radius:12px;padding:10px 12px">
-              <span style="font-size:18px">⚔️</span>
-              <div>
-                <div style="font-size:13px;font-weight:700;color:#fff">Défis multi-joueurs</div>
-                <div style="font-size:11px;color:rgba(255,255,255,.45)">Mise des points · Rafle la cagnotte</div>
-              </div>
+            <div style="flex:1;background:rgba(244,168,58,.12);border:1px solid rgba(244,168,58,.25);border-radius:14px;padding:14px 10px;text-align:center">
+              <div style="font-size:30px;margin-bottom:8px;filter:drop-shadow(0 0 8px rgba(244,168,58,.7))">⚔️</div>
+              <div style="font-size:15px;font-weight:800;color:#fff;margin-bottom:4px">Défie</div>
+              <div style="font-size:12px;color:rgba(255,255,255,.65);line-height:1.4">Invite · Mise des pts · Rafle la cagnotte</div>
             </div>
-            <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border-radius:12px;padding:10px 12px">
-              <span style="font-size:18px">🔥</span>
-              <div>
-                <div style="font-size:13px;font-weight:700;color:#fff">Streak & classement</div>
-                <div style="font-size:11px;color:rgba(255,255,255,.45)">Reviens chaque jour · Ne brise pas la chaîne</div>
-              </div>
-            </div>
+          </div>
+          <div style="margin-top:12px;display:flex;align-items:center;gap:6px;padding-left:4px">
+            <span style="width:5px;height:5px;border-radius:50%;background:#F4A83A;box-shadow:0 0 4px #F4A83A;display:inline-block"></span>
+            <span style="font-size:11px;color:rgba(255,255,255,.45);font-style:italic">Joue · Défie tes amis · Rafle la cagnotte</span>
           </div>
         </div>
+
       </div>
     </div>
 
-    <!-- SECTION WOW — sans CTA -->
-    <div style="background:linear-gradient(135deg,#1a0533,#2d1060);padding:28px 20px;text-align:center">
-      <div style="display:inline-block;background:linear-gradient(135deg,#F4A83A,#e8850a);color:#fff;font-size:10px;font-weight:800;padding:4px 12px;border-radius:16px;letter-spacing:.5px;margin-bottom:12px;text-transform:uppercase">🔥 La fonctionnalité qui cartonne</div>
-      <h2 style="color:#fff;font-size:clamp(18px,4vw,26px);font-weight:800;margin:0 0 8px;line-height:1.2">Quiz + Défis multi-joueurs 🎮</h2>
-      <p style="color:rgba(255,255,255,.55);font-size:14px;margin:0 auto 20px;max-width:400px;line-height:1.5">La roulette choisit ton thème. Tu réponds en 30 sec. Tu gagnes des points. Tu défies tes amis.</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:400px;margin:0 auto">
-        <div style="background:rgba(255,255,255,.07);border-radius:12px;padding:12px;text-align:center">
-          <div style="font-size:22px;margin-bottom:4px">🎡</div>
-          <div style="font-size:12px;font-weight:700;color:#fff">Roue de révision</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">Thème tiré au sort</div>
+    <!-- MODE DÉFI GAMING (bloc validé) -->
+    <div style="padding:28px 20px;background:#0a0015">
+      <div style="background:linear-gradient(135deg,#0d001a,#1a0035,#0d001a);border-radius:16px;padding:20px 16px;font-family:inherit;overflow:hidden;position:relative;max-width:900px;margin:0 auto">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+          <div style="width:3px;height:18px;background:linear-gradient(180deg,#F4A83A,#B06CE4);border-radius:2px"></div>
+          <span style="font-size:13px;font-weight:800;color:#F4A83A;text-transform:uppercase;letter-spacing:1.2px">⚔️ Mode défi</span>
+          <div style="margin-left:auto;display:flex;gap:5px;align-items:center">
+            <span style="width:8px;height:8px;border-radius:50%;background:#E84855;display:inline-block;box-shadow:0 0 6px #E84855"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#F4A83A;display:inline-block;box-shadow:0 0 6px #F4A83A"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#1DB87A;display:inline-block;box-shadow:0 0 6px #1DB87A"></span>
+          </div>
         </div>
-        <div style="background:rgba(255,255,255,.07);border-radius:12px;padding:12px;text-align:center">
-          <div style="font-size:22px;margin-bottom:4px">⚔️</div>
-          <div style="font-size:12px;font-weight:700;color:#fff">Défis 1v1</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">Mise de points</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div style="background:rgba(176,108,228,.12);border:1.5px solid rgba(176,108,228,.5);border-radius:14px;padding:16px 10px;text-align:center;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#B06CE4;border-radius:14px 14px 0 0"></div>
+            <div style="font-size:34px;margin-bottom:10px;filter:drop-shadow(0 0 8px rgba(176,108,228,.8))">💌</div>
+            <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:6px">Invite</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.5">Envoie le lien à un camarade par WhatsApp ou SMS</div>
+          </div>
+          <div style="background:rgba(244,168,58,.12);border:1.5px solid rgba(244,168,58,.5);border-radius:14px;padding:16px 10px;text-align:center;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#F4A83A;border-radius:14px 14px 0 0"></div>
+            <div style="font-size:34px;margin-bottom:10px;filter:drop-shadow(0 0 8px rgba(244,168,58,.8))">💰</div>
+            <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:6px">Mise tes pts</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.5">Mise des points gagnés en révisant tes fiches</div>
+          </div>
+          <div style="background:rgba(29,184,122,.12);border:1.5px solid rgba(29,184,122,.5);border-radius:14px;padding:16px 10px;text-align:center;position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#1DB87A;border-radius:14px 14px 0 0"></div>
+            <div style="font-size:34px;margin-bottom:10px;filter:drop-shadow(0 0 8px rgba(29,184,122,.8))">🏆</div>
+            <div style="font-weight:800;font-size:15px;color:#fff;margin-bottom:6px">Rafle tout</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.5">Meilleur score au quiz = toute la cagnotte pour toi</div>
+          </div>
         </div>
-        <div style="background:rgba(255,255,255,.07);border-radius:12px;padding:12px;text-align:center">
-          <div style="font-size:22px;margin-bottom:4px">🏆</div>
-          <div style="font-size:12px;font-weight:700;color:#fff">Classement live</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">Qui est le meilleur ?</div>
-        </div>
-        <div style="background:rgba(255,255,255,.07);border-radius:12px;padding:12px;text-align:center">
-          <div style="font-size:22px;margin-bottom:4px">🔥</div>
-          <div style="font-size:12px;font-weight:700;color:#fff">Streak quotidien</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.4);margin-top:2px">Ne brise pas la chaîne</div>
+        <div style="margin-top:14px;border-top:1px solid rgba(255,255,255,.08);padding-top:10px;display:flex;align-items:center;justify-content:center;gap:8px">
+          <span style="width:6px;height:6px;border-radius:50%;background:#1DB87A;display:inline-block;box-shadow:0 0 5px #1DB87A"></span>
+          <span style="font-size:12px;color:rgba(255,255,255,.55);font-style:italic">Les points se gagnent en révisant · Les défis font tout perdre ou tout gagner</span>
+          <span style="width:6px;height:6px;border-radius:50%;background:#1DB87A;display:inline-block;box-shadow:0 0 5px #1DB87A"></span>
         </div>
       </div>
     </div>
 
     <!-- INSTALL PWA -->
-    <div style="padding:28px 24px;background:#0d0120;text-align:center">
-      <div style="font-size:32px;margin-bottom:10px">📲</div>
-      <div style="font-weight:800;font-size:17px;color:#fff;margin-bottom:6px">Installe l'app sur ton téléphone</div>
-      <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:16px;line-height:1.5">Accès direct depuis ton écran d'accueil · Sans téléchargement · Fonctionne hors connexion</div>
+    <div style="padding:28px 20px;background:#0d0120;text-align:center">
+      <div style="font-size:36px;margin-bottom:10px">📲</div>
+      <div style="font-weight:800;font-size:18px;color:#fff;margin-bottom:6px">Installe l'app sur ton téléphone</div>
+      <div style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:18px;line-height:1.5">Accès direct depuis ton écran · Sans téléchargement</div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-        <button onclick="switchMode('pwa')" style="background:rgba(0,122,255,.15);color:#007AFF;border:1px solid rgba(0,122,255,.3);border-radius:14px;padding:10px 20px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">🍎 iOS — 3 taps</button>
-        <button onclick="switchMode('pwa')" style="background:rgba(52,168,83,.15);color:#34A853;border:1px solid rgba(52,168,83,.3);border-radius:14px;padding:10px 20px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer">🤖 Android — 1 clic</button>
+        <button onclick="switchMode('pwa')" style="background:rgba(0,122,255,.15);color:#4da6ff;border:1.5px solid rgba(0,122,255,.4);border-radius:14px;padding:12px 22px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">🍎 iOS — 3 taps</button>
+        <button onclick="switchMode('pwa')" style="background:rgba(52,168,83,.15);color:#5cd98a;border:1.5px solid rgba(52,168,83,.4);border-radius:14px;padding:12px 22px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer">🤖 Android — 1 clic</button>
       </div>
     </div>
 
     <!-- CTA FINAL + RGPD -->
     <div class="cta-bottom">
       <h2>Prêt·e à cartonner le bac ?</h2>
-      <p>Sans téléchargement · Gratuit</p>
-      <button class="btn-main" onclick="switchMode('inscription')">🚀 Commencer maintenant</button>
-      <div style="margin-top:20px;padding:14px 16px;background:rgba(255,255,255,.05);border-radius:14px;border:1px solid rgba(255,255,255,.1);text-align:left;max-width:480px;margin-left:auto;margin-right:auto">
-        <div style="font-size:12px;color:rgba(255,255,255,.4);line-height:1.6">
-          🔒 <strong style="color:rgba(255,255,255,.6)">Données & confidentialité</strong><br>
-          En t'inscrivant, tu acceptes que tes données (prénom, établissement, scores) soient utilisées pour le fonctionnement de Flowin et des services associés. Tes données ne sont pas revendues. Tu peux demander leur suppression à tout moment via l'application.<br>
-          <span style="margin-top:6px;display:block">Tu acceptes également d'être contacté·e par OPCONSULT dans le cadre de Flowin et de futures offres pédagogiques.</span>
+      <p>Gratuit · Sans téléchargement · Accessible partout</p>
+      <div style="margin-top:8px;padding:16px;background:rgba(255,255,255,.04);border-radius:14px;border:1px solid rgba(255,255,255,.08);text-align:left;max-width:480px;margin-left:auto;margin-right:auto">
+        <div style="font-size:13px;color:rgba(255,255,255,.55);line-height:1.7">
+          🔒 <strong style="color:rgba(255,255,255,.75)">Confidentialité</strong> — En t'inscrivant, tu acceptes que tes données (prénom, établissement, scores) soient utilisées pour le fonctionnement de Flowin. Tes données ne sont pas revendues. Tu peux demander leur suppression à tout moment.<br>
+          <span style="color:rgba(255,255,255,.4);font-size:12px;margin-top:4px;display:block">Tu acceptes également d'être contacté·e par OPCONSULT dans le cadre de Flowin et de futures offres pédagogiques.</span>
         </div>
       </div>
     </div>
+
   </div>
 </div>
 </div>
