@@ -514,68 +514,10 @@ td.crm-td{padding:0 6px;text-align:center}
       <div class="view-title">Élèves</div>
       <div class="view-sub" id="eleves-sub"></div>
 
-      <!-- BARRE RECHERCHE + TRI -->
+      <!-- BARRE RECHERCHE -->
       <div class="filters">
         <input class="filter-input" type="text" id="eleves-search" placeholder="🔍 Rechercher nom, email…" oninput="renderEleves()">
-        <select class="filter-select" id="eleves-sort" onchange="renderEleves()">
-          <option value="date">↓ Plus récents</option>
-          <option value="pts">↓ Points</option>
-          <option value="score">↓ Score</option>
-          <option value="streak">↓ Streak</option>
-          <option value="cnx">↓ Dernière connexion</option>
-          <option value="name">A–Z</option>
-        </select>
         <span class="filter-count" id="eleves-count"></span>
-      </div>
-
-      <!-- FILTRES EN PILLS -->
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center">
-        <select class="col-filter" id="eleves-etab" onchange="renderEleves()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:var(--surf2);color:var(--t);cursor:pointer;outline:none">
-          <option value="">🏫 Tous établissements</option>
-        </select>
-        <select class="col-filter" id="eleves-classe" onchange="renderEleves()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:var(--surf2);color:var(--t);cursor:pointer;outline:none">
-          <option value="">🎓 Toutes classes</option>
-        </select>
-        <select class="col-filter" id="eleves-score" onchange="renderEleves()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:var(--surf2);color:var(--t);cursor:pointer;outline:none">
-          <option value="">📊 Tous scores</option>
-          <option value="80">📊 ≥ 80%</option>
-          <option value="60">📊 ≥ 60%</option>
-          <option value="40">📊 ≥ 40%</option>
-          <option value="0-40">📊 &lt; 40%</option>
-        </select>
-        <select class="col-filter" id="eleves-streak" onchange="renderEleves()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:var(--surf2);color:var(--t);cursor:pointer;outline:none">
-          <option value="">🔥 Tous streaks</option>
-          <option value="7">🔥 ≥ 7 jours</option>
-          <option value="3">🔥 ≥ 3 jours</option>
-          <option value="1">🔥 ≥ 1 jour</option>
-          <option value="0">— Aucun streak</option>
-        </select>
-        <select class="col-filter" id="eleves-ligue" onchange="renderEleves()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:var(--surf2);color:var(--t);cursor:pointer;outline:none">
-          <option value="">🏆 Toutes ligues</option>
-          <option value="bronze">🥉 Bronze</option>
-          <option value="silver">🥈 Argent</option>
-          <option value="gold">🥇 Or</option>
-          <option value="diamond">💎 Platine</option>
-          <option value="legend">👑 Légende</option>
-        </select>
-        <select class="col-filter" id="eleves-pwa" onchange="renderEleves()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:var(--surf2);color:var(--t);cursor:pointer;outline:none">
-          <option value="">📱 Tous appareils</option>
-          <option value="1">📱 App installée</option>
-          <option value="0">🌐 Web</option>
-        </select>
-        <select class="col-filter" id="eleves-stat" onchange="renderEleves()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:var(--surf2);color:var(--t);cursor:pointer;outline:none">
-          <option value="">👤 Tous statuts</option>
-          <option value="Actif">✅ Actif</option>
-          <option value="Inactif">⏸ Inactif</option>
-        </select>
-        <select class="col-filter" id="eleves-cnx" onchange="renderEleves()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:var(--surf2);color:var(--t);cursor:pointer;outline:none">
-          <option value="">🕐 Toutes connexions</option>
-          <option value="1">🕐 Aujourd'hui</option>
-          <option value="7">🕐 7 derniers jours</option>
-          <option value="30">🕐 30 derniers jours</option>
-          <option value="never">🕐 Jamais connecté</option>
-        </select>
-        <button onclick="resetElevesFilters()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:transparent;color:var(--t3);cursor:pointer">✕ Reset</button>
       </div>
 
       <div class="crm-bar" id="eleves-crm-bar">
@@ -584,21 +526,22 @@ td.crm-td{padding:0 6px;text-align:center}
         <button class="crm-btn" onclick="crmMessageGroupe('eleves')">💬 Message groupé</button>
         <button class="crm-btn" style="margin-left:auto" onclick="crmDeselectAll('eleves')">✕ Annuler</button>
       </div>
+
       <div class="panel" style="overflow-x:auto">
         <table style="min-width:900px"><thead>
           <tr>
             <th class="crm-th"><input type="checkbox" class="crm-check-all" id="eleves-check-all" onchange="crmToggleAll('eleves',this.checked)"></th>
-            <th>Élève</th>
-            <th>Établissement</th>
-            <th>Classe</th>
-            <th>Score</th>
-            <th>Streak</th>
-            <th>Points</th>
-            <th>Ligue</th>
+            <th onclick="sortEleves('name')" style="cursor:pointer;user-select:none">Élève <span id="sort-arrow-name" style="font-size:9px;color:var(--t3)">↕</span></th>
+            <th onclick="sortEleves('etab')" style="cursor:pointer;user-select:none">Établissement <span id="sort-arrow-etab" style="font-size:9px;color:var(--t3)">↕</span></th>
+            <th onclick="sortEleves('classe')" style="cursor:pointer;user-select:none">Classe <span id="sort-arrow-classe" style="font-size:9px;color:var(--t3)">↕</span></th>
+            <th onclick="sortEleves('score')" style="cursor:pointer;user-select:none">Score <span id="sort-arrow-score" style="font-size:9px;color:var(--t3)">↕</span></th>
+            <th onclick="sortEleves('streak')" style="cursor:pointer;user-select:none">Streak <span id="sort-arrow-streak" style="font-size:9px;color:var(--t3)">↕</span></th>
+            <th onclick="sortEleves('pts')" style="cursor:pointer;user-select:none">Points <span id="sort-arrow-pts" style="font-size:9px;color:var(--t3)">↕</span></th>
+            <th onclick="sortEleves('ligue')" style="cursor:pointer;user-select:none">Ligue <span id="sort-arrow-ligue" style="font-size:9px;color:var(--t3)">↕</span></th>
             <th>📱 App</th>
-            <th>Activité</th>
-            <th>Dernière connexion</th>
-            <th>Statut</th>
+            <th onclick="sortEleves('activite')" style="cursor:pointer;user-select:none">Activité <span id="sort-arrow-activite" style="font-size:9px;color:var(--t3)">↕</span></th>
+            <th onclick="sortEleves('cnx')" style="cursor:pointer;user-select:none">Dernière connexion <span id="sort-arrow-cnx" style="font-size:9px;color:var(--t3)">↕</span></th>
+            <th onclick="sortEleves('statut')" style="cursor:pointer;user-select:none">Statut <span id="sort-arrow-statut" style="font-size:9px;color:var(--t3)">↕</span></th>
           </tr>
         </thead>
         <tbody id="eleves-tbody"></tbody></table>
@@ -1637,13 +1580,23 @@ function buildElevs() {
   // Exclure comptes fake/test des stats admin
   return DB.joueurs.filter(j => !isFakeAccount(j)).map((j,idx) => {
     const pseudo = j.pseudo || j.prenom || '';
+    const pseudoLow = pseudo.toLowerCase().trim();
     const st = getStats(pseudo);
     const totalPts = getTotalPts(pseudo);
     // Calculer la ligue
     const lgMap = [{k:'bronze',min:0},{k:'silver',min:500},{k:'gold',min:1500},{k:'diamond',min:3000},{k:'legend',min:5000}];
     const lg = lgMap.slice().reverse().find(l => totalPts >= l.min) || lgMap[0];
-    // Connexions de ce joueur
-    const cnx = (DB.connexions||[]).filter(c => c.pseudo === pseudo);
+    // Connexions — match insensible à la casse (pseudo peut varier)
+    const cnx = (DB.connexions||[]).filter(c => {
+      if(!c.pseudo) return false;
+      const cp = c.pseudo.toLowerCase().trim();
+      return cp === pseudoLow
+        || cp === (j.prenom||'').toLowerCase().trim()
+        || cp === (j.pseudo||'').toLowerCase().trim()
+        || (j.email && c.pseudo.toLowerCase() === j.email.toLowerCase());
+    });
+    // Trier par date desc pour avoir la plus récente en [0]
+    cnx.sort((a,b) => new Date(b.ts||0) - new Date(a.ts||0));
     const lastCnx = cnx[0]?.ts || null;
     return { j, idx, pseudo, ...st, totalPts, isActif: st.us.length>0, league: lg.k, connexions: cnx, lastCnx };
   });
@@ -1748,81 +1701,75 @@ function isFakeAccount(j) {
 }
 
 // ── ÉLÈVES ──
-function resetElevesFilters(){
-  ['eleves-etab','eleves-classe','eleves-score','eleves-streak','eleves-ligue','eleves-pwa','eleves-stat','eleves-cnx'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.value = '';
+
+
+// ── TRI ÉLÈVES ──
+let elevesSort = 'date';
+let elevesSortDir = -1; // -1 = desc, 1 = asc
+
+function sortEleves(col) {
+  if(elevesSort === col) {
+    elevesSortDir *= -1;
+  } else {
+    elevesSort = col;
+    elevesSortDir = col === 'name' || col === 'etab' || col === 'classe' || col === 'statut' ? 1 : -1;
+  }
+  // Mettre à jour les flèches
+  const cols = ['name','etab','classe','score','streak','pts','ligue','activite','cnx','statut'];
+  cols.forEach(c => {
+    const el = document.getElementById('sort-arrow-'+c);
+    if(!el) return;
+    if(c === elevesSort) {
+      el.textContent = elevesSortDir === -1 ? '↓' : '↑';
+      el.style.color = 'var(--ac)';
+    } else {
+      el.textContent = '↕';
+      el.style.color = 'var(--t3)';
+    }
   });
-  const s = document.getElementById('eleves-search');
-  if(s) s.value = '';
   renderEleves();
 }
 
 function renderEleves() {
   const elevs = buildElevs();
-  // Sub
   document.getElementById('eleves-sub').textContent = `${elevs.filter(d=>d.isActif).length} actifs · ${elevs.filter(d=>!d.isActif).length} inactifs · ${elevs.length} total`;
 
-  // Lire TOUS les filtres avant de modifier le DOM
-  const search      = document.getElementById('eleves-search').value.toLowerCase();
-  const etab        = document.getElementById('eleves-etab').value;
-  const classeVal   = (document.getElementById('eleves-classe')||{value:''}).value;
-  const ligueVal    = (document.getElementById('eleves-ligue')||{value:''}).value;
-  const scoreVal    = (document.getElementById('eleves-score')||{value:''}).value;
-  const streakVal   = (document.getElementById('eleves-streak')||{value:''}).value;
-  const stat        = document.getElementById('eleves-stat').value;
-  const pwaFilter   = (document.getElementById('eleves-pwa')||{value:''}).value;
-  const cnxFilter   = (document.getElementById('eleves-cnx')||{value:''}).value;
-  const sort        = document.getElementById('eleves-sort').value;
+  const search = document.getElementById('eleves-search').value.toLowerCase();
 
-  // Peupler établissements dynamiquement
-  const sel = document.getElementById('eleves-etab');
-  const ecoles = [...new Set(DB.joueurs.map(j=>j.ecole).filter(Boolean))].sort();
-  sel.innerHTML = '<option value="">Tous établissements</option>'+ecoles.map(e=>`<option value="${e}"${e===etab?' selected':''}>${e}</option>`).join('');
+  let data = elevs.filter(d => !isFakeAccount(d.j));
+  if(search) data = data.filter(d =>
+    `${d.j.prenom} ${d.j.nom}`.toLowerCase().includes(search) ||
+    (d.j.ecole||'').toLowerCase().includes(search) ||
+    (d.j.email||'').toLowerCase().includes(search) ||
+    (d.j.classe||'').toLowerCase().includes(search)
+  );
 
-  // Peupler classes dynamiquement
-  const classSel = document.getElementById('eleves-classe');
-  if(classSel) {
-    const classes = [...new Set(DB.joueurs.map(j=>j.classe).filter(Boolean))].sort();
-    classSel.innerHTML = '<option value="">Toutes classes</option>'+classes.map(c=>`<option value="${c}"${c===classeVal?' selected':''}>${c}</option>`).join('');
-  }
-
-  let data = [...elevs];
-  if(search)    data = data.filter(d=>`${d.j.prenom} ${d.j.nom}`.toLowerCase().includes(search)||(d.j.ecole||'').toLowerCase().includes(search)||(d.j.email||'').toLowerCase().includes(search));
-  if(etab)      data = data.filter(d=>d.j.ecole===etab);
-  if(classeVal) data = data.filter(d=>d.j.classe===classeVal);
-  if(ligueVal)  data = data.filter(d=>d.league===ligueVal);
-  if(scoreVal==='0-40') data = data.filter(d=>d.avg<40);
-  else if(scoreVal)     data = data.filter(d=>d.avg>=parseInt(scoreVal));
-  if(streakVal==='0')   data = data.filter(d=>d.maxStreak===0);
-  else if(streakVal)    data = data.filter(d=>d.maxStreak>=parseInt(streakVal));
-  if(stat==='Actif')    data = data.filter(d=>d.isActif);
-  if(stat==='Inactif')  data = data.filter(d=>!d.isActif);
-  if(pwaFilter==='1')   data = data.filter(d=>d.j.pwa_installed);
-  if(pwaFilter==='0')   data = data.filter(d=>!d.j.pwa_installed);
-
-  // Filtre connexion récente
-  if(cnxFilter==='never') data = data.filter(d=>!d.lastCnx);
-  else if(cnxFilter) {
-    const days = parseInt(cnxFilter);
-    const cutoff = new Date(Date.now() - days*24*60*60*1000);
-    data = data.filter(d=>d.lastCnx && new Date(d.lastCnx) >= cutoff);
-  }
-
-  data.sort((a,b)=>sort==='pts'?b.totalPts-a.totalPts:sort==='score'?b.avg-a.avg:sort==='streak'?b.maxStreak-a.maxStreak:sort==='cnx'?(b.lastCnx?new Date(b.lastCnx):new Date(0))-(a.lastCnx?new Date(a.lastCnx):new Date(0)):sort==='date'?new Date(b.j.ts||0)-new Date(a.j.ts||0):`${a.j.prenom} ${a.j.nom}`.localeCompare(`${b.j.prenom} ${b.j.nom}`));
+  // Tri
+  data.sort((a,b) => {
+    let va, vb;
+    switch(elevesSort) {
+      case 'name':    va=`${a.j.prenom} ${a.j.nom}`; vb=`${b.j.prenom} ${b.j.nom}`; return elevesSortDir*(va.localeCompare(vb));
+      case 'etab':    va=a.j.ecole||''; vb=b.j.ecole||''; return elevesSortDir*(va.localeCompare(vb));
+      case 'classe':  va=a.j.classe||''; vb=b.j.classe||''; return elevesSortDir*(va.localeCompare(vb));
+      case 'score':   return elevesSortDir*(b.avg-a.avg)*-1;
+      case 'streak':  return elevesSortDir*(b.maxStreak-a.maxStreak)*-1;
+      case 'pts':     return elevesSortDir*(b.totalPts-a.totalPts)*-1;
+      case 'ligue':   return elevesSortDir*(b.totalPts-a.totalPts)*-1;
+      case 'activite':return elevesSortDir*(new Date(b.last||0)-new Date(a.last||0))*-1;
+      case 'cnx':     return elevesSortDir*(new Date(b.lastCnx||0)-new Date(a.lastCnx||0));
+      case 'statut':  va=a.isActif?'Actif':'Inactif'; vb=b.isActif?'Actif':'Inactif'; return elevesSortDir*(va.localeCompare(vb));
+      default:        return new Date(b.j.ts||0)-new Date(a.j.ts||0);
+    }
+  });
 
   document.getElementById('eleves-count').textContent = `${data.length} élève${data.length>1?'s':''}`;
-
-  // Reset sélection CRM si les données changent
   crmSelections['eleves'] = crmSelections['eleves'] || new Set();
 
   document.getElementById('eleves-tbody').innerHTML = data.map(d => {
-    const fake = isFakeAccount(d.j);
-    if(fake) return null;
     const pwaBadge = d.j.pwa_installed ? `<span class="pwa-badge">📱 App</span>` : '<span style="color:var(--t3);font-size:10px">—</span>';
     const sel = crmSelections['eleves'].has(d.pseudo);
     return `
-    <tr class="eleve-row" data-id="${d.pseudo}" style="${sel?'background:rgba(176,108,228,.07)':''}">
+    <tr class="eleve-row" data-id="${d.pseudo}" style="${sel?'background:rgba(176,108,228,.07)':''}" >
       <td class="crm-td" onclick="event.stopPropagation()"><input type="checkbox" class="crm-check" ${sel?'checked':''} onchange="crmToggle('eleves','${d.pseudo}',this.checked)"></td>
       <td><div style="display:flex;align-items:center;gap:9px">${ava(d.j.prenom,d.j.nom,d.idx,30)}<div><div style="font-size:12px;font-weight:600;color:var(--t)">${d.j.prenom} ${d.j.nom}</div><div style="font-size:9px;color:var(--t3)">${d.j.email||'—'}</div></div></div></td>
       <td style="font-size:11px">${d.j.ecole||'—'}</td>
@@ -1833,27 +1780,24 @@ function renderEleves() {
       <td>${lguePill(d.totalPts)}</td>
       <td>${pwaBadge}</td>
       <td style="font-size:10px;color:var(--t3)">${d.last?ago(d.last):'—'}</td>
-      <td style="font-size:10px;color:${d.lastCnx?'var(--t)':'var(--t3)'};font-weight:${d.lastCnx?600:400}">${d.lastCnx?
-  '<span style=\"font-weight:700\">'+ago(d.lastCnx)+'</span>'
-  +'<div style=\"font-size:9px;color:var(--t3);font-weight:400;margin-top:1px\">'
-  +new Date(d.lastCnx).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'})
-  +' · '
-  +new Date(d.lastCnx).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})
-  +'</div>'
-  :'<span style=\"color:var(--t3)\">—</span>'}</td>
+      <td style="font-size:10px;color:${d.lastCnx?'var(--t)':'var(--t3)'};font-weight:${d.lastCnx?600:400}">
+        ${d.lastCnx
+          ? '<span style="font-weight:700">'+ago(d.lastCnx)+'</span><div style="font-size:9px;color:var(--t3);font-weight:400;margin-top:1px">'+new Date(d.lastCnx).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'})+' · '+new Date(d.lastCnx).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+'</div>'
+          : '<span style="color:var(--t3)">—</span>'}
+      </td>
       <td>${bdg(d.isActif?'green':'amber',d.isActif?'Actif':'Inactif')}</td>
     </tr>`;
-  }).filter(Boolean).join('') || `<tr><td colspan="12"><div class="empty"><div class="empty-icon">👤</div><div class="empty-text">Aucun élève trouvé</div></div></td></tr>`;
+  }).join('') || `<tr><td colspan="12"><div class="empty"><div class="empty-icon">👤</div><div class="empty-text">Aucun élève trouvé</div></div></td></tr>`;
 
-  // Attacher les clics via délégation (évite les problèmes d'apostrophes dans onclick)
   document.getElementById('eleves-tbody').querySelectorAll('.eleve-row').forEach(tr => {
     tr.style.cursor = 'pointer';
     tr.addEventListener('click', function(e) {
-      if(e.target.closest('.crm-td') || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+      if(e.target.closest('.crm-td') || e.target.tagName === 'INPUT') return;
       openEleve(this.dataset.id);
     });
   });
 }
+
 
 // ── FICHE ÉLÈVE ──
 function openEleve(pseudo) {
