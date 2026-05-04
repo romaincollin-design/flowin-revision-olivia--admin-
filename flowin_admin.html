@@ -513,11 +513,71 @@ td.crm-td{padding:0 6px;text-align:center}
     <div class="view" id="v-eleves">
       <div class="view-title">Élèves</div>
       <div class="view-sub" id="eleves-sub"></div>
+
+      <!-- BARRE RECHERCHE + TRI -->
       <div class="filters">
         <input class="filter-input" type="text" id="eleves-search" placeholder="🔍 Rechercher nom, email…" oninput="renderEleves()">
-        <select class="filter-select" id="eleves-sort" onchange="renderEleves()"><option value="date">↓ Plus récents</option><option value="pts">↓ Points</option><option value="score">↓ Score</option><option value="streak">↓ Streak</option><option value="name">A–Z</option></select>
+        <select class="filter-select" id="eleves-sort" onchange="renderEleves()">
+          <option value="date">↓ Plus récents</option>
+          <option value="pts">↓ Points</option>
+          <option value="score">↓ Score</option>
+          <option value="streak">↓ Streak</option>
+          <option value="cnx">↓ Dernière connexion</option>
+          <option value="name">A–Z</option>
+        </select>
         <span class="filter-count" id="eleves-count"></span>
       </div>
+
+      <!-- FILTRES EN PILLS -->
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center">
+        <select class="col-filter" id="eleves-etab" onchange="renderEleves()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:var(--surf2);color:var(--t);cursor:pointer;outline:none">
+          <option value="">🏫 Tous établissements</option>
+        </select>
+        <select class="col-filter" id="eleves-classe" onchange="renderEleves()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:var(--surf2);color:var(--t);cursor:pointer;outline:none">
+          <option value="">🎓 Toutes classes</option>
+        </select>
+        <select class="col-filter" id="eleves-score" onchange="renderEleves()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:var(--surf2);color:var(--t);cursor:pointer;outline:none">
+          <option value="">📊 Tous scores</option>
+          <option value="80">📊 ≥ 80%</option>
+          <option value="60">📊 ≥ 60%</option>
+          <option value="40">📊 ≥ 40%</option>
+          <option value="0-40">📊 &lt; 40%</option>
+        </select>
+        <select class="col-filter" id="eleves-streak" onchange="renderEleves()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:var(--surf2);color:var(--t);cursor:pointer;outline:none">
+          <option value="">🔥 Tous streaks</option>
+          <option value="7">🔥 ≥ 7 jours</option>
+          <option value="3">🔥 ≥ 3 jours</option>
+          <option value="1">🔥 ≥ 1 jour</option>
+          <option value="0">— Aucun streak</option>
+        </select>
+        <select class="col-filter" id="eleves-ligue" onchange="renderEleves()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:var(--surf2);color:var(--t);cursor:pointer;outline:none">
+          <option value="">🏆 Toutes ligues</option>
+          <option value="bronze">🥉 Bronze</option>
+          <option value="silver">🥈 Argent</option>
+          <option value="gold">🥇 Or</option>
+          <option value="diamond">💎 Platine</option>
+          <option value="legend">👑 Légende</option>
+        </select>
+        <select class="col-filter" id="eleves-pwa" onchange="renderEleves()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:var(--surf2);color:var(--t);cursor:pointer;outline:none">
+          <option value="">📱 Tous appareils</option>
+          <option value="1">📱 App installée</option>
+          <option value="0">🌐 Web</option>
+        </select>
+        <select class="col-filter" id="eleves-stat" onchange="renderEleves()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:var(--surf2);color:var(--t);cursor:pointer;outline:none">
+          <option value="">👤 Tous statuts</option>
+          <option value="Actif">✅ Actif</option>
+          <option value="Inactif">⏸ Inactif</option>
+        </select>
+        <select class="col-filter" id="eleves-cnx" onchange="renderEleves()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:var(--surf2);color:var(--t);cursor:pointer;outline:none">
+          <option value="">🕐 Toutes connexions</option>
+          <option value="1">🕐 Aujourd'hui</option>
+          <option value="7">🕐 7 derniers jours</option>
+          <option value="30">🕐 30 derniers jours</option>
+          <option value="never">🕐 Jamais connecté</option>
+        </select>
+        <button onclick="resetElevesFilters()" style="border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;border:1.5px solid var(--b);background:transparent;color:var(--t3);cursor:pointer">✕ Reset</button>
+      </div>
+
       <div class="crm-bar" id="eleves-crm-bar">
         <span class="crm-bar-count" id="eleves-crm-count">0</span> sélectionné(s)
         <button class="crm-btn" onclick="crmExportCSV('eleves')">⬇ Export CSV</button>
@@ -529,16 +589,16 @@ td.crm-td{padding:0 6px;text-align:center}
           <tr>
             <th class="crm-th"><input type="checkbox" class="crm-check-all" id="eleves-check-all" onchange="crmToggleAll('eleves',this.checked)"></th>
             <th>Élève</th>
-            <th><div style="display:flex;flex-direction:column;gap:3px"><span>Établissement</span><select class="col-filter" id="eleves-etab" onchange="renderEleves()"><option value="">Tous</option></select></div></th>
-            <th><div style="display:flex;flex-direction:column;gap:3px"><span>Classe</span><select class="col-filter" id="eleves-classe" onchange="renderEleves()"><option value="">Toutes</option></select></div></th>
-            <th><div style="display:flex;flex-direction:column;gap:3px"><span>Score</span><select class="col-filter" id="eleves-score" onchange="renderEleves()"><option value="">Tous</option><option value="80">≥80%</option><option value="60">≥60%</option><option value="40">≥40%</option><option value="0-40">&lt;40%</option></select></div></th>
-            <th><div style="display:flex;flex-direction:column;gap:3px"><span>Streak</span><select class="col-filter" id="eleves-streak" onchange="renderEleves()"><option value="">Tous</option><option value="7">≥7j</option><option value="3">≥3j</option><option value="1">≥1j</option><option value="0">Aucun</option></select></div></th>
+            <th>Établissement</th>
+            <th>Classe</th>
+            <th>Score</th>
+            <th>Streak</th>
             <th>Points</th>
-            <th><div style="display:flex;flex-direction:column;gap:3px"><span>Ligue</span><select class="col-filter" id="eleves-ligue" onchange="renderEleves()"><option value="">Toutes</option><option value="bronze">🥉 Bronze</option><option value="silver">🥈 Argent</option><option value="gold">🥇 Or</option><option value="diamond">💎 Platine</option><option value="legend">👑 Légende</option></select></div></th>
-            <th><div style="display:flex;flex-direction:column;gap:3px"><span>📱 App</span><select class="col-filter" id="eleves-pwa" onchange="renderEleves()"><option value="">Tous</option><option value="1">Installée</option><option value="0">Web</option></select></div></th>
+            <th>Ligue</th>
+            <th>📱 App</th>
             <th>Activité</th>
             <th>Dernière connexion</th>
-            <th><div style="display:flex;flex-direction:column;gap:3px"><span>Statut</span><select class="col-filter" id="eleves-stat" onchange="renderEleves()"><option value="">Tous</option><option value="Actif">Actif</option><option value="Inactif">Inactif</option></select></div></th>
+            <th>Statut</th>
           </tr>
         </thead>
         <tbody id="eleves-tbody"></tbody></table>
@@ -1675,6 +1735,16 @@ function isFakeAccount(j) {
 }
 
 // ── ÉLÈVES ──
+function resetElevesFilters(){
+  ['eleves-etab','eleves-classe','eleves-score','eleves-streak','eleves-ligue','eleves-pwa','eleves-stat','eleves-cnx'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  const s = document.getElementById('eleves-search');
+  if(s) s.value = '';
+  renderEleves();
+}
+
 function renderEleves() {
   const elevs = buildElevs();
   // Sub
@@ -1689,6 +1759,7 @@ function renderEleves() {
   const streakVal   = (document.getElementById('eleves-streak')||{value:''}).value;
   const stat        = document.getElementById('eleves-stat').value;
   const pwaFilter   = (document.getElementById('eleves-pwa')||{value:''}).value;
+  const cnxFilter   = (document.getElementById('eleves-cnx')||{value:''}).value;
   const sort        = document.getElementById('eleves-sort').value;
 
   // Peupler établissements dynamiquement
@@ -1717,7 +1788,15 @@ function renderEleves() {
   if(pwaFilter==='1')   data = data.filter(d=>d.j.pwa_installed);
   if(pwaFilter==='0')   data = data.filter(d=>!d.j.pwa_installed);
 
-  data.sort((a,b)=>sort==='pts'?b.totalPts-a.totalPts:sort==='score'?b.avg-a.avg:sort==='streak'?b.maxStreak-a.maxStreak:sort==='date'?new Date(b.j.ts||0)-new Date(a.j.ts||0):`${a.j.prenom} ${a.j.nom}`.localeCompare(`${b.j.prenom} ${b.j.nom}`));
+  // Filtre connexion récente
+  if(cnxFilter==='never') data = data.filter(d=>!d.lastCnx);
+  else if(cnxFilter) {
+    const days = parseInt(cnxFilter);
+    const cutoff = new Date(Date.now() - days*24*60*60*1000);
+    data = data.filter(d=>d.lastCnx && new Date(d.lastCnx) >= cutoff);
+  }
+
+  data.sort((a,b)=>sort==='pts'?b.totalPts-a.totalPts:sort==='score'?b.avg-a.avg:sort==='streak'?b.maxStreak-a.maxStreak:sort==='cnx'?(b.lastCnx?new Date(b.lastCnx):new Date(0))-(a.lastCnx?new Date(a.lastCnx):new Date(0)):sort==='date'?new Date(b.j.ts||0)-new Date(a.j.ts||0):`${a.j.prenom} ${a.j.nom}`.localeCompare(`${b.j.prenom} ${b.j.nom}`));
 
   document.getElementById('eleves-count').textContent = `${data.length} élève${data.length>1?'s':''}`;
 
@@ -1741,7 +1820,14 @@ function renderEleves() {
       <td>${lguePill(d.totalPts)}</td>
       <td>${pwaBadge}</td>
       <td style="font-size:10px;color:var(--t3)">${d.last?ago(d.last):'—'}</td>
-      <td style="font-size:10px;color:${d.lastCnx?'var(--t)':'var(--t3)'};font-weight:${d.lastCnx?600:400}">${d.lastCnx?ago(d.lastCnx)+'<div style=\"font-size:9px;color:var(--t3);font-weight:400\">'+new Date(d.lastCnx).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+'</div>':'—'}</td>
+      <td style="font-size:10px;color:${d.lastCnx?'var(--t)':'var(--t3)'};font-weight:${d.lastCnx?600:400}">${d.lastCnx?
+  '<span style=\"font-weight:700\">'+ago(d.lastCnx)+'</span>'
+  +'<div style=\"font-size:9px;color:var(--t3);font-weight:400;margin-top:1px\">'
+  +new Date(d.lastCnx).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'})
+  +' · '
+  +new Date(d.lastCnx).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})
+  +'</div>'
+  :'<span style=\"color:var(--t3)\">—</span>'}</td>
       <td>${bdg(d.isActif?'green':'amber',d.isActif?'Actif':'Inactif')}</td>
     </tr>`;
   }).filter(Boolean).join('') || `<tr><td colspan="12"><div class="empty"><div class="empty-icon">👤</div><div class="empty-text">Aucun élève trouvé</div></div></td></tr>`;
