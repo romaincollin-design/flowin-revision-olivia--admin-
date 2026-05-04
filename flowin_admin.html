@@ -870,6 +870,7 @@ td.crm-td{padding:0 6px;text-align:center}
           <button onclick="setStatsMatiere(this,'Histoire')" class="stats-mat" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">📜 Histoire</button>
           <button onclick="setStatsMatiere(this,'Géographie')" class="stats-mat" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">🌍 Géo</button>
           <button onclick="setStatsMatiere(this,'EMC')" class="stats-mat" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">⚖️ EMC</button>
+          <button onclick="setStatsMatiere(this,'PSE')" class="stats-mat" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">🩺 PSE</button>
         </div>
 
         <!-- Indicateur filtre actif -->
@@ -1549,9 +1550,21 @@ function renderCurrentView() {
 }
 
 // ── DASHBOARD ──
+
+// Helper : date locale YYYY-MM-DD (évite le décalage UTC)
+function localDateStr(ts) {
+  const d = ts ? new Date(ts) : new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
 function renderDashboard() {
   const today = new Date().toISOString().slice(0,10);
-  const sessToday = DB.sessions.filter(s => s.ts && s.ts.slice(0,10)===today);
+  // Comparaison en heure locale (pas UTC) pour éviter le décalage d'une journée
+  const todayLocal = new Date().toLocaleDateString('fr-FR',{year:'numeric',month:'2-digit',day:'2-digit'}).split('/').reverse().join('-');
+  const sessToday = DB.sessions.filter(s => {
+    if(!s.ts) return false;
+    const d = new Date(s.ts).toLocaleDateString('fr-FR',{year:'numeric',month:'2-digit',day:'2-digit'}).split('/').reverse().join('-');
+    return d === todayLocal;
+  });
   const avg = DB.sessions.length ? Math.round(DB.sessions.reduce((a,s)=>a+(s.score_pct||0),0)/DB.sessions.length) : 0;
   const parrSenders = new Set(DB.parrainage.map(p=>p.sender)).size;
   const actifs = new Set(DB.sessions.map(s=>s.pseudo)).size;
@@ -1869,8 +1882,8 @@ function openEleve(pseudo) {
   const now = new Date();
   const heat = Array.from({length:30},(_,i)=>{
     const date=new Date(now); date.setDate(date.getDate()-(29-i));
-    const ds=date.toISOString().slice(0,10);
-    const n=d.us.filter(s=>s.ts&&s.ts.slice(0,10)===ds).length;
+    const ds=localDateStr(date);
+    const n=d.us.filter(s=>s.ts&&localDateStr(s.ts)===ds).length;
     const bg=n===0?'var(--surf3)':n>=3?'var(--gr)':n>=2?'var(--ac)':'rgba(108,95,232,.3)';
     return `<div class="heatmap-cell" style="background:${bg}" title="${n} session${n>1?'s':''}"></div>`;
   });
@@ -3593,7 +3606,7 @@ function buildEtabBtns() {
 function getStatsSessions() {
   const ms = {'7j':7*86400000,'30j':30*86400000,'90j':90*86400000,all:Infinity};
   const cut = ms[statsPeriod]||Infinity;
-  let sess = cut===Infinity ? DB.sessions : DB.sessions.filter(s=>s.ts&&(Date.now()-new Date(s.ts))<=cut);
+  let sess = cut===Infinity ? DB.sessions : DB.sessions.filter(s=>s.ts&&(Date.now()-new Date(s.ts).getTime())<=cut);
   if(statsEtab!=='all') sess = sess.filter(s=>s.ecole===statsEtab);
   if(statsMatiere!=='all') sess = sess.filter(s=>s.matiere===statsMatiere);
   return sess;
@@ -3625,7 +3638,7 @@ async function saveKpiSnapshot() {
   const cut7  = new Date(Date.now()-7*86400000).toISOString();
   const cut30 = new Date(Date.now()-30*86400000).toISOString();
 
-  const dau = new Set(sess.filter(s=>s.ts&&s.ts.slice(0,10)===today).map(s=>s.pseudo)).size;
+  const dau = new Set(sess.filter(s=>s.ts&&localDateStr(s.ts)===localDateStr()).map(s=>s.pseudo)).size;
   const wau = new Set(sess.filter(s=>s.ts&&s.ts>cut7).map(s=>s.pseudo)).size;
   const mau = new Set(sess.filter(s=>s.ts&&s.ts>cut30).map(s=>s.pseudo)).size;
   const avgScore = sess.length ? Math.round(sess.reduce((a,s)=>a+(s.score_pct||0),0)/sess.length) : 0;
@@ -3713,9 +3726,9 @@ async function renderStats() {
   const daily = {};
   for(let i=days-1;i>=0;i--){
     const d=new Date(now); d.setDate(d.getDate()-i);
-    daily[d.toISOString().slice(0,10)]=0;
+    daily[localDateStr(d)]=0;
   }
-  sess.forEach(s=>{const k=s.ts?.slice(0,10); if(k&&daily[k]!==undefined) daily[k]++;});
+  sess.forEach(s=>{const k=localDateStr(s.ts); if(k&&daily[k]!==undefined) daily[k]++;});
 
   // Try to enrich from Supabase snapshots
   statsKpiSnapshots.forEach(snap=>{
@@ -3772,7 +3785,7 @@ async function renderStats() {
         const maxV = Math.max(...dailyEntries.map(([,v])=>v),1);
         return `<div style="font-size:10px;color:var(--t3);margin-bottom:8px">Sessions par jour · ${days}j</div>
         <div style="display:flex;flex-direction:column;gap:4px">${dailyEntries.map(([date,v])=>{
-          const isToday = date===new Date().toISOString().slice(0,10);
+          const isToday = date===localDateStr();
           return `<div style="display:flex;align-items:center;gap:8px"><span style="font-size:9px;color:${isToday?'var(--ac)':'var(--t3)'};min-width:70px;font-weight:${isToday?700:400}">${new Date(date).toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})}</span><div style="flex:1;height:6px;background:var(--surf3);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round(v/maxV*100)}%;background:${isToday?'var(--ac)':'var(--gr)'};border-radius:3px"></div></div><span style="font-size:10px;font-weight:${v>0?700:400};color:${v>0?'var(--gr)':'var(--t3)'};min-width:20px;text-align:right">${v}</span></div>`;
         }).join('')}</div>
         <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
@@ -3872,7 +3885,7 @@ async function renderStats() {
     <div style="display:flex;align-items:flex-end;gap:${barW>12?3:2}px;height:110px;padding-bottom:22px;overflow-x:auto">
       ${showDays.map(([date,val])=>{
         const h=Math.max(4,Math.round((val/maxVal)*95));
-        const isToday=date===new Date().toISOString().slice(0,10);
+        const isToday=date===localDateStr();
         const dayLabel=new Date(date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
         return `<div style="display:flex;flex-direction:column;align-items:center;gap:2px;flex-shrink:0" title="${dayLabel} : ${val} sessions" onclick="drillDay('${date}','${dayLabel}')">
           <div style="font-size:8px;color:var(--t3)">${val>0?val:''}</div>
@@ -5010,12 +5023,12 @@ function renderActivityChart(periodSess) {
 
   const days = dashPeriod==='today'?1:dashPeriod==='7j'?7:dashPeriod==='30j'?30:60;
   const now = new Date();
-  const dates = Array.from({length:days},(_,i)=>{ const d=new Date(now); d.setDate(d.getDate()-(days-1-i)); return d.toISOString().slice(0,10); });
+  const dates = Array.from({length:days},(_,i)=>{ const d=new Date(now); d.setDate(d.getDate()-(days-1-i)); return localDateStr(d); });
 
   // Sessions par jour
-  const sessPerDay = dates.map(date => periodSess.filter(s=>s.ts&&s.ts.slice(0,10)===date).length);
+  const sessPerDay = dates.map(date => periodSess.filter(s=>s.ts&&localDateStr(s.ts)===date).length);
   // Nouveaux élèves par jour
-  const newPerDay  = dates.map(date => DB.joueurs.filter(j=>j.ts&&j.ts.slice(0,10)===date).length);
+  const newPerDay  = dates.map(date => DB.joueurs.filter(j=>j.ts&&localDateStr(j.ts)===date).length);
 
   // Simuler une courbe plus réaliste si peu de vraies données
   const enriched = sessPerDay.map((v,i)=>Math.max(v, [3,4,2,5,6,4,3,7,5,4,6,3,4,5,6,4,5,3,4,6,5,4,7,5,3,4,5,6,4,3][i%30]||2));
@@ -5227,7 +5240,7 @@ function renderTopEtabs() {
     const users = DB.joueurs.filter(j=>j.ecole&&j.ecole.toLowerCase().includes(e.short.toLowerCase())).length;
     const sess  = DB.sessions.filter(s=>s.ecole&&s.ecole.toLowerCase().includes(e.short.toLowerCase()));
     const avg   = sess.length ? Math.round(sess.reduce((a,s)=>a+(s.score_pct||0),0)/sess.length) : 0;
-    const sessToday = sess.filter(s=>s.ts&&s.ts.slice(0,10)===new Date().toISOString().slice(0,10)).length;
+    const sessToday = sess.filter(s=>s.ts&&localDateStr(s.ts)===localDateStr()).length;
     const plan = plans[e.key]||'Starter';
     return { e, users, avg, sessToday, plan };
   }).sort((a,b)=>b.avg-a.avg);
