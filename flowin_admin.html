@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Flowin · Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -441,6 +441,38 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
 .lg-inp:focus{border-color:var(--ac)}
 /* ── LOTS ── */
 .lot-card{border:1px solid var(--b);border-radius:12px;padding:14px;margin-bottom:10px;background:var(--surf);display:flex;align-items:flex-start;gap:12px}
+/* ── PARTNER CARDS ── */
+.partners-grid{padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.pcard{background:var(--surf);border:1.5px solid var(--b);border-radius:12px;overflow:visible;transition:box-shadow .2s}
+.pcard:hover{box-shadow:0 4px 18px rgba(0,0,0,.09)}
+.pcard.inactive{opacity:.55}
+.pcard-top{padding:14px 14px 10px}
+.logo-wrap{position:relative;display:inline-block;margin-bottom:10px}
+.pcard-logo{width:50px;height:50px;border-radius:11px;border:1.5px dashed var(--b);display:flex;align-items:center;justify-content:center;font-size:24px;background:var(--surf2);cursor:pointer;transition:all .15s}
+.pcard-logo:hover{background:var(--surf3);border-color:var(--ac)}
+.logo-hint{position:absolute;bottom:-5px;right:-5px;font-size:10px;background:var(--surf);border-radius:50%;width:17px;height:17px;display:flex;align-items:center;justify-content:center;border:1px solid var(--b);pointer-events:none}
+.pcard-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--t);border:none;background:transparent;width:100%;outline:none;padding:2px 0;border-bottom:1.5px solid transparent}
+.pcard-name:focus{border-bottom-color:var(--ac)}
+.pcard-name::placeholder{color:var(--t3)}
+.pcard-desc{font-size:11px;color:var(--t2);border:none;background:transparent;width:100%;outline:none;resize:none;padding:4px 0 2px;border-bottom:1px solid transparent;font-family:inherit;line-height:1.5}
+.pcard-desc:focus{border-bottom-color:#D0CFE8}
+.pcard-desc::placeholder{color:var(--t3)}
+.pcard-code-row{display:flex;align-items:center;gap:7px;margin-top:10px;padding:7px 10px;background:var(--surf2);border-radius:7px;border:1px solid var(--b)}
+.pcard-code-lbl{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;flex-shrink:0}
+.pcard-code{font-family:'Courier New',monospace;font-size:13px;font-weight:800;color:var(--ac);border:none;background:transparent;outline:none;width:100%;text-transform:uppercase;letter-spacing:.06em}
+.pcard-code::placeholder{color:#C0C0D8;font-weight:400;letter-spacing:0;font-family:inherit}
+.pcard-footer{padding:9px 12px;background:var(--surf2);border-top:1px solid var(--b);display:flex;align-items:center;gap:8px}
+.pcard-cond{flex:1;min-width:0}
+.pcard-cond select{font-size:10px;border:1px solid var(--b);border-radius:6px;padding:4px 6px;background:var(--surf);color:var(--t2);font-family:inherit;outline:none;width:100%;cursor:pointer}
+.pcard-status{display:flex;align-items:center;gap:5px;cursor:pointer;flex-shrink:0;padding:3px 8px;border-radius:20px;background:var(--surf3);border:1px solid var(--b)}
+.pcard-dot{width:7px;height:7px;border-radius:50%;background:#D1D5DB;flex-shrink:0;transition:background .2s}
+.pcard-dot.on{background:var(--gr)}
+.pcard-slbl{font-size:10px;font-weight:600;color:var(--t3);white-space:nowrap}
+.pcard-del{width:26px;height:26px;border-radius:7px;border:1px solid var(--b);background:transparent;color:var(--t3);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pcard-del:hover{background:#FFF0F0;border-color:#FCD4D4;color:#E53935}
+.emoji-picker-admin{position:absolute;top:58px;left:0;background:var(--surf);border:1.5px solid var(--b);border-radius:10px;padding:8px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.14)}
+.emoji-opt-admin{font-size:18px;padding:5px;border-radius:7px;cursor:pointer;text-align:center}
+.emoji-opt-admin:hover{background:var(--surf2)}
 .lot-ic{width:44px;min-width:44px;height:44px;border-radius:10px;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:22px}
 .lot-bd{flex:1;min-width:0}
 .lot-ti{font-size:13px;font-weight:700;color:var(--t)}
@@ -598,16 +630,28 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
         <div class="panel">
           <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
             <span>⭐ Barème des points</span>
-            <button onclick="navTo('bareme')" style="background:var(--surf2);border:1px solid var(--b);border-radius:6px;padding:3px 8px;font-size:10px;cursor:pointer;color:var(--t2)">✏️ Modifier</button>
+            <a href="flowin_bareme.html" target="_blank" style="background:var(--surf2);border:1px solid var(--b);border-radius:6px;padding:3px 8px;font-size:10px;cursor:pointer;color:var(--t2);text-decoration:none">✏️ Modifier</a>
           </div>
           <div style="padding:14px" id="dash-bareme"></div>
         </div>
         <div class="panel">
           <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
             <span>🏆 Seuils des ligues</span>
-            <button onclick="navTo('bareme')" style="background:var(--surf2);border:1px solid var(--b);border-radius:6px;padding:3px 8px;font-size:10px;cursor:pointer;color:var(--t2)">✏️ Modifier</button>
+            <a href="flowin_bareme.html" target="_blank" style="background:var(--surf2);border:1px solid var(--b);border-radius:6px;padding:3px 8px;font-size:10px;cursor:pointer;color:var(--t2);text-decoration:none">✏️ Modifier</a>
           </div>
           <div style="padding:14px" id="dash-ligues-seuils"></div>
+        </div>
+      </div>
+
+      <!-- Accès module Barème & Lots -->
+      <div class="panel" style="margin-bottom:4px">
+        <div style="padding:14px;display:flex;align-items:center;gap:14px">
+          <div style="font-size:28px">⭐</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700;color:var(--t)">Barème & Lots partenaires</div>
+            <div style="font-size:11px;color:var(--t3);margin-top:2px">Configurez les points, les ligues et les offres partenaires — module indépendant</div>
+          </div>
+          <a href="flowin_bareme.html" target="_blank" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap">⭐ Ouvrir le module →</a>
         </div>
       </div>
 
@@ -1354,84 +1398,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       </div>
 
     <!-- PARAMÈTRES -->
-    <div class="view" id="v-settings">
-      <div class="view-title">⚙️ Paramètres</div>
-      <div class="view-sub">Configuration de la plateforme Flowin</div>
-      <div class="settings-grid">
-        <div class="panel">
-          <div class="panel-header">🔗 Connexion Supabase</div>
-          <div style="padding:16px" id="settings-supa"></div>
-        </div>
-        <div class="panel">
-          <div class="panel-header">🎮 App Élève</div>
-          <div style="padding:16px" id="settings-app"></div>
-        </div>
-      </div>
-    </div>
-
-
-
-
     <!-- BARÈME & LOTS -->
-    <div class="view" id="v-bareme">
-      <div class="view-title">Barème & Lots</div>
-      <div class="view-sub">Paramétrez les points, les ligues et les récompenses</div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-
-        <!-- Points -->
-        <div class="panel">
-          <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
-            <span>⭐ Points par action</span>
-            <button onclick="resetBareme()" style="font-size:10px;padding:3px 9px;border-radius:20px;background:var(--surf2);border:1px solid var(--b);cursor:pointer;color:var(--t2)">↺ Reset</button>
-          </div>
-          <div style="padding:16px" id="bar-pts"></div>
-        </div>
-
-        <!-- Ligues -->
-        <div class="panel">
-          <div class="panel-header">🏆 Seuils de ligue</div>
-          <div style="padding:16px" id="bar-ligues"></div>
-        </div>
-
-      </div>
-
-      <!-- Lots : cachés par défaut, visibles seulement si toggle ON -->
-      <div class="panel" style="margin-bottom:14px">
-        <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
-          <div style="display:flex;align-items:center;gap:14px">
-            <span>🎰 Lots hebdomadaires</span>
-            <!-- Toggle ON/OFF -->
-            <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="toggleLots()">
-              <div id="lots-track" style="width:38px;height:22px;border-radius:20px;background:#D1D5DB;position:relative;transition:background .25s;flex-shrink:0">
-                <div id="lots-thumb" style="position:absolute;top:4px;left:4px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .25s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
-              </div>
-              <span id="lots-lbl" style="font-size:11px;font-weight:600;color:var(--t3)">Désactivé</span>
-            </div>
-          </div>
-          <button id="lots-add-btn" onclick="addLot()" style="font-size:11px;padding:5px 14px;border-radius:20px;background:#D1D5DB;color:#9CA3AF;border:none;cursor:not-allowed;font-weight:600;pointer-events:none">+ Ajouter un lot</button>
-        </div>
-
-        <!-- Bandeau affiché quand désactivé -->
-        <div id="lots-off-banner" style="padding:11px 16px;background:#FFF8E1;border-bottom:1px solid #FFE082;font-size:11px;color:#B45309;font-weight:500;display:flex;align-items:center;gap:8px">
-          ⚠️ Activez le toggle pour configurer et afficher les récompenses aux élèves.
-        </div>
-
-        <!-- Contenu lots : masqué par défaut -->
-        <div id="lots-body" style="display:none">
-          <div style="padding:10px 16px;background:var(--surf2);border-bottom:1px solid var(--b);font-size:10px;color:var(--t2)">
-            Un lot est attribué automatiquement quand l'élève remplit la condition. Il reçoit une notification dans l'app avec le code promo.
-          </div>
-          <div id="bar-lots" style="padding:14px"></div>
-        </div>
-
-      </div>
-
-      <div style="display:flex;justify-content:flex-end;padding:4px 0 20px">
-        <button onclick="saveBareme2()" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer">✓ Sauvegarder dans Supabase</button>
-      </div>
-    </div>
-
   </div><!-- end #content -->
 </div><!-- end #main -->
 
@@ -1484,6 +1451,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
 // ── CONFIG ──
 const SB_URL = 'https://ywcqtupgoxfzkddqkztk.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3F0dXBnb3hmemtkZHFrenRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjQ0MDUsImV4cCI6MjA5MjgwMDQwNX0.Y8sb7Faqlp-uFyUjGl013018RWP0MIbbWzPAVcTMIoI';
+const SB_ENABLED = true; // ← mettre false pour mode démo
 
 // ── DB ──
 const DB = { joueurs: [], sessions: [], parrainage: [], connexions: [] };
@@ -1553,6 +1521,14 @@ const getTotalPts = pseudo => {
 async function loadData() {
   const dot = document.getElementById('live-dot');
   const lbl = document.getElementById('live-label');
+  if(!SB_ENABLED) {
+    dot.className = 'live-dot';
+    lbl.className = 'live-label';
+    lbl.textContent = '⚡ Mode démo';
+    updateBadges();
+    renderCurrentView();
+    return;
+  }
   dot.className = 'live-dot';
   lbl.className = 'live-label';
   lbl.textContent = 'Synchronisation…';
@@ -1602,14 +1578,43 @@ async function loadData() {
     banner.innerHTML = `⚠️ Supabase : ${errMsg} <button onclick="this.parentElement.remove()" style="margin-left:10px;background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:5px;padding:2px 8px;cursor:pointer">✕</button>`;
     document.body.appendChild(banner);
     setTimeout(()=>banner.remove(), 15000);
-    DB.joueurs = [];
-    DB.sessions = [];
-    DB.parrainage = [];
-    DB.connexions = [];
+    DB.joueurs = [
+      {id:1, ts:new Date(Date.now()-86400000*2).toISOString(), pseudo:'OliviaDiana', prenom:'Olivia', nom:'Diana', email:'olivia@lycee-vinci.fr', ecole:'Lycée Léonard de Vinci', pts_total:2340, streak:5, ligue:'gold'},
+      {id:2, ts:new Date(Date.now()-86400000*5).toISOString(), pseudo:'LucasBertin', prenom:'Lucas', nom:'Bertin', email:'lucas@lycee-vinci.fr', ecole:'Lycée Léonard de Vinci', pts_total:1820, streak:3, ligue:'gold'},
+      {id:3, ts:new Date(Date.now()-86400000*7).toISOString(), pseudo:'EmmaFaure', prenom:'Emma', nom:'Faure', email:'emma@lycee-vinci.fr', ecole:'Lycée Léonard de Vinci', pts_total:1450, streak:2, ligue:'silver'},
+      {id:4, ts:new Date(Date.now()-86400000*10).toISOString(), pseudo:'NathanLopez', prenom:'Nathan', nom:'Lopez', email:'nathan@lycee-massena.fr', ecole:'Lycée Masséna', pts_total:980, streak:1, ligue:'silver'},
+      {id:5, ts:new Date(Date.now()-86400000*12).toISOString(), pseudo:'ChloeMartin', prenom:'Chloé', nom:'Martin', email:'chloe@lycee-massena.fr', ecole:'Lycée Masséna', pts_total:760, streak:0, ligue:'silver'},
+      {id:6, ts:new Date(Date.now()-86400000*14).toISOString(), pseudo:'RomainDuval', prenom:'Romain', nom:'Duval', email:'romain@lycee-vinci.fr', ecole:'Lycée Léonard de Vinci', pts_total:3200, streak:7, ligue:'diamond'},
+      {id:7, ts:new Date(Date.now()-86400000*3).toISOString(), pseudo:'LaetitiaBrun', prenom:'Laetitia', nom:'Brun', email:'laetitia@lycee-vinci.fr', ecole:'Lycée Léonard de Vinci', pts_total:410, streak:0, ligue:'bronze'},
+      {id:8, ts:new Date(Date.now()-86400000*6).toISOString(), pseudo:'ThomasVidal', prenom:'Thomas', nom:'Vidal', email:'thomas@lycee-massena.fr', ecole:'Lycée Masséna', pts_total:1200, streak:4, ligue:'silver'},
+      {id:9, ts:new Date(Date.now()-86400000*1).toISOString(), pseudo:'amelie.petit', prenom:'Amélie', nom:'Petit', email:'amelie@lycee-vinci.fr', ecole:'Lycée Léonard de Vinci', pts_total:320, streak:1, ligue:'bronze'},
+      {id:10, ts:new Date(Date.now()-86400000*2).toISOString(), pseudo:'jules.fontaine', prenom:'Jules', nom:'Fontaine', email:'jules@lycee-vinci.fr', ecole:'Lycée Léonard de Vinci', pts_total:180, streak:0, ligue:'bronze'},
+      {id:11, ts:new Date(Date.now()-86400000*4).toISOString(), pseudo:'lea.bernard', prenom:'Léa', nom:'Bernard', email:'lea@lycee-massena.fr', ecole:'Lycée Masséna', pts_total:540, streak:2, ligue:'silver'},
+    ];
+    const themes = ['La guerre froide','La mondialisation','De la IVe à Ve République','Les 30 Glorieuses','La construction européenne','Décolonisation'];
+    const matieres = ['Histoire','Géographie','EMC'];
+    DB.sessions = Array.from({length:40}, (_,i) => ({
+      id:i+1, ts:new Date(Date.now()-Math.random()*86400000*14).toISOString(),
+      pseudo:DB.joueurs[Math.floor(Math.random()*DB.joueurs.length)].pseudo,
+      ecole:Math.random()>.5?'Lycée Léonard de Vinci':'Lycée Masséna',
+      theme:themes[Math.floor(Math.random()*themes.length)],
+      matiere:matieres[Math.floor(Math.random()*matieres.length)],
+      score_pct:Math.floor(Math.random()*60)+40,
+      pts_round:Math.floor(Math.random()*80)+20,
+      nb_bonnes:Math.floor(Math.random()*4)+1, nb_questions:5
+    }));
+    DB.parrainage = [
+      {id:1, ts:new Date(Date.now()-86400000*1).toISOString(), sender:'OliviaDiana', sender_etab:'Lycée Léonard de Vinci', destinataire:'amelie.petit', channel:'whatsapp', pts:100},
+      {id:2, ts:new Date(Date.now()-86400000*3).toISOString(), sender:'LucasBertin', sender_etab:'Lycée Léonard de Vinci', destinataire:'jules.fontaine', channel:'telegram', pts:100},
+      {id:3, ts:new Date(Date.now()-86400000*5).toISOString(), sender:'RomainDuval', sender_etab:'Lycée Léonard de Vinci', destinataire:'lea.bernard', channel:'copy', pts:100},
+    ];
+    DB.connexions = DB.joueurs.map((j,i) => ({
+      id:i+1, ts:new Date(Date.now()-Math.random()*86400000*7).toISOString(),
+      pseudo:j.pseudo, device:'Mobile', duree_min:Math.floor(Math.random()*20)+5
+    }));
   }
   updateBadges();
   renderCurrentView();
-  if(currentView==='bareme') renderBareme2();
 }
 
 // ── NAV ──
@@ -1623,7 +1628,6 @@ const NAV_ITEMS = [
   { id:'cours',           label:'+ Cours',           icon:'📖', sec:'Contenu', badgeFn:()=>COURS_DB.length },
   { id:'stats',           label:'Stats & Trafic',   icon:'📊', sec:null },
   { id:'appcom',          label:'App & Com',        icon:'📲', sec:null },
-  { id:'settings',        label:'Paramètres',      icon:'⚙️', sec:null },
 ];
 let currentView = 'dashboard';
 
@@ -1653,15 +1657,14 @@ function navTo(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   const vEl = document.getElementById('v-'+id);
   if(vEl) vEl.classList.add('active');
-  const titles = {dashboard:'Dashboard',eleves:'Élèves',defis:'Défis & Pools',parrainage:'Parrainage',ligues:'Ligues & Classements',etablissements:'Établissements',cours:'Cours & Contenus',stats:'Stats & Trafic',appcom:'App & Communication',bareme:'Barème & Lots',settings:'Paramètres'};
+  const titles = {dashboard:'Dashboard',eleves:'Élèves',defis:'Défis & Pools',parrainage:'Parrainage',ligues:'Ligues & Classements',etablissements:'Établissements',cours:'Cours & Contenus',stats:'Stats & Trafic',appcom:'App & Communication'};
   document.getElementById('topbar-title').textContent = titles[id]||id;
-  if(id === 'bareme') { requestAnimationFrame(() => renderBareme2()); return; }
   renderCurrentView();
 }
 
 function renderCurrentView() {
-  const r = {dashboard:renderDashboard,eleves:renderEleves,defis:renderDefis,parrainage:renderParrainage,ligues:renderLigues,etablissements:renderEtabs,cours:renderCours,stats:renderStats,appcom:renderAppCom,bareme:renderBareme2,settings:renderSettings};
-  if(r[currentView]) r[currentView]();
+  const r = {dashboard:renderDashboard,eleves:renderEleves,defis:renderDefis,parrainage:renderParrainage,ligues:renderLigues,etablissements:renderEtabs,cours:renderCours,stats:renderStats,appcom:renderAppCom};
+  if(r[currentView]) { try { r[currentView](); } catch(e) { console.warn('renderCurrentView error:', currentView, e); } }
 }
 
 // ── DASHBOARD ──
@@ -2054,114 +2057,140 @@ function openEleve(pseudo) {
   const nextElev = currentIdx < allElevs.length - 1 ? allElevs[currentIdx + 1] : null;
 
   document.getElementById('modal-eleve-body').innerHTML = `
-    <!-- Barre navigation + actions -->
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--b);flex-wrap:wrap">
-      <button onclick="${prevElev?`openEleve('${prevElev.pseudo}')`:'void(0)'}" style="padding:6px 12px;border-radius:7px;border:1px solid var(--b);background:${prevElev?'var(--surf2)':'var(--surf3)'};color:${prevElev?'var(--t2)':'var(--t3)'};font-size:11px;cursor:${prevElev?'pointer':'default'};font-family:inherit">← ${prevElev?`${prevElev.j.prenom} ${prevElev.j.nom}`:'—'}</button>
+    <!-- Navigation élèves -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--b)">
+      <button onclick="${prevElev?`openEleve('${prevElev.pseudo}')`:'void(0)'}" style="padding:5px 11px;border-radius:7px;border:1px solid var(--b);background:${prevElev?'var(--surf2)':'var(--surf3)'};color:${prevElev?'var(--t2)':'var(--t3)'};font-size:11px;cursor:${prevElev?'pointer':'default'};font-family:inherit">← ${prevElev?`${prevElev.j.prenom}`:'—'}</button>
       <span style="font-size:10px;color:var(--t3);flex:1;text-align:center">${currentIdx+1} / ${allElevs.length}</span>
-      <button onclick="${nextElev?`openEleve('${nextElev.pseudo}')`:'void(0)'}" style="padding:6px 12px;border-radius:7px;border:1px solid var(--b);background:${nextElev?'var(--surf2)':'var(--surf3)'};color:${nextElev?'var(--t2)':'var(--t3)'};font-size:11px;cursor:${nextElev?'pointer':'default'};font-family:inherit">${nextElev?`${nextElev.j.prenom} ${nextElev.j.nom}`:'—'} →</button>
+      <button onclick="${nextElev?`openEleve('${nextElev.pseudo}')`:'void(0)'}" style="padding:5px 11px;border-radius:7px;border:1px solid var(--b);background:${nextElev?'var(--surf2)':'var(--surf3)'};color:${nextElev?'var(--t2)':'var(--t3)'};font-size:11px;cursor:${nextElev?'pointer':'default'};font-family:inherit">${nextElev?`${nextElev.j.prenom}`:'—'} →</button>
     </div>
-    <!-- Actions rapides -->
-    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-      <a href="mailto:${d.j.email||''}" style="padding:7px 14px;border-radius:7px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:11px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px">✉️ Email</a>
-      <a href="https://wa.me/?text=${encodeURIComponent('Bonjour '+d.j.prenom+', un message de Flowin !')}" target="_blank" style="padding:7px 14px;border-radius:7px;border:1px solid var(--b);background:#E8F5E9;color:#1B5E20;font-size:11px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px">💬 WhatsApp</a>
-      <button onclick="navTo('eleves')" style="padding:7px 14px;border-radius:7px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">👥 Tous les élèves</button>
-      <button onclick="closeEleve();navTo('parrainage')" style="padding:7px 14px;border-radius:7px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">🎁 Parrainages</button>
-    </div>
-    <div class="fiche-header">
+
+    <!-- Header identité -->
+    <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:16px">
       ${ava(d.j.prenom,d.j.nom,d.idx,52)}
       <div style="flex:1">
-        <div class="fiche-name">${d.j.prenom} ${d.j.nom}</div>
-        <div class="fiche-meta">${d.j.classe||'—'} · ${d.j.ecole||'—'}</div>
-        <div class="fiche-email">${d.j.email||'—'}</div>
+        <div style="font-size:18px;font-weight:800;color:var(--t);font-family:'Syne',sans-serif">${d.j.prenom} ${d.j.nom}</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:2px">${d.j.ecole||'—'} ${d.j.classe?'· '+d.j.classe:''}</div>
+        <div style="font-size:11px;color:var(--ac);margin-top:1px">${d.j.email||'—'}</div>
+        <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="bdg" style="background:${lg.bg};color:${lg.color}">${lg.icon} Ligue ${lg.name}</span>
+          ${d.j.genre==='F'?'<span class="bdg purple">♀ Féminin</span>':d.j.genre==='M'?'<span class="bdg blue">♂ Masculin</span>':''}
+          ${bdg(d.isActif?'green':'amber',d.isActif?'Actif':'Inactif')}
+          ${d.j.pwa_installed?'<span class="bdg green">📱 App</span>':'<span class="bdg gray">🌐 Web</span>'}
+        </div>
       </div>
-      <div style="text-align:right">
-        <span class="bdg" style="background:${lg.bg};color:${lg.color};padding:6px 13px;font-size:12px">${lg.icon} Ligue ${lg.name}</span>
-        <div style="font-size:10px;color:var(--t3);margin-top:5px">Inscription : ${fmtDate(d.j.ts)}</div>
-        ${d.j.pwa_installed ? `<div style="margin-top:4px"><span class="pwa-badge">📱 App installée</span></div>` : `<div style="font-size:9px;color:var(--t3);margin-top:4px">🌐 Web uniquement</div>`}
+      <div style="text-align:right;font-size:10px;color:var(--t3)">
+        Inscrit le ${fmtDate(d.j.ts)}<br>
+        <span style="font-size:9px">Dernière session : ${d.last?ago(d.last):'—'}</span>
       </div>
     </div>
 
-    <div class="fiche-stats">
-      ${stats5.map(([v,l,tc,bg])=>`<div class="fiche-stat" style="background:${bg}"><div class="fiche-stat-val" style="color:${tc}">${v}</div><div class="fiche-stat-label">${l}</div></div>`).join('')}
+    <!-- KPIs -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px">
+      ${[
+        [d.avg+'%','Score moy.','var(--gr)','#E8F5E9'],
+        [d.us.length,'Quiz joués','var(--ac)','#EEECFC'],
+        ['🔥 '+d.maxStreak+'j','Streak max','var(--am)','#FEF3DC'],
+        [d.totalPts.toLocaleString('fr'),'Points total','var(--am)','#FEF9E7'],
+        [parr.length,'Parrainages','#E040A0','#FCE4EC'],
+      ].map(([v,l,c,bg])=>`<div style="background:${bg};border-radius:10px;padding:12px 10px;text-align:center"><div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:${c}">${v}</div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">${l}</div></div>`).join('')}
     </div>
 
-    <div class="fiche-ligue-bar">
+    <!-- Progression ligue -->
+    <div style="background:var(--surf2);border-radius:9px;padding:10px 14px;margin-bottom:14px">
       <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-bottom:6px">
-        <span>Progression — ${lg.icon} ${lg.name}</span>
-        <span>${d.totalPts.toLocaleString('fr')} / ${lg.max.toLocaleString('fr')} pts → ${lgNext?.name||'MAX'}</span>
+        <span>${lg.icon} ${lg.name}</span>
+        <span>${d.totalPts.toLocaleString('fr')} / ${lg.max===99999?'∞':lg.max.toLocaleString('fr')} pts → ${lgNext?.name||'MAX 👑'}</span>
       </div>
-      <div class="ligue-bar-track"><div class="ligue-bar-fill" style="width:${lgPct}%;background:${lg.color}"></div></div>
+      <div style="height:6px;background:var(--surf3);border-radius:3px;overflow:hidden"><div style="height:100%;width:${lgPct}%;background:${lg.color};border-radius:3px;transition:width .4s"></div></div>
     </div>
 
-    <div class="fiche-grid2">
+    <!-- Actions rapides -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+      <a href="mailto:${d.j.email||''}" style="padding:7px 14px;border-radius:7px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:11px;font-weight:600;text-decoration:none">✉️ Email</a>
+      <a href="https://wa.me/?text=${encodeURIComponent('Bonjour '+d.j.prenom+', un message de Flowin !')}" target="_blank" style="padding:7px 14px;border-radius:7px;background:#E8F5E9;color:#1B5E20;font-size:11px;font-weight:600;text-decoration:none;border:1px solid #C8E6C9">💬 WhatsApp</a>
+    </div>
+
+    <!-- Contenu 2 colonnes -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+
+      <!-- Informations -->
       <div class="fiche-block">
         <div class="fiche-block-title">📋 Informations</div>
         ${[
-          ['Genre', d.j.genre==='F'?'Féminin':d.j.genre==='M'?'Masculin':d.j.genre||'—'],
+          ['Genre', d.j.genre==='F'?'♀ Féminin':d.j.genre==='M'?'♂ Masculin':d.j.genre||'—'],
           ['Email', d.j.email||'—'],
           ['Établissement', d.j.ecole||'—'],
           ['Classe', d.j.classe||'—'],
           ['Inscription', fmtDate(d.j.ts)],
-          ['Dernière session', d.last?ago(d.last):'—'],
-        ].map(([k,v])=>`<div class="info-row"><span class="info-key">${k}</span><span class="info-val" style="${k==='Email'?'color:var(--ac)':''}">${v}</span></div>`).join('')}
-        <div class="info-row"><span class="info-key">Statut</span>${bdg(d.isActif?'green':'amber',d.isActif?'Actif':'Inactif')}</div>
+        ].map(([k,v])=>`<div class="info-row"><span class="info-key">${k}</span><span class="info-val">${v}</span></div>`).join('')}
       </div>
+
+      <!-- Parrainages cliquables -->
       <div class="fiche-block">
-        <div class="fiche-block-title">🎁 Parrainages (${parr.length})</div>
+        <div class="fiche-block-title">🎁 Filleuls (${parr.length})</div>
         ${parr.length===0
-          ? '<div style="font-size:11px;color:var(--t3);font-style:italic;text-align:center;padding:16px 0">Aucun parrainage effectué</div>'
-          : parr.slice(0,5).map((p,i)=>`<div style="display:flex;align-items:center;gap:7px;padding:6px 0;${i<Math.min(parr.length,5)-1?'border-bottom:1px solid var(--b)':''}"><span style="font-size:14px">${chIc[p.channel]||'↗️'}</span><span style="flex:1;color:var(--t);font-weight:500;font-size:11px">${p.destinataire}</span>${bdg('green','+'+(p.pts||100)+' pts')}</div>`).join('')
+          ? '<div style="font-size:11px;color:var(--t3);text-align:center;padding:16px 0">Aucun parrainage</div>'
+          : parr.slice(0,6).map((p,i)=>{
+              const filleul = (buildElevs()||[]).find(e=>e.pseudo===p.destinataire||(e.j.prenom||'').toLowerCase()===p.destinataire.toLowerCase());
+              return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;${i<Math.min(parr.length,6)-1?'border-bottom:1px solid var(--b)':''};${filleul?'cursor:pointer':''}" ${filleul?`onclick="openEleve('${filleul.pseudo}')"`:''}>\
+                <span style="font-size:13px">${chIc[p.channel]||'↗️'}</span>\
+                <span style="flex:1;font-size:11px;font-weight:600;color:${filleul?'var(--ac)':'var(--t)'}\">${p.destinataire}${filleul?' →':''}</span>\
+                <span style="font-size:10px;background:#E8F5E9;color:var(--gr);border-radius:20px;padding:2px 8px;font-weight:700">+${p.pts||100} pts</span>\
+              </div>`;
+            }).join('')
         }
-        ${parr.length>5?`<div style="font-size:10px;color:var(--t3);margin-top:6px;text-align:center">+${parr.length-5} autres</div>`:''}
-        ${parr.length>0?`<div style="font-size:11px;color:var(--gr);font-weight:600;margin-top:10px">+${parr.reduce((s,p)=>s+(p.pts||100),0)} pts gagnés au total</div>`:''}
+        ${parr.length>0?`<div style="font-size:10px;color:var(--gr);font-weight:700;margin-top:8px;padding-top:8px;border-top:1px solid var(--b)">Total : +${parr.reduce((s,p)=>s+(p.pts||100),0)} pts</div>`:''}
       </div>
     </div>
 
-    <div class="fiche-block" style="margin-bottom:14px">
-      <div class="fiche-block-title">📅 Activité — 30 derniers jours</div>
-      <div class="heatmap">${heat.join('')}</div>
-      <div class="heatmap-legend">
-        <span>${d.us.length} sessions au total</span>
-        <span>·</span>
-        <span>Dernière : ${d.last?new Date(d.last).toLocaleDateString('fr-FR'):'—'}</span>
-        <span style="margin-left:auto;display:flex;align-items:center;gap:4px">
-          Moins
-          <div style="width:11px;height:11px;border-radius:2px;background:var(--surf3)"></div>
-          <div style="width:11px;height:11px;border-radius:2px;background:rgba(108,95,232,.3)"></div>
-          <div style="width:11px;height:11px;border-radius:2px;background:var(--ac)"></div>
-          <div style="width:11px;height:11px;border-radius:2px;background:var(--gr)"></div>
-          Plus
-        </span>
-      </div>
-    </div>
-
-    ${topT.length>0?`<div class="fiche-block">
+    <!-- Thèmes favoris -->
+    ${topT.length>0?`<div class="fiche-block" style="margin-bottom:12px">
       <div class="fiche-block-title">🎯 Thèmes favoris</div>
-      ${topT.map(([t,n],i)=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:5px 0;${i<topT.length-1?'border-bottom:1px solid var(--b)':''}"><span style="color:var(--t);font-weight:500">${t}</span><span style="color:var(--t3)">${n} session${n>1?'s':''}</span></div>`).join('')}
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">
+        ${topT.slice(0,4).map(([t,n])=>`<div style="background:var(--surf2);border-radius:7px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;color:var(--t);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px">${t}</span><span style="font-size:10px;color:var(--t3);flex-shrink:0;margin-left:4px">${n}×</span></div>`).join('')}
+      </div>
     </div>`:''}
 
-    <!-- HISTORIQUE CONNEXIONS -->
-    <div class="fiche-block">
-      <div class="fiche-block-title">🔐 Historique des connexions ${d.connexions.length?`<span style="font-size:10px;color:var(--t3);font-weight:400;margin-left:6px">(${d.connexions.length})</span>`:''}</div>
-      ${d.connexions.length ? `
-        <div style="max-height:240px;overflow-y:auto">
-          ${d.connexions.slice(0,30).map((c,i)=>{
-            const dt = new Date(c.ts);
-            const isPWA = c.device==='PWA';
-            const isMobile = c.device==='Mobile Web';
-            const icon = isPWA?'📱':isMobile?'📲':'💻';
-            return `<div style="display:flex;align-items:center;gap:10px;padding:7px 0;${i<Math.min(d.connexions.length,30)-1?'border-bottom:1px solid var(--b)':''}">
-              <span style="font-size:14px">${icon}</span>
-              <div style="flex:1;min-width:0">
-                <div style="font-size:11px;font-weight:600;color:var(--t)">${dt.toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short',year:'numeric'})} · ${dt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</div>
-                <div style="font-size:9px;color:var(--t3)">${c.device||'—'}${c.duree_min>0?' · <span style="color:var(--ac);font-weight:600">'+c.duree_min+' min</span>':''}${i===0?' · <span style="color:var(--gr);font-weight:600">Plus récente</span>':''}</div>
-              </div>
-              <span style="font-size:10px;color:var(--t3)">${ago(c.ts)}</span>
-            </div>`;
-          }).join('')}
-          ${d.connexions.length > 30 ? `<div style="text-align:center;font-size:10px;color:var(--t3);padding:8px 0;border-top:1px solid var(--b);margin-top:6px">+ ${d.connexions.length-30} connexions plus anciennes</div>` : ''}
+    <!-- QR Code parrainage -->
+    <div class="fiche-block" style="margin-bottom:12px">
+      <div class="fiche-block-title">⬛ QR Code — Lien de parrainage</div>
+      <div style="display:flex;align-items:center;gap:16px;padding:8px 0">
+        <img id="fiche-qr-${d.pseudo}" src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent('https://romaincollin-design.github.io/flowin-revision-bac-olivia-2026?ref='+d.pseudo)}&color=3B3A8F&bgcolor=FFFFFF&qzone=1" style="border-radius:8px;border:1px solid var(--b);flex-shrink:0" width="110" height="110" alt="QR ${d.pseudo}">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;font-weight:700;color:var(--t);margin-bottom:6px">Lien personnel de ${d.j.prenom}</div>
+          <div style="font-size:10px;color:var(--t3);word-break:break-all;background:var(--surf2);border-radius:6px;padding:6px 8px;font-family:monospace;margin-bottom:10px">https://romaincollin-design.github.io/flowin-revision-bac-olivia-2026?ref=${d.pseudo}</div>
+          <div style="display:flex;gap:6px">
+            <a href="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent('https://romaincollin-design.github.io/flowin-revision-bac-olivia-2026?ref='+d.pseudo)}&color=3B3A8F&bgcolor=FFFFFF&qzone=2" download="flowin-qr-${d.pseudo}.png" target="_blank" style="padding:6px 12px;border-radius:7px;background:var(--ac);color:#fff;font-size:11px;font-weight:600;text-decoration:none">⬇ Télécharger</a>
+            <button onclick="navigator.clipboard.writeText('https://romaincollin-design.github.io/flowin-revision-bac-olivia-2026?ref=${d.pseudo}').then(()=>{this.textContent='✓ Copié !';setTimeout(()=>this.textContent='📋 Copier lien',1500)})" style="padding:6px 12px;border-radius:7px;background:var(--surf2);border:1px solid var(--b);color:var(--t2);font-size:11px;font-weight:600;cursor:pointer">📋 Copier lien</button>
+          </div>
         </div>
-      ` : `<div style="text-align:center;padding:14px;color:var(--t3);font-size:11px">Aucune connexion enregistrée</div>`}
+      </div>
+    </div>
+    <div class="fiche-block">
+      <div class="fiche-block-title">🔐 Connexions <span style="font-size:10px;color:var(--t3);font-weight:400">(${d.connexions.length})</span></div>
+      ${d.connexions.length ? `
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr>
+            <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Date</th>
+            <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Heure</th>
+            <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Durée</th>
+            <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Appareil</th>
+          </tr></thead>
+          <tbody>
+            ${d.connexions.slice(0,20).map((c,i)=>{
+              const dt = new Date(c.ts);
+              const icon = c.device==='PWA'?'📱':c.device==='Mobile Web'?'📲':'💻';
+              return `<tr style="background:${i%2===0?'transparent':'var(--surf2)'}">
+                <td style="padding:7px 8px;font-size:11px;color:var(--t)">${dt.toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short'})}</td>
+                <td style="padding:7px 8px;font-size:11px;color:var(--t);font-weight:600">${dt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</td>
+                <td style="padding:7px 8px;font-size:11px;color:${c.duree_min>0?'var(--ac)':'var(--t3)'};font-weight:${c.duree_min>0?'700':'400'}">${c.duree_min>0?c.duree_min+' min':'—'}</td>
+                <td style="padding:7px 8px;font-size:11px;color:var(--t3)">${icon} ${c.device||'—'}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+        ${d.connexions.length>20?`<div style="text-align:center;font-size:10px;color:var(--t3);padding:8px;border-top:1px solid var(--b)">+ ${d.connexions.length-20} connexions plus anciennes</div>`:''}
+      ` : `<div style="text-align:center;padding:16px;color:var(--t3);font-size:11px">Aucune connexion enregistrée</div>`}
     </div>
   `;
   document.getElementById('modal-eleve').classList.add('open');
@@ -2796,36 +2825,6 @@ function openEtab(key) {
 function closeEtab() { document.getElementById('modal-etab').classList.remove('open'); }
 
 // ── PARAMÈTRES ──
-function renderSettings() {
-  document.getElementById('settings-supa').innerHTML = `
-    ${[
-      ['Projet','flowin revision olivia'],
-      ['URL','ywcqtupgoxfzkddqkztk.supabase.co'],
-      ['Joueurs',DB.joueurs.length],
-      ['Sessions',DB.sessions.length],
-      ['Parrainages',DB.parrainage.length],
-    ].map(([k,v])=>`<div class="settings-row"><span class="settings-key">${k}</span><span class="settings-val">${v}</span></div>`).join('')}
-    <div class="settings-row"><span class="settings-key">Statut</span>${bdg(liveMode?'green':'amber',liveMode?'✓ Supabase live':'Hors ligne')}</div>
-    <button class="btn-sync" style="width:100%;margin-top:14px" onclick="loadData()">↻ Synchroniser avec Supabase</button>`;
-
-  document.getElementById('settings-app').innerHTML = `
-    ${[
-      ['URL publique','romaincollin-design.github.io'],
-      ['Repo admin','flowin-revision-olivia--admin-'],
-      ['App élève','...github.io/flowin-revision-bac-olivia-2026'],
-      ['Version','V7'],
-    ].map(([k,v])=>`<div class="settings-row"><span class="settings-key">${k}</span><span class="settings-val">${v}</span></div>`).join('')}
-    <div style="margin-top:14px;padding:11px;background:var(--amBg);border-radius:8px;border:1px solid rgba(184,122,16,.3)">
-      <div style="font-size:11px;color:var(--am);font-weight:700;margin-bottom:4px">⚡ V2 — Gains réels</div>
-      <div style="font-size:10px;color:var(--t3)">Les mises et gains réels seront activés en V2. Les pools fonctionnent en mode social sans enjeu monétaire.</div>
-    </div>
-    <div style="margin-top:10px;padding:11px;background:var(--reBg);border-radius:8px;border:1px solid rgba(214,53,80,.2)">
-      <div style="font-size:11px;color:var(--re);font-weight:700;margin-bottom:6px">🧹 Nettoyage comptes tests Supabase</div>
-      <div style="font-size:9px;color:var(--t3);margin-bottom:8px;line-height:1.5">Exécuter dans Supabase SQL Editor pour supprimer rom, SKIPPY, zizouuuu, TestDirect, Marionette :</div>
-      <div style="background:var(--t);border-radius:6px;padding:8px 10px;font-family:monospace;font-size:9px;color:#A8F5A8;line-height:1.7;user-select:all">DELETE FROM sessions WHERE pseudo IN ('rom','SKIPPY','zizouuuu','TestDirect','Marionette');<br>DELETE FROM joueurs  WHERE pseudo IN ('rom','SKIPPY','zizouuuu','TestDirect','Marionette');</div>
-    </div>`;
-}
-
 // ── RECHERCHE GLOBALE ──
 function onGlobalSearch(val) {
   const v = val.toLowerCase().trim();
@@ -5589,30 +5588,97 @@ let LOTS_DB = [
 
 function toggleLots() {
   LOTS_ON = !LOTS_ON;
-  const track  = document.getElementById('lots-track');
-  const thumb  = document.getElementById('lots-thumb');
-  const lbl    = document.getElementById('lots-lbl');
-  const addBtn = document.getElementById('lots-add-btn');
-  const banner = document.getElementById('lots-off-banner');
-  const body   = document.getElementById('lots-body');
+  const track = document.getElementById('lots-track');
+  const thumb = document.getElementById('lots-thumb');
+  const lbl   = document.getElementById('lots-lbl');
+  const btn   = document.getElementById('lots-add-btn');
+  const banner= document.getElementById('lots-off-banner');
+  const body  = document.getElementById('lots-body');
   if(!track) return;
-  if(LOTS_ON) {
-    track.style.background = 'var(--ac)';
-    thumb.style.left = '20px';
-    lbl.textContent = 'Activé';
-    lbl.style.color = 'var(--ac)';
-    addBtn.style.cssText = 'font-size:11px;padding:5px 14px;border-radius:20px;background:var(--ac);color:#fff;border:none;cursor:pointer;font-weight:600;pointer-events:auto';
-    banner.style.display = 'none';
-    body.style.display   = 'block';
-  } else {
-    track.style.background = '#D1D5DB';
-    thumb.style.left = '4px';
-    lbl.textContent = 'Désactivé';
-    lbl.style.color = 'var(--t3)';
-    addBtn.style.cssText = 'font-size:11px;padding:5px 14px;border-radius:20px;background:#D1D5DB;color:#9CA3AF;border:none;cursor:not-allowed;font-weight:600;pointer-events:none';
-    banner.style.display = 'flex';
-    body.style.display   = 'none';
+  track.style.background = LOTS_ON ? 'var(--ac)' : '#D1D5DB';
+  thumb.style.left = LOTS_ON ? '20px' : '4px';
+  lbl.textContent = LOTS_ON ? 'Activé' : 'Désactivé';
+  lbl.style.color = LOTS_ON ? 'var(--ac)' : 'var(--t3)';
+  btn.style.cssText = LOTS_ON
+    ? 'font-size:11px;padding:5px 14px;border-radius:20px;background:var(--ac);color:#fff;border:none;cursor:pointer;font-weight:600;pointer-events:auto'
+    : 'font-size:11px;padding:5px 14px;border-radius:20px;background:#D1D5DB;color:#9CA3AF;border:none;cursor:not-allowed;font-weight:600;pointer-events:none';
+  if(banner) banner.style.display = LOTS_ON ? 'none' : 'flex';
+  if(body)   body.style.display   = LOTS_ON ? 'block' : 'none';
+  if(LOTS_ON) renderPartners();
+}
+
+// ── PARTNER CARDS ──
+const EMOJIS_PARTNER = ['🍔','🍕','🎬','🎁','🛒','☕','🍦','🎮','🎫','🏋️','📚','🎵','🎯','🍣','🎪','🏄','🍿','🎭','🧁','🏪'];
+
+function renderPartners() {
+  const grid = document.getElementById('partners-grid');
+  if(!grid) return;
+  if(!LOTS_DB.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--t3);font-size:12px">Aucun partenaire — cliquez sur "+ Ajouter un partenaire"</div>';
+    return;
   }
+  grid.innerHTML = LOTS_DB.map((lot,i) => `
+    <div class="pcard${lot.actif?'':' inactive'}">
+      <div class="pcard-top">
+        <div class="logo-wrap">
+          <div class="pcard-logo" onclick="openEmojiPickerAdmin(${i},this)">${lot.emoji||'🎁'}</div>
+          <div class="logo-hint">✏️</div>
+        </div>
+        <input class="pcard-name" type="text" value="${(lot.titre||'').replace(/"/g,'&quot;')}" placeholder="Nom du partenaire"
+          oninput="LOTS_DB[${i}].titre=this.value">
+        <textarea class="pcard-desc" rows="2" placeholder="Description de l'offre"
+          oninput="LOTS_DB[${i}].desc=this.value">${lot.desc||''}</textarea>
+        <div class="pcard-code-row">
+          <span class="pcard-code-lbl">Code</span>
+          <input class="pcard-code" type="text" value="${lot.code||''}" placeholder="FLOWIN40"
+            oninput="LOTS_DB[${i}].code=this.value.toUpperCase();this.value=this.value.toUpperCase()">
+        </div>
+      </div>
+      <div class="pcard-footer">
+        <div class="pcard-cond">
+          <select onchange="LOTS_DB[${i}].cond=this.value;LOTS_DB[${i}].condLbl=this.options[this.selectedIndex].text">
+            <option value="gold_semaine" ${lot.cond==='gold_semaine'?'selected':''}>🥇 Ligue Or 7j consécutifs</option>
+            <option value="top1_semaine" ${lot.cond==='top1_semaine'?'selected':''}>🏆 Top 1 classement semaine</option>
+          </select>
+        </div>
+        <div class="pcard-status" onclick="LOTS_DB[${i}].actif=!LOTS_DB[${i}].actif;renderPartners()">
+          <div class="pcard-dot${lot.actif?' on':''}"></div>
+          <span class="pcard-slbl" style="color:${lot.actif?'var(--gr)':'var(--t3)'}">${lot.actif?'Actif':'Inactif'}</span>
+        </div>
+        <button class="pcard-del" onclick="deletePartner(${i})" title="Supprimer">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function openEmojiPickerAdmin(i, logoEl) {
+  document.querySelectorAll('.emoji-picker-admin').forEach(p=>p.remove());
+  const picker = document.createElement('div');
+  picker.className = 'emoji-picker-admin';
+  EMOJIS_PARTNER.forEach(e => {
+    const opt = document.createElement('div');
+    opt.className = 'emoji-opt-admin';
+    opt.textContent = e;
+    opt.onclick = ev => { ev.stopPropagation(); LOTS_DB[i].emoji=e; picker.remove(); renderPartners(); };
+    picker.appendChild(opt);
+  });
+  logoEl.closest('.logo-wrap').appendChild(picker);
+  setTimeout(() => document.addEventListener('click', ()=>picker.remove(), {once:true}), 10);
+}
+
+function deletePartner(i) {
+  if(!confirm('Supprimer ce partenaire ?')) return;
+  LOTS_DB.splice(i,1); renderPartners();
+}
+
+function addPartner() {
+  if(!LOTS_ON) return;
+  LOTS_DB.push({id:'l'+Date.now(),emoji:'🎁',titre:'',desc:'',cond:'gold_semaine',condLbl:'🥇 Ligue Or 7j',code:'',actif:true});
+  renderPartners();
+  setTimeout(() => {
+    const cards = document.querySelectorAll('.pcard');
+    const last = cards[cards.length-1];
+    if(last) { last.scrollIntoView({behavior:'smooth',block:'nearest'}); last.querySelector('.pcard-name')?.focus(); }
+  }, 60);
 }
 
 function renderBareme2() {
@@ -5645,7 +5711,7 @@ function renderBareme2() {
     </div>`;
   }).join('');
 
-  renderLots2();
+  if(LOTS_ON) renderPartners();
 }
 
 function renderLots2() {
@@ -5765,6 +5831,7 @@ async function saveBareme2() {
 }
 
 async function loadLotsFromSupabase() {
+  if(!SB_ENABLED) return;
   try {
     const h = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY};
     const r = await fetch(SB_URL+'/rest/v1/config?key=in.(lots,lots_active)&select=key,value', {headers:h});
@@ -5772,15 +5839,18 @@ async function loadLotsFromSupabase() {
     const rows = await r.json();
     rows.forEach(row => {
       if(row.key==='lots' && Array.isArray(row.value)) LOTS_DB = row.value;
-      if(row.key==='lots_active' && row.value===true && !LOTS_ON) toggleLots();
+      if(row.key==='lots_active') { if(row.value===true && !LOTS_ON) toggleLots(); }
     });
   } catch(e) {}
 }
 
 // ── INIT ──
 buildNav();
+renderCurrentView();
 loadData();
 loadLotsFromSupabase();
+// Barème toujours rendu au démarrage — indépendant de Supabase
+setTimeout(() => { try { renderBareme(); } catch(e){} }, 100);
 
 // ── MENU MOBILE ──
 function toggleMobileMenu(force) {
