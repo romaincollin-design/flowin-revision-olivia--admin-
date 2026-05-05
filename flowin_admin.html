@@ -1652,9 +1652,11 @@ function navTo(id) {
   const ni = document.getElementById('nav-'+id);
   if(ni) ni.classList.add('active');
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById('v-'+id).classList.add('active');
+  const vEl = document.getElementById('v-'+id);
+  if(vEl) vEl.classList.add('active');
   const titles = {dashboard:'Dashboard',eleves:'Élèves',defis:'Défis & Pools',parrainage:'Parrainage',ligues:'Ligues & Classements',etablissements:'Établissements',cours:'Cours & Contenus',stats:'Stats & Trafic',appcom:'App & Communication',bareme:'Barème & Lots',settings:'Paramètres'};
   document.getElementById('topbar-title').textContent = titles[id]||id;
+  if(id === 'bareme') { requestAnimationFrame(() => renderBareme2()); return; }
   renderCurrentView();
 }
 
