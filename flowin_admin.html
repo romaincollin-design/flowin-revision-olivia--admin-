@@ -350,6 +350,109 @@ td.crm-td{padding:0 6px;text-align:center}
 .mat-fill{height:100%;border-radius:3px}
 .ligue-bar-track{height:7px;background:var(--surf3);border-radius:4px;overflow:hidden;margin-top:6px}
 .ligue-bar-fill{height:100%;border-radius:4px;transition:width .5s}
+
+/* POOLS V2 */
+.pool-row{display:flex;align-items:center;gap:10px;background:var(--surf);border:1px solid var(--b);border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .15s;box-sizing:border-box}
+.pool-row:hover{border-color:var(--ac)}
+.pc-th{flex:2;min-width:0;display:flex;align-items:center;gap:8px;overflow:hidden}
+.pc-pl{flex:1;min-width:0;display:flex}
+.pc-sc{flex:0 0 64px;text-align:center}
+.pc-ld{flex:1.2;min-width:0;overflow:hidden}
+.pc-vr{flex:0 0 44px;text-align:right;font-size:11px;color:var(--ac);font-weight:600}
+.pool-nm{font-size:13px;font-weight:700;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pool-sb{font-size:10px;color:var(--t3);margin-top:2px}
+.pool-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:3px}
+.pool-avs{display:flex}
+.pool-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;border:2px solid var(--surf);margin-left:-6px}
+.pool-av:first-child{margin-left:0}
+.pool-sc{font-size:15px;font-weight:800}
+.pool-ln{font-size:12px;font-weight:600;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pool-ls{font-size:11px;color:var(--t3)}
+/* TABS */
+.tb2{padding:8px 16px;font-size:12px;font-weight:600;color:var(--t3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.tb2.on{color:var(--t);border-bottom-color:var(--ac)}
+/* TIMELINE */
+.tl-pill{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--b);background:var(--surf);color:var(--t2)}
+.tl-pill.on{background:var(--t);color:var(--surf);border-color:var(--t)}
+.tl-day{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 8px;display:flex;align-items:center;gap:10px}
+.tl-day::after{content:'';flex:1;height:1px;background:var(--b)}
+.tl-list{display:flex;flex-direction:column;gap:5px;padding-left:14px;border-left:1px solid var(--b);margin-bottom:4px}
+.tl-ev{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;background:var(--surf);border:1px solid var(--b);position:relative}
+.tl-ev::before{content:'';position:absolute;left:-20px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%}
+.tl-ev.quiz::before{background:#6C5FE8;border:2px solid var(--surf)}
+.tl-ev.cnx::before{background:#1B9E75;border:2px solid var(--surf)}
+.tl-ic{width:28px;min-width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.tl-ic.quiz{background:#EEECFC}.tl-ic.cnx{background:#E6F7F1}
+.tl-bd{flex:1;min-width:0;overflow:hidden}
+.tl-who{font-size:12px;font-weight:700;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-wh2{font-size:11px;color:var(--t2);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-mt{display:flex;align-items:center;gap:7px;margin-top:4px}
+.tl-tm{font-size:10px;color:var(--t3)}
+.tl-sp{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
+.tl-dp{font-size:10px;color:var(--t3);padding:2px 7px;border-radius:20px;background:var(--surf2)}
+/* PARRAINAGE */
+.pth{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;cursor:pointer;font-size:11px;font-weight:600;color:var(--t2);user-select:none}
+.pth:hover{color:var(--t)}
+.cflt{width:100%;height:28px;border:1px solid var(--b);border-radius:6px;background:var(--surf);font-size:11px;color:var(--t2);padding:0 8px;outline:none}
+/* BARÈME */
+.bsl{margin-bottom:14px}
+.bsl-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.bsl-lbl{font-size:12px;color:var(--t2)}
+.bsl-val{font-size:14px;font-weight:800;color:var(--t);font-family:'Syne',sans-serif}
+.bsl-unit{font-size:10px;color:var(--t3);margin-left:2px}
+input[type=range]{accent-color:var(--ac);width:100%}
+.bsl-bnds{display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-top:2px}
+.lg-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--b)}
+.lg-row:last-child{border-bottom:none}
+.lg-ic{width:34px;min-width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.lg-nm{font-size:13px;font-weight:700;flex:1}
+.lg-rg{font-size:10px;color:var(--t3)}
+.lg-inp{width:68px;height:28px;border:1px solid var(--b);border-radius:7px;background:var(--surf2);text-align:center;font-size:12px;font-weight:700;color:var(--t);outline:none}
+.lg-inp:focus{border-color:var(--ac)}
+/* LOTS */
+.lot-card{border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:10px;background:var(--surf);display:flex;align-items:flex-start;gap:12px}
+.lot-ic{width:42px;min-width:42px;height:42px;border-radius:9px;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:20px}
+.lot-bd{flex:1;min-width:0}
+.lot-ti{font-size:13px;font-weight:700;color:var(--t)}
+.lot-de{font-size:11px;color:var(--t2);margin-top:2px}
+.lot-tg{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.lot-tc{font-size:10px;padding:2px 8px;border-radius:20px;background:#EEECFC;color:var(--ac);font-weight:600}
+.lot-tk{font-size:10px;padding:2px 8px;border-radius:20px;background:var(--surf2);color:var(--t2);font-family:'Syne',sans-serif;font-weight:700}
+.lot-on{font-size:9px;padding:2px 7px;border-radius:20px;font-weight:700;background:#E6F7F1;color:#1B9E75}
+.lot-off{font-size:9px;padding:2px 7px;border-radius:20px;font-weight:700;background:var(--surf2);color:var(--t3)}
+.lot-ac{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.lot-btn{font-size:10px;padding:4px 10px;border-radius:20px;border:1px solid var(--b);background:var(--surf2);cursor:pointer;color:var(--t2)}
+
+
+/* ── BARÈME ── */
+.bsl{margin-bottom:16px}
+.bsl-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.bsl-lbl{font-size:12px;color:var(--t2)}
+.bsl-val{font-size:15px;font-weight:800;color:var(--t);font-family:'Syne',sans-serif}
+.bsl-unit{font-size:10px;color:var(--t3);margin-left:2px}
+input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
+.bsl-bnds{display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-top:3px}
+.lg-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--b)}
+.lg-row:last-child{border-bottom:none}
+.lg-ic{width:36px;min-width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.lg-nm{font-size:13px;font-weight:700;flex:1}
+.lg-rg{font-size:10px;color:var(--t3);white-space:nowrap}
+.lg-inp{width:72px;height:30px;border:1px solid var(--b);border-radius:7px;background:var(--surf2);text-align:center;font-size:13px;font-weight:700;color:var(--t);outline:none}
+.lg-inp:focus{border-color:var(--ac)}
+/* ── LOTS ── */
+.lot-card{border:1px solid var(--b);border-radius:12px;padding:14px;margin-bottom:10px;background:var(--surf);display:flex;align-items:flex-start;gap:12px}
+.lot-ic{width:44px;min-width:44px;height:44px;border-radius:10px;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:22px}
+.lot-bd{flex:1;min-width:0}
+.lot-ti{font-size:13px;font-weight:700;color:var(--t)}
+.lot-de{font-size:11px;color:var(--t2);margin-top:3px}
+.lot-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.lot-tc{font-size:10px;padding:3px 9px;border-radius:20px;background:#EEECFC;color:var(--ac);font-weight:600}
+.lot-tk{font-size:10px;padding:3px 9px;border-radius:20px;background:var(--surf2);color:var(--t2);font-family:'Syne',sans-serif;font-weight:700}
+.lot-on{font-size:9px;padding:2px 8px;border-radius:20px;font-weight:700;background:#E6F7F1;color:#1B9E75}
+.lot-off{font-size:9px;padding:2px 8px;border-radius:20px;font-weight:700;background:var(--surf2);color:var(--t3)}
+.lot-ac{display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.lot-btn{font-size:10px;padding:4px 11px;border-radius:20px;border:1px solid var(--b);background:var(--surf2);cursor:pointer;color:var(--t2);white-space:nowrap}
+
 </style>
 </head>
 <body>
@@ -405,7 +508,8 @@ td.crm-td{padding:0 6px;text-align:center}
 
     <!-- DASHBOARD -->
     <div class="view active" id="v-dashboard">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <!-- PÉRIODE -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
         <span style="font-size:11px;font-weight:600;color:var(--t2)">Période :</span>
         <button onclick="setDashPeriod(this,'today')" class="period-btn" style="padding:5px 12px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">Aujourd'hui</button>
         <button onclick="setDashPeriod(this,'7j')" class="period-btn active-period" style="padding:5px 12px;border-radius:20px;border:1px solid var(--ac);background:#EEECFC;font-size:11px;color:var(--ac);cursor:pointer;font-weight:600">7 jours</button>
@@ -413,12 +517,12 @@ td.crm-td{padding:0 6px;text-align:center}
         <button onclick="setDashPeriod(this,'all')" class="period-btn" style="padding:5px 12px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">Tout</button>
         <span id="dash-period-label" style="margin-left:auto;font-size:10px;color:var(--t3)"></span>
       </div>
+
+      <!-- KPIs — 4 cartes avec tendance -->
       <div class="kpi-grid" id="dash-kpis"></div>
 
-      <!-- ACTIVITÉ + CARTE -->
+      <!-- LIGNE 1 : Graphique activité + Carte -->
       <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:14px">
-
-        <!-- Graphique activité courbes -->
         <div class="panel">
           <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
             <span>📈 Activité <span id="dash-chart-period" style="color:var(--t3);font-weight:400;font-size:10px"></span></span>
@@ -432,8 +536,6 @@ td.crm-td{padding:0 6px;text-align:center}
             <div id="dash-chart-labels" style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-top:4px;padding:0 2px"></div>
           </div>
         </div>
-
-        <!-- Carte établissements -->
         <div class="panel">
           <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
             <span>🗺️ Implantation des établissements</span>
@@ -447,7 +549,7 @@ td.crm-td{padding:0 6px;text-align:center}
         </div>
       </div>
 
-      <!-- TOP ÉTABS -->
+      <!-- LIGNE 2 : Top Établissements -->
       <div class="panel" style="margin-bottom:14px">
         <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
           <span>🏫 Top établissements</span>
@@ -457,9 +559,13 @@ td.crm-td{padding:0 6px;text-align:center}
         <tbody id="dash-top-etabs"></tbody></table>
       </div>
 
-      <div class="dash-2col">
+      <!-- LIGNE 3 : Top élèves + Matières -->
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px">
         <div class="panel">
-          <div class="panel-header">🏆 Top Élèves</div>
+          <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
+            <span>🏆 Top élèves</span>
+            <button onclick="navTo('eleves')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600">Voir tous →</button>
+          </div>
           <table><thead><tr><th>#</th><th>Élève</th><th>École</th><th>Score</th><th>Streak</th><th>Points</th></tr></thead>
           <tbody id="dash-top5"></tbody></table>
         </div>
@@ -468,34 +574,43 @@ td.crm-td{padding:0 6px;text-align:center}
           <div class="mat-bar-wrap" id="dash-matieres"></div>
         </div>
       </div>
-      <div class="dash-2eq">
+
+      <!-- LIGNE 4 : Sessions récentes + Parrainages -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
         <div class="panel">
-          <div class="panel-header">⚡ Dernières sessions</div>
+          <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
+            <span>⚡ Dernières sessions</span>
+            <button onclick="navTo('defis')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600">Voir plus →</button>
+          </div>
           <div class="scroll-panel" id="dash-sessions"></div>
         </div>
         <div class="panel">
-          <div class="panel-header">🎁 Parrainages récents</div>
+          <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
+            <span>🎁 Parrainages récents</span>
+            <button onclick="navTo('parrainage')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600">Voir plus →</button>
+          </div>
           <div class="scroll-panel" id="dash-parr"></div>
         </div>
       </div>
 
-      <!-- BARÈME -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:0">
+      <!-- LIGNE 5 : Barème résumé -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:4px">
         <div class="panel">
           <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
             <span>⭐ Barème des points</span>
-            <button onclick="openBareme()" style="background:var(--surf2);border:1px solid var(--b);border-radius:6px;padding:3px 8px;font-size:10px;cursor:pointer;color:var(--t2)">✏️ Modifier</button>
+            <button onclick="navTo('bareme')" style="background:var(--surf2);border:1px solid var(--b);border-radius:6px;padding:3px 8px;font-size:10px;cursor:pointer;color:var(--t2)">✏️ Modifier</button>
           </div>
           <div style="padding:14px" id="dash-bareme"></div>
         </div>
         <div class="panel">
           <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
             <span>🏆 Seuils des ligues</span>
-            <button onclick="openBareme()" style="background:var(--surf2);border:1px solid var(--b);border-radius:6px;padding:3px 8px;font-size:10px;cursor:pointer;color:var(--t2)">✏️ Modifier</button>
+            <button onclick="navTo('bareme')" style="background:var(--surf2);border:1px solid var(--b);border-radius:6px;padding:3px 8px;font-size:10px;cursor:pointer;color:var(--t2)">✏️ Modifier</button>
           </div>
           <div style="padding:14px" id="dash-ligues-seuils"></div>
         </div>
       </div>
+
     </div>
 
     <!-- MODAL BARÈME -->
@@ -552,99 +667,93 @@ td.crm-td{padding:0 6px;text-align:center}
     <div class="view" id="v-defis">
       <div class="view-title">Défis & Pools</div>
       <div class="kpi-grid" id="defis-kpis" style="margin-bottom:16px"></div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-        <input class="filter-input" type="text" id="defis-search" placeholder="🔍 Joueur, thème…" oninput="renderDefis()" style="flex:1;min-width:160px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+        <input class="filter-input" id="defis-search" type="text" placeholder="🔍 Joueur, thème…" oninput="renderDefis()" style="flex:1;min-width:140px">
         <select class="filter-select" id="defis-matiere" onchange="renderDefis()">
           <option value="">Toutes matières</option>
           <option value="Histoire">📜 Histoire</option>
-          <option value="Géographie">🌍 Géographie</option>
+          <option value="Géographie">🌍 Géo</option>
           <option value="EMC">⚖️ EMC</option>
           <option value="PSE">🩺 PSE</option>
           <option value="Roulette">🎰 Roulette</option>
         </select>
         <select class="filter-select" id="defis-periode" onchange="renderDefis()">
           <option value="7">7 derniers jours</option>
-          <option value="30">30 derniers jours</option>
+          <option value="30">30 jours</option>
           <option value="0">Tout</option>
         </select>
         <span class="filter-count" id="defis-count"></span>
       </div>
-      <div style="display:flex;gap:0;margin-bottom:16px;border-bottom:1px solid var(--b)">
-        <button class="dtab-v2 dtab-on" id="dtab-pools" onclick="switchDefiTabV2('pools',this)">Pools actives</button>
-        <button class="dtab-v2" id="dtab-histo" onclick="switchDefiTabV2('histo',this)">Historique</button>
-        <button class="dtab-v2" id="dtab-rank" onclick="switchDefiTabV2('rank',this)">Classement</button>
+      <div style="display:flex;border-bottom:1px solid var(--b);margin-bottom:14px">
+        <button class="tb2 on" id="dt-pools" onclick="switchDTab('pools',this)">Pools actives</button>
+        <button class="tb2" id="dt-histo" onclick="switchDTab('histo',this)">Historique</button>
+        <button class="tb2" id="dt-rank" onclick="switchDTab('rank',this)">Classement</button>
       </div>
       <div id="defis-pools-wrap">
-        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr 70px;gap:12px;padding:0 14px;margin-bottom:6px">
-          <span style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em">Thème</span>
-          <span style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em">Joueurs</span>
-          <span style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em">Score moy.</span>
-          <span style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em">Leader</span>
-          <span></span>
+        <div style="display:flex;padding:0 14px;margin-bottom:6px;gap:10px">
+          <span class="pc-th" style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase">Thème</span>
+          <span class="pc-pl" style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase">Joueurs</span>
+          <span class="pc-sc" style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase">Score</span>
+          <span class="pc-ld" style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase">Leader</span>
+          <span class="pc-vr"></span>
         </div>
-        <div id="defis-pools" style="display:flex;flex-direction:column;gap:6px;margin-bottom:24px"></div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div id="defis-pools" style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
           <span style="font-size:13px;font-weight:600;color:var(--t)">Activité récente</span>
           <div style="display:flex;gap:6px">
-            <button class="tl-pill tl-on" onclick="switchTlFilter('all',this)">Tout</button>
-            <button class="tl-pill" onclick="switchTlFilter('quiz',this)">Quiz</button>
-            <button class="tl-pill" onclick="switchTlFilter('cnx',this)">Connexions</button>
+            <button class="tl-pill on" onclick="switchTL('all',this)">Tout</button>
+            <button class="tl-pill" onclick="switchTL('quiz',this)">Quiz</button>
+            <button class="tl-pill" onclick="switchTL('cnx',this)">Connexions</button>
           </div>
         </div>
-        <div id="defis-timeline"></div>
+        <div id="defis-tl"></div>
       </div>
       <div id="defis-histo" style="display:none"></div>
       <div id="defis-rank" style="display:none"></div>
     </div>
-
     <!-- PARRAINAGE -->
     <div class="view" id="v-parrainage">
       <div class="view-title">Parrainage</div>
       <div class="kpi-grid" id="parr-kpis" style="margin-bottom:16px"></div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-        <input class="filter-input" type="text" id="parr-search" placeholder="🔍 Rechercher un parrain, établissement…" oninput="renderParrainage()" style="flex:1;min-width:180px">
-        <span class="filter-count" id="parr-count"></span>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+        <input class="filter-input" id="parr-search" type="text" placeholder="🔍 Parrain, établissement…" oninput="renderParrainage()" style="flex:1">
+        <span class="filter-count" id="parr-cnt"></span>
       </div>
       <div class="crm-bar" id="parr-crm-bar">
         <span class="crm-bar-count" id="parr-crm-count">0</span> sélectionné(s)
-        <button class="crm-btn" onclick="crmExportCSV('parr')">⬇ Export CSV</button>
-        <button class="crm-btn" onclick="crmMessageGroupe('parr')">💬 Message groupé</button>
-        <button class="crm-btn" style="margin-left:auto" onclick="crmDeselectAll('parr')">✕ Annuler</button>
+        <button class="crm-btn" onclick="crmExportCSV('parr')">⬇ CSV</button>
+        <button class="crm-btn" onclick="crmMessageGroupe('parr')">💬 Message</button>
+        <button class="crm-btn" style="margin-left:auto" onclick="crmDeselectAll('parr')">✕</button>
       </div>
       <div class="panel" style="overflow-x:auto">
-        <table style="min-width:700px;width:100%;border-collapse:collapse">
-          <thead>
-            <tr id="parr-thead">
-              <th class="crm-th" style="width:32px"><input type="checkbox" class="crm-check-all" id="parr-check-all" onchange="crmToggleAll('parr',this.checked)"></th>
-              <th style="width:30%"><div class="pth" onclick="parrSort('name')">Parrain <span id="parr-arr-name" style="font-size:10px;color:var(--t3)">↕</span></div></th>
-              <th>
-                <div class="pth" onclick="parrSort('etab');parrToggleFilter('etab')">École <span id="parr-arr-etab" style="font-size:10px;color:var(--t3)">↕</span></div>
-                <div id="parr-flt-etab" style="display:none;padding:0 10px 8px">
-                  <select class="col-filter" id="parr-etab" onchange="renderParrainage()"><option value="">Toutes</option></select>
-                </div>
-              </th>
-              <th><div class="pth" onclick="parrSort('filleuls')">Filleuls <span id="parr-arr-filleuls" style="font-size:10px;color:var(--t3)">↕</span></div></th>
-              <th>
-                <div class="pth" onclick="parrToggleFilter('canal')">Canal <span style="font-size:10px;color:var(--t3)">⌄</span></div>
-                <div id="parr-flt-canal" style="display:none;padding:0 10px 8px">
-                  <select class="col-filter" id="parr-canal" onchange="renderParrainage()">
-                    <option value="">Tous</option>
-                    <option value="whatsapp">💬 WhatsApp</option>
-                    <option value="telegram">✈️ Telegram</option>
-                    <option value="copy">📋 Copie</option>
-                    <option value="native">↗️ Partage</option>
-                  </select>
-                </div>
-              </th>
-              <th><div class="pth" onclick="parrSort('pts')">Pts générés <span id="parr-arr-pts" style="font-size:10px;color:var(--t3)">↕</span></div></th>
-              <th><div class="pth" onclick="parrSort('recent')">Dernière inv. <span id="parr-arr-recent" style="font-size:10px;color:var(--t3)">↕</span></div></th>
-            </tr>
-          </thead>
+        <table style="width:100%;border-collapse:collapse;table-layout:fixed">
+          <thead><tr>
+            <th class="crm-th" style="width:30px"><input type="checkbox" id="parr-all" onchange="crmToggleAll('parr',this.checked)"></th>
+            <th style="width:25%"><div class="pth" onclick="parrSort('name')">Parrain <span id="pa-name">↕</span></div></th>
+            <th style="width:22%">
+              <div class="pth" onclick="parrFlt('etab')">École ⌄</div>
+              <div id="parr-flt-etab" style="display:none;padding:0 10px 8px"><select class="cflt" id="parr-etab" onchange="renderParrainage()"><option value="">Toutes</option></select></div>
+            </th>
+            <th style="width:9%"><div class="pth" onclick="parrSort('filleuls')">Filleuls <span id="pa-filleuls">↕</span></div></th>
+            <th style="width:15%">
+              <div class="pth" onclick="parrFlt('canal')">Canal ⌄</div>
+              <div id="parr-flt-canal" style="display:none;padding:0 10px 8px">
+                <select class="cflt" id="parr-canal" onchange="renderParrainage()">
+                  <option value="">Tous</option>
+                  <option value="whatsapp">💬 WhatsApp</option>
+                  <option value="telegram">✈️ Telegram</option>
+                  <option value="copy">📋 Copie</option>
+                  <option value="native">↗️ Partage</option>
+                </select>
+              </div>
+            </th>
+            <th style="width:12%"><div class="pth" onclick="parrSort('pts')">Pts <span id="pa-pts">↕</span></div></th>
+            <th style="width:12%"><div class="pth" onclick="parrSort('recent')">Dernière <span id="pa-recent">↕</span></div></th>
+          </tr></thead>
           <tbody id="parr-tbody"></tbody>
         </table>
       </div>
     </div>
-
     <!-- LIGUES -->
     <div class="view" id="v-ligues">
       <div class="view-title">Ligues & Classements</div>
@@ -1260,56 +1369,69 @@ td.crm-td{padding:0 6px;text-align:center}
       </div>
     </div>
 
+
+
+
     <!-- BARÈME & LOTS -->
     <div class="view" id="v-bareme">
       <div class="view-title">Barème & Lots</div>
-      <div class="view-sub">Paramétrez les points, les ligues et les récompenses hebdomadaires</div>
+      <div class="view-sub">Paramétrez les points, les ligues et les récompenses</div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
 
-        <!-- POINTS -->
+        <!-- Points -->
         <div class="panel">
           <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
             <span>⭐ Points par action</span>
-            <button onclick="resetBareme()" style="font-size:10px;padding:3px 10px;border-radius:20px;background:var(--surf2);border:1px solid var(--b);cursor:pointer;color:var(--t2)">↺ Reset</button>
+            <button onclick="resetBareme()" style="font-size:10px;padding:3px 9px;border-radius:20px;background:var(--surf2);border:1px solid var(--b);cursor:pointer;color:var(--t2)">↺ Reset</button>
           </div>
-          <div style="padding:16px" id="bareme-pts-editor"></div>
+          <div style="padding:16px" id="bar-pts"></div>
         </div>
 
-        <!-- LIGUES -->
+        <!-- Ligues -->
         <div class="panel">
           <div class="panel-header">🏆 Seuils de ligue</div>
-          <div style="padding:16px" id="bareme-ligues-editor"></div>
+          <div style="padding:16px" id="bar-ligues"></div>
         </div>
+
       </div>
 
-      <!-- LOTS -->
+      <!-- Lots : cachés par défaut, visibles seulement si toggle ON -->
       <div class="panel" style="margin-bottom:14px">
         <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
-          <div style="display:flex;align-items:center;gap:12px">
+          <div style="display:flex;align-items:center;gap:14px">
             <span>🎰 Lots hebdomadaires</span>
-            <div style="display:flex;align-items:center;gap:7px;cursor:pointer" onclick="toggleLotsFeature()">
-              <div id="lots-toggle-track" style="width:36px;height:20px;border-radius:20px;background:#D1D5DB;position:relative;transition:background .2s;flex-shrink:0">
-                <div id="lots-toggle-thumb" style="position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .2s"></div>
+            <!-- Toggle ON/OFF -->
+            <div style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="toggleLots()">
+              <div id="lots-track" style="width:38px;height:22px;border-radius:20px;background:#D1D5DB;position:relative;transition:background .25s;flex-shrink:0">
+                <div id="lots-thumb" style="position:absolute;top:4px;left:4px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .25s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
               </div>
-              <span id="lots-toggle-label" style="font-size:10px;font-weight:700;color:var(--t3)">Désactivé</span>
+              <span id="lots-lbl" style="font-size:11px;font-weight:600;color:var(--t3)">Désactivé</span>
             </div>
           </div>
           <button id="lots-add-btn" onclick="addLot()" style="font-size:11px;padding:5px 14px;border-radius:20px;background:#D1D5DB;color:#9CA3AF;border:none;cursor:not-allowed;font-weight:600;pointer-events:none">+ Ajouter un lot</button>
         </div>
-        <div id="lots-disabled-banner" style="padding:12px 16px;background:#FFF8E1;border-bottom:1px solid #FFE082;font-size:11px;color:#B45309;font-weight:500;display:flex;align-items:center;gap:8px">
-          ⚠️ Activez via le toggle pour configurer et distribuer des récompenses aux élèves.
+
+        <!-- Bandeau affiché quand désactivé -->
+        <div id="lots-off-banner" style="padding:11px 16px;background:#FFF8E1;border-bottom:1px solid #FFE082;font-size:11px;color:#B45309;font-weight:500;display:flex;align-items:center;gap:8px">
+          ⚠️ Activez le toggle pour configurer et afficher les récompenses aux élèves.
         </div>
-        <div style="padding:12px 16px;background:var(--surf2);border-bottom:1px solid var(--b);font-size:10px;color:var(--t2);line-height:1.6;display:none" id="lots-desc-banner">
-          Un lot est attribué automatiquement à l'élève dès qu'il remplit la condition. Il reçoit une notification dans l'app avec le code promo.
+
+        <!-- Contenu lots : masqué par défaut -->
+        <div id="lots-body" style="display:none">
+          <div style="padding:10px 16px;background:var(--surf2);border-bottom:1px solid var(--b);font-size:10px;color:var(--t2)">
+            Un lot est attribué automatiquement quand l'élève remplit la condition. Il reçoit une notification dans l'app avec le code promo.
+          </div>
+          <div id="bar-lots" style="padding:14px"></div>
         </div>
-        <div id="bareme-lots-list" style="padding:16px"></div>
+
       </div>
 
-      <div style="display:flex;justify-content:flex-end;gap:10px;padding:4px 0 20px">
-        <button onclick="saveBaremeToSupabaseWithLots()" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer">✓ Sauvegarder dans Supabase</button>
+      <div style="display:flex;justify-content:flex-end;padding:4px 0 20px">
+        <button onclick="saveBareme2()" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer">✓ Sauvegarder dans Supabase</button>
       </div>
     </div>
+
   </div><!-- end #content -->
 </div><!-- end #main -->
 
@@ -1361,7 +1483,7 @@ td.crm-td{padding:0 6px;text-align:center}
 <script>
 // ── CONFIG ──
 const SB_URL = 'https://ywcqtupgoxfzkddqkztk.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3F0dXBnb3hmemtkZHFrenRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjQ0MDUsImV4cCI6MjA5MjgwMDQwNX0.Y8sb7Faqlp-uFyUjGl013018RWP0MIbbWzPAVcTMIoI';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3F0dXBnb3hmemtkZHFrenRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM2MDYwMDQsImV4cCI6MjA1OTE4MjAwNH0.UNSRpVOwSSMqaFHtd0XuFq3F_HRJeHDiGoqq7m6tKNw';
 
 // ── DB ──
 const DB = { joueurs: [], sessions: [], parrainage: [], connexions: [] };
@@ -1480,48 +1602,14 @@ async function loadData() {
     banner.innerHTML = `⚠️ Supabase : ${errMsg} <button onclick="this.parentElement.remove()" style="margin-left:10px;background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:5px;padding:2px 8px;cursor:pointer">✕</button>`;
     document.body.appendChild(banner);
     setTimeout(()=>banner.remove(), 15000);
-    const today = new Date().toISOString().slice(0,10);
-    const d = (daysAgo, h=10, m=0) => { const dt=new Date(); dt.setDate(dt.getDate()-daysAgo); dt.setHours(h,m,0,0); return dt.toISOString(); };
-    DB.joueurs = [
-      {id:'demo-1',ts:d(45),pseudo:'OliviaLaurent',prenom:'Olivia',nom:'Laurent',email:'olivia.laurent@lycee-vence.fr',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',genre:'F',ref:'',_demo:true},
-      {id:'demo-2',ts:d(40),pseudo:'ChloeRoux',prenom:'Chloé',nom:'Roux',email:'chloe.roux@lycee-massena.fr',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',genre:'F',ref:'OliviaLaurent',_demo:true},
-      {id:'demo-3',ts:d(38),pseudo:'EmmaDubois',prenom:'Emma',nom:'Dubois',email:'emma.dubois@lycee-massena.fr',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',genre:'F',ref:'',_demo:true},
-      {id:'demo-4',ts:d(35),pseudo:'LinaGarcia',prenom:'Lina',nom:'Garcia',email:'lina.garcia@lycee-vence.fr',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',genre:'F',ref:'OliviaLaurent',_demo:true},
-      {id:'demo-5',ts:d(30),pseudo:'LucasMartin',prenom:'Lucas',nom:'Martin',email:'lucas.martin@lycee-cezanne.fr',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',genre:'M',ref:'',_demo:true},
-      {id:'demo-6',ts:d(28),pseudo:'TheoPetit',prenom:'Théo',nom:'Petit',email:'theo.petit@lycee-cezanne.fr',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',genre:'M',ref:'LucasMartin',_demo:true},
-      {id:'demo-7',ts:d(25),pseudo:'SarahLeclerc',prenom:'Sarah',nom:'Leclerc',email:'sarah.leclerc@college-grasse.fr',ecole:'Collège Grasse',classe:'Terminale Bac Pro',genre:'F',ref:'',_demo:true},
-      {id:'demo-8',ts:d(22),pseudo:'HugoBernard',prenom:'Hugo',nom:'Bernard',email:'hugo.bernard@college-grasse.fr',ecole:'Collège Grasse',classe:'Terminale Bac Pro',genre:'M',ref:'SarahLeclerc',_demo:true},
-      {id:'demo-9',ts:d(60),pseudo:'NathanMoreau',prenom:'Nathan',nom:'Moreau',email:'nathan.moreau@lycee-vence.fr',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',genre:'M',ref:'',_demo:true},
-      {id:'demo-10',ts:d(55),pseudo:'YanisFerreira',prenom:'Yanis',nom:'Ferreira',email:'yanis.ferreira@lycee-cezanne.fr',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',genre:'M',ref:'',_demo:true},
-      {id:'demo-11',ts:d(10),pseudo:'MaevaKlein',prenom:'Maeva',nom:'Klein',email:'maeva.klein@lycee-massena.fr',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',genre:'F',ref:'ChloeRoux',_demo:true},
-      {id:'demo-12',ts:d(8),pseudo:'RomaneVidal',prenom:'Romane',nom:'Vidal',email:'romane.vidal@lycee-vence.fr',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',genre:'F',ref:'OliviaLaurent',_demo:true},
-    ];
-    DB.sessions = [
-      {ts:d(0,8,30),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'La guerre froide',matiere:'Histoire',score_pct:80,pts_round:70,pts_total:1340,streak:8,nb_questions:5,_demo:true},
-      {ts:d(1,9,0),pseudo:'OliviaLaurent',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:72,pts_round:55,pts_total:1270,streak:7,nb_questions:5,_demo:true},
-      {ts:d(0,9,0),pseudo:'ChloeRoux',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:92,pts_round:90,pts_total:3320,streak:16,nb_questions:5,_demo:true},
-      {ts:d(1,18,30),pseudo:'ChloeRoux',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'La guerre froide',matiere:'Histoire',score_pct:88,pts_round:82,pts_total:3230,streak:15,nb_questions:5,_demo:true},
-      {ts:d(0,9,30),pseudo:'EmmaDubois',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:85,pts_round:76,pts_total:2250,streak:12,nb_questions:5,_demo:true},
-      {ts:d(0,10,0),pseudo:'LinaGarcia',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:77,pts_round:65,pts_total:1640,streak:9,nb_questions:5,_demo:true},
-      {ts:d(1,11,0),pseudo:'LucasMartin',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:68,pts_round:50,pts_total:980,streak:5,nb_questions:5,_demo:true},
-      {ts:d(0,11,30),pseudo:'TheoPetit',ecole:'Lycée Cézanne Aix',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:61,pts_round:40,pts_total:720,streak:3,nb_questions:5,_demo:true},
-      {ts:d(0,12,0),pseudo:'SarahLeclerc',ecole:'Collège Grasse',classe:'Terminale Bac Pro',theme:'EMC citoyenneté',matiere:'EMC',score_pct:73,pts_round:60,pts_total:1100,streak:6,nb_questions:5,_demo:true},
-      {ts:d(0,11,45),pseudo:'HugoBernard',ecole:'Collège Grasse',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:54,pts_round:30,pts_total:450,streak:2,nb_questions:5,_demo:true},
-      {ts:d(28,12,0),pseudo:'NathanMoreau',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Roulette',matiere:'Histoire',score_pct:45,pts_round:20,pts_total:250,streak:0,nb_questions:5,_demo:true},
-      {ts:d(0,8,0),pseudo:'MaevaKlein',ecole:'Lycée Masséna Nice',classe:'Terminale Bac Pro',theme:'EMC citoyenneté',matiere:'EMC',score_pct:82,pts_round:72,pts_total:520,streak:4,nb_questions:5,_demo:true},
-      {ts:d(0,9,15),pseudo:'RomaneVidal',ecole:'Lycée de Vence',classe:'Terminale Bac Pro',theme:'Mondialisation',matiere:'Géographie',score_pct:70,pts_round:55,pts_total:310,streak:2,nb_questions:5,_demo:true},
-    ];
-    DB.parrainage = [
-      {ts:d(0,9,45),sender:'Chloé Roux',sender_etab:'Lycée Masséna Nice',destinataire:'Inès',channel:'whatsapp',pts:100,_demo:true},
-      {ts:d(1,17,15),sender:'Chloé Roux',sender_etab:'Lycée Masséna Nice',destinataire:'Marius',channel:'whatsapp',pts:100,_demo:true},
-      {ts:d(0,20,12),sender:'Emma Dubois',sender_etab:'Lycée Masséna Nice',destinataire:'Camille',channel:'whatsapp',pts:100,_demo:true},
-      {ts:d(0,13,28),sender:'Lina Garcia',sender_etab:'Lycée de Vence',destinataire:'Amine',channel:'whatsapp',pts:100,_demo:true},
-      {ts:d(0,9,45),sender:'Olivia Laurent',sender_etab:'Lycée de Vence',destinataire:'Marine',channel:'whatsapp',pts:100,_demo:true},
-    ];
+    DB.joueurs = [];
+    DB.sessions = [];
+    DB.parrainage = [];
+    DB.connexions = [];
   }
   updateBadges();
-  loadLotsFromSupabase();
   renderCurrentView();
+  if(currentView==='bareme') renderBareme2();
 }
 
 // ── NAV ──
@@ -1535,7 +1623,7 @@ const NAV_ITEMS = [
   { id:'cours',           label:'+ Cours',           icon:'📖', sec:'Contenu', badgeFn:()=>COURS_DB.length },
   { id:'stats',           label:'Stats & Trafic',   icon:'📊', sec:null },
   { id:'appcom',          label:'App & Com',        icon:'📲', sec:null },
-  { id:'bareme',          label:'Barème & Lots',   icon:'🎁', sec:'Contenu' },
+  { id:'bareme',          label:'Barème & Lots',   icon:'⭐', sec:'Configuration' },
   { id:'settings',        label:'Paramètres',      icon:'⚙️', sec:null },
 ];
 let currentView = 'dashboard';
@@ -1571,7 +1659,7 @@ function navTo(id) {
 }
 
 function renderCurrentView() {
-  const r = {dashboard:renderDashboard,eleves:renderEleves,defis:renderDefis,parrainage:renderParrainage,ligues:renderLigues,etablissements:renderEtabs,cours:renderCours,stats:renderStats,appcom:renderAppCom,bareme:renderBaremeView,settings:renderSettings};
+  const r = {dashboard:renderDashboard,eleves:renderEleves,defis:renderDefis,parrainage:renderParrainage,ligues:renderLigues,etablissements:renderEtabs,cours:renderCours,stats:renderStats,appcom:renderAppCom,bareme:renderBareme2,settings:renderSettings};
   if(r[currentView]) r[currentView]();
 }
 
@@ -1583,8 +1671,6 @@ function localDateStr(ts) {
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
 function renderDashboard() {
-  const today = new Date().toISOString().slice(0,10);
-  // Comparaison en heure locale (pas UTC) pour éviter le décalage d'une journée
   const todayLocal = new Date().toLocaleDateString('fr-FR',{year:'numeric',month:'2-digit',day:'2-digit'}).split('/').reverse().join('-');
   const sessToday = DB.sessions.filter(s => {
     if(!s.ts) return false;
@@ -1595,13 +1681,25 @@ function renderDashboard() {
   const parrSenders = new Set(DB.parrainage.map(p=>p.sender)).size;
   const actifs = new Set(DB.sessions.map(s=>s.pseudo)).size;
 
+  // Calcul tendance : nb éléments créés dans les 7 derniers jours
+  const now = Date.now();
+  const ms7j = 7*24*3600*1000;
+  const newJoueurs7j = DB.joueurs.filter(j => j.ts && (now - new Date(j.ts).getTime()) < ms7j).length;
+  const newSess7j    = DB.sessions.filter(s => s.ts && (now - new Date(s.ts).getTime()) < ms7j).length;
+  const newParr7j    = DB.parrainage.filter(p => p.ts && (now - new Date(p.ts).getTime()) < ms7j).length;
+
+  function trendTag(n) {
+    if(!n) return '';
+    return `<span style="display:inline-block;margin-top:4px;padding:2px 7px;border-radius:20px;background:#E8F5E9;color:#1B9E75;font-size:9px;font-weight:700">+${n} cette semaine</span>`;
+  }
+
   // KPIs
   document.getElementById('dash-kpis').innerHTML = [
-    { val:DB.joueurs.length, label:'Élèves inscrits', sub:`${actifs} actifs`, color:'var(--ac)', icon:'👤', nav:'eleves' },
-    { val:sessToday.length||DB.sessions.length, label:'Sessions', sub:sessToday.length?`aujourd\'hui · ${DB.sessions.length} total`:`${DB.sessions.length} total`, color:'var(--gr)', icon:'⚡', nav:'defis' },
-    { val:avg+'%', label:'Score moyen global', sub:'Toutes matières', color:'var(--am)', icon:'🎯', nav:'stats' },
-    { val:DB.parrainage.length, label:'Parrainages', sub:`${parrSenders} parrain${parrSenders>1?'s':''}`, color:'#E040A0', icon:'🎁', nav:'parrainage' },
-  ].map(k => `<div class="kpi-card" onclick="${k.nav?`navTo('${k.nav}')`:'void(0)'}" style="${k.nav?'cursor:pointer;':''}transition:transform .14s,box-shadow .14s" onmouseenter="${k.nav?`this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 18px rgba(0,0,0,.08)'`:''}" onmouseleave="${k.nav?`this.style.transform='';this.style.boxShadow=''`:''}"><div class="kpi-bar" style="background:${k.color}"></div><div class="kpi-icon">${k.icon}</div><div class="kpi-val">${k.val}</div><div class="kpi-label">${k.label}</div><div class="kpi-sub">${k.sub}${k.nav?` <span style="font-size:9px;color:var(--ac)">→</span>`:''}</div></div>`).join('');
+    { val:DB.joueurs.length, label:'Élèves inscrits', sub:`${actifs} actifs`, trend:newJoueurs7j, color:'var(--ac)', icon:'👤', nav:'eleves' },
+    { val:sessToday.length||DB.sessions.length, label:'Sessions', sub:sessToday.length?`aujourd\'hui · ${DB.sessions.length} total`:`${DB.sessions.length} total`, trend:newSess7j, color:'var(--gr)', icon:'⚡', nav:'defis' },
+    { val:avg+'%', label:'Score moyen global', sub:'Toutes matières', trend:0, color:'var(--am)', icon:'🎯', nav:'stats' },
+    { val:DB.parrainage.length, label:'Parrainages', sub:`${parrSenders} parrain${parrSenders>1?'s':''}`, trend:newParr7j, color:'#E040A0', icon:'🎁', nav:'parrainage' },
+  ].map(k => `<div class="kpi-card" onclick="${k.nav?`navTo('${k.nav}')`:'void(0)'}" style="${k.nav?'cursor:pointer;':''}transition:transform .14s,box-shadow .14s" onmouseenter="${k.nav?`this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 18px rgba(0,0,0,.08)'`:''}" onmouseleave="${k.nav?`this.style.transform='';this.style.boxShadow=''`:''}"><div class="kpi-bar" style="background:${k.color}"></div><div class="kpi-icon">${k.icon}</div><div class="kpi-val">${k.val}</div><div class="kpi-label">${k.label}</div><div class="kpi-sub">${k.sub}${k.nav?` <span style="font-size:9px;color:var(--ac)">→</span>`:''}</div>${trendTag(k.trend)}</div>`).join('');
 
   // Top 5
   const elevs = buildElevs();
@@ -1620,7 +1718,7 @@ function renderDashboard() {
   const periodSess = getPeriodSessions();
   const mat = {};
   periodSess.forEach(s=>{ if(s.matiere) mat[s.matiere]=(mat[s.matiere]||0)+1; });
-  const mc = {Histoire:'var(--ac)',Géographie:'var(--gr)',EMC:'#E040A0'};
+  const mc = {Histoire:'var(--ac)',Géographie:'var(--gr)',EMC:'#E040A0',PSE:'var(--am)'};
   document.getElementById('dash-matieres').innerHTML = Object.entries(mat).sort((a,b)=>b[1]-a[1]).map(([m,n])=>{
     const pct = Math.round(n/(DB.sessions.length||1)*100);
     return `<div class="mat-bar"><div class="mat-row"><span style="color:var(--t);font-weight:500">${m}</span><span style="color:var(--t3)">${n} · ${pct}%</span></div><div class="mat-track"><div class="mat-fill" style="width:${pct}%;background:${mc[m]||'var(--bl)'}"></div></div></div>`;
@@ -2090,288 +2188,239 @@ function switchDefiTabById(tab) {
 }
 
 function renderDefis() {
-  const periodeVal = (document.getElementById('defis-periode')||{value:'7'}).value||'7';
-  const matiereVal = (document.getElementById('defis-matiere')||{value:''}).value||'';
-  const defiSearch = ((document.getElementById('defis-search')||{value:''}).value||'').toLowerCase();
-  const cutoffMs = periodeVal==='0' ? 0 : Date.now() - parseInt(periodeVal)*24*3600*1000;
-  const cutoff = new Date(cutoffMs).toISOString();
-  let recent = periodeVal==='0' ? [...DB.sessions] : DB.sessions.filter(s=>s.ts>cutoff);
-  if(matiereVal) recent = recent.filter(s=>(s.matiere||s.theme||'').includes(matiereVal));
-  if(defiSearch) recent = recent.filter(s=>(s.pseudo||'').toLowerCase().includes(defiSearch)||(s.theme||s.matiere||'').toLowerCase().includes(defiSearch));
-  const defisCount = document.getElementById('defis-count');
-  if(defisCount) defisCount.textContent = recent.length + ' sessions';
-  const nbPools = new Set(recent.map(s=>s.theme||s.matiere||'Général')).size;
-  const nbJoueurs = new Set(recent.map(s=>s.pseudo)).size;
+  const per = (document.getElementById('defis-periode')||{value:'7'}).value||'7';
+  const mat = (document.getElementById('defis-matiere')||{value:''}).value||'';
+  const q   = ((document.getElementById('defis-search')||{value:''}).value||'').toLowerCase();
+  const cut = per==='0' ? '' : new Date(Date.now()-parseInt(per)*86400000).toISOString();
+  let rows  = per==='0' ? [...DB.sessions] : DB.sessions.filter(s=>s.ts>cut);
+  if(mat) rows = rows.filter(s=>(s.matiere||s.theme||'').includes(mat));
+  if(q)   rows = rows.filter(s=>(s.pseudo||'').toLowerCase().includes(q)||(s.theme||s.matiere||'').toLowerCase().includes(q));
 
-  // KPIs
+  const cnt = document.getElementById('defis-count');
+  if(cnt) cnt.textContent = rows.length + ' sessions';
+
+  const nP = new Set(rows.map(s=>s.theme||s.matiere||'Général')).size;
+  const nJ = new Set(rows.map(s=>s.pseudo)).size;
+  const avg = rows.length ? Math.round(rows.reduce((a,s)=>a+(s.score_pct||0),0)/rows.length) : 0;
+
   document.getElementById('defis-kpis').innerHTML = [
-    { val:nbPools, label:'Pools actives', sub:'thèmes joués', color:'var(--ac)', icon:'🎮' },
-    { val:nbJoueurs, label:'Joueurs actifs', sub:'cette période', color:'var(--gr)', icon:'👥' },
-    { val:recent.length, label:'Parties jouées', sub:'sessions total', color:'var(--am)', icon:'⚡' },
-    { val:recent.length?Math.round(recent.reduce((a,s)=>a+(s.score_pct||0),0)/recent.length)+'%':'—', label:'Score moyen', sub:'toutes sessions', color:'var(--bl)', icon:'🎯' },
-  ].map(k=>`<div class="kpi-card" style="cursor:default"><div class="kpi-bar" style="background:${k.color}"></div><div class="kpi-icon">${k.icon}</div><div class="kpi-val">${k.val}</div><div class="kpi-label">${k.label}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+    {v:nP,              l:'Pools actives',  s:'thèmes joués',   c:'var(--ac)', i:'🎮', t:'pools'},
+    {v:nJ,              l:'Joueurs actifs', s:'cette période',  c:'var(--gr)', i:'👥', t:'rank'},
+    {v:rows.length,     l:'Parties',        s:'sessions total', c:'var(--am)', i:'⚡', t:'histo'},
+    {v:rows.length?avg+'%':'—', l:'Score moyen', s:'toutes sessions', c:'var(--bl)', i:'🎯', t:''},
+  ].map(k=>`<div class="kpi-card" style="cursor:${k.t?'pointer':'default'}" onclick="${k.t?`switchDTab('${k.t}',document.getElementById('dt-${k.t}'))`:''}">
+    <div class="kpi-bar" style="background:${k.c}"></div>
+    <div class="kpi-icon">${k.i}</div>
+    <div class="kpi-val">${k.v}</div>
+    <div class="kpi-label">${k.l}</div>
+    <div class="kpi-sub">${k.s}</div>
+  </div>`).join('');
 
-  // POOLS en liste
-  const pools = {};
   const emj = {Histoire:'📜',Géographie:'🌍',EMC:'⚖️',PSE:'🩺',Roulette:'🎰',Général:'🎯'};
-  const avColors = [['#EEECFC','#6C5FE8'],['#E6F7F1','#1B9E75'],['#FEF3DC','#B87A10'],['#E8F2FC','#2478CC'],['#F5EDE3','#9A6B3A'],['#FBEAF0','#993556']];
-  recent.forEach(s=>{
-    const t=s.theme||s.matiere||'Général';
+  const avC = [['#EEECFC','#6C5FE8'],['#E6F7F1','#1B9E75'],['#FEF3DC','#B87A10'],['#E8F2FC','#2478CC'],['#F5EDE3','#9A6B3A'],['#FBEAF0','#993556']];
+  const pools = {};
+  rows.forEach(s => {
+    const t = s.theme||s.matiere||'Général';
     if(!pools[t]) pools[t]=[];
     if(!pools[t].find(p=>p.pseudo===s.pseudo)) pools[t].push(s);
   });
-  const poolEntries = Object.entries(pools).sort((a,b)=>b[1].length-a[1].length);
   const elevs = buildElevs();
-  window._poolsData = poolEntries.map(([theme,joueurs])=>{
-    const sorted=[...joueurs].sort((a,b)=>(b.score_pct||0)-(a.score_pct||0));
-    const avgPool=sorted.length?Math.round(sorted.reduce((a,s)=>a+(s.score_pct||0),0)/sorted.length):0;
-    return {theme,sorted,avgPool};
+  const pdata = Object.entries(pools).sort((a,b)=>b[1].length-a[1].length).map(([theme,joueurs],pi) => {
+    const sorted = [...joueurs].sort((a,b)=>(b.score_pct||0)-(a.score_pct||0));
+    const pavg   = sorted.length ? Math.round(sorted.reduce((a,s)=>a+(s.score_pct||0),0)/sorted.length) : 0;
+    return {theme, sorted, pavg, pi};
   });
+  window._poolsData = pdata;
 
-  const poolEl = document.getElementById('defis-pools');
-  if(poolEl) poolEl.innerHTML = poolEntries.length ? window._poolsData.map((pool,pi)=>{
-    const winner=pool.sorted[0];
-    const winnerElev=winner?elevs.find(e=>e.pseudo===winner.pseudo):null;
-    const winnerName=winnerElev?winnerElev.j.prenom+' '+winnerElev.j.nom:winner?.pseudo||'—';
-    const top3=pool.sorted.slice(0,3);
-    const col=scColor(pool.avgPool);
-    return `<div class="pool-row-v2" onclick="openPoolPanel(${pi})">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="width:34px;height:34px;border-radius:8px;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${emj[pool.theme]||'🎯'}</div>
-        <div>
-          <div class="pool-theme-name">${pool.theme}</div>
-          <div class="pool-theme-sub"><span class="pool-dot"></span>Actif · ${pool.sorted.length} joueur${pool.sorted.length>1?'s':''}</div>
+  const pEl = document.getElementById('defis-pools');
+  if(pEl) pEl.innerHTML = pdata.length ? pdata.map(p => {
+    const w  = p.sorted[0];
+    const we = w ? elevs.find(e=>e.pseudo===w.pseudo) : null;
+    const wn = we ? we.j.prenom+' '+we.j.nom : w?.pseudo||'—';
+    const col = scColor(p.pavg);
+    const avH = p.sorted.slice(0,3).map((s,i) => {
+      const d  = elevs.find(e=>e.pseudo===s.pseudo);
+      const [bg,fg] = avC[i%avC.length];
+      const ini = d ? (d.j.prenom[0]||'?')+(d.j.nom[0]||'') : (s.pseudo||'?').slice(0,2);
+      return `<div class="pool-av" style="background:${bg};color:${fg}">${ini.toUpperCase()}</div>`;
+    }).join('') + (p.sorted.length>3 ? `<div class="pool-av" style="background:var(--surf2);color:var(--t3)">+${p.sorted.length-3}</div>` : '');
+    return `<div class="pool-row" onclick="openPoolPanel(${p.pi})">
+      <div class="pc-th">
+        <div style="width:32px;min-width:32px;height:32px;border-radius:8px;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:14px">${emj[p.theme]||'🎯'}</div>
+        <div style="min-width:0;overflow:hidden">
+          <div class="pool-nm">${p.theme}</div>
+          <div class="pool-sb"><span class="pool-dot"></span>Actif · ${p.sorted.length}j</div>
         </div>
       </div>
-      <div class="pool-avatars">${top3.map((s,i)=>{
-        const d=elevs.find(e=>e.pseudo===s.pseudo);
-        const [bg,fg]=avColors[i%avColors.length];
-        const init=d?(d.j.prenom[0]||'')+(d.j.nom?d.j.nom[0]:''):s.pseudo?.slice(0,2)||'?';
-        return `<div class="pool-av" style="background:${bg};color:${fg}">${init.toUpperCase()}</div>`;
-      }).join('')}${pool.sorted.length>3?`<div class="pool-av" style="background:var(--surf2);color:var(--t3)">+${pool.sorted.length-3}</div>`:''}</div>
-      <div class="pool-score" style="color:${col}">${pool.avgPool}%</div>
-      <div>${winner?`<div class="pool-leader-name">${winnerName}</div><div class="pool-leader-score" style="color:${scColor(winner.score_pct||0)}">${winner.score_pct||0}%</div>`:''}</div>
-      <div class="pool-voir">Voir →</div>
+      <div class="pc-pl"><div class="pool-avs">${avH}</div></div>
+      <div class="pc-sc"><div class="pool-sc" style="color:${col}">${p.pavg}%</div></div>
+      <div class="pc-ld"><div class="pool-ln">${wn}</div><div class="pool-ls" style="color:${w?scColor(w.score_pct||0):'var(--t3)'}">${w?w.score_pct||0:0}%</div></div>
+      <div class="pc-vr">Voir →</div>
     </div>`;
   }).join('') : `<div class="empty"><div class="empty-icon">⚔️</div><div class="empty-text">Aucune pool active</div></div>`;
 
-  // TIMELINE
-  renderTimeline(window._tlMode||'all', recent);
+  renderTL(window._tlMode||'all', rows);
 
-  // HISTORIQUE
-  document.getElementById('defis-histo').innerHTML = `<div class="panel"><div class="panel-header">📋 Historique des sessions</div><table><thead><tr><th>Joueur</th><th>Thème</th><th>Matière</th><th>École</th><th>Score</th><th>Points</th><th>Date</th></tr></thead><tbody>${
-    DB.sessions.slice(0,30).map(s=>`<tr class="eleve-row" data-id="${s.pseudo}" data-pseudo="${s.pseudo}" style="cursor:pointer">
-      <td><span style="font-weight:500;color:var(--t)">${s.pseudo||'—'}</span></td>
-      <td style="font-size:11px">${s.theme||'—'}</td>
-      <td style="font-size:11px">${s.matiere||'—'}</td>
-      <td style="font-size:11px">${s.ecole||'—'}</td>
-      <td>${scorePill(s.score_pct||0)}</td>
-      <td style="font-weight:600;color:var(--am)">+${s.pts_round||0}</td>
-      <td style="font-size:10px;color:var(--t3)">${ago(s.ts)}</td>
-    </tr>`).join('')||'<tr><td colspan="7"><div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Aucune session</div></div></td></tr>'
+  document.getElementById('defis-histo').innerHTML = `<div class="panel"><div class="panel-header">📋 Historique</div><table><thead><tr><th>Joueur</th><th>Thème</th><th>Score</th><th>Pts</th><th>Date</th></tr></thead><tbody>${
+    DB.sessions.slice(0,30).map(s=>`<tr><td style="font-weight:600">${s.pseudo||'—'}</td><td style="font-size:11px">${s.theme||s.matiere||'—'}</td><td>${scorePill(s.score_pct||0)}</td><td style="font-weight:700;color:var(--am)">+${s.pts_round||0}</td><td style="font-size:10px;color:var(--t3)">${ago(s.ts)}</td></tr>`).join('')
   }</tbody></table></div>`;
 
-  // CLASSEMENT
   const sm={};
-  DB.sessions.forEach(s=>{
-    if(!s.pseudo) return;
-    if(!sm[s.pseudo]) sm[s.pseudo]={pseudo:s.pseudo,ecole:s.ecole,sessions:0,pts:0,wins:0};
-    sm[s.pseudo].sessions++;
-    sm[s.pseudo].pts=Math.max(sm[s.pseudo].pts,s.pts_total||0);
-    if((s.score_pct||0)>=80) sm[s.pseudo].wins++;
-  });
-  const ranking=Object.values(sm).sort((a,b)=>b.pts-a.pts);
-  document.getElementById('defis-rank').innerHTML=`<div class="panel"><div class="panel-header">🏆 Classement général</div><table><thead><tr><th>#</th><th>Joueur</th><th>École</th><th>Sessions</th><th>Victoires ≥80%</th><th>Points</th></tr></thead><tbody>${
-    ranking.slice(0,20).map((r,i)=>{
-      const jd=DB.joueurs.find(j=>j.pseudo===r.pseudo);
-      const fn=jd?jd.prenom+' '+jd.nom:r.pseudo;
-      return `<tr class="eleve-row" data-id="${r.pseudo}" data-pseudo="${r.pseudo}" style="cursor:pointer">
-      <td style="font-weight:800">${['🥇','🥈','🥉'][i]||'#'+(i+1)}</td>
-      <td><div style="font-size:12px;font-weight:600;color:var(--t)">${fn}</div><div style="font-size:9px;color:var(--t3)">${r.pseudo}</div></td>
-      <td style="font-size:11px">${r.ecole||'—'}</td>
-      <td>${r.sessions}</td>
-      <td>${r.wins>0?'⚡ '+r.wins:'—'}</td>
-      <td style="font-weight:700;color:var(--am)">${r.pts.toLocaleString('fr')}</td>
-    </tr>`;}).join('')||'<tr><td colspan="6"><div class="empty"><div class="empty-icon">🏆</div></div></td></tr>'
+  DB.sessions.forEach(s=>{if(!s.pseudo)return;if(!sm[s.pseudo])sm[s.pseudo]={n:0,pts:0,wins:0,ecole:s.ecole,pseudo:s.pseudo};sm[s.pseudo].n++;sm[s.pseudo].pts=Math.max(sm[s.pseudo].pts,s.pts_total||0);if((s.score_pct||0)>=80)sm[s.pseudo].wins++;});
+  document.getElementById('defis-rank').innerHTML = `<div class="panel"><div class="panel-header">🏆 Classement</div><table><thead><tr><th>#</th><th>Joueur</th><th>École</th><th>Sessions</th><th>Wins</th><th>Pts</th></tr></thead><tbody>${
+    Object.values(sm).sort((a,b)=>b.pts-a.pts).slice(0,20).map((r,i) => {
+      const jd = DB.joueurs.find(j=>j.pseudo===r.pseudo);
+      return `<tr><td style="font-weight:800">${['🥇','🥈','🥉'][i]||'#'+(i+1)}</td><td style="font-weight:600;font-size:12px">${jd?jd.prenom+' '+jd.nom:r.pseudo}</td><td style="font-size:11px">${r.ecole||'—'}</td><td>${r.n}</td><td>${r.wins?'⚡'+r.wins:'—'}</td><td style="font-weight:700;color:var(--am)">${r.pts.toLocaleString('fr')}</td></tr>`;
+    }).join('')
   }</tbody></table></div>`;
 }
 
-function renderTimeline(mode, sessions) {
+function renderTL(mode, sessions) {
   window._tlMode = mode;
-  const tlEl = document.getElementById('defis-timeline');
-  if(!tlEl) return;
-  // Combiner sessions quiz + connexions
-  const events = [];
-  (sessions||DB.sessions.slice(0,50)).forEach(s=>{
-    events.push({type:'quiz',who:s.pseudo||'—',what:s.theme||s.matiere||'Roulette',score:s.score_pct||0,ts:s.ts});
-  });
-  DB.connexions && DB.connexions.slice(0,50).forEach(cn=>{
-    events.push({type:'cnx',who:cn.pseudo||'—',what:'Connexion · '+(cn.device||'App'),dur:cn.duree_min?cn.duree_min+' min':null,ts:cn.ts});
-  });
-  events.sort((a,b)=>new Date(b.ts)-new Date(a.ts));
-  const filtered = mode==='all' ? events : events.filter(e=>e.type===mode);
-  // Grouper par jour
-  const byDay={};
-  filtered.slice(0,40).forEach(e=>{
+  const el = document.getElementById('defis-tl');
+  if(!el) return;
+  const evts = [];
+  (sessions||DB.sessions.slice(0,50)).forEach(s => evts.push({type:'quiz',who:s.pseudo||'—',what:s.theme||s.matiere||'Roulette',score:s.score_pct||0,ts:s.ts}));
+  (DB.connexions||[]).slice(0,30).forEach(cn => evts.push({type:'cnx',who:cn.pseudo||'—',what:'Connexion · '+(cn.device||'App'),dur:cn.duree_min?cn.duree_min+' min':null,ts:cn.ts}));
+  evts.sort((a,b)=>new Date(b.ts)-new Date(a.ts));
+  const filt = mode==='all' ? evts : evts.filter(e=>e.type===mode);
+  const byDay = {};
+  filt.slice(0,40).forEach(e => {
     if(!e.ts) return;
-    const d = localDateStr(e.ts);
+    const d     = localDateStr(e.ts);
     const today = localDateStr();
-    const yest = localDateStr(new Date(Date.now()-86400000).toISOString());
-    const label = d===today?"Aujourd'hui":d===yest?'Hier':d;
-    if(!byDay[label]) byDay[label]=[];
-    byDay[label].push(e);
+    const yest  = localDateStr(new Date(Date.now()-86400000).toISOString());
+    const lbl   = d===today ? "Aujourd'hui" : d===yest ? 'Hier' : d;
+    if(!byDay[lbl]) byDay[lbl]=[];
+    byDay[lbl].push(e);
   });
-  const days=Object.keys(byDay);
-  if(!days.length){tlEl.innerHTML='<div class="empty"><div class="empty-icon">📅</div><div class="empty-text">Aucune activité</div></div>';return;}
-  tlEl.innerHTML=days.map(day=>`
-    <div class="tl-day-label">${day}</div>
-    <div class="tl-events">${byDay[day].map(e=>{
-      const col = e.type==='quiz'?scColor(e.score):'var(--gr)';
-      return `<div class="tl-event tl-${e.type}">
-        <div class="tl-ev-icon ${e.type}">${e.type==='quiz'?'🎯':'🔗'}</div>
-        <div style="flex:1;min-width:0">
-          <div class="tl-ev-who">${e.who}</div>
-          <div class="tl-ev-what">${e.what}</div>
-          <div class="tl-ev-meta">
-            <span class="tl-ev-time">${e.ts?new Date(e.ts).toLocaleTimeString('fr',{hour:'2-digit',minute:'2-digit'}):''}</span>
-            ${e.type==='quiz'?`<span class="tl-score-pill" style="background:${scBg(e.score)};color:${scColor(e.score)}">${e.score}%</span>`:''}
-            ${e.dur?`<span class="tl-dur-pill">${e.dur}</span>`:''}
+  const days = Object.keys(byDay);
+  if(!days.length){el.innerHTML='<div class="empty"><div class="empty-icon">📅</div><div class="empty-text">Aucune activité</div></div>';return;}
+  el.innerHTML = days.map(day => `
+    <div class="tl-day">${day}</div>
+    <div class="tl-list">${byDay[day].map(e => `
+      <div class="tl-ev ${e.type}">
+        <div class="tl-ic ${e.type}">${e.type==='quiz'?'🎯':'🔗'}</div>
+        <div class="tl-bd">
+          <div class="tl-who">${e.who}</div>
+          <div class="tl-wh2">${e.what}</div>
+          <div class="tl-mt">
+            <span class="tl-tm">${e.ts?new Date(e.ts).toLocaleTimeString('fr',{hour:'2-digit',minute:'2-digit'}):''}</span>
+            ${e.type==='quiz'?`<span class="tl-sp" style="background:${scBg(e.score)};color:${scColor(e.score)}">${e.score}%</span>`:''}
+            ${e.dur?`<span class="tl-dp">${e.dur}</span>`:''}
           </div>
         </div>
-      </div>`;
-    }).join('')}</div>`).join('');
+      </div>`).join('')}
+    </div>`).join('');
 }
 
-function switchDefiTabV2(tab, btn) {
-  document.querySelectorAll('.dtab-v2').forEach(b=>b.classList.remove('dtab-on'));
-  btn.classList.add('dtab-on');
+function switchDTab(tab, btn) {
+  document.querySelectorAll('.tb2').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
   document.getElementById('defis-pools-wrap').style.display = tab==='pools'?'block':'none';
   document.getElementById('defis-histo').style.display = tab==='histo'?'block':'none';
   document.getElementById('defis-rank').style.display  = tab==='rank'?'block':'none';
 }
-
-function switchTlFilter(mode, btn) {
-  document.querySelectorAll('.tl-pill').forEach(b=>b.classList.remove('tl-on'));
-  btn.classList.add('tl-on');
-  renderTimeline(mode);
+function switchTL(mode, btn) {
+  document.querySelectorAll('.tl-pill').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  renderTL(mode);
 }
-
-// Garder l'ancienne switchDefiTab pour compatibilité
-function switchDefiTab(tab, btn) { switchDefiTabV2(tab, btn); }
+function switchDefiTab(tab, btn) { switchDTab(tab, btn); }
 
 
 // ── PARRAINAGE ──
-let parrSortKey='filleuls', parrSortDir=-1;
-const parrFilterOpen={etab:false,canal:false};
+let _psk='filleuls', _psd=-1, _pfo={etab:false,canal:false};
 
-function parrToggleFilter(id){
-  parrFilterOpen[id]=!parrFilterOpen[id];
-  const el=document.getElementById('parr-flt-'+id);
-  if(el) el.style.display=parrFilterOpen[id]?'block':'none';
+function parrFlt(id) {
+  _pfo[id] = !_pfo[id];
+  const el = document.getElementById('parr-flt-'+id);
+  if(el) el.style.display = _pfo[id] ? 'block' : 'none';
 }
 
-function parrSort(key){
-  if(parrSortKey===key) parrSortDir*=-1; else{parrSortKey=key;parrSortDir=-1;}
-  ['name','etab','filleuls','pts','recent'].forEach(k=>{
-    const el=document.getElementById('parr-arr-'+k);
-    if(el) el.textContent='↕';
-    const th=document.getElementById('pth-'+k);
-    if(th) th.classList.remove('pth-on');
-  });
-  const arr=document.getElementById('parr-arr-'+key);
-  if(arr) arr.textContent=parrSortDir===-1?'↓':'↑';
+function parrSort(k) {
+  if(_psk===k) _psd*=-1; else { _psk=k; _psd=-1; }
+  ['name','filleuls','pts','recent'].forEach(x => { const e=document.getElementById('pa-'+x); if(e) e.textContent='↕'; });
+  const a = document.getElementById('pa-'+k);
+  if(a) a.textContent = _psd===-1 ? '↓' : '↑';
   renderParrainage();
 }
 
 function renderParrainage() {
-  const elevs = buildElevs();
-  const ptsParrain = (typeof BAREME_CONFIG!=='undefined' && BAREME_CONFIG.pts_parrainage) ? BAREME_CONFIG.pts_parrainage : 100;
-  const senders = {};
+  const elevs  = buildElevs();
+  const pp     = (typeof BAREME_CONFIG!=='undefined' && BAREME_CONFIG.pts_parrainage) ? BAREME_CONFIG.pts_parrainage : 100;
+  const snd    = {};
   DB.parrainage.forEach(p => {
-    if (!p.sender) return;
-    const matchElev = elevs.find(e => {
-      const email=(e.j.email||'').toLowerCase();
-      const fullName=`${e.j.prenom} ${e.j.nom}`.toLowerCase();
-      const prenom=(e.j.prenom||'').toLowerCase();
-      const ps=(p.sender||'').toLowerCase();
-      const pe=(p.sender_email||'').toLowerCase();
-      return (pe&&email&&pe===email)||ps===fullName||ps===prenom||ps===(e.pseudo||'').toLowerCase();
+    if(!p.sender) return;
+    const me = elevs.find(e => {
+      const fn = (e.j.prenom+' '+e.j.nom).toLowerCase();
+      const ps = (p.sender||'').toLowerCase();
+      return ps===fn || ps===(e.pseudo||'').toLowerCase();
     });
-    const key=matchElev?`${matchElev.j.prenom} ${matchElev.j.nom}`:p.sender;
-    if(!senders[key]) senders[key]={name:key,etab:matchElev?(matchElev.j.ecole||'—'):(p.sender_etab||'—'),elev:matchElev||null,filleuls:[],channels:[],last:null};
-    senders[key].filleuls.push(p.destinataire);
-    senders[key].channels.push(p.channel);
-    if(!senders[key].last||p.ts>senders[key].last) senders[key].last=p.ts;
+    const k = me ? (me.j.prenom+' '+me.j.nom) : p.sender;
+    if(!snd[k]) snd[k] = {name:k, etab:me?(me.j.ecole||'—'):(p.sender_etab||'—'), elev:me||null, fils:[], chs:[], last:null};
+    snd[k].fils.push(p.destinataire);
+    snd[k].chs.push(p.channel);
+    if(!snd[k].last || p.ts>snd[k].last) snd[k].last = p.ts;
   });
 
-  const search=((document.getElementById('parr-search')||{value:''}).value||'').toLowerCase();
-  const etabVal=(document.getElementById('parr-etab')||{value:''}).value||'';
-  const canalVal=(document.getElementById('parr-canal')||{value:''}).value||'';
+  const q   = ((document.getElementById('parr-search')||{value:''}).value||'').toLowerCase();
+  const ev  = (document.getElementById('parr-etab')||{value:''}).value||'';
+  const cv  = (document.getElementById('parr-canal')||{value:''}).value||'';
+  const all = Object.values(snd);
 
-  const allRows=Object.values(senders);
-  const etabSel=document.getElementById('parr-etab');
-  if(etabSel){
-    const allEtabs=[...new Set(allRows.map(r=>r.etab).filter(e=>e&&e!=='—'))].sort();
-    etabSel.innerHTML='<option value="">Toutes</option>'+allEtabs.map(e=>`<option value="${e}"${e===etabVal?' selected':''}>${e}</option>`).join('');
+  const es = document.getElementById('parr-etab');
+  if(es) {
+    const etabs = [...new Set(all.map(r=>r.etab).filter(e=>e&&e!=='—'))].sort();
+    const cur = es.value;
+    es.innerHTML = '<option value="">Toutes</option>' + etabs.map(e=>`<option value="${e}"${e===cur?' selected':''}>${e}</option>`).join('');
   }
 
-  const topCanalAll=DB.parrainage.length?Object.entries(DB.parrainage.reduce((acc,p)=>{acc[p.channel]=(acc[p.channel]||0)+1;return acc},{})).sort((a,b)=>b[1]-a[1])[0][0]:'—';
-  const chIc={whatsapp:'💬 WhatsApp',telegram:'✈️ Telegram',copy:'📋 Copie',native:'↗️ Partage'};
-  const totalPts=DB.parrainage.reduce((s,p)=>s+(p.pts||ptsParrain),0);
+  const totalP = DB.parrainage.reduce((s,p)=>s+(p.pts||pp),0);
+  const topC   = DB.parrainage.length ? Object.entries(DB.parrainage.reduce((acc,p)=>{acc[p.channel]=(acc[p.channel]||0)+1;return acc},{})).sort((a,b)=>b[1]-a[1])[0][0] : '—';
+  const chI    = {whatsapp:'💬 WhatsApp',telegram:'✈️ Telegram',copy:'📋 Copie',native:'↗️ Partage'};
 
-  document.getElementById('parr-kpis').innerHTML=[
-    {val:DB.parrainage.length,label:'Total invitations',sub:`+${totalPts} pts générés`,color:'#E040A0',icon:'🎁'},
-    {val:allRows.length,label:'Parrains actifs',sub:'ont invité ≥1 filleul',color:'var(--ac)',icon:'👤'},
-    {val:totalPts,label:'Points distribués',sub:`${ptsParrain} pts / parrainage`,color:'var(--am)',icon:'⭐'},
-    {val:chIc[topCanalAll]||topCanalAll,label:'Canal favori',sub:'le plus utilisé',color:'var(--gr)',icon:'📡'},
-  ].map(k=>`<div class="kpi-card" style="cursor:default"><div class="kpi-bar" style="background:${k.color}"></div><div class="kpi-icon">${k.icon}</div><div class="kpi-val" style="font-size:${typeof k.val==='string'&&k.val.length>6?'14px':'26px'}">${k.val}</div><div class="kpi-label">${k.label}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+  document.getElementById('parr-kpis').innerHTML = [
+    {v:DB.parrainage.length, l:'Invitations',       s:'total',          c:'#E040A0', i:'🎁'},
+    {v:all.length,           l:'Parrains actifs',   s:'≥1 filleul',     c:'var(--ac)',i:'👤'},
+    {v:totalP,               l:'Points distribués', s:pp+' pts/parr.',  c:'var(--am)',i:'⭐'},
+    {v:chI[topC]||topC,      l:'Canal favori',      s:'le plus utilisé',c:'var(--gr)',i:'📡'},
+  ].map(k=>`<div class="kpi-card" style="cursor:default"><div class="kpi-bar" style="background:${k.c}"></div><div class="kpi-icon">${k.i}</div><div class="kpi-val" style="font-size:${typeof k.v==='string'&&k.v.length>8?'13px':'26px'}">${k.v}</div><div class="kpi-label">${k.l}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
 
-  let data=allRows.filter(r=>{
-    if(search&&!r.name.toLowerCase().includes(search)&&!(r.etab||'').toLowerCase().includes(search)) return false;
-    if(etabVal&&r.etab!==etabVal) return false;
-    if(canalVal&&!r.channels.includes(canalVal)) return false;
+  let data = all.filter(r => {
+    if(q && !r.name.toLowerCase().includes(q) && !(r.etab||'').toLowerCase().includes(q)) return false;
+    if(ev && r.etab!==ev) return false;
+    if(cv && !r.chs.includes(cv)) return false;
     return true;
-  });
-
-  data.sort((a,b)=>{
-    const k=parrSortKey;
-    const d=parrSortDir;
-    if(k==='name') return d*a.name.localeCompare(b.name);
-    if(k==='etab') return d*(a.etab||'').localeCompare(b.etab||'');
-    if(k==='filleuls') return d*(a.filleuls.length-b.filleuls.length);
-    if(k==='pts') return d*(a.filleuls.length-b.filleuls.length);
-    if(k==='recent') return d*(new Date(a.last||0)-new Date(b.last||0));
+  }).sort((a,b) => {
+    const d = _psd;
+    if(_psk==='name')    return d * a.name.localeCompare(b.name);
+    if(_psk==='etab')    return d * (a.etab||'').localeCompare(b.etab||'');
+    if(_psk==='filleuls'||_psk==='pts') return d * (a.fils.length-b.fils.length);
+    if(_psk==='recent')  return d * (new Date(a.last||0)-new Date(b.last||0));
     return 0;
   });
 
-  document.getElementById('parr-count').textContent=`${data.length} parrain${data.length>1?'s':''}`;
+  const cntEl = document.getElementById('parr-cnt');
+  if(cntEl) cntEl.textContent = data.length + ' parrain' + (data.length>1?'s':'');
+  crmSelections['parr'] = crmSelections['parr'] || new Set();
+  const tC = r => { const f={}; r.chs.forEach(ch=>f[ch]=(f[ch]||0)+1); return Object.entries(f).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—'; };
 
-  const topCh=r=>{const freq={};r.channels.forEach(ch=>freq[ch]=(freq[ch]||0)+1);return Object.entries(freq).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—';};
-  crmSelections['parr']=crmSelections['parr']||new Set();
-
-  document.getElementById('parr-tbody').innerHTML=data.length?data.map(r=>{
-    const d=r.elev;
-    const sel=crmSelections['parr'].has(r.name);
-    const targetPseudo=d?d.pseudo:r.name;
-    const ch=topCh(r);
-    const chLabel=chIc[ch]||ch;
-    return `<tr class="parr-row eleve-row" data-id="${targetPseudo}" data-pseudo="${targetPseudo}" style="${sel?'background:rgba(108,95,232,.07)':''}">
-      <td class="crm-td"><input type="checkbox" class="crm-check" ${sel?'checked':''} onchange="crmToggle('parr','${r.name}',this.checked)"></td>
-      <td><div style="display:flex;align-items:center;gap:9px">${d?ava(d.j.prenom,d.j.nom,d.idx,30):`<div class="ava" style="width:30px;height:30px;background:var(--surf3);color:var(--t3);font-size:11px">${r.name[0]||'?'}</div>`}<div style="font-size:12px;font-weight:600;color:var(--t)">${r.name}</div></div></td>
-      <td style="font-size:11px;color:var(--t2)">${r.etab}</td>
-      <td><span style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--ac)">${r.filleuls.length}</span></td>
-      <td><span class="bdg purple">${chLabel}</span></td>
-      <td style="font-weight:700;color:var(--am)">+${r.filleuls.length*ptsParrain} pts</td>
+  document.getElementById('parr-tbody').innerHTML = data.length ? data.map(r => {
+    const d   = r.elev;
+    const sel = crmSelections['parr'].has(r.name);
+    const ch  = tC(r);
+    const av_html = d ? ava(d.j.prenom,d.j.nom,d.idx,28) : `<div style="width:28px;height:28px;border-radius:50%;background:var(--surf2);color:var(--t3);font-size:11px;display:flex;align-items:center;justify-content:center">${(r.name[0]||'?').toUpperCase()}</div>`;
+    return `<tr style="${sel?'background:rgba(108,95,232,.07)':''}">
+      <td class="crm-td"><input type="checkbox" ${sel?'checked':''} onchange="crmToggle('parr','${r.name.replace(/'/g,"\'")}',this.checked)"></td>
+      <td><div style="display:flex;align-items:center;gap:8px">${av_html}<div style="font-size:12px;font-weight:600;color:var(--t);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name}</div></div></td>
+      <td style="font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.etab}</td>
+      <td><span style="font-size:16px;font-weight:800;color:var(--ac)">${r.fils.length}</span></td>
+      <td><span class="bdg purple">${chI[ch]||ch}</span></td>
+      <td style="font-weight:700;color:var(--am)">+${r.fils.length*pp}</td>
       <td style="font-size:10px;color:var(--t3)">${ago(r.last)}</td>
     </tr>`;
-  }).join(''):`<tr><td colspan="7"><div class="empty"><div class="empty-icon">🎁</div><div class="empty-text">Aucun parrain trouvé</div></div></td></tr>`;
-
-  document.getElementById('parr-tbody').querySelectorAll('.parr-row').forEach(tr=>{
-    tr.addEventListener('click',function(e){
-      if(e.target.closest('.crm-td')||e.target.tagName==='INPUT') return;
-      openEleve(this.dataset.id);
-    });
-  });
+  }).join('') : `<tr><td colspan="7"><div class="empty"><div class="empty-icon">🎁</div><div class="empty-text">Aucun parrain</div></div></td></tr>`;
 }
 
 
@@ -3109,16 +3158,6 @@ function initMsgData() {
   msgConversations['__global__'] = [
     {from:'admin', text:'📢 Rappel : le Bac blanc est dans 3 semaines. Révisez bien avec Flowin !', ts:new Date(Date.now()-259200000).toISOString()},
   ];
-  msgConversations['OliviaLaurent'] = [
-    {from:'eleve', text:"Bonjour, j'arrive pas à lancer le quiz sur thème Roulette", ts:new Date(Date.now()-3600000*3).toISOString()},
-  ];
-  msgConversations['ChloeRoux'] = [
-    {from:'admin', text:'Bravo Chloé pour ton score de 92% ! Continue comme ça 🎉', ts:new Date(Date.now()-86400000).toISOString()},
-    {from:'eleve', text:"Merci !! J'essaie de passer en Légende 👑", ts:new Date(Date.now()-82800000).toISOString()},
-  ];
-  msgConversations['NathanMoreau'] = [
-    {from:'admin', text:"Nathan, ça fait un moment qu'on ne t'a pas vu ! Tout va bien ?", ts:new Date(Date.now()-172800000).toISOString()},
-  ];
 }
 
 function renderMsgList(filter='') {
@@ -3312,8 +3351,8 @@ function computePushQueue() {
 }
 
 const PUSH_HISTORY = [
-  { ts:new Date(Date.now()-3600000*2).toISOString(),  rule:'inactif3',    dest:'NathanMoreau',  status:'sent',  open:true  },
-  { ts:new Date(Date.now()-3600000*5).toISOString(),  rule:'streak_risk', dest:'OliviaLaurent', status:'sent',  open:true  },
+  { ts:new Date(Date.now()-3600000*2).toISOString(),  rule:'inactif3',    dest:'',  status:'sent',  open:true  },
+  { ts:new Date(Date.now()-3600000*5).toISOString(),  rule:'streak_risk', dest:'',  status:'sent',  open:true  },
   { ts:new Date(Date.now()-3600000*26).toISOString(), rule:'inactif7',    dest:'YanisFerreira', status:'sent',  open:false },
   { ts:new Date(Date.now()-3600000*27).toISOString(), rule:'fin_semaine', dest:'ALL',           status:'sent',  open:null  },
   { ts:new Date(Date.now()-3600000*50).toISOString(), rule:'promo_ligue', dest:'LinaGarcia',    status:'sent',  open:true  },
@@ -4761,63 +4800,7 @@ function buildAddCoursHTML(editing, id) {
     </div>
 
   </div>
-  <style>@keyframes spin{to{transform:rotate(360deg)}}
-/* ── DÉFIS V2 ── */
-.dtab-v2{padding:8px 18px;font-size:12px;font-weight:600;color:var(--t3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s}
-.dtab-on{color:var(--t);border-bottom-color:var(--ac) !important}
-.pool-row-v2{background:var(--surf);border:1px solid var(--b);border-radius:10px;padding:12px 14px;display:grid;grid-template-columns:2fr 1fr 1fr 1.4fr 70px;align-items:center;gap:12px;cursor:pointer;transition:border-color .15s}
-.pool-row-v2:hover{border-color:var(--ac)}
-.pool-theme-name{font-size:13px;font-weight:700;color:var(--t);line-height:1.3}
-.pool-theme-sub{font-size:10px;color:var(--t3);margin-top:2px;display:flex;align-items:center;gap:4px}
-.pool-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0}
-.pool-avatars{display:flex}
-.pool-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;border:2px solid var(--surf);margin-left:-7px;flex-shrink:0}
-.pool-av:first-child{margin-left:0}
-.pool-score{font-size:16px;font-weight:800}
-.pool-leader-name{font-size:12px;font-weight:600;color:var(--t)}
-.pool-leader-score{font-size:11px;color:var(--t3);margin-top:1px}
-.pool-voir{font-size:11px;color:var(--ac);font-weight:600;text-align:right}
-/* Timeline */
-.tl-pill{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--b);background:var(--surf);color:var(--t2);transition:all .15s}
-.tl-on{background:var(--t);color:var(--surf);border-color:var(--t)}
-.tl-day-label{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:flex;align-items:center;gap:10px}
-.tl-day-label::after{content:'';flex:1;height:1px;background:var(--b)}
-.tl-events{display:flex;flex-direction:column;gap:5px;padding-left:14px;border-left:1px solid var(--b);margin-bottom:20px}
-.tl-event{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;background:var(--surf);border:1px solid var(--b);position:relative;cursor:pointer;transition:border-color .15s}
-.tl-event:hover{border-color:var(--ac)}
-.tl-event::before{content:'';position:absolute;left:-20px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%}
-.tl-quiz::before{background:#6C5FE8;border:2px solid var(--surf)}
-.tl-cnx::before{background:#1B9E75;border:2px solid var(--surf)}
-.tl-ev-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
-.tl-ev-icon.quiz{background:#EEECFC}
-.tl-ev-icon.cnx{background:#E6F7F1}
-.tl-ev-who{font-size:12px;font-weight:700;color:var(--t)}
-.tl-ev-what{font-size:11px;color:var(--t2);margin-top:1px}
-.tl-ev-meta{display:flex;align-items:center;gap:7px;margin-top:4px}
-.tl-ev-time{font-size:10px;color:var(--t3)}
-.tl-score-pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
-.tl-dur-pill{font-size:10px;color:var(--t3);padding:2px 7px;border-radius:20px;background:var(--surf2)}
-/* Parrainage V2 */
-.pth{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;font-size:11px;font-weight:600;color:var(--t2);user-select:none;transition:color .15s;gap:4px}
-.pth:hover{color:var(--t)}
-.pth-on{color:var(--t) !important}
-/* Barème V2 */
-.bsl-row{margin-bottom:14px}
-.bsl-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
-.bsl-label{font-size:12px;color:var(--t2)}
-.bsl-val{font-size:14px;font-weight:800;color:var(--t);font-family:'Syne',sans-serif}
-.bsl-unit{font-size:10px;color:var(--t3);margin-left:2px}
-input[type=range]{accent-color:var(--ac)}
-.bsl-bounds{display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-top:2px}
-.lg-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--b)}
-.lg-row:last-child{border-bottom:none}
-.lg-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.lg-name{font-size:13px;font-weight:700;flex:1}
-.lg-range{font-size:10px;color:var(--t3)}
-.lg-input{width:70px;height:28px;border:1px solid var(--b);border-radius:7px;background:var(--surf2);text-align:center;font-size:12px;font-weight:700;color:var(--t);outline:none}
-.lg-input:focus{border-color:var(--ac)}
-
-</style>`;
+  <style>@keyframes spin{to{transform:rotate(360deg)}}</style>`;
 }
 
 // ── FILE HANDLING ──
@@ -5584,301 +5567,219 @@ function resetBareme() {
   closeBareme(); renderBareme();
 }
 
-let LOTS_FEATURE_ACTIVE = false;
-
-function toggleLotsFeature() {
-  LOTS_FEATURE_ACTIVE = !LOTS_FEATURE_ACTIVE;
-  const track  = document.getElementById('lots-toggle-track');
-  const thumb  = document.getElementById('lots-toggle-thumb');
-  const label  = document.getElementById('lots-toggle-label');
-  const addBtn = document.getElementById('lots-add-btn');
-  const banner = document.getElementById('lots-disabled-banner');
-  const desc   = document.getElementById('lots-desc-banner');
-  const list   = document.getElementById('bareme-lots-list');
-
-  if (LOTS_FEATURE_ACTIVE) {
-    track.style.background  = 'var(--ac)';
-    thumb.style.left        = '19px';
-    label.style.color       = 'var(--ac)';
-    label.textContent       = 'Activé';
-    addBtn.style.background = 'var(--ac)';
-    addBtn.style.color      = '#fff';
-    addBtn.style.cursor     = 'pointer';
-    addBtn.style.pointerEvents = 'auto';
-    banner.style.display    = 'none';
-    desc.style.display      = 'block';
-    if (list) list.style.opacity = '1';
-  } else {
-    track.style.background  = '#D1D5DB';
-    thumb.style.left        = '3px';
-    label.style.color       = 'var(--t3)';
-    label.textContent       = 'Désactivé';
-    addBtn.style.background = '#D1D5DB';
-    addBtn.style.color      = '#9CA3AF';
-    addBtn.style.cursor     = 'not-allowed';
-    addBtn.style.pointerEvents = 'none';
-    banner.style.display    = 'flex';
-    desc.style.display      = 'none';
-    if (list) list.style.opacity = '0.35';
-  }
-}
 
 
 
-const LOTS_DEFAULT = [
-  {
-    id: 'lot_gold_semaine',
-    titre: '40% sur le 2e menu McDo',
-    description: 'Remise de 40% sur le second menu McDonald\'s acheté',
-    condition: 'gold_semaine',
-    conditionLabel: '🥇 Ligue Or pendant 7 jours consécutifs',
-    codePromo: 'FLOWIN40',
-    actif: true,
-    emoji: '🍔'
-  },
-  {
-    id: 'lot_top1',
-    titre: 'Bon cadeau 10€',
-    description: 'Bon cadeau de 10€ pour le top 1 du classement hebdomadaire',
-    condition: 'top1_semaine',
-    conditionLabel: '🏆 Top 1 classement de la semaine',
-    codePromo: 'FLOWIN-TOP1',
-    actif: true,
-    emoji: '🎁'
-  }
+// ══════════════════════════════════════
+// BARÈME & LOTS
+// ══════════════════════════════════════
+
+let LOTS_ON = false;
+let LOTS_DB = [
+  {id:'l1', emoji:'🍔', titre:'40% sur le 2e menu McDo',
+   desc:"Remise de 40% sur le second menu McDonald's acheté",
+   cond:'gold_semaine', condLbl:'🥇 Ligue Or pendant 7 jours consécutifs',
+   code:'FLOWIN40', actif:true},
+  {id:'l2', emoji:'🎁', titre:'Bon cadeau 10€',
+   desc:'Bon cadeau pour le top 1 du classement hebdomadaire',
+   cond:'top1_semaine', condLbl:'🏆 Top 1 classement de la semaine',
+   code:'FLOWIN-TOP1', actif:true}
 ];
 
-let LOTS_DB = JSON.parse(JSON.stringify(LOTS_DEFAULT));
-
-// Charger lots depuis Supabase
-async function loadLotsFromSupabase() {
-  try {
-    const hdrs = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
-    const r = await fetch(SB_URL + '/rest/v1/config?key=in.(lots,lots_active)&select=key,value', { headers: hdrs });
-    if (!r.ok) return;
-    const rows = await r.json();
-    rows.forEach(row => {
-      if (row.key === 'lots' && Array.isArray(row.value)) LOTS_DB = row.value;
-      if (row.key === 'lots_active' && typeof row.value === 'boolean') {
-        LOTS_FEATURE_ACTIVE = row.value;
-        // Mettre à jour le toggle si la vue est déjà rendue
-        if (LOTS_FEATURE_ACTIVE) {
-          setTimeout(() => {
-            const track = document.getElementById('lots-toggle-track');
-            if (track) toggleLotsFeature(); // remettre à false d'abord puis toggle
-          }, 100);
-        }
-      }
-    });
-  } catch(e) {}
+function toggleLots() {
+  LOTS_ON = !LOTS_ON;
+  const track  = document.getElementById('lots-track');
+  const thumb  = document.getElementById('lots-thumb');
+  const lbl    = document.getElementById('lots-lbl');
+  const addBtn = document.getElementById('lots-add-btn');
+  const banner = document.getElementById('lots-off-banner');
+  const body   = document.getElementById('lots-body');
+  if(!track) return;
+  if(LOTS_ON) {
+    track.style.background = 'var(--ac)';
+    thumb.style.left = '20px';
+    lbl.textContent = 'Activé';
+    lbl.style.color = 'var(--ac)';
+    addBtn.style.cssText = 'font-size:11px;padding:5px 14px;border-radius:20px;background:var(--ac);color:#fff;border:none;cursor:pointer;font-weight:600;pointer-events:auto';
+    banner.style.display = 'none';
+    body.style.display   = 'block';
+  } else {
+    track.style.background = '#D1D5DB';
+    thumb.style.left = '4px';
+    lbl.textContent = 'Désactivé';
+    lbl.style.color = 'var(--t3)';
+    addBtn.style.cssText = 'font-size:11px;padding:5px 14px;border-radius:20px;background:#D1D5DB;color:#9CA3AF;border:none;cursor:not-allowed;font-weight:600;pointer-events:none';
+    banner.style.display = 'flex';
+    body.style.display   = 'none';
+  }
 }
 
-function renderBaremeView() {
-  // Points sliders
-  const ptsEl=document.getElementById('bareme-pts-editor');
-  if(ptsEl) ptsEl.innerHTML=Object.entries(BAREME).map(([k,b])=>`
-    <div class="bsl-row">
+function renderBareme2() {
+  const pEl = document.getElementById('bar-pts');
+  const lEl = document.getElementById('bar-ligues');
+  if(!pEl || !lEl) { setTimeout(renderBareme2, 50); return; }
+
+  pEl.innerHTML = Object.entries(BAREME).map(([k,b]) => `
+    <div class="bsl">
       <div class="bsl-top">
-        <label class="bsl-label">${b.label}</label>
-        <span><span class="bsl-val" id="bvv-${k}">${b.val}</span><span class="bsl-unit">${b.unit}</span></span>
+        <label class="bsl-lbl">${b.label}</label>
+        <span><span class="bsl-val" id="bv-${k}">${b.val}</span><span class="bsl-unit"> ${b.unit}</span></span>
       </div>
       <input type="range" min="${b.min}" max="${b.max}" step="${b.step}" value="${b.val}"
-        oninput="BAREME['${k}'].val=parseInt(this.value);document.getElementById('bvv-${k}').textContent=this.value;renderBareme()">
-      <div class="bsl-bounds"><span>${b.min}</span><span>${b.max}</span></div>
+        oninput="BAREME['${k}'].val=parseInt(this.value);document.getElementById('bv-${k}').textContent=this.value;renderBareme()">
+      <div class="bsl-bnds"><span>${b.min}</span><span>${b.max}</span></div>
     </div>`).join('');
 
-  // Ligues
-  const ligEl=document.getElementById('bareme-ligues-editor');
-  if(ligEl) ligEl.innerHTML=LIGUES_SEUILS.map((l,i)=>`
-    <div class="lg-row">
-      <div class="lg-icon" style="background:${l.bg}">${l.icon}</div>
-      <div class="lg-name" style="color:${l.color}">${l.name}</div>
-      ${i<LIGUES_SEUILS.length-1?`
-        <span class="lg-range">${l.min.toLocaleString('fr')} —</span>
-        <input class="lg-input" type="number" value="${l.max}" style="color:${l.color}"
-          onchange="LIGUES_SEUILS[${i}].max=parseInt(this.value);if(${i+1}<LIGUES_SEUILS.length)LIGUES_SEUILS[${i+1}].min=parseInt(this.value)+1;renderBaremeView()">
-        <span class="lg-range">pts</span>
-      `:`<span class="lg-range" style="color:${l.color}">≥ ${l.min.toLocaleString('fr')} pts — ∞</span>`}
-    </div>`).join('');
+  lEl.innerHTML = LIGUES_SEUILS.map((l,i) => {
+    const right = i < LIGUES_SEUILS.length-1
+      ? `<span class="lg-rg">${l.min.toLocaleString('fr')} —</span>
+         <input class="lg-inp" type="number" value="${l.max}" style="color:${l.color}"
+           onchange="LIGUES_SEUILS[${i}].max=parseInt(this.value);if(${i+1}<LIGUES_SEUILS.length)LIGUES_SEUILS[${i+1}].min=parseInt(this.value)+1;renderBareme2()">
+         <span class="lg-rg">pts</span>`
+      : `<span class="lg-rg" style="color:${l.color}">≥ ${l.min.toLocaleString('fr')} pts — ∞</span>`;
+    return `<div class="lg-row">
+      <div class="lg-ic" style="background:${l.bg}">${l.icon}</div>
+      <div class="lg-nm" style="color:${l.color}">${l.name}</div>
+      ${right}
+    </div>`;
+  }).join('');
 
-  renderLotsView();
+  renderLots2();
 }
 
-
-function renderLotsView() {
-  const el = document.getElementById('bareme-lots-list');
-  if (!el) return;
-  if (LOTS_DB.length === 0) {
-    el.innerHTML = '<div style="text-align:center;padding:24px;color:var(--t3);font-size:12px">Aucun lot configuré. Cliquez sur "+ Ajouter un lot" pour commencer.</div>';
+function renderLots2() {
+  const el = document.getElementById('bar-lots');
+  if(!el) return;
+  if(!LOTS_DB.length) {
+    el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">Aucun lot. Cliquez sur "+ Ajouter un lot".</div>';
     return;
   }
-  el.innerHTML = LOTS_DB.map((lot, i) => `
-    <div style="border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:12px;background:var(--surf)">
-      <div style="display:flex;align-items:flex-start;gap:12px">
-        <div style="width:44px;height:44px;border-radius:10px;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">${lot.emoji}</div>
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-            <div style="font-size:13px;font-weight:700;color:var(--t)">${lot.titre}</div>
-            <span style="font-size:9px;padding:2px 7px;border-radius:20px;font-weight:700;
-              ${lot.actif ? 'background:#E6F7F1;color:#1B9E75' : 'background:var(--surf2);color:var(--t3)'}">
-              ${lot.actif ? '✓ Actif' : '○ Inactif'}
-            </span>
-          </div>
-          <div style="font-size:11px;color:var(--t2);margin-bottom:6px">${lot.description}</div>
-          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
-            <span style="font-size:10px;padding:3px 8px;border-radius:20px;background:#EEECFC;color:var(--ac);font-weight:600">${lot.conditionLabel}</span>
-            <span style="font-size:10px;padding:3px 8px;border-radius:20px;background:var(--surf2);color:var(--t2);font-family:'Syne',sans-serif;font-weight:700">Code : ${lot.codePromo}</span>
-          </div>
+  el.innerHTML = LOTS_DB.map((lot,i) => `
+    <div class="lot-card">
+      <div class="lot-ic">${lot.emoji}</div>
+      <div class="lot-bd">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span class="lot-ti">${lot.titre}</span>
+          <span class="${lot.actif?'lot-on':'lot-off'}">${lot.actif?'✓ Actif':'○ Inactif'}</span>
         </div>
-        <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
-          <button onclick="toggleLot(${i})"
-            style="font-size:10px;padding:4px 10px;border-radius:20px;border:1px solid var(--b);background:var(--surf2);cursor:pointer;color:var(--t2)">
-            ${lot.actif ? '⏸ Désactiver' : '▶ Activer'}
-          </button>
-          <button onclick="editLot(${i})"
-            style="font-size:10px;padding:4px 10px;border-radius:20px;border:1px solid var(--ac);background:#EEECFC;cursor:pointer;color:var(--ac)">
-            ✏️ Modifier
-          </button>
-          <button onclick="deleteLot(${i})"
-            style="font-size:10px;padding:4px 10px;border-radius:20px;border:1px solid #FCD4D4;background:#FFF0F0;cursor:pointer;color:#E53935">
-            🗑 Supprimer
-          </button>
+        <div class="lot-de">${lot.desc}</div>
+        <div class="lot-tags">
+          <span class="lot-tc">${lot.condLbl}</span>
+          <span class="lot-tk">${lot.code}</span>
         </div>
+      </div>
+      <div class="lot-ac">
+        <button class="lot-btn" onclick="lotToggle(${i})">${lot.actif?'⏸ Désactiver':'▶ Activer'}</button>
+        <button class="lot-btn" style="border-color:var(--ac);color:var(--ac);background:#EEECFC" onclick="lotEdit(${i})">✏️ Modifier</button>
+        <button class="lot-btn" style="border-color:#FCD4D4;color:#E53935;background:#FFF0F0" onclick="lotDel(${i})">🗑 Supprimer</button>
       </div>
     </div>`).join('');
 }
 
-function toggleLot(i) {
-  LOTS_DB[i].actif = !LOTS_DB[i].actif;
-  renderLotsView();
-}
+function lotToggle(i) { LOTS_DB[i].actif = !LOTS_DB[i].actif; renderLots2(); }
+function lotDel(i)    { if(!confirm('Supprimer ce lot ?')) return; LOTS_DB.splice(i,1); renderLots2(); }
+function addLot()     { if(!LOTS_ON) return; lotEdit(null); }
 
-function deleteLot(i) {
-  if (!confirm('Supprimer ce lot ?')) return;
-  LOTS_DB.splice(i, 1);
-  renderLotsView();
-}
-
-function addLot() { if (!LOTS_FEATURE_ACTIVE) return; editLot(null); }
-
-function editLot(i) {
-  const isNew = i === null;
-  const lot = isNew ? {
-    id: 'lot_' + Date.now(),
-    titre: '', description: '', emoji: '🎁',
-    condition: 'gold_semaine', conditionLabel: '🥇 Ligue Or pendant 7 jours consécutifs',
-    codePromo: '', actif: true
-  } : JSON.parse(JSON.stringify(LOTS_DB[i]));
-
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px';
-  overlay.innerHTML = `
-    <div style="background:var(--surf);border-radius:14px;width:100%;max-width:480px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.2)">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-        <div style="font-size:15px;font-weight:800;color:var(--t)">${isNew ? '+ Nouveau lot' : '✏️ Modifier le lot'}</div>
-        <button id="lot-close-btn" style="width:28px;height:28px;border-radius:50%;background:var(--surf2);border:none;cursor:pointer;font-size:14px">✕</button>
+function lotEdit(i) {
+  const isN = i===null;
+  const lot = isN
+    ? {id:'l'+Date.now(), emoji:'🎁', titre:'', desc:'', cond:'gold_semaine', condLbl:'🥇 Ligue Or 7j', code:'', actif:true}
+    : JSON.parse(JSON.stringify(LOTS_DB[i]));
+  const cL = {gold_semaine:'🥇 Ligue Or pendant 7 jours consécutifs', top1_semaine:'🏆 Top 1 classement de la semaine'};
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px';
+  ov.innerHTML = `
+    <div style="background:var(--surf);border-radius:14px;width:100%;max-width:460px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <b style="font-size:14px">${isN ? '+ Nouveau lot' : '✏️ Modifier le lot'}</b>
+        <button id="lx" style="width:28px;height:28px;border-radius:50%;background:var(--surf2);border:none;cursor:pointer;font-size:14px">✕</button>
       </div>
-
-      <div style="display:grid;gap:12px">
+      <div style="display:grid;gap:11px">
         <div>
-          <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px">Emoji</label>
-          <input id="lot-emoji" type="text" value="${lot.emoji}" maxlength="2"
-            style="width:50px;font-size:22px;text-align:center;border:1px solid var(--b);border-radius:8px;padding:6px;background:var(--surf2)">
+          <label style="font-size:10px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px">EMOJI</label>
+          <input id="lem" type="text" value="${lot.emoji}" maxlength="2" style="width:44px;font-size:22px;text-align:center;border:1px solid var(--b);border-radius:8px;padding:6px;background:var(--surf2)">
         </div>
         <div>
-          <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px">Titre du lot</label>
-          <input id="lot-titre" type="text" value="${lot.titre}" placeholder="Ex: 40% sur le 2e menu McDo"
-            style="width:100%;border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:13px;background:var(--surf2);color:var(--t);box-sizing:border-box">
+          <label style="font-size:10px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px">TITRE DU LOT</label>
+          <input id="lti" type="text" value="${lot.titre}" placeholder="Ex: 40% sur le 2e menu McDo" style="width:100%;border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:13px;background:var(--surf2);color:var(--t);box-sizing:border-box">
         </div>
         <div>
-          <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px">Description</label>
-          <textarea id="lot-desc" rows="2" placeholder="Détail de la récompense…"
-            style="width:100%;border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:12px;background:var(--surf2);color:var(--t);resize:none;box-sizing:border-box">${lot.description}</textarea>
+          <label style="font-size:10px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px">DESCRIPTION</label>
+          <textarea id="lde" rows="2" style="width:100%;border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:12px;background:var(--surf2);color:var(--t);resize:none;box-sizing:border-box">${lot.desc}</textarea>
         </div>
         <div>
-          <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px">Condition de déclenchement</label>
-          <select id="lot-condition"
-            style="width:100%;border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:12px;background:var(--surf2);color:var(--t)">
-            <option value="gold_semaine" ${lot.condition==='gold_semaine'?'selected':''}>🥇 Ligue Or pendant 7 jours consécutifs</option>
-            <option value="top1_semaine" ${lot.condition==='top1_semaine'?'selected':''}>🏆 Top 1 classement de la semaine</option>
+          <label style="font-size:10px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px">CONDITION DE DÉCLENCHEMENT</label>
+          <select id="lco" style="width:100%;border:1px solid var(--b);border-radius:8px;padding:8px;font-size:12px;background:var(--surf2);color:var(--t)">
+            <option value="gold_semaine" ${lot.cond==='gold_semaine'?'selected':''}>🥇 Ligue Or pendant 7 jours consécutifs</option>
+            <option value="top1_semaine" ${lot.cond==='top1_semaine'?'selected':''}>🏆 Top 1 classement de la semaine</option>
           </select>
         </div>
         <div>
-          <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px">Code promo / détail remise</label>
-          <input id="lot-code" type="text" value="${lot.codePromo}" placeholder="Ex: FLOWIN40"
-            style="width:100%;border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:13px;font-family:'Syne',sans-serif;font-weight:700;background:var(--surf2);color:var(--t);box-sizing:border-box;text-transform:uppercase">
+          <label style="font-size:10px;font-weight:700;color:var(--t3);display:block;margin-bottom:4px">CODE PROMO / DÉTAIL</label>
+          <input id="lcd" type="text" value="${lot.code}" placeholder="Ex: FLOWIN40" style="width:100%;border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:13px;font-weight:700;background:var(--surf2);color:var(--t);box-sizing:border-box;text-transform:uppercase">
         </div>
       </div>
-
-      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--b)">
-        <button id="lot-cancel-btn" style="background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:8px 16px;font-size:12px;cursor:pointer">Annuler</button>
-        <button id="lot-save-btn" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer">✓ Enregistrer</button>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--b)">
+        <button id="lca" style="background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:8px 16px;font-size:12px;cursor:pointer">Annuler</button>
+        <button id="lsv" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer">✓ Enregistrer</button>
       </div>
     </div>`;
-
-  document.body.appendChild(overlay);
-
-  const condLabels = {
-    gold_semaine: '🥇 Ligue Or pendant 7 jours consécutifs',
-    top1_semaine: '🏆 Top 1 classement de la semaine'
-  };
-
-  document.getElementById('lot-close-btn').onclick =
-  document.getElementById('lot-cancel-btn').onclick = () => overlay.remove();
-
-  document.getElementById('lot-save-btn').onclick = () => {
-    const titre = document.getElementById('lot-titre').value.trim();
-    if (!titre) { alert('Le titre est obligatoire.'); return; }
-    const cond = document.getElementById('lot-condition').value;
-    const updated = {
+  document.body.appendChild(ov);
+  document.getElementById('lx').onclick = document.getElementById('lca').onclick = () => ov.remove();
+  document.getElementById('lsv').onclick = () => {
+    const ti = document.getElementById('lti').value.trim();
+    if(!ti) { alert('Le titre est obligatoire.'); return; }
+    const co = document.getElementById('lco').value;
+    const u  = {
       id: lot.id,
-      emoji: document.getElementById('lot-emoji').value || '🎁',
-      titre,
-      description: document.getElementById('lot-desc').value.trim(),
-      condition: cond,
-      conditionLabel: condLabels[cond] || cond,
-      codePromo: (document.getElementById('lot-code').value.trim()).toUpperCase(),
+      emoji: document.getElementById('lem').value || '🎁',
+      titre: ti,
+      desc:  document.getElementById('lde').value.trim(),
+      cond:  co,
+      condLbl: cL[co] || co,
+      code: document.getElementById('lcd').value.trim().toUpperCase(),
       actif: lot.actif
     };
-    if (isNew) LOTS_DB.push(updated);
-    else LOTS_DB[i] = updated;
-    overlay.remove();
-    renderLotsView();
+    if(isN) LOTS_DB.push(u); else LOTS_DB[i] = u;
+    ov.remove();
+    renderLots2();
   };
 }
 
-async function saveBaremeToSupabaseWithLots() {
-  const baremePayload = {};
-  Object.entries(BAREME).forEach(([k, b]) => { baremePayload[k] = b.val; });
-  const liguesPayload = LIGUES_SEUILS.map(l => ({
-    key: l.name.toLowerCase().replace('é','e').replace('è','e').replace('è','e')
-      .replace('argent','silver').replace('or','gold').replace('platine','diamond').replace('legende','legend'),
-    name: l.name, icon: l.icon, color: l.color, bg: l.bg,
-    min: l.min, max: l.max
-  }));
-  const hdrs = {
-    apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY,
-    'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates'
-  };
+async function saveBareme2() {
+  const bp = {};
+  Object.entries(BAREME).forEach(([k,b]) => { bp[k] = b.val; });
+  const lp = LIGUES_SEUILS.map(l => ({key:l.name.toLowerCase(), name:l.name, icon:l.icon, color:l.color, bg:l.bg, min:l.min, max:l.max}));
+  const h  = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', 'Prefer':'resolution=merge-duplicates'};
   try {
-    await fetch(SB_URL + '/rest/v1/config', {
-      method: 'POST', headers: hdrs,
-      body: JSON.stringify([
-        { key: 'bareme',        value: baremePayload,        updated_at: new Date().toISOString() },
-        { key: 'ligues_seuils', value: liguesPayload,        updated_at: new Date().toISOString() },
-        { key: 'lots',          value: LOTS_DB,              updated_at: new Date().toISOString() },
-        { key: 'lots_active',   value: LOTS_FEATURE_ACTIVE,  updated_at: new Date().toISOString() }
-      ])
+    const r = await fetch(SB_URL+'/rest/v1/config', {method:'POST', headers:h, body:JSON.stringify([
+      {key:'bareme',        value:bp,      updated_at:new Date().toISOString()},
+      {key:'ligues_seuils', value:lp,      updated_at:new Date().toISOString()},
+      {key:'lots',          value:LOTS_DB, updated_at:new Date().toISOString()},
+      {key:'lots_active',   value:LOTS_ON, updated_at:new Date().toISOString()},
+    ])});
+    if(r.ok) alert('✅ Sauvegardé dans Supabase');
+    else     alert('⚠️ Erreur — vérifier la connexion Supabase');
+  } catch(e) { alert('⚠️ Connexion Supabase impossible'); }
+}
+
+async function loadLotsFromSupabase() {
+  try {
+    const h = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY};
+    const r = await fetch(SB_URL+'/rest/v1/config?key=in.(lots,lots_active)&select=key,value', {headers:h});
+    if(!r.ok) return;
+    const rows = await r.json();
+    rows.forEach(row => {
+      if(row.key==='lots' && Array.isArray(row.value)) LOTS_DB = row.value;
+      if(row.key==='lots_active' && row.value===true && !LOTS_ON) toggleLots();
     });
-    alert('✅ Barème, ligues et lots sauvegardés dans Supabase — actifs pour tous les élèves');
-  } catch(e) {
-    alert('⚠️ Sauvegarde échouée — vérifier la connexion Supabase');
-  }
+  } catch(e) {}
 }
 
 // ── INIT ──
 buildNav();
 loadData();
+loadLotsFromSupabase();
 
 // ── MENU MOBILE ──
 function toggleMobileMenu(force) {
