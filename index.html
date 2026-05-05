@@ -3127,6 +3127,9 @@ if(document.readyState==='loading'){
   updateLandingStats();
 }
 
+// Sessions Supabase de l'élève (chargées au démarrage)
+var USER_SESSIONS = [];
+
 // État global du quiz
 const QS = {
   banqueIdx: 0,        // index de la banque tirée
@@ -3281,7 +3284,8 @@ async function loadPlayerStatsFromSupabase(pseudo) {
     const sessions = await res.json();
     if(!Array.isArray(sessions) || sessions.length === 0) return;
 
-    // Vraies stats
+    // Stocker globalement pour la courbe 7 jours par thème
+    USER_SESSIONS = sessions;
     const totalPts   = Math.max(...sessions.map(s => s.pts_total||0), 0);
     const nbSessions = sessions.length;
     const maxStreak  = Math.max(...sessions.map(s => s.streak||0), 0);
@@ -4336,30 +4340,61 @@ function renderThemeCard(idx, saved) {
     + ' font-family="Calibri,Arial,sans-serif" font-size="16" font-weight="800" fill="' + color + '">' + score + '%</text>'
     + '</svg>';
 
-  // Sparkline SVG
-  var days = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-  var base = score > 0
-    ? [0, Math.round(score * 0.4), Math.round(score * 0.6), Math.round(score * 0.5),
-       Math.round(score * 0.8), score, Math.round(score * 0.9)]
-    : [0, 0, 0, 0, 0, 0, 0];
+  // Sparkline SVG — vraies données Supabase (7 derniers jours)
+  var dayLabels = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
+  // Construire un tableau des 7 derniers jours (du plus ancien au plus récent)
+  var sevenDays = [];
+  for(var d = 6; d >= 0; d--) {
+    var dd = new Date(Date.now() - d * 86400000);
+    var yy = dd.getFullYear();
+    var mm = String(dd.getMonth()+1).padStart(2,'0');
+    var jj = String(dd.getDate()).padStart(2,'0');
+    sevenDays.push(yy + '-' + mm + '-' + jj);
+  }
+  dayLabels = sevenDays.map(function(ds) {
+    return ['D','L','M','M','J','V','S'][new Date(ds).getDay()];
+  });
+  // Pour chaque jour : score_pct moyen des sessions du thème t ce jour-là (0 si aucune)
+  var base = sevenDays.map(function(ds) {
+    var daySessions = USER_SESSIONS.filter(function(s) {
+      if(!s.ts) return false;
+      var sDate = s.ts.slice(0,10);
+      var sTheme = (s.theme || '').toLowerCase();
+      var tTitle = (t.title || '').toLowerCase();
+      var tId    = (t.id   || '').toLowerCase();
+      return sDate === ds && (sTheme === tTitle || sTheme === tId || sTheme.indexOf(tId) >= 0);
+    });
+    if(daySessions.length === 0) return 0;
+    var sum = daySessions.reduce(function(acc, s) { return acc + (s.score_pct || 0); }, 0);
+    return Math.round(sum / daySessions.length);
+  });
   var maxV = Math.max.apply(null, base) || 1;
   var sw = 200, sh = 48;
-  var pts = base.map(function(v, i) {
+  var allZero = base.every(function(v){ return v === 0; });
+  var sparkPts = base.map(function(v, i) {
     return [i * (sw / (base.length - 1)), sh - (v / maxV * (sh - 8)) + 4];
   });
-  var path = 'M ' + pts.map(function(p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' L ');
-  var area = 'M ' + pts[0][0] + ' ' + sh + ' L ' + path.slice(2) + ' L ' + pts[pts.length - 1][0] + ' ' + sh + ' Z';
-  var sparkSVG = '<svg width="100%" viewBox="0 0 200 48" style="display:block;overflow:visible">'
-    + '<defs><linearGradient id="sg' + idx + '" x1="0" y1="0" x2="0" y2="1">'
-    + '<stop offset="0%" stop-color="' + color + '" stop-opacity=".3"/>'
-    + '<stop offset="100%" stop-color="' + color + '" stop-opacity="0"/>'
-    + '</linearGradient></defs>'
-    + '<path d="' + area + '" fill="url(#sg' + idx + ')"/>'
-    + '<path d="' + path + '" fill="none" stroke="' + color + '" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'
-    + pts.map(function(p) {
-        return '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3" fill="' + color + '"/>';
-      }).join('')
-    + '</svg>';
+  var path = 'M ' + sparkPts.map(function(p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' L ');
+  var area = 'M ' + sparkPts[0][0] + ' ' + sh + ' L ' + path.slice(2) + ' L ' + sparkPts[sparkPts.length-1][0] + ' ' + sh + ' Z';
+  var sparkSVG = '<svg width="100%" viewBox="0 0 200 60" style="display:block;overflow:visible">';
+  if(allZero) {
+    // Pas encore de données pour ce thème
+    sparkSVG += '<text x="100" y="30" text-anchor="middle" font-size="11" fill="#bbb">Aucune session sur ce thème</text>';
+  } else {
+    sparkSVG += '<defs><linearGradient id="sg' + idx + '" x1="0" y1="0" x2="0" y2="1">'
+      + '<stop offset="0%" stop-color="' + color + '" stop-opacity=".3"/>'
+      + '<stop offset="100%" stop-color="' + color + '" stop-opacity="0"/>'
+      + '</linearGradient></defs>'
+      + '<path d="' + area + '" fill="url(#sg' + idx + ')"/>'
+      + '<path d="' + path + '" fill="none" stroke="' + color + '" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'
+      + sparkPts.map(function(p, i) {
+          var val = base[i];
+          var dot = '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3" fill="' + (val > 0 ? color : '#ddd') + '"/>';
+          var lbl = val > 0 ? '<text x="' + p[0].toFixed(1) + '" y="' + (p[1]-6).toFixed(1) + '" text-anchor="middle" font-size="9" fill="' + color + '" font-weight="700">' + val + '%</text>' : '';
+          return dot + lbl;
+        }).join('');
+  }
+  sparkSVG += '</svg>';
 
   var star = score >= 80 ? '⭐ Expert' : score >= 60 ? '✅ Bien' : score > 0 ? '📝 En cours' : '○ Non commencé';
   var panel = document.getElementById('statsThemePanel');
@@ -4384,7 +4419,7 @@ function renderThemeCard(idx, saved) {
       + '<div class="stats-curve-lbl">📈 Progression 7 jours</div>'
       + sparkSVG
       + '<div style="display:flex;justify-content:space-between;margin-top:4px">'
-        + days.map(function(d) { return '<span style="font-size:10px;color:#aaa;font-weight:600">' + d + '</span>'; }).join('')
+        + dayLabels.map(function(d) { return '<span style="font-size:10px;color:#aaa;font-weight:600">' + d + '</span>'; }).join('')
       + '</div>'
     + '</div>'
     + '<button class="stats-th-cta" id="stc-rev-' + idx + '" style="background:' + color + ';color:#fff">📖 Réviser ce thème</button>'
