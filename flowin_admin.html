@@ -657,9 +657,84 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
 
     </div>
 
+    <!-- BARÈME & LOTS -->
+    <div class="view" id="v-bareme">
+
+      <!-- HEADER -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div>
+          <div class="view-title" style="margin-bottom:2px">⭐ Barème & Lots partenaires</div>
+          <div class="view-sub">Configurez les points, les ligues et les récompenses</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button onclick="loadStockAndGains().then(()=>{renderStockPanel();renderGainsPanel()})" style="background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:8px 14px;font-size:11px;cursor:pointer;color:var(--t2);font-weight:600">↻ Actualiser</button>
+          <button onclick="saveBaremeComplet()" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer">✓ Sauvegarder</button>
+        </div>
+      </div>
+
+      <!-- LIGNE 1 : Points + Ligues -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div class="panel">
+          <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
+            <span>⭐ Points par action</span>
+            <button onclick="resetBareme()" style="font-size:10px;padding:3px 9px;border-radius:20px;background:var(--surf2);border:1px solid var(--b);cursor:pointer;color:var(--t2)">↺ Reset</button>
+          </div>
+          <div style="padding:16px">
+            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Bonne réponse (base)</label><span><span class="bsl-val" id="bvp-pts_bonne_reponse">15</span><span class="bsl-unit"> pts</span></span></div><input type="range" min="1" max="50" step="1" value="15" style="width:100%;accent-color:var(--am)" oninput="BAREME['pts_bonne_reponse'].val=parseInt(this.value);document.getElementById('bvp-pts_bonne_reponse').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>1</span><span>50</span></div></div>
+            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Bonus streak (2e bonne)</label><span><span class="bsl-val" id="bvp-pts_streak_bonus_2e">5</span><span class="bsl-unit"> pts</span></span></div><input type="range" min="0" max="20" step="1" value="5" style="width:100%;accent-color:var(--am)" oninput="BAREME['pts_streak_bonus_2e'].val=parseInt(this.value);document.getElementById('bvp-pts_streak_bonus_2e').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>0</span><span>20</span></div></div>
+            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Bonus streak (3e+)</label><span><span class="bsl-val" id="bvp-pts_streak_bonus_sup">2</span><span class="bsl-unit"> pts</span></span></div><input type="range" min="0" max="10" step="1" value="2" style="width:100%;accent-color:var(--am)" oninput="BAREME['pts_streak_bonus_sup'].val=parseInt(this.value);document.getElementById('bvp-pts_streak_bonus_sup').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>0</span><span>10</span></div></div>
+            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Quiz parfait (100%)</label><span><span class="bsl-val" id="bvp-pts_perfect_bonus">10</span><span class="bsl-unit"> pts bonus</span></span></div><input type="range" min="0" max="100" step="5" value="10" style="width:100%;accent-color:var(--am)" oninput="BAREME['pts_perfect_bonus'].val=parseInt(this.value);document.getElementById('bvp-pts_perfect_bonus').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>0</span><span>100</span></div></div>
+            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Parrainage réussi</label><span><span class="bsl-val" id="bvp-pts_parrainage">100</span><span class="bsl-unit"> pts</span></span></div><input type="range" min="10" max="500" step="10" value="100" style="width:100%;accent-color:var(--am)" oninput="BAREME['pts_parrainage'].val=parseInt(this.value);document.getElementById('bvp-pts_parrainage').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>10</span><span>500</span></div></div>
+            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Questions par quiz</label><span><span class="bsl-val" id="bvp-nb_questions_quiz">5</span><span class="bsl-unit"> questions</span></span></div><input type="range" min="3" max="20" step="1" value="5" style="width:100%;accent-color:var(--am)" oninput="BAREME['nb_questions_quiz'].val=parseInt(this.value);document.getElementById('bvp-nb_questions_quiz').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>3</span><span>20</span></div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">🏆 Seuils de ligue</div>
+          <div style="padding:16px">
+            <div style="margin-bottom:10px;padding:12px;background:#F5EDE3;border-radius:9px;border-left:3px solid #9A6B3A"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🥉</span><span style="font-size:13px;font-weight:700;color:#9A6B3A;min-width:60px">Bronze</span><span style="font-size:11px;color:#9A6B3A">0 — <input type="number" value="499" style="width:70px;border:1px solid #9A6B3A;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;color:#9A6B3A;background:rgba(255,255,255,.8);outline:none" onchange="LIGUES_SEUILS[0].max=parseInt(this.value);LIGUES_SEUILS[1].min=parseInt(this.value)+1;renderBareme()"> pts</span></div></div>
+            <div style="margin-bottom:10px;padding:12px;background:#F0F1F4;border-radius:9px;border-left:3px solid #6B7280"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🥈</span><span style="font-size:13px;font-weight:700;color:#6B7280;min-width:60px">Argent</span><span style="font-size:11px;color:#6B7280">500 — <input type="number" value="1499" style="width:70px;border:1px solid #6B7280;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;color:#6B7280;background:rgba(255,255,255,.8);outline:none" onchange="LIGUES_SEUILS[1].max=parseInt(this.value);LIGUES_SEUILS[2].min=parseInt(this.value)+1;renderBareme()"> pts</span></div></div>
+            <div style="margin-bottom:10px;padding:12px;background:#FEF3DC;border-radius:9px;border-left:3px solid #B87A10"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🥇</span><span style="font-size:13px;font-weight:700;color:#B87A10;min-width:60px">Or</span><span style="font-size:11px;color:#B87A10">1500 — <input type="number" value="2999" style="width:70px;border:1px solid #B87A10;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;color:#B87A10;background:rgba(255,255,255,.8);outline:none" onchange="LIGUES_SEUILS[2].max=parseInt(this.value);LIGUES_SEUILS[3].min=parseInt(this.value)+1;renderBareme()"> pts</span></div></div>
+            <div style="margin-bottom:10px;padding:12px;background:#E8F2FC;border-radius:9px;border-left:3px solid #2478CC"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">💎</span><span style="font-size:13px;font-weight:700;color:#2478CC;min-width:60px">Platine</span><span style="font-size:11px;color:#2478CC">3000 — <input type="number" value="4999" style="width:70px;border:1px solid #2478CC;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;color:#2478CC;background:rgba(255,255,255,.8);outline:none" onchange="LIGUES_SEUILS[3].max=parseInt(this.value);LIGUES_SEUILS[4].min=parseInt(this.value)+1;renderBareme()"> pts</span></div></div>
+            <div style="padding:12px;background:#EEECFC;border-radius:9px;border-left:3px solid #6C5FE8"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">👑</span><span style="font-size:13px;font-weight:700;color:#6C5FE8;min-width:60px">Légende</span><span style="font-size:11px;color:#6C5FE8">≥ 5000 pts — ∞ 👑</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIGNE 2 : Lots & Stock -->
+      <div class="panel" style="margin-bottom:14px">
+        <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:13px;font-weight:700">🎁 Lots & Stock partenaires</span>
+            <div style="display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;background:var(--surf2);border:1px solid var(--b);border-radius:20px;padding:4px 10px" onclick="toggleLots()">
+              <div id="lots-track" style="width:30px;height:18px;border-radius:20px;background:#D1D5DB;position:relative;transition:background .25s;flex-shrink:0">
+                <div id="lots-thumb" style="position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:#fff;transition:left .25s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
+              </div>
+              <span id="lots-lbl" style="font-size:11px;font-weight:600;color:var(--t3)">Désactivé</span>
+            </div>
+          </div>
+          <button onclick="addPartner()" style="background:var(--ac);color:#fff;border:none;border-radius:20px;padding:7px 18px;font-size:11px;font-weight:700;cursor:pointer">+ Nouveau partenaire</button>
+        </div>
+        <div id="lots-off-banner" style="padding:10px 20px;background:#FFF8E1;border-top:1px solid #FFE082;border-bottom:1px solid #FFE082;font-size:11px;color:#B45309;font-weight:500">
+          ⚠️ Activez le toggle pour que les élèves voient les offres dans l'app.
+        </div>
+        <div id="stock-panel">
+          <div style="padding:24px;text-align:center;color:var(--t3);font-size:12px">Chargement…</div>
+        </div>
+      </div>
+
+      <!-- LIGNE 3 : Historique gains -->
+      <div class="panel" style="margin-bottom:20px">
+        <div class="panel-header">🏅 Historique des gains attribués</div>
+        <div id="gains-panel">
+          <div style="padding:16px;color:var(--t3);font-size:11px;text-align:center">Aucun gain attribué pour le moment.</div>
+        </div>
+      </div>
+
+    </div>
+
     <!-- MODAL BARÈME -->
     <div class="modal-overlay" id="modal-bareme" onclick="if(event.target===this)closeBareme()">
-      <div class="modal-box" style="max-width:600px">
+      <div class="modal-box" style="max-width:700px">
         <div class="modal-header">
           <span class="modal-header-title">⭐ Barème & Ligues — Paramétrage</span>
           <button class="modal-close" onclick="closeBareme()">✕</button>
@@ -667,6 +742,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
         <div class="modal-body" id="modal-bareme-body"></div>
       </div>
     </div>
+
 
     <!-- ÉLÈVES -->
     <div class="view" id="v-eleves">
@@ -1628,6 +1704,7 @@ const NAV_ITEMS = [
   { id:'cours',           label:'+ Cours',           icon:'📖', sec:'Contenu', badgeFn:()=>COURS_DB.length },
   { id:'stats',           label:'Stats & Trafic',   icon:'📊', sec:null },
   { id:'appcom',          label:'App & Com',        icon:'📲', sec:null },
+  { id:'bareme',          label:'Barème & Lots',    icon:'⭐', sec:'Configuration' },
 ];
 let currentView = 'dashboard';
 
@@ -1657,14 +1734,17 @@ function navTo(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   const vEl = document.getElementById('v-'+id);
   if(vEl) vEl.classList.add('active');
-  const titles = {dashboard:'Dashboard',eleves:'Élèves',defis:'Défis & Pools',parrainage:'Parrainage',ligues:'Ligues & Classements',etablissements:'Établissements',cours:'Cours & Contenus',stats:'Stats & Trafic',appcom:'App & Communication'};
+  const titles = {dashboard:'Dashboard',eleves:'Élèves',defis:'Défis & Pools',parrainage:'Parrainage',ligues:'Ligues & Classements',etablissements:'Établissements',cours:'Cours & Contenus',stats:'Stats & Trafic',appcom:'App & Communication',bareme:'Barème & Lots'};
   document.getElementById('topbar-title').textContent = titles[id]||id;
   renderCurrentView();
 }
 
 function renderCurrentView() {
-  const r = {dashboard:renderDashboard,eleves:renderEleves,defis:renderDefis,parrainage:renderParrainage,ligues:renderLigues,etablissements:renderEtabs,cours:renderCours,stats:renderStats,appcom:renderAppCom};
-  if(r[currentView]) { try { r[currentView](); } catch(e) { console.warn('renderCurrentView error:', currentView, e); } }
+  const r = {dashboard:renderDashboard,eleves:renderEleves,defis:renderDefis,parrainage:renderParrainage,ligues:renderLigues,etablissements:renderEtabs,cours:renderCours,stats:renderStats,appcom:renderAppCom,bareme:renderBaremeView};
+  if(r[currentView]) {
+    if(currentView === 'bareme') { requestAnimationFrame(() => { try { renderBaremeView(); } catch(e){ console.error(e); } }); }
+    else { try { r[currentView](); } catch(e) { console.warn('renderCurrentView error:', currentView, e); } }
+  }
 }
 
 // ── DASHBOARD ──
@@ -2166,6 +2246,29 @@ function openEleve(pseudo) {
         </div>
       </div>
     </div>
+
+    <!-- GAINS & LOTS REMPORTÉS -->
+    \${(() => {
+      const eleveGains = GAINS_DB.filter(g => g.pseudo === d.pseudo);
+      return \`<div class="fiche-block" style="margin-bottom:12px">
+        <div class="fiche-block-title">🏅 Lots remportés (\${eleveGains.length})</div>
+        \${eleveGains.length === 0
+          ? '<div style="text-align:center;padding:16px;color:var(--t3);font-size:11px">Aucun lot remporté pour le moment</div>'
+          : eleveGains.map((g,i) => \`
+            <div style="display:flex;align-items:center;gap:10px;padding:9px 0;\${i<eleveGains.length-1?'border-bottom:1px solid var(--b)':''}">
+              <span style="font-size:22px;flex-shrink:0">\${g.lot_emoji}</span>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:12px;font-weight:700;color:var(--t)">\${g.lot_nom}</div>
+                <div style="font-size:10px;color:var(--t3);margin-top:2px">\${g.condition||'—'} · \${g.created_at?new Date(g.created_at).toLocaleDateString('fr-FR'):''}</div>
+              </div>
+              <div style="background:#EEECFC;border-radius:7px;padding:6px 12px;text-align:center">
+                <div style="font-family:monospace;font-size:13px;font-weight:800;color:var(--ac);letter-spacing:.06em">\${g.code}</div>
+                <div style="font-size:9px;color:var(--t3);margin-top:2px">Code promo</div>
+              </div>
+            </div>\`).join('')}
+      </div>\`;
+    })()}
+
     <div class="fiche-block">
       <div class="fiche-block-title">🔐 Connexions <span style="font-size:10px;color:var(--t3);font-weight:400">(${d.connexions.length})</span></div>
       ${d.connexions.length ? `
@@ -2356,7 +2459,6 @@ function switchTL(mode, btn) {
   if(btn) btn.classList.add('on');
   renderTL(mode);
 }
-function switchDefiTab(tab, btn) { switchDTab(tab, btn); }
 
 
 // ── PARRAINAGE ──
@@ -3036,7 +3138,7 @@ function buildColorPalette() {
   }).join('');
 }
 
-function selectEmoji(e) {
+function selectPwaEmoji(e) {
   pwaEmoji = e;
   document.querySelectorAll('.emoji-btn').forEach(el => {
     el.style.borderColor = el.dataset.e === e ? 'var(--ac)' : 'transparent';
@@ -3779,6 +3881,7 @@ function getPeriodDays() { return {'7j':7,'30j':30,'90j':90,all:60}[statsPeriod]
 
 // ── SUPABASE ANALYTICS LOAD ──
 async function loadAnalyticsFromSupabase() {
+  if(!SB_ENABLED) return;
   try {
     const hdrs = { apikey: SB_KEY, Authorization: 'Bearer '+SB_KEY };
     const [snaps, events] = await Promise.all([
@@ -3795,6 +3898,7 @@ async function loadAnalyticsFromSupabase() {
 
 // ── SAVE KPI SNAPSHOT ──
 async function saveKpiSnapshot() {
+  if(!SB_ENABLED) return;
   const sess = DB.sessions;
   const now = new Date();
   const today = now.toISOString().slice(0,10);
@@ -3840,6 +3944,7 @@ async function saveKpiSnapshot() {
 
 // ── TRACK EVENT ──
 async function trackEvent(event, pseudo, ecole, properties={}) {
+  if(!SB_ENABLED) return;
   try {
     const hdrs = { apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', Prefer:'return=minimal' };
     await fetch(SB_URL+'/rest/v1/analytics_events', {
@@ -5467,94 +5572,374 @@ function renderBareme() {
     </div>`).join('');
 }
 
+function renderBaremeView() {
+  // Sliders et ligues sont en HTML statique — pas besoin de JS
+  // Toggle state
+  var track = document.getElementById('lots-track');
+  var thumb = document.getElementById('lots-thumb');
+  var lbl = document.getElementById('lots-lbl');
+  var banner = document.getElementById('lots-off-banner');
+  if(track) {
+    track.style.background = LOTS_ON ? 'var(--ac)' : '#D1D5DB';
+    thumb.style.left = LOTS_ON ? '20px' : '3px';
+    lbl.textContent = LOTS_ON ? 'Activé' : 'Désactivé';
+    lbl.style.color = LOTS_ON ? 'var(--ac)' : 'var(--t3)';
+    if(banner) banner.style.display = LOTS_ON ? 'none' : 'block';
+  }
+  renderStockPanel();
+  renderGainsPanel();
+}
+
+function renderStockPanel() {
+  const el = document.getElementById('stock-panel');
+  if(!el) return;
+
+  const byLot = {};
+  STOCK_DB.forEach(function(s) {
+    if(!byLot[s.lot_id]) byLot[s.lot_id] = {dispo:0, attribue:0, codes:[]};
+    if(s.statut==='disponible') byLot[s.lot_id].dispo++;
+    else byLot[s.lot_id].attribue++;
+    byLot[s.lot_id].codes.push(s);
+  });
+
+  if(!LOTS_DB.length) {
+    el.innerHTML = '<div style="padding:24px;text-align:center;color:var(--t3);font-size:12px">Aucun partenaire — cliquez sur <b>+ Nouveau partenaire</b> pour commencer.</div>';
+    return;
+  }
+
+  var html = '';
+  LOTS_DB.forEach(function(lot, li) {
+    var st = byLot[lot.id] || {dispo:0, attribue:0, codes:[]};
+    var total = st.dispo + st.attribue;
+    var pct = total ? Math.round((st.attribue/total)*100) : 0;
+    var stockColor = st.dispo === 0 ? 'var(--re)' : st.dispo <= 2 ? 'var(--am)' : 'var(--gr)';
+    var barColor = pct > 80 ? 'var(--re)' : pct > 50 ? 'var(--am)' : 'var(--ac)';
+    var stockInfo = total + ' code' + (total>1?'s':'') + ' · ' + pct + '% attribués' + (st.dispo<=2&&total>0?' · ⚠️ Stock faible':'');
+
+    var codesHtml = '';
+    if(st.codes.length === 0) {
+      codesHtml = '<div style="padding:12px 14px;color:var(--t3);font-size:11px">Aucun code importé.</div>';
+    } else {
+      st.codes.forEach(function(cd) {
+        var bg = cd.statut==='attribue' ? '#FFFBF0' : '';
+        var codeColor = cd.statut==='disponible' ? 'var(--gr)' : 'var(--am)';
+        var statusHtml = cd.statut==='attribue'
+          ? '<span style="font-size:10px;color:var(--am)">→ ' + (cd.pseudo||'') + '</span><span style="font-size:9px;color:var(--t3);margin-left:6px">' + (cd.attribue_le ? new Date(cd.attribue_le).toLocaleDateString('fr-FR') : '') + '</span>'
+          : '<span style="background:var(--grBg);color:var(--gr);font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px">Disponible</span>';
+        codesHtml += '<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--b);background:' + bg + '">'
+          + '<span style="font-family:monospace;font-size:12px;font-weight:700;color:' + codeColor + ';flex:1">' + cd.code + '</span>'
+          + statusHtml
+          + '</div>';
+      });
+    }
+
+    html += '<div style="padding:16px 20px;border-bottom:1px solid var(--b)">'
+      + '<div style="display:flex;align-items:center;gap:14px">'
+
+      // Emoji
+      + '<div style="position:relative;flex-shrink:0;cursor:pointer" onclick="openEmojiPickerAdmin(' + li + ',this)">'
+      + '<div style="width:48px;height:48px;border-radius:12px;background:var(--surf2);border:1.5px dashed var(--b);display:flex;align-items:center;justify-content:center;font-size:26px">' + lot.emoji + '</div>'
+      + '<div style="position:absolute;bottom:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:var(--surf);border:1px solid var(--b);display:flex;align-items:center;justify-content:center;font-size:9px;pointer-events:none">✏️</div>'
+      + '</div>'
+
+      // Nom + condition
+      + '<div style="flex:1;min-width:0">'
+      + '<input value="' + lot.titre.replace(/"/g,'&quot;') + '" oninput="LOTS_DB[' + li + '].titre=this.value"'
+      + ' style="font-size:14px;font-weight:800;font-family:\'Syne\',sans-serif;color:var(--t);border:none;background:transparent;outline:none;width:100%;border-bottom:1.5px solid transparent;padding:0 0 2px;transition:border-color .15s"'
+      + ' onfocus="this.style.borderBottomColor=\'var(--ac)\'" onblur="this.style.borderBottomColor=\'transparent\'">'
+      + '<div style="margin-top:5px">'
+      + '<select onchange="LOTS_DB[' + li + '].cond=this.value;LOTS_DB[' + li + '].condLbl=this.options[this.selectedIndex].text"'
+      + ' style="font-size:10px;border:1px solid var(--b);border-radius:6px;padding:3px 8px;background:var(--surf2);color:var(--t2);font-family:inherit;outline:none;cursor:pointer">'
+      + '<option value="gold_semaine"' + (lot.cond==='gold_semaine'?' selected':'') + '>🥇 Ligue Or 7j consécutifs</option>'
+      + '<option value="top1_semaine"' + (lot.cond==='top1_semaine'?' selected':'') + '>🏆 Top 1 classement semaine</option>'
+      + '</select></div></div>'
+
+      // Compteurs
+      + '<div style="display:flex;gap:20px;flex-shrink:0;text-align:center">'
+      + '<div><div style="font-family:\'Syne\',sans-serif;font-size:28px;font-weight:800;color:' + stockColor + ';line-height:1">' + st.dispo + '</div>'
+      + '<div style="font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;margin-top:2px">Dispo</div></div>'
+      + '<div><div style="font-family:\'Syne\',sans-serif;font-size:28px;font-weight:800;color:var(--ac);line-height:1">' + st.attribue + '</div>'
+      + '<div style="font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;margin-top:2px">Attribués</div></div>'
+      + '</div>'
+
+      // Actions
+      + '<div style="display:flex;gap:8px;flex-shrink:0">'
+      + '<button onclick="openAddCodes(\'' + lot.id + '\',\'' + lot.titre.replace(/'/g,"\\'") + '\',\'' + lot.emoji + '\')" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:11px;font-weight:600;cursor:pointer">+ Codes</button>'
+      + '<button onclick="openAttribuer(\'' + lot.id + '\')" style="background:' + (st.dispo===0?'#D1D5DB':'var(--gr)') + ';color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:11px;font-weight:600;cursor:' + (st.dispo===0?'not-allowed':'pointer') + '">🎯 Attribuer</button>'
+      + '<button onclick="toggleStockDetail(\'' + lot.id + '\')" style="background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:8px 12px;font-size:11px;cursor:pointer;color:var(--t2)">📋 ' + total + '</button>'
+      + '<button onclick="deletePartner(' + li + ')" style="background:transparent;border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:12px;cursor:pointer;color:var(--t3)" title="Supprimer">🗑</button>'
+      + '</div></div>'
+
+      // Barre stock
+      + '<div style="margin-top:12px;display:flex;align-items:center;gap:10px">'
+      + '<div style="flex:1;height:6px;background:var(--surf3);border-radius:4px;overflow:hidden">'
+      + '<div style="height:100%;width:' + pct + '%;background:' + barColor + ';border-radius:4px;transition:width .5s"></div></div>'
+      + '<span style="font-size:10px;color:var(--t3);flex-shrink:0;min-width:130px;text-align:right">' + stockInfo + '</span>'
+      + '</div>'
+
+      // Detail codes
+      + '<div id="stock-detail-' + lot.id + '" style="display:none;margin-top:10px;border:1px solid var(--b);border-radius:8px;overflow:hidden;max-height:180px;overflow-y:auto">'
+      + codesHtml
+      + '</div>'
+      + '</div>';
+  });
+
+  el.innerHTML = html;
+}
+
+
+function toggleStockDetail(lotId) {
+  const el = document.getElementById('stock-detail-'+lotId);
+  if(el) el.style.display = el.style.display==='none' ? 'block' : 'none';
+}
+
+function openAddCodes(lotId, lotNom, lotEmoji) {
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  ov.innerHTML = `
+    <div style="background:#fff;border-radius:14px;width:100%;max-width:480px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.2)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <span style="font-size:24px">${lotEmoji}</span>
+        <div>
+          <div style="font-size:14px;font-weight:800;color:var(--t)">Ajouter des codes — ${lotNom}</div>
+          <div style="font-size:11px;color:var(--t3)">Un code par ligne</div>
+        </div>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="margin-left:auto;width:28px;height:28px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px">✕</button>
+      </div>
+      <textarea id="codes-input" rows="8" placeholder="FLOWIN-MC-001&#10;FLOWIN-MC-002&#10;FLOWIN-MC-003&#10;..." style="width:100%;border:1px solid var(--b);border-radius:8px;padding:10px;font-family:monospace;font-size:12px;color:var(--t);background:var(--surf2);outline:none;resize:vertical;box-sizing:border-box"></textarea>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+        <span id="codes-count-lbl" style="font-size:11px;color:var(--t3)">0 code(s) détecté(s)</span>
+        <div style="display:flex;gap:8px">
+          <button onclick="this.closest('[style*=fixed]').remove()" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:7px 14px;font-size:12px;cursor:pointer">Annuler</button>
+          <button onclick="saveCodes('${lotId}','${lotNom}',this.closest('[style*=fixed]'))" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer">✓ Importer</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  const ta = ov.querySelector('#codes-input');
+  ta.addEventListener('input', () => {
+    const codes = ta.value.split('\n').map(c=>c.trim()).filter(Boolean);
+    ov.querySelector('#codes-count-lbl').textContent = codes.length + ' code(s) détecté(s)';
+  });
+}
+
+async function saveCodes(lotId, lotNom, overlay) {
+  if(!SB_ENABLED) { alert('Mode démo — Supabase désactivé'); return; }
+  const ta = overlay.querySelector('#codes-input');
+  const codes = ta.value.split('\n').map(c=>c.trim().toUpperCase()).filter(Boolean);
+  if(!codes.length) { alert('Aucun code à importer.'); return; }
+  const hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', 'Prefer':'return=minimal'};
+  const lot = LOTS_DB.find(l=>l.id===lotId);
+  const payload = codes.map(code => ({lot_id:lotId, lot_nom:lotNom, code, statut:'disponible', created_at:new Date().toISOString()}));
+  try {
+    const r = await fetch(SB_URL+'/rest/v1/lots_stock', {method:'POST', headers:hdrs, body:JSON.stringify(payload)});
+    if(r.ok) {
+      overlay.remove();
+      await loadStockAndGains();
+      renderStockPanel();
+      alert(`✅ ${codes.length} code(s) importé(s) !`);
+    } else {
+      const err = await r.text();
+      alert('⚠️ Erreur : '+err);
+    }
+  } catch(e) { alert('⚠️ Erreur réseau : '+e.message); }
+}
+
+function openAttribuer(lotId) {
+  const lot = LOTS_DB.find(l=>l.id===lotId);
+  const dispo = STOCK_DB.filter(s=>s.lot_id===lotId&&s.statut==='disponible').length;
+  const elevs = buildElevs().sort((a,b)=>b.totalPts-a.totalPts);
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  ov.innerHTML = `
+    <div style="background:#fff;border-radius:14px;width:100%;max-width:480px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.2)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <span style="font-size:24px">${lot?.emoji||'🎁'}</span>
+        <div>
+          <div style="font-size:14px;font-weight:800;color:var(--t)">Attribuer — ${lot?.titre||''}</div>
+          <div style="font-size:11px;color:var(--gr)">${dispo} code(s) disponible(s)</div>
+        </div>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="margin-left:auto;width:28px;height:28px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px">✕</button>
+      </div>
+      <input id="attrib-search" type="text" placeholder="🔍 Rechercher un élève…" oninput="filterAttribList(this.value)" style="width:100%;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;margin-bottom:10px;box-sizing:border-box;outline:none;background:var(--surf2)">
+      <div id="attrib-list" style="max-height:280px;overflow-y:auto;border:1px solid var(--b);border-radius:8px">
+        ${elevs.map(d => {
+          const dejGagne = GAINS_DB.some(g=>g.pseudo===d.pseudo&&g.lot_id===lotId);
+          return `<div class="attrib-row" data-pseudo="${d.pseudo}" data-nom="${(d.j.prenom+' '+d.j.nom).toLowerCase()}" onclick="if(!${dejGagne})confirmAttrib('${lotId}','${d.pseudo}','${d.j.prenom} ${d.j.nom}',this.closest('[style*=fixed]'))" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--b);cursor:${dejGagne?'default':'pointer'};background:${dejGagne?'#FEF3DC':''}">
+            ${ava(d.j.prenom,d.j.nom,d.idx,26)}
+            <div style="flex:1">
+              <div style="font-size:12px;font-weight:600;color:var(--t)">${d.j.prenom} ${d.j.nom}</div>
+              <div style="font-size:10px;color:var(--t3)">${d.j.ecole||'—'} · ${d.totalPts.toLocaleString('fr')} pts</div>
+            </div>
+            ${dejGagne ? '<span class="bdg amber">Déjà gagné</span>' : '<span class="bdg green">Attribuer →</span>'}
+          </div>`;
+        }).join('') || '<div style="padding:16px;color:var(--t3);font-size:11px">Aucun élève</div>'}
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  window._attribOverlay = ov;
+}
+
+function filterAttribList(val) {
+  document.querySelectorAll('.attrib-row').forEach(row => {
+    row.style.display = row.dataset.nom.includes(val.toLowerCase()) ? '' : 'none';
+  });
+}
+
+function confirmAttrib(lotId, pseudo, nom, overlay) {
+  if(!confirm(`Attribuer un code "${LOTS_DB.find(l=>l.id===lotId)?.titre}" à ${nom} ?`)) return;
+  overlay.remove();
+  attribuerLot(pseudo, lotId);
+}
+
+function renderGainsPanel() {
+  const el = document.getElementById('gains-panel');
+  if(!el) return;
+  if(!GAINS_DB.length) {
+    el.innerHTML = '<div style="padding:16px;color:var(--t3);font-size:11px;text-align:center">Aucun gain attribué pour le moment.</div>';
+    return;
+  }
+  el.innerHTML = `
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr>
+        <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase">Élève</th>
+        <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase">Lot</th>
+        <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase">Code</th>
+        <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase">Condition</th>
+        <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase">Date</th>
+      </tr></thead>
+      <tbody>
+        ${GAINS_DB.slice(0,50).map((g,i) => `
+          <tr style="background:${i%2===0?'':'var(--surf2)'}">
+            <td style="padding:9px 12px;font-size:12px;font-weight:600;color:var(--t)">${g.pseudo}</td>
+            <td style="padding:9px 12px;font-size:12px;color:var(--t)">${g.lot_emoji} ${g.lot_nom}</td>
+            <td style="padding:9px 12px;font-family:monospace;font-size:12px;font-weight:800;color:var(--ac)">${g.code}</td>
+            <td style="padding:9px 12px;font-size:10px;color:var(--t3)">${g.condition||'—'}</td>
+            <td style="padding:9px 12px;font-size:10px;color:var(--t3)">${g.created_at?new Date(g.created_at).toLocaleDateString('fr-FR'):''}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+
+
 function openBareme() {
   document.getElementById('modal-bareme-body').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
 
-      <!-- Barème points -->
-      <div>
-        <div style="font-size:11px;font-weight:700;color:var(--t);margin-bottom:12px">⭐ Points par action</div>
-        ${Object.entries(BAREME).map(([k,b])=>`
-          <div style="margin-bottom:12px">
-            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px">
-              <label style="color:var(--t2);font-weight:500">${b.label}</label>
-              <span style="font-family:'Syne',sans-serif;font-weight:800;color:var(--am)" id="bv-${k}">${b.val} ${b.unit}</span>
-            </div>
-            <input type="range" min="${b.min}" max="${b.max}" step="${b.step}" value="${b.val}"
-              oninput="BAREME['${k}'].val=parseInt(this.value);document.getElementById('bv-${k}').textContent=this.value+' ${b.unit}';renderBareme()"
-              style="width:100%;accent-color:var(--am)">
-            <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-top:2px"><span>${b.min}</span><span>${b.max}</span></div>
-          </div>`).join('')}
-      </div>
+    <!-- TABS -->
+    <div style="display:flex;gap:4px;margin-bottom:18px;border-bottom:1px solid var(--b);padding-bottom:0">
+      <button onclick="switchBaremeTab('pts',this)" id="btab-pts" class="btab on" style="padding:8px 16px;border:none;background:none;font-size:12px;font-weight:700;color:var(--ac);cursor:pointer;border-bottom:2px solid var(--ac);margin-bottom:-1px">⭐ Points</button>
+      <button onclick="switchBaremeTab('ligues',this)" id="btab-ligues" class="btab" style="padding:8px 16px;border:none;background:none;font-size:12px;font-weight:600;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px">🏆 Ligues</button>
+      <button onclick="switchBaremeTab('lots',this)" id="btab-lots" class="btab" style="padding:8px 16px;border:none;background:none;font-size:12px;font-weight:600;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px">🎁 Lots partenaires</button>
+    </div>
 
-      <!-- Seuils ligues -->
-      <div>
-        <div style="font-size:11px;font-weight:700;color:var(--t);margin-bottom:12px">🏆 Seuils de ligue</div>
-        ${LIGUES_SEUILS.map((l,i)=>`
-          <div style="margin-bottom:14px;padding:10px;background:${l.bg};border-radius:9px;border-left:3px solid ${l.color}">
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
-              <span style="font-size:16px">${l.icon}</span>
-              <span style="font-size:12px;font-weight:700;color:${l.color}">${l.name}</span>
-            </div>
-            ${i<LIGUES_SEUILS.length-1?`
-            <div style="display:flex;gap:8px;align-items:center">
-              <label style="font-size:10px;color:var(--t3);min-width:50px">Jusqu'à</label>
-              <input type="number" value="${l.max}" min="${l.min+100}" max="${i<LIGUES_SEUILS.length-2?LIGUES_SEUILS[i+1].max-100:99998}"
-                onchange="LIGUES_SEUILS[${i}].max=parseInt(this.value);if(${i+1}<LIGUES_SEUILS.length)LIGUES_SEUILS[${i+1}].min=parseInt(this.value);renderBareme()"
-                style="flex:1;background:var(--surf);border:1px solid var(--b);border-radius:6px;padding:5px 8px;font-size:12px;font-weight:700;color:${l.color};outline:none;width:80px">
-              <span style="font-size:10px;color:var(--t3)">pts</span>
-            </div>`:
-            `<div style="font-size:10px;color:${l.color};font-weight:600">≥ ${l.min.toLocaleString('fr')} pts — illimité 👑</div>`}
-          </div>`).join('')}
+    <!-- TAB POINTS -->
+    <div id="btab-content-pts">
+      ${Object.entries(BAREME).map(([k,b])=>`
+        <div style="margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px">
+            <label style="color:var(--t2);font-weight:500">${b.label}</label>
+            <span style="font-family:'Syne',sans-serif;font-weight:800;color:var(--am)" id="bv-${k}">${b.val} ${b.unit}</span>
+          </div>
+          <input type="range" min="${b.min}" max="${b.max}" step="${b.step}" value="${b.val}"
+            oninput="BAREME['${k}'].val=parseInt(this.value);document.getElementById('bv-${k}').textContent=this.value+' ${b.unit}';renderBareme()"
+            style="width:100%;accent-color:var(--am)">
+          <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-top:2px"><span>${b.min}</span><span>${b.max}</span></div>
+        </div>`).join('')}
+    </div>
 
-        <div style="margin-top:8px;padding:10px;background:var(--surf2);border-radius:8px;font-size:10px;color:var(--t3);line-height:1.6">
-          ℹ️ Les seuils se mettent à jour en temps réel dans le dashboard et les fiches élèves.
-          Pour les appliquer dans l'app élève, re-déployer <code>index.html</code>.
-        </div>
+    <!-- TAB LIGUES -->
+    <div id="btab-content-ligues" style="display:none">
+      ${LIGUES_SEUILS.map((l,i)=>`
+        <div style="margin-bottom:10px;padding:12px;background:${l.bg};border-radius:9px;border-left:3px solid ${l.color}">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:20px">${l.icon}</span>
+            <span style="font-size:13px;font-weight:700;color:${l.color};min-width:60px">${l.name}</span>
+            <span style="font-size:11px;color:${l.color};flex:1">
+              ${i===0?'0':''}${i>0?l.min.toLocaleString('fr')+' —':''}
+              ${i<LIGUES_SEUILS.length-1
+                ? `<input type="number" value="${l.max}" style="width:70px;border:1px solid ${l.color};border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;color:${l.color};background:rgba(255,255,255,.8);outline:none"
+                    onchange="LIGUES_SEUILS[${i}].max=parseInt(this.value);if(${i+1}<LIGUES_SEUILS.length)LIGUES_SEUILS[${i+1}].min=parseInt(this.value)+1"> pts`
+                : `≥ ${l.min.toLocaleString('fr')} pts — ∞ 👑`}
+            </span>
+          </div>
+        </div>`).join('')}
+      <div style="margin-top:10px;padding:10px;background:var(--surf2);border-radius:8px;font-size:10px;color:var(--t3);line-height:1.6">
+        ℹ️ Les seuils s'appliquent immédiatement dans le dashboard et les fiches élèves.
       </div>
     </div>
 
+    <!-- TAB LOTS -->
+    <div id="btab-content-lots" style="display:none">
+      <!-- Toggle activation -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:12px 14px;background:var(--surf2);border-radius:9px">
+        <div style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none" onclick="toggleLots()">
+          <div id="lots-track" style="width:38px;height:22px;border-radius:20px;background:#D1D5DB;position:relative;transition:background .25s;flex-shrink:0">
+            <div id="lots-thumb" style="position:absolute;top:4px;left:4px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .25s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
+          </div>
+          <span id="lots-lbl" style="font-size:12px;font-weight:600;color:var(--t3)">Désactivé</span>
+        </div>
+        <span style="font-size:11px;color:var(--t3)">Activer pour afficher les offres aux élèves</span>
+        <button onclick="addPartner()" style="margin-left:auto;background:var(--ac);color:#fff;border:none;border-radius:20px;padding:5px 14px;font-size:11px;font-weight:600;cursor:pointer">+ Ajouter</button>
+      </div>
+      <div id="partners-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px"></div>
+    </div>
+
+    <!-- FOOTER -->
     <div style="display:flex;justify-content:flex-end;gap:8px;padding-top:14px;border-top:1px solid var(--b);margin-top:14px">
-      <button onclick="resetBareme()" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:8px 14px;font-size:11px;cursor:pointer">↺ Réinitialiser</button>
-      <button onclick="closeBareme();renderBareme();saveBaremeToSupabase()" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:8px 16px;font-size:11px;font-weight:600;cursor:pointer">✓ Appliquer & Sauvegarder</button>
+      <button onclick="resetBareme()" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:8px 14px;font-size:11px;cursor:pointer;font-family:inherit">↺ Réinitialiser</button>
+      <button onclick="saveBaremeComplet()" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:8px 16px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">✓ Sauvegarder</button>
     </div>`;
+
+  // Init lots state
+  const track = document.getElementById('lots-track');
+  const thumb = document.getElementById('lots-thumb');
+  const lbl   = document.getElementById('lots-lbl');
+  if(LOTS_ON) {
+    track.style.background='var(--ac)'; thumb.style.left='20px';
+    lbl.textContent='Activé'; lbl.style.color='var(--ac)';
+  }
+  renderStockPanel();
   document.getElementById('modal-bareme').classList.add('open');
+}
+
+function switchBaremeTab(tab, btn) {
+  ['pts','ligues','lots'].forEach(t => {
+    document.getElementById('btab-content-'+t).style.display = t===tab?'block':'none';
+    const b = document.getElementById('btab-'+t);
+    if(b) { b.style.color=t===tab?'var(--ac)':'var(--t3)'; b.style.borderBottomColor=t===tab?'var(--ac)':'transparent'; b.style.fontWeight=t===tab?'700':'600'; }
+  });
+  if(tab==='lots') renderStockPanel();
 }
 
 function closeBareme() { document.getElementById('modal-bareme').classList.remove('open'); }
 
-async function saveBaremeToSupabase() {
-  const baremePayload = {};
-  Object.entries(BAREME).forEach(([k,b]) => { baremePayload[k] = b.val; });
-
-  const liguesPayload = LIGUES_SEUILS.map(l => ({
-    name: l.name, key: l.name.toLowerCase()
-      .replace('é','e').replace('è','e').replace('ô','o')
-      .replace('bronze','bronze').replace('argent','silver')
-      .replace('or','gold').replace('platine','diamond').replace('legende','legend'),
-    min: l.min, max: l.max
+async function saveBaremeComplet() {
+  if(!SB_ENABLED) { alert('Mode démo — Supabase désactivé'); return; }
+  const bp = {};
+  Object.entries(BAREME).forEach(([k,b]) => { bp[k] = b.val; });
+  const keyMap = {bronze:'bronze',argent:'silver',or:'gold',platine:'diamond',légende:'legend',legende:'legend'};
+  const lp = LIGUES_SEUILS.map(l => ({
+    key: keyMap[l.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')] || l.name.toLowerCase(),
+    name:l.name, icon:l.icon, color:l.color, bg:l.bg, min:l.min, max:l.max
   }));
-  // Correction manuelle des clés
-  const keyMap = {bronze:'bronze',argent:'silver',or:'gold',platine:'diamond',legende:'legend',légende:'legend'};
-  liguesPayload.forEach(l => { l.key = keyMap[l.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')] || l.name.toLowerCase(); });
-
-  const hdrs = {
-    'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY,
-    'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates'
-  };
+  const hdrs = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'};
   try {
-    await fetch(SB_URL + '/rest/v1/config', {
-      method: 'POST', headers: hdrs,
-      body: JSON.stringify([
-        {key:'bareme', value: baremePayload, updated_at: new Date().toISOString()},
-        {key:'ligues_seuils', value: liguesPayload, updated_at: new Date().toISOString()}
+    const r = await fetch(SB_URL+'/rest/v1/config', {
+      method:'POST', headers:hdrs,
+      body:JSON.stringify([
+        {key:'bareme',        value:bp,      updated_at:new Date().toISOString()},
+        {key:'ligues_seuils', value:lp,      updated_at:new Date().toISOString()},
+        {key:'lots',          value:LOTS_DB, updated_at:new Date().toISOString()},
+        {key:'lots_active',   value:LOTS_ON, updated_at:new Date().toISOString()},
       ])
     });
-    alert('✅ Barème sauvegardé dans Supabase — actif pour tous les élèves');
-  } catch(e) {
-    alert('⚠️ Sauvegarde échouée — vérifier la connexion Supabase');
-  }
+    if(r.ok) { closeBareme(); renderBareme(); alert('✅ Sauvegardé !'); }
+    else alert('⚠️ Erreur Supabase — code '+r.status);
+  } catch(e) { alert('⚠️ Impossible de joindre Supabase'); }
 }
+
+async function saveBaremeToSupabase() { await saveBaremeComplet(); }
 
 function resetBareme() {
   BAREME.pts_bonne_reponse.val=15; BAREME.pts_streak_bonus_2e.val=5;
@@ -5577,7 +5962,7 @@ function resetBareme() {
 let LOTS_ON = false;
 let LOTS_DB = [
   {id:'l1', emoji:'🍔', titre:'40% sur le 2e menu McDo',
-   desc:"Remise de 40% sur le second menu McDonald's acheté",
+   desc:"Remise de 40% sur le second menu McDo acheté",
    cond:'gold_semaine', condLbl:'🥇 Ligue Or pendant 7 jours consécutifs',
    code:'FLOWIN40', actif:true},
   {id:'l2', emoji:'🎁', titre:'Bon cadeau 10€',
@@ -5586,69 +5971,83 @@ let LOTS_DB = [
    code:'FLOWIN-TOP1', actif:true}
 ];
 
+// Stock chargé depuis Supabase
+let STOCK_DB = [
+  {id:'s1', lot_id:'l1', lot_nom:'40% McDo', code:'FLOWIN-MC-001', statut:'disponible', pseudo:null, attribue_le:null},
+  {id:'s2', lot_id:'l1', lot_nom:'40% McDo', code:'FLOWIN-MC-002', statut:'disponible', pseudo:null, attribue_le:null},
+  {id:'s3', lot_id:'l1', lot_nom:'40% McDo', code:'FLOWIN-MC-003', statut:'attribue', pseudo:'OliviaDiana', attribue_le:new Date(Date.now()-86400000*2).toISOString()},
+  {id:'s4', lot_id:'l1', lot_nom:'40% McDo', code:'FLOWIN-MC-004', statut:'disponible', pseudo:null, attribue_le:null},
+  {id:'s5', lot_id:'l1', lot_nom:'40% McDo', code:'FLOWIN-MC-005', statut:'attribue', pseudo:'LucasBertin', attribue_le:new Date(Date.now()-86400000*5).toISOString()},
+  {id:'s6', lot_id:'l2', lot_nom:'Bon cadeau 10€', code:'GIFT-2026-001', statut:'disponible', pseudo:null, attribue_le:null},
+  {id:'s7', lot_id:'l2', lot_nom:'Bon cadeau 10€', code:'GIFT-2026-002', statut:'disponible', pseudo:null, attribue_le:null},
+  {id:'s8', lot_id:'l2', lot_nom:'Bon cadeau 10€', code:'GIFT-2026-003', statut:'attribue', pseudo:'RomainDuval', attribue_le:new Date(Date.now()-86400000*1).toISOString()},
+];
+let GAINS_DB = [
+  {id:'g1', pseudo:'OliviaDiana', lot_id:'l1', lot_nom:'40% sur le 2e menu McDo', lot_emoji:'🍔', code:'FLOWIN-MC-003', condition:'gold_semaine', created_at:new Date(Date.now()-86400000*2).toISOString()},
+  {id:'g2', pseudo:'LucasBertin', lot_id:'l1', lot_nom:'40% sur le 2e menu McDo', lot_emoji:'🍔', code:'FLOWIN-MC-005', condition:'gold_semaine', created_at:new Date(Date.now()-86400000*5).toISOString()},
+  {id:'g3', pseudo:'RomainDuval', lot_id:'l2', lot_nom:'Bon cadeau 10€', lot_emoji:'🎁', code:'GIFT-2026-003', condition:'top1_semaine', created_at:new Date(Date.now()-86400000*1).toISOString()},
+];
+
+async function loadStockAndGains() {
+  if(!SB_ENABLED) return;
+  const hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY};
+  try {
+    const [rs, rg] = await Promise.all([
+      fetch(SB_URL+'/rest/v1/lots_stock?order=created_at.desc', {headers:hdrs}),
+      fetch(SB_URL+'/rest/v1/gains?order=created_at.desc', {headers:hdrs}),
+    ]);
+    if(rs.ok) STOCK_DB = await rs.json();
+    if(rg.ok) GAINS_DB = await rg.json();
+  } catch(e) { console.warn('loadStockAndGains error:', e); }
+}
+
+async function attribuerLot(pseudo, lotId) {
+  if(!SB_ENABLED) { alert('Mode démo — Supabase désactivé'); return; }
+  // Trouver un code disponible dans le stock pour ce lot
+  const dispo = STOCK_DB.find(s => s.lot_id === lotId && s.statut === 'disponible');
+  if(!dispo) { alert('⚠️ Plus de codes disponibles pour ce lot !'); return; }
+  const lot = LOTS_DB.find(l => l.id === lotId);
+  const hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json'};
+  try {
+    // 1. Marquer le code comme attribué dans lots_stock
+    await fetch(SB_URL+`/rest/v1/lots_stock?id=eq.${dispo.id}`, {
+      method:'PATCH', headers:{...hdrs,'Prefer':'return=minimal'},
+      body: JSON.stringify({statut:'attribue', pseudo, attribue_le: new Date().toISOString()})
+    });
+    // 2. Créer une entrée dans gains
+    await fetch(SB_URL+'/rest/v1/gains', {
+      method:'POST', headers:{...hdrs,'Prefer':'return=minimal'},
+      body: JSON.stringify({
+        pseudo, lot_id: lotId, lot_nom: lot?.titre||'Lot', lot_emoji: lot?.emoji||'🎁',
+        code: dispo.code, condition: lot?.cond||'', created_at: new Date().toISOString()
+      })
+    });
+    // 3. Mettre à jour local
+    dispo.statut = 'attribue'; dispo.pseudo = pseudo; dispo.attribue_le = new Date().toISOString();
+    GAINS_DB.unshift({pseudo, lot_id:lotId, lot_nom:lot?.titre||'Lot', lot_emoji:lot?.emoji||'🎁', code:dispo.code, condition:lot?.cond||'', created_at:new Date().toISOString()});
+    alert(`✅ Code "${dispo.code}" attribué à ${pseudo} !`);
+    if(currentView==='bareme') renderBaremeView();
+  } catch(e) { alert('⚠️ Erreur attribution : '+e.message); }
+}
+
 function toggleLots() {
   LOTS_ON = !LOTS_ON;
   const track = document.getElementById('lots-track');
   const thumb = document.getElementById('lots-thumb');
   const lbl   = document.getElementById('lots-lbl');
-  const btn   = document.getElementById('lots-add-btn');
   const banner= document.getElementById('lots-off-banner');
-  const body  = document.getElementById('lots-body');
   if(!track) return;
   track.style.background = LOTS_ON ? 'var(--ac)' : '#D1D5DB';
   thumb.style.left = LOTS_ON ? '20px' : '4px';
   lbl.textContent = LOTS_ON ? 'Activé' : 'Désactivé';
   lbl.style.color = LOTS_ON ? 'var(--ac)' : 'var(--t3)';
-  btn.style.cssText = LOTS_ON
-    ? 'font-size:11px;padding:5px 14px;border-radius:20px;background:var(--ac);color:#fff;border:none;cursor:pointer;font-weight:600;pointer-events:auto'
-    : 'font-size:11px;padding:5px 14px;border-radius:20px;background:#D1D5DB;color:#9CA3AF;border:none;cursor:not-allowed;font-weight:600;pointer-events:none';
-  if(banner) banner.style.display = LOTS_ON ? 'none' : 'flex';
-  if(body)   body.style.display   = LOTS_ON ? 'block' : 'none';
-  if(LOTS_ON) renderPartners();
+  if(banner) banner.style.display = LOTS_ON ? 'none' : 'block';
+  renderStockPanel();
 }
 
 // ── PARTNER CARDS ──
 const EMOJIS_PARTNER = ['🍔','🍕','🎬','🎁','🛒','☕','🍦','🎮','🎫','🏋️','📚','🎵','🎯','🍣','🎪','🏄','🍿','🎭','🧁','🏪'];
 
-function renderPartners() {
-  const grid = document.getElementById('partners-grid');
-  if(!grid) return;
-  if(!LOTS_DB.length) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--t3);font-size:12px">Aucun partenaire — cliquez sur "+ Ajouter un partenaire"</div>';
-    return;
-  }
-  grid.innerHTML = LOTS_DB.map((lot,i) => `
-    <div class="pcard${lot.actif?'':' inactive'}">
-      <div class="pcard-top">
-        <div class="logo-wrap">
-          <div class="pcard-logo" onclick="openEmojiPickerAdmin(${i},this)">${lot.emoji||'🎁'}</div>
-          <div class="logo-hint">✏️</div>
-        </div>
-        <input class="pcard-name" type="text" value="${(lot.titre||'').replace(/"/g,'&quot;')}" placeholder="Nom du partenaire"
-          oninput="LOTS_DB[${i}].titre=this.value">
-        <textarea class="pcard-desc" rows="2" placeholder="Description de l'offre"
-          oninput="LOTS_DB[${i}].desc=this.value">${lot.desc||''}</textarea>
-        <div class="pcard-code-row">
-          <span class="pcard-code-lbl">Code</span>
-          <input class="pcard-code" type="text" value="${lot.code||''}" placeholder="FLOWIN40"
-            oninput="LOTS_DB[${i}].code=this.value.toUpperCase();this.value=this.value.toUpperCase()">
-        </div>
-      </div>
-      <div class="pcard-footer">
-        <div class="pcard-cond">
-          <select onchange="LOTS_DB[${i}].cond=this.value;LOTS_DB[${i}].condLbl=this.options[this.selectedIndex].text">
-            <option value="gold_semaine" ${lot.cond==='gold_semaine'?'selected':''}>🥇 Ligue Or 7j consécutifs</option>
-            <option value="top1_semaine" ${lot.cond==='top1_semaine'?'selected':''}>🏆 Top 1 classement semaine</option>
-          </select>
-        </div>
-        <div class="pcard-status" onclick="LOTS_DB[${i}].actif=!LOTS_DB[${i}].actif;renderPartners()">
-          <div class="pcard-dot${lot.actif?' on':''}"></div>
-          <span class="pcard-slbl" style="color:${lot.actif?'var(--gr)':'var(--t3)'}">${lot.actif?'Actif':'Inactif'}</span>
-        </div>
-        <button class="pcard-del" onclick="deletePartner(${i})" title="Supprimer">🗑</button>
-      </div>
-    </div>`).join('');
-}
 
 function openEmojiPickerAdmin(i, logoEl) {
   document.querySelectorAll('.emoji-picker-admin').forEach(p=>p.remove());
@@ -5658,7 +6057,7 @@ function openEmojiPickerAdmin(i, logoEl) {
     const opt = document.createElement('div');
     opt.className = 'emoji-opt-admin';
     opt.textContent = e;
-    opt.onclick = ev => { ev.stopPropagation(); LOTS_DB[i].emoji=e; picker.remove(); renderPartners(); };
+    opt.onclick = ev => { ev.stopPropagation(); LOTS_DB[i].emoji=e; picker.remove(); renderStockPanel(); };
     picker.appendChild(opt);
   });
   logoEl.closest('.logo-wrap').appendChild(picker);
@@ -5667,19 +6066,147 @@ function openEmojiPickerAdmin(i, logoEl) {
 
 function deletePartner(i) {
   if(!confirm('Supprimer ce partenaire ?')) return;
-  LOTS_DB.splice(i,1); renderPartners();
+  LOTS_DB.splice(i,1); renderStockPanel();
 }
 
 function addPartner() {
-  if(!LOTS_ON) return;
-  LOTS_DB.push({id:'l'+Date.now(),emoji:'🎁',titre:'',desc:'',cond:'gold_semaine',condLbl:'🥇 Ligue Or 7j',code:'',actif:true});
-  renderPartners();
-  setTimeout(() => {
-    const cards = document.querySelectorAll('.pcard');
-    const last = cards[cards.length-1];
-    if(last) { last.scrollIntoView({behavior:'smooth',block:'nearest'}); last.querySelector('.pcard-name')?.focus(); }
-  }, 60);
+  const EMOJIS_LIST = ['🍔','🍕','🎬','🎁','🛒','☕','🍦','🎮','🎫','🏋️','📚','🎵','🎯','🍣','🎪','🏄','🍿','🎭','🧁','🏪'];
+  let selectedEmoji = '🎁';
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto';
+  ov.innerHTML = `
+    <div style="background:#fff;border-radius:16px;width:100%;max-width:520px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.2)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--t)">+ Nouveau partenaire</div>
+        <button onclick="this.closest('[style*=fixed]').remove()" style="width:32px;height:32px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:16px">✕</button>
+      </div>
+
+      <!-- EMOJI PICKER -->
+      <div style="margin-bottom:18px">
+        <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:8px">Icône partenaire</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${EMOJIS_LIST.map(e => `<button onclick="selectEmoji(this,'${e}')" data-emoji="${e}"
+            style="width:38px;height:38px;border-radius:8px;border:2px solid ${e==='🎁'?'var(--ac)':'var(--b)'};background:${e==='🎁'?'#EEECFC':'var(--surf2)'};font-size:20px;cursor:pointer;transition:all .15s">${e}</button>`).join('')}
+        </div>
+      </div>
+
+      <!-- INFOS PARTENAIRE -->
+      <div style="display:grid;gap:14px;margin-bottom:18px">
+        <div>
+          <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Nom du partenaire *</label>
+          <input id="np-nom" type="text" placeholder="Ex: McDonald's, Cinéma Pathé, Pizza Hut…"
+            style="width:100%;border:1.5px solid var(--b);border-radius:9px;padding:10px 13px;font-size:13px;font-weight:600;color:var(--t);background:var(--surf2);outline:none;box-sizing:border-box;transition:border-color .15s"
+            onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--b)'">
+        </div>
+        <div>
+          <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Description de l'offre *</label>
+          <input id="np-desc" type="text" placeholder="Ex: 40% de réduction sur le 2e menu acheté"
+            style="width:100%;border:1.5px solid var(--b);border-radius:9px;padding:10px 13px;font-size:13px;color:var(--t);background:var(--surf2);outline:none;box-sizing:border-box;transition:border-color .15s"
+            onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--b)'">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Condition d'attribution</label>
+            <select id="np-cond" style="width:100%;border:1.5px solid var(--b);border-radius:9px;padding:10px 10px;font-size:12px;background:var(--surf2);color:var(--t2);font-family:inherit;outline:none;cursor:pointer">
+              <option value="gold_semaine">🥇 Ligue Or 7j consécutifs</option>
+              <option value="top1_semaine">🏆 Top 1 classement semaine</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Préfixe code promo</label>
+            <input id="np-prefix" type="text" placeholder="FLOWIN-MC" maxlength="15"
+              style="width:100%;border:1.5px solid var(--b);border-radius:9px;padding:10px 13px;font-size:12px;font-weight:700;font-family:monospace;color:var(--ac);background:var(--surf2);outline:none;box-sizing:border-box;text-transform:uppercase"
+              oninput="this.value=this.value.toUpperCase();updateStockPreview()">
+          </div>
+        </div>
+      </div>
+
+      <!-- STOCK INITIAL -->
+      <div style="background:var(--surf2);border-radius:10px;padding:16px;margin-bottom:18px;border:1px solid var(--b)">
+        <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:10px">📦 Stock initial de codes</label>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <label style="font-size:12px;color:var(--t2)">Quantité :</label>
+          <input id="np-qty" type="number" min="1" max="500" value="10"
+            oninput="updateStockPreview()"
+            style="width:70px;border:1.5px solid var(--b);border-radius:7px;padding:6px 10px;font-size:14px;font-weight:700;color:var(--t);background:var(--surf);outline:none;text-align:center">
+          <span style="font-size:11px;color:var(--t3)">codes générés automatiquement</span>
+        </div>
+        <div style="background:var(--surf);border-radius:7px;padding:10px;border:1px solid var(--b);max-height:100px;overflow-y:auto;font-family:monospace;font-size:11px;color:var(--ac);line-height:1.8" id="np-preview">
+          FLOWIN-001, FLOWIN-002, FLOWIN-003…
+        </div>
+        <div style="font-size:10px;color:var(--t3);margin-top:6px">💡 Les codes sont générés automatiquement. Vous pouvez aussi saisir vos propres codes après création.</div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px">
+        <button onclick="this.closest('[style*=fixed]').remove()" style="background:var(--surf2);border:1px solid var(--b);border-radius:9px;padding:10px 18px;font-size:12px;cursor:pointer;font-family:inherit;color:var(--t2);font-weight:600">Annuler</button>
+        <button onclick="createPartner(this.closest('[style*=fixed]'))" style="background:var(--ac);color:#fff;border:none;border-radius:9px;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">✓ Créer le partenaire</button>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  updateStockPreview();
 }
+
+function selectEmoji(btn, emoji) {
+  document.querySelectorAll('[data-emoji]').forEach(b => {
+    b.style.border = '2px solid var(--b)'; b.style.background = 'var(--surf2)';
+  });
+  btn.style.border = '2px solid var(--ac)'; btn.style.background = '#EEECFC';
+  window._selectedEmoji = emoji;
+}
+
+function updateStockPreview() {
+  const prefix = (document.getElementById('np-prefix')?.value || 'FLOWIN').toUpperCase().replace(/[^A-Z0-9-]/g,'') || 'FLOWIN';
+  const qty = parseInt(document.getElementById('np-qty')?.value) || 10;
+  const preview = document.getElementById('np-preview');
+  if(!preview) return;
+  const codes = Array.from({length:Math.min(qty,8)}, (_,i) => `${prefix}-${String(i+1).padStart(3,'0')}`);
+  preview.textContent = codes.join(', ') + (qty>8?` … +${qty-8} autres`:'');
+}
+
+async function createPartner(overlay) {
+  if(!SB_ENABLED) { alert('Mode démo — Supabase désactivé'); return; }
+  const nom  = document.getElementById('np-nom')?.value.trim();
+  const desc = document.getElementById('np-desc')?.value.trim();
+  const cond = document.getElementById('np-cond')?.value;
+  const condLbl = document.getElementById('np-cond')?.options[document.getElementById('np-cond').selectedIndex]?.text;
+  const prefix = (document.getElementById('np-prefix')?.value || 'FLOWIN').toUpperCase().replace(/[^A-Z0-9-]/g,'') || 'FLOWIN';
+  const qty  = parseInt(document.getElementById('np-qty')?.value) || 10;
+  const emoji = window._selectedEmoji || '🎁';
+  if(!nom) { document.getElementById('np-nom').style.borderColor='var(--re)'; return; }
+  if(!desc) { document.getElementById('np-desc').style.borderColor='var(--re)'; return; }
+
+  const lotId = 'l'+Date.now();
+  const lot = {id:lotId, emoji, titre:nom, desc, cond, condLbl, code:prefix+'-XXX', actif:true};
+
+  // Générer les codes
+  const codes = Array.from({length:qty}, (_,i) => ({
+    lot_id:lotId, lot_nom:nom, code:`${prefix}-${String(i+1).padStart(3,'0')}`,
+    statut:'disponible', created_at:new Date().toISOString()
+  }));
+
+  // Ajouter localement
+  LOTS_DB.push(lot);
+  codes.forEach(c => STOCK_DB.push({...c, id:'s'+Date.now()+Math.random()}));
+
+  // Sauvegarder dans Supabase si connecté
+  if(SB_ENABLED) {
+    const hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', 'Prefer':'return=minimal'};
+    try {
+      await Promise.all([
+        fetch(SB_URL+'/rest/v1/lots_stock', {method:'POST', headers:hdrs, body:JSON.stringify(codes)}),
+        fetch(SB_URL+'/rest/v1/config?key=eq.lots', {method:'PATCH', headers:{...hdrs,'Prefer':'resolution=merge-duplicates'}, body:JSON.stringify({key:'lots',value:LOTS_DB,updated_at:new Date().toISOString()})})
+      ]);
+    } catch(e) { console.warn('Sauvegarde Supabase échouée:', e); }
+  }
+
+  overlay.remove();
+  renderStockPanel();
+  renderStockPanel();
+  // Scroll vers le nouveau lot
+  setTimeout(() => document.getElementById('stock-panel')?.scrollIntoView({behavior:'smooth',block:'start'}), 100);
+}
+
+
 
 function renderBareme2() {
   const pEl = document.getElementById('bar-pts');
@@ -5711,7 +6238,7 @@ function renderBareme2() {
     </div>`;
   }).join('');
 
-  if(LOTS_ON) renderPartners();
+  if(LOTS_ON) renderStockPanel();
 }
 
 function renderLots2() {
@@ -5814,6 +6341,7 @@ function lotEdit(i) {
 }
 
 async function saveBareme2() {
+  if(!SB_ENABLED) return;
   const bp = {};
   Object.entries(BAREME).forEach(([k,b]) => { bp[k] = b.val; });
   const lp = LIGUES_SEUILS.map(l => ({key:l.name.toLowerCase(), name:l.name, icon:l.icon, color:l.color, bg:l.bg, min:l.min, max:l.max}));
@@ -5849,8 +6377,8 @@ buildNav();
 renderCurrentView();
 loadData();
 loadLotsFromSupabase();
-// Barème toujours rendu au démarrage — indépendant de Supabase
-setTimeout(() => { try { renderBareme(); } catch(e){} }, 100);
+loadStockAndGains();
+setTimeout(() => { try { renderBareme(); renderStockPanel(); renderGainsPanel(); } catch(e){} }, 200);
 
 // ── MENU MOBILE ──
 function toggleMobileMenu(force) {
