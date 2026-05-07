@@ -1644,9 +1644,7 @@ function navTo(id) {
 
 function renderCurrentView() {
   const r = {dashboard:renderDashboard,eleves:renderEleves,defis:renderDefis,parrainage:renderParrainage,ligues:renderLigues,etablissements:renderEtabs,cours:renderCours,stats:renderStats,appcom:renderAppCom};
-  if(r[currentView]) { catch(e){ console.error(e); } }); }
-    else { try { r[currentView](); } catch(e) { console.warn('renderCurrentView error:', currentView, e); } }
-  }
+  if(r[currentView]) { try { r[currentView](); } catch(e) { console.warn('renderCurrentView error:', currentView, e); } }
 }
 
 // ── DASHBOARD ──
