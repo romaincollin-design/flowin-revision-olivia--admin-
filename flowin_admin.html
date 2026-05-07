@@ -630,21 +630,118 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
         <div class="panel">
           <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
             <span>⭐ Barème des points</span>
-            
+            <a href="flowin_bareme.html" target="_blank" style="background:var(--surf2);border:1px solid var(--b);border-radius:6px;padding:3px 8px;font-size:10px;cursor:pointer;color:var(--t2);text-decoration:none">✏️ Modifier</a>
           </div>
-          
+          <div style="padding:14px" id="dash-bareme"></div>
         </div>
         <div class="panel">
           <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
             <span>🏆 Seuils des ligues</span>
-            
+            <a href="flowin_bareme.html" target="_blank" style="background:var(--surf2);border:1px solid var(--b);border-radius:6px;padding:3px 8px;font-size:10px;cursor:pointer;color:var(--t2);text-decoration:none">✏️ Modifier</a>
           </div>
           <div style="padding:14px" id="dash-ligues-seuils"></div>
         </div>
       </div>
 
-      <!-- MODAL BARÈME -->
-    
+      <!-- Accès module Barème & Lots -->
+      <div class="panel" style="margin-bottom:4px">
+        <div style="padding:14px;display:flex;align-items:center;gap:14px">
+          <div style="font-size:28px">⭐</div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:700;color:var(--t)">Barème & Lots partenaires</div>
+            <div style="font-size:11px;color:var(--t3);margin-top:2px">Configurez les points, les ligues et les offres partenaires — module indépendant</div>
+          </div>
+          <a href="flowin_bareme.html" target="_blank" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap">⭐ Ouvrir le module →</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BARÈME & LOTS -->
+    <div class="view" id="v-bareme">
+
+      <!-- HEADER -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div>
+          <div class="view-title" style="margin-bottom:2px">⭐ Barème & Lots partenaires</div>
+          <div class="view-sub">Configurez les points, les ligues et les récompenses</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button onclick="loadStockAndGains().then(()=>{renderStockPanel();renderGainsPanel()})" style="background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:8px 14px;font-size:11px;cursor:pointer;color:var(--t2);font-weight:600">↻ Actualiser</button>
+          <button onclick="saveBaremeComplet()" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer">✓ Sauvegarder</button>
+        </div>
+      </div>
+
+      <!-- LIGNE 1 : Points + Ligues -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div class="panel">
+          <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
+            <span>⭐ Points par action</span>
+            <button onclick="resetBareme()" style="font-size:10px;padding:3px 9px;border-radius:20px;background:var(--surf2);border:1px solid var(--b);cursor:pointer;color:var(--t2)">↺ Reset</button>
+          </div>
+          <div style="padding:16px">
+            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Bonne réponse (base)</label><span><span class="bsl-val" id="bvp-pts_bonne_reponse">15</span><span class="bsl-unit"> pts</span></span></div><input type="range" min="1" max="50" step="1" value="15" style="width:100%;accent-color:var(--am)" oninput="BAREME['pts_bonne_reponse'].val=parseInt(this.value);document.getElementById('bvp-pts_bonne_reponse').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>1</span><span>50</span></div></div>
+            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Bonus streak (2e bonne)</label><span><span class="bsl-val" id="bvp-pts_streak_bonus_2e">5</span><span class="bsl-unit"> pts</span></span></div><input type="range" min="0" max="20" step="1" value="5" style="width:100%;accent-color:var(--am)" oninput="BAREME['pts_streak_bonus_2e'].val=parseInt(this.value);document.getElementById('bvp-pts_streak_bonus_2e').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>0</span><span>20</span></div></div>
+            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Bonus streak (3e+)</label><span><span class="bsl-val" id="bvp-pts_streak_bonus_sup">2</span><span class="bsl-unit"> pts</span></span></div><input type="range" min="0" max="10" step="1" value="2" style="width:100%;accent-color:var(--am)" oninput="BAREME['pts_streak_bonus_sup'].val=parseInt(this.value);document.getElementById('bvp-pts_streak_bonus_sup').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>0</span><span>10</span></div></div>
+            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Quiz parfait (100%)</label><span><span class="bsl-val" id="bvp-pts_perfect_bonus">10</span><span class="bsl-unit"> pts bonus</span></span></div><input type="range" min="0" max="100" step="5" value="10" style="width:100%;accent-color:var(--am)" oninput="BAREME['pts_perfect_bonus'].val=parseInt(this.value);document.getElementById('bvp-pts_perfect_bonus').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>0</span><span>100</span></div></div>
+            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Parrainage réussi</label><span><span class="bsl-val" id="bvp-pts_parrainage">100</span><span class="bsl-unit"> pts</span></span></div><input type="range" min="10" max="500" step="10" value="100" style="width:100%;accent-color:var(--am)" oninput="BAREME['pts_parrainage'].val=parseInt(this.value);document.getElementById('bvp-pts_parrainage').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>10</span><span>500</span></div></div>
+            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Questions par quiz</label><span><span class="bsl-val" id="bvp-nb_questions_quiz">5</span><span class="bsl-unit"> questions</span></span></div><input type="range" min="3" max="20" step="1" value="5" style="width:100%;accent-color:var(--am)" oninput="BAREME['nb_questions_quiz'].val=parseInt(this.value);document.getElementById('bvp-nb_questions_quiz').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>3</span><span>20</span></div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">🏆 Seuils de ligue</div>
+          <div style="padding:16px">
+            <div style="margin-bottom:10px;padding:12px;background:#F5EDE3;border-radius:9px;border-left:3px solid #9A6B3A"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🥉</span><span style="font-size:13px;font-weight:700;color:#9A6B3A;min-width:60px">Bronze</span><span style="font-size:11px;color:#9A6B3A">0 — <input type="number" value="499" style="width:70px;border:1px solid #9A6B3A;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;color:#9A6B3A;background:rgba(255,255,255,.8);outline:none" onchange="LIGUES_SEUILS[0].max=parseInt(this.value);LIGUES_SEUILS[1].min=parseInt(this.value)+1;renderBareme()"> pts</span></div></div>
+            <div style="margin-bottom:10px;padding:12px;background:#F0F1F4;border-radius:9px;border-left:3px solid #6B7280"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🥈</span><span style="font-size:13px;font-weight:700;color:#6B7280;min-width:60px">Argent</span><span style="font-size:11px;color:#6B7280">500 — <input type="number" value="1499" style="width:70px;border:1px solid #6B7280;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;color:#6B7280;background:rgba(255,255,255,.8);outline:none" onchange="LIGUES_SEUILS[1].max=parseInt(this.value);LIGUES_SEUILS[2].min=parseInt(this.value)+1;renderBareme()"> pts</span></div></div>
+            <div style="margin-bottom:10px;padding:12px;background:#FEF3DC;border-radius:9px;border-left:3px solid #B87A10"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🥇</span><span style="font-size:13px;font-weight:700;color:#B87A10;min-width:60px">Or</span><span style="font-size:11px;color:#B87A10">1500 — <input type="number" value="2999" style="width:70px;border:1px solid #B87A10;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;color:#B87A10;background:rgba(255,255,255,.8);outline:none" onchange="LIGUES_SEUILS[2].max=parseInt(this.value);LIGUES_SEUILS[3].min=parseInt(this.value)+1;renderBareme()"> pts</span></div></div>
+            <div style="margin-bottom:10px;padding:12px;background:#E8F2FC;border-radius:9px;border-left:3px solid #2478CC"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">💎</span><span style="font-size:13px;font-weight:700;color:#2478CC;min-width:60px">Platine</span><span style="font-size:11px;color:#2478CC">3000 — <input type="number" value="4999" style="width:70px;border:1px solid #2478CC;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;color:#2478CC;background:rgba(255,255,255,.8);outline:none" onchange="LIGUES_SEUILS[3].max=parseInt(this.value);LIGUES_SEUILS[4].min=parseInt(this.value)+1;renderBareme()"> pts</span></div></div>
+            <div style="padding:12px;background:#EEECFC;border-radius:9px;border-left:3px solid #6C5FE8"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">👑</span><span style="font-size:13px;font-weight:700;color:#6C5FE8;min-width:60px">Légende</span><span style="font-size:11px;color:#6C5FE8">≥ 5000 pts — ∞ 👑</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIGNE 2 : Lots & Stock -->
+      <div class="panel" style="margin-bottom:14px">
+        <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:13px;font-weight:700">🎁 Lots & Stock partenaires</span>
+            <div style="display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none;background:var(--surf2);border:1px solid var(--b);border-radius:20px;padding:4px 10px" onclick="toggleLots()">
+              <div id="lots-track" style="width:30px;height:18px;border-radius:20px;background:#D1D5DB;position:relative;transition:background .25s;flex-shrink:0">
+                <div id="lots-thumb" style="position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:#fff;transition:left .25s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>
+              </div>
+              <span id="lots-lbl" style="font-size:11px;font-weight:600;color:var(--t3)">Désactivé</span>
+            </div>
+          </div>
+          <button onclick="addPartner()" style="background:var(--ac);color:#fff;border:none;border-radius:20px;padding:7px 18px;font-size:11px;font-weight:700;cursor:pointer">+ Nouveau partenaire</button>
+        </div>
+        <div id="lots-off-banner" style="padding:10px 20px;background:#FFF8E1;border-top:1px solid #FFE082;border-bottom:1px solid #FFE082;font-size:11px;color:#B45309;font-weight:500">
+          ⚠️ Activez le toggle pour que les élèves voient les offres dans l'app.
+        </div>
+        <div id="stock-panel">
+          <div style="padding:24px;text-align:center;color:var(--t3);font-size:12px">Chargement…</div>
+        </div>
+      </div>
+
+      <!-- LIGNE 3 : Historique gains -->
+      <div class="panel" style="margin-bottom:20px">
+        <div class="panel-header">🏅 Historique des gains attribués</div>
+        <div id="gains-panel">
+          <div style="padding:16px;color:var(--t3);font-size:11px;text-align:center">Aucun gain attribué pour le moment.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MODAL BARÈME -->
+    <div class="modal-overlay" id="modal-bareme" onclick="if(event.target===this)closeBareme()">
+      <div class="modal-box" style="max-width:700px">
+        <div class="modal-header">
+          <span class="modal-header-title">⭐ Barème & Ligues — Paramétrage</span>
+          <button class="modal-close" onclick="closeBareme()">✕</button>
+        </div>
+        <div class="modal-body" id="modal-bareme-body"></div>
+      </div>
+    </div>
 
 
     <!-- ÉLÈVES -->
@@ -1607,7 +1704,7 @@ const NAV_ITEMS = [
   { id:'cours',           label:'+ Cours',           icon:'📖', sec:'Contenu', badgeFn:()=>COURS_DB.length },
   { id:'stats',           label:'Stats & Trafic',   icon:'📊', sec:null },
   { id:'appcom',          label:'App & Com',        icon:'📲', sec:null },
-
+  { id:'bareme',          label:'Barème & Lots',    icon:'⭐', sec:'Configuration' },
 ];
 let currentView = 'dashboard';
 
@@ -1637,14 +1734,17 @@ function navTo(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   const vEl = document.getElementById('v-'+id);
   if(vEl) vEl.classList.add('active');
-  const titles = {dashboard:'Dashboard',eleves:'Élèves',defis:'Défis & Pools',parrainage:'Parrainage',ligues:'Ligues & Classements',etablissements:'Établissements',cours:'Cours & Contenus',stats:'Stats & Trafic',appcom:'App & Communication'};
+  const titles = {dashboard:'Dashboard',eleves:'Élèves',defis:'Défis & Pools',parrainage:'Parrainage',ligues:'Ligues & Classements',etablissements:'Établissements',cours:'Cours & Contenus',stats:'Stats & Trafic',appcom:'App & Communication',bareme:'Barème & Lots'};
   document.getElementById('topbar-title').textContent = titles[id]||id;
   renderCurrentView();
 }
 
 function renderCurrentView() {
-  const r = {dashboard:renderDashboard,eleves:renderEleves,defis:renderDefis,parrainage:renderParrainage,ligues:renderLigues,etablissements:renderEtabs,cours:renderCours,stats:renderStats,appcom:renderAppCom};
-  if(r[currentView]) { try { r[currentView](); } catch(e) { console.warn('renderCurrentView error:', currentView, e); } }
+  const r = {dashboard:renderDashboard,eleves:renderEleves,defis:renderDefis,parrainage:renderParrainage,ligues:renderLigues,etablissements:renderEtabs,cours:renderCours,stats:renderStats,appcom:renderAppCom,bareme:renderBaremeView};
+  if(r[currentView]) {
+    if(currentView === 'bareme') { requestAnimationFrame(() => { try { renderBaremeView(); } catch(e){ console.error(e); } }); }
+    else { try { r[currentView](); } catch(e) { console.warn('renderCurrentView error:', currentView, e); } }
+  }
 }
 
 // ── DASHBOARD ──
@@ -1722,6 +1822,7 @@ function renderDashboard() {
 
   // Parrainages récents
   const chIc = {whatsapp:'💬',telegram:'✈️',copy:'📋',native:'↗️'};
+  renderBareme();
   renderActivityChart(periodSess);
   renderMap();
   renderTopEtabs();
