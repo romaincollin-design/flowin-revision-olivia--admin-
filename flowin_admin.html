@@ -1473,6 +1473,11 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
         </div>
       </div>
 
+    <!-- TEXTES APP -->
+    <div class="view" id="v-textes">
+      <div id="textes-container" style="padding:20px;max-width:720px;margin:0 auto"></div>
+    </div>
+
     <!-- PARAMÈTRES -->
     <!-- BARÈME & LOTS -->
   </div><!-- end #content -->
@@ -1587,10 +1592,14 @@ const getStats = pseudo => {
   };
 };
 
-// Meilleur total pts: prendre le max de pts_total parmi toutes les sessions (c'est cumulatif)
+// Meilleur total pts: MAX entre sessions.pts_total (cumulatif) ET joueurs.pts_total (PATCH admin)
 const getTotalPts = pseudo => {
   const us = DB.sessions.filter(s => s.pseudo === pseudo);
-  return us.reduce((a,s) => Math.max(a, s.pts_total||0), 0);
+  const fromSessions = us.reduce((a,s) => Math.max(a, s.pts_total||0), 0);
+  // Prendre aussi pts_total depuis joueurs (modifiable par admin PATCH)
+  const j = DB.joueurs.find(function(jj){ return jj.pseudo === pseudo; });
+  const fromJoueurs = (j && j.pts_total) ? j.pts_total : 0;
+  return Math.max(fromSessions, fromJoueurs);
 };
 
 // ── LOAD ──
@@ -1654,43 +1663,136 @@ async function loadData() {
     banner.innerHTML = `⚠️ Supabase : ${errMsg} <button onclick="this.parentElement.remove()" style="margin-left:10px;background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:5px;padding:2px 8px;cursor:pointer">✕</button>`;
     document.body.appendChild(banner);
     setTimeout(()=>banner.remove(), 15000);
-    DB.joueurs = [
-      {id:1, ts:new Date(Date.now()-86400000*2).toISOString(), pseudo:'OliviaDiana', prenom:'Olivia', nom:'Diana', email:'olivia@lycee-vinci.fr', ecole:'Lycée Léonard de Vinci', pts_total:2340, streak:5, ligue:'gold'},
-      {id:2, ts:new Date(Date.now()-86400000*5).toISOString(), pseudo:'LucasBertin', prenom:'Lucas', nom:'Bertin', email:'lucas@lycee-vinci.fr', ecole:'Lycée Léonard de Vinci', pts_total:1820, streak:3, ligue:'gold'},
-      {id:3, ts:new Date(Date.now()-86400000*7).toISOString(), pseudo:'EmmaFaure', prenom:'Emma', nom:'Faure', email:'emma@lycee-vinci.fr', ecole:'Lycée Léonard de Vinci', pts_total:1450, streak:2, ligue:'silver'},
-      {id:4, ts:new Date(Date.now()-86400000*10).toISOString(), pseudo:'NathanLopez', prenom:'Nathan', nom:'Lopez', email:'nathan@lycee-massena.fr', ecole:'Lycée Masséna', pts_total:980, streak:1, ligue:'silver'},
-      {id:5, ts:new Date(Date.now()-86400000*12).toISOString(), pseudo:'ChloeMartin', prenom:'Chloé', nom:'Martin', email:'chloe@lycee-massena.fr', ecole:'Lycée Masséna', pts_total:760, streak:0, ligue:'silver'},
-      {id:6, ts:new Date(Date.now()-86400000*14).toISOString(), pseudo:'RomainDuval', prenom:'Romain', nom:'Duval', email:'romain@lycee-vinci.fr', ecole:'Lycée Léonard de Vinci', pts_total:3200, streak:7, ligue:'diamond'},
-      {id:7, ts:new Date(Date.now()-86400000*3).toISOString(), pseudo:'LaetitiaBrun', prenom:'Laetitia', nom:'Brun', email:'laetitia@lycee-vinci.fr', ecole:'Lycée Léonard de Vinci', pts_total:410, streak:0, ligue:'bronze'},
-      {id:8, ts:new Date(Date.now()-86400000*6).toISOString(), pseudo:'ThomasVidal', prenom:'Thomas', nom:'Vidal', email:'thomas@lycee-massena.fr', ecole:'Lycée Masséna', pts_total:1200, streak:4, ligue:'silver'},
-      {id:9, ts:new Date(Date.now()-86400000*1).toISOString(), pseudo:'amelie.petit', prenom:'Amélie', nom:'Petit', email:'amelie@lycee-vinci.fr', ecole:'Lycée Léonard de Vinci', pts_total:320, streak:1, ligue:'bronze'},
-      {id:10, ts:new Date(Date.now()-86400000*2).toISOString(), pseudo:'jules.fontaine', prenom:'Jules', nom:'Fontaine', email:'jules@lycee-vinci.fr', ecole:'Lycée Léonard de Vinci', pts_total:180, streak:0, ligue:'bronze'},
-      {id:11, ts:new Date(Date.now()-86400000*4).toISOString(), pseudo:'lea.bernard', prenom:'Léa', nom:'Bernard', email:'lea@lycee-massena.fr', ecole:'Lycée Masséna', pts_total:540, streak:2, ligue:'silver'},
-    ];
-    const themes = ['La guerre froide','La mondialisation','De la IVe à Ve République','Les 30 Glorieuses','La construction européenne','Décolonisation'];
-    const matieres = ['Histoire','Géographie','EMC'];
-    DB.sessions = Array.from({length:40}, (_,i) => ({
-      id:i+1, ts:new Date(Date.now()-Math.random()*86400000*14).toISOString(),
-      pseudo:DB.joueurs[Math.floor(Math.random()*DB.joueurs.length)].pseudo,
-      ecole:Math.random()>.5?'Lycée Léonard de Vinci':'Lycée Masséna',
-      theme:themes[Math.floor(Math.random()*themes.length)],
-      matiere:matieres[Math.floor(Math.random()*matieres.length)],
-      score_pct:Math.floor(Math.random()*60)+40,
-      pts_round:Math.floor(Math.random()*80)+20,
-      nb_bonnes:Math.floor(Math.random()*4)+1, nb_questions:5
-    }));
-    DB.parrainage = [
-      {id:1, ts:new Date(Date.now()-86400000*1).toISOString(), sender:'OliviaDiana', sender_etab:'Lycée Léonard de Vinci', destinataire:'amelie.petit', channel:'whatsapp', pts:100},
-      {id:2, ts:new Date(Date.now()-86400000*3).toISOString(), sender:'LucasBertin', sender_etab:'Lycée Léonard de Vinci', destinataire:'jules.fontaine', channel:'telegram', pts:100},
-      {id:3, ts:new Date(Date.now()-86400000*5).toISOString(), sender:'RomainDuval', sender_etab:'Lycée Léonard de Vinci', destinataire:'lea.bernard', channel:'copy', pts:100},
-    ];
-    DB.connexions = DB.joueurs.map((j,i) => ({
-      id:i+1, ts:new Date(Date.now()-Math.random()*86400000*7).toISOString(),
-      pseudo:j.pseudo, device:'Mobile', duree_min:Math.floor(Math.random()*20)+5
-    }));
+    // R4/R5 : catch = tableaux vides — jamais de données démo
+    DB.joueurs    = [];
+    DB.sessions   = [];
+    DB.parrainage = [];
+    DB.connexions = [];
   }
   updateBadges();
   renderCurrentView();
+}
+
+// ── TEXTES APP ──
+var TEXTES_DB = {
+  landing_titre: 'Révise mieux, gagne plus.',
+  landing_sous_titre: "L'app de révision gamifiée pour ton Bac Pro.",
+  landing_cta: '🚀 Commencer à réviser',
+  landing_stats_sessions: '1 247',
+  landing_stats_eleves: '89',
+  landing_stats_score: '78%',
+  inscription_titre: 'Créer mon profil',
+  inscription_sous_titre: 'Résultats sauvegardés · 30 secondes',
+  inscription_cta: '🚀 Lancer le quiz !',
+  inscription_rgpd: "J\'accepte que mes donnees soient utilisees pour personnaliser ma progression.",
+  quiz_landing_titre: 'Quiz Flowin',
+  quiz_landing_sous_titre: 'Tourne la roue et découvre ton thème !',
+  quiz_landing_cta: '🎯 Lancer le quiz',
+  app_bienvenue: 'Bienvenue sur Flowin !',
+  app_hero_sub: 'Choisis un thème et commence à réviser.',
+  defi_intro: 'Défie tes camarades en temps réel !',
+};
+
+var TEXTES_DIRTY = false;
+
+var TEXTES_META = [
+  { section:'Page accueil (Landing)', champs:[
+    {key:'landing_titre', label:'Titre principal', type:'textarea', rows:2},
+    {key:'landing_sous_titre', label:'Sous-titre', type:'text'},
+    {key:'landing_cta', label:'Bouton principal', type:'text'},
+    {key:'landing_stats_sessions', label:'Stat : sessions', type:'text'},
+    {key:'landing_stats_eleves', label:'Stat : élèves', type:'text'},
+    {key:'landing_stats_score', label:'Stat : score moyen', type:'text'},
+  ]},
+  { section:'Formulaire inscription', champs:[
+    {key:'inscription_titre', label:'Titre formulaire', type:'text'},
+    {key:'inscription_sous_titre', label:'Sous-titre formulaire', type:'text'},
+    {key:'inscription_cta', label:'Bouton valider', type:'text'},
+    {key:'inscription_rgpd', label:'Texte RGPD', type:'textarea', rows:2},
+  ]},
+  { section:'🎯 Quiz', champs:[
+    {key:'quiz_landing_titre', label:'Titre quiz landing', type:'text'},
+    {key:'quiz_landing_sous_titre', label:'Sous-titre quiz', type:'text'},
+    {key:'quiz_landing_cta', label:'Bouton lancer quiz', type:'text'},
+  ]},
+  { section:'📱 App principale', champs:[
+    {key:'app_bienvenue', label:'Message bienvenue', type:'text'},
+    {key:'app_hero_sub', label:'Sous-titre accueil app', type:'text'},
+    {key:'defi_intro', label:'Intro défis', type:'text'},
+  ]},
+];
+
+async function loadTextesFromSupabase() {
+  try {
+    var hdrs = {apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY};
+    var r = await fetch(SB_URL + '/rest/v1/config?key=eq.app_textes&select=value', {headers: hdrs});
+    if(!r.ok) return;
+    var rows = await r.json();
+    if(rows && rows[0] && rows[0].value) {
+      Object.assign(TEXTES_DB, rows[0].value);
+    }
+  } catch(e) {}
+}
+
+async function saveTextesToSupabase() {
+  var btn = document.getElementById('textes-save-btn');
+  if(btn) { btn.textContent = '⏳ Sauvegarde…'; btn.disabled = true; }
+  try {
+    var hdrs = {apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates'};
+    var r = await fetch(SB_URL + '/rest/v1/config', {
+      method: 'POST',
+      headers: hdrs,
+      body: JSON.stringify({key: 'app_textes', value: TEXTES_DB})
+    });
+    if(btn) { btn.textContent = r.ok ? '✅ Sauvegardé !' : '❌ Erreur'; btn.disabled = false; }
+    setTimeout(function() { if(btn) { btn.textContent = '💾 Sauvegarder dans Supabase'; } }, 2000);
+    TEXTES_DIRTY = false;
+  } catch(e) {
+    if(btn) { btn.textContent = '❌ Erreur réseau'; btn.disabled = false; }
+  }
+}
+
+function renderTextes() {
+  var c = document.getElementById('textes-container');
+  if(!c) return;
+  loadTextesFromSupabase().then(function() { renderTextesUI(); });
+}
+
+function renderTextesUI() {
+  var c = document.getElementById('textes-container');
+  if(!c) return;
+  var html = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px">'
+    + '<div style="font-size:18px;font-weight:800;color:var(--t)">Textes app</div>'
+    + '<button id="textes-save-btn" onclick="saveTextesToSupabase()" style="background:var(--ac);color:#fff;border:none;border-radius:10px;padding:10px 20px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit">💾 Sauvegarder dans Supabase</button>'
+    + '</div>'
+    + '<div style="background:var(--amBg);border:1px solid var(--am);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--am);font-weight:600">ℹ️ Ces textes sont sauvegardes dans Supabase (config app_textes) et charges au demarrage de l\'app eleve.</div>';
+
+  TEXTES_META.forEach(function(sec) {
+    html += '<div style="background:var(--surf);border:1px solid var(--b);border-radius:14px;padding:16px;margin-bottom:16px">'
+      + '<div style="font-size:14px;font-weight:800;color:var(--t);margin-bottom:14px">' + sec.section + '</div>';
+    sec.champs.forEach(function(ch) {
+      var val = (TEXTES_DB[ch.key] || '').replace(/"/g, '&quot;');
+      html += '<div style="margin-bottom:12px">'
+        + '<div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">' + ch.label + '</div>';
+      if(ch.type === 'textarea') {
+        html += '<textarea rows="' + (ch.rows||2) + '" data-key="' + ch.key + '" oninput="texteUpdate(this)" style="width:100%;background:var(--surf2);border:1.5px solid var(--b);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--t);outline:none;resize:vertical;font-family:inherit;line-height:1.4">' + val + '</textarea>';
+      } else {
+        html += '<input type="text" data-key="' + ch.key + '" value="' + val + '" oninput="texteUpdate(this)" style="width:100%;background:var(--surf2);border:1.5px solid var(--b);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--t);outline:none;font-family:inherit">';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+
+  c.innerHTML = html;
+}
+
+function texteUpdate(el) {
+  var key = el.getAttribute('data-key');
+  TEXTES_DB[key] = el.value;
+  TEXTES_DIRTY = true;
+  var btn = document.getElementById('textes-save-btn');
+  if(btn && !btn.disabled) btn.textContent = '💾 Sauvegarder *';
 }
 
 // ── NAV ──
@@ -1705,6 +1807,7 @@ const NAV_ITEMS = [
   { id:'stats',           label:'Stats & Trafic',   icon:'📊', sec:null },
   { id:'appcom',          label:'App & Com',        icon:'📲', sec:null },
   { id:'bareme',          label:'Barème & Lots',    icon:'⭐', sec:'Configuration' },
+  { id:'textes',          label:'Textes App',       icon:'✏️', sec:null },
 ];
 let currentView = 'dashboard';
 
@@ -1734,13 +1837,13 @@ function navTo(id) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   const vEl = document.getElementById('v-'+id);
   if(vEl) vEl.classList.add('active');
-  const titles = {dashboard:'Dashboard',eleves:'Élèves',defis:'Défis & Pools',parrainage:'Parrainage',ligues:'Ligues & Classements',etablissements:'Établissements',cours:'Cours & Contenus',stats:'Stats & Trafic',appcom:'App & Communication',bareme:'Barème & Lots'};
+  const titles = {dashboard:'Dashboard',eleves:'Élèves',defis:'Défis & Pools',parrainage:'Parrainage',ligues:'Ligues & Classements',etablissements:'Établissements',cours:'Cours & Contenus',stats:'Stats & Trafic',appcom:'App & Communication',bareme:'Barème & Lots',textes:'Textes de l\'App'};
   document.getElementById('topbar-title').textContent = titles[id]||id;
   renderCurrentView();
 }
 
 function renderCurrentView() {
-  const r = {dashboard:renderDashboard,eleves:renderEleves,defis:renderDefis,parrainage:renderParrainage,ligues:renderLigues,etablissements:renderEtabs,cours:renderCours,stats:renderStats,appcom:renderAppCom,bareme:renderBaremeView};
+  const r = {dashboard:renderDashboard,eleves:renderEleves,defis:renderDefis,parrainage:renderParrainage,ligues:renderLigues,etablissements:renderEtabs,cours:renderCours,stats:renderStats,appcom:renderAppCom,bareme:renderBaremeView,textes:renderTextes};
   if(r[currentView]) {
     if(currentView === 'bareme') { requestAnimationFrame(() => { try { renderBaremeView(); } catch(e){ console.error(e); } }); }
     else { try { r[currentView](); } catch(e) { console.warn('renderCurrentView error:', currentView, e); } }
@@ -1783,7 +1886,21 @@ function renderDashboard() {
     { val:sessToday.length||DB.sessions.length, label:'Sessions', sub:sessToday.length?`aujourd\'hui · ${DB.sessions.length} total`:`${DB.sessions.length} total`, trend:newSess7j, color:'var(--gr)', icon:'⚡', nav:'defis' },
     { val:avg+'%', label:'Score moyen global', sub:'Toutes matières', trend:0, color:'var(--am)', icon:'🎯', nav:'stats' },
     { val:DB.parrainage.length, label:'Parrainages', sub:`${parrSenders} parrain${parrSenders>1?'s':''}`, trend:newParr7j, color:'#E040A0', icon:'🎁', nav:'parrainage' },
-  ].map(k => `<div class="kpi-card" onclick="${k.nav?`navTo('${k.nav}')`:'void(0)'}" style="${k.nav?'cursor:pointer;':''}transition:transform .14s,box-shadow .14s" onmouseenter="${k.nav?`this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 18px rgba(0,0,0,.08)'`:''}" onmouseleave="${k.nav?`this.style.transform='';this.style.boxShadow=''`:''}"><div class="kpi-bar" style="background:${k.color}"></div><div class="kpi-icon">${k.icon}</div><div class="kpi-val">${k.val}</div><div class="kpi-label">${k.label}</div><div class="kpi-sub">${k.sub}${k.nav?` <span style="font-size:9px;color:var(--ac)">→</span>`:''}</div>${trendTag(k.trend)}</div>`).join('');
+  ].map(k => {
+    var kOnclick    = k.nav ? "navTo('" + k.nav + "')" : 'void(0)';
+    var kStyle      = (k.nav ? 'cursor:pointer;' : '') + 'transition:transform .14s,box-shadow .14s';
+    var kEnter      = k.nav ? "this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 18px rgba(0,0,0,.08)'" : '';
+    var kLeave      = k.nav ? "this.style.transform='';this.style.boxShadow=''" : '';
+    var kNavArrow   = k.nav ? ' <span style="font-size:9px;color:var(--ac)">→</span>' : '';
+    return '<div class="kpi-card" onclick="' + kOnclick + '" style="' + kStyle + '" onmouseenter="' + kEnter + '" onmouseleave="' + kLeave + '">'
+      + '<div class="kpi-bar" style="background:' + k.color + '"></div>'
+      + '<div class="kpi-icon">' + k.icon + '</div>'
+      + '<div class="kpi-val">' + k.val + '</div>'
+      + '<div class="kpi-label">' + k.label + '</div>'
+      + '<div class="kpi-sub">' + k.sub + kNavArrow + '</div>'
+      + trendTag(k.trend)
+      + '</div>';
+  }).join('');
 
   // Top 5
   const elevs = buildElevs();
@@ -2135,13 +2252,17 @@ function openEleve(pseudo) {
   const currentIdx = allElevs.findIndex(e => e.pseudo === pseudo);
   const prevElev = currentIdx > 0 ? allElevs[currentIdx - 1] : null;
   const nextElev = currentIdx < allElevs.length - 1 ? allElevs[currentIdx + 1] : null;
+  const prevOnclick = prevElev ? ("openEleve('" + prevElev.pseudo + "')") : 'void(0)';
+  const nextOnclick = nextElev ? ("openEleve('" + nextElev.pseudo + "')") : 'void(0)';
+  const prevPrenom = prevElev ? prevElev.j.prenom : '—';
+  const nextPrenom = nextElev ? nextElev.j.prenom : '—';
 
   document.getElementById('modal-eleve-body').innerHTML = `
     <!-- Navigation élèves -->
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--b)">
-      <button onclick="${prevElev?`openEleve('${prevElev.pseudo}')`:'void(0)'}" style="padding:5px 11px;border-radius:7px;border:1px solid var(--b);background:${prevElev?'var(--surf2)':'var(--surf3)'};color:${prevElev?'var(--t2)':'var(--t3)'};font-size:11px;cursor:${prevElev?'pointer':'default'};font-family:inherit">← ${prevElev?`${prevElev.j.prenom}`:'—'}</button>
+      <button onclick="${prevOnclick}" style="padding:5px 11px;border-radius:7px;border:1px solid var(--b);background:${prevElev?'var(--surf2)':'var(--surf3)'};color:${prevElev?'var(--t2)':'var(--t3)'};font-size:11px;cursor:${prevElev?'pointer':'default'};font-family:inherit">← ${prevPrenom}</button>
       <span style="font-size:10px;color:var(--t3);flex:1;text-align:center">${currentIdx+1} / ${allElevs.length}</span>
-      <button onclick="${nextElev?`openEleve('${nextElev.pseudo}')`:'void(0)'}" style="padding:5px 11px;border-radius:7px;border:1px solid var(--b);background:${nextElev?'var(--surf2)':'var(--surf3)'};color:${nextElev?'var(--t2)':'var(--t3)'};font-size:11px;cursor:${nextElev?'pointer':'default'};font-family:inherit">${nextElev?`${nextElev.j.prenom}`:'—'} →</button>
+      <button onclick="${nextOnclick}" style="padding:5px 11px;border-radius:7px;border:1px solid var(--b);background:${nextElev?'var(--surf2)':'var(--surf3)'};color:${nextElev?'var(--t2)':'var(--t3)'};font-size:11px;cursor:${nextElev?'pointer':'default'};font-family:inherit">${nextPrenom} →</button>
     </div>
 
     <!-- Header identité -->
@@ -2247,6 +2368,35 @@ function openEleve(pseudo) {
       </div>
     </div>
 
+    <!-- GESTION DES POINTS — V11 -->
+    <div class="fiche-block" style="margin-bottom:12px">
+      <div class="fiche-block-title">💰 Gestion des points</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div style="background:var(--amBg);border-radius:8px;padding:8px 12px;text-align:center;flex-shrink:0">
+          <div style="font-size:22px;font-weight:800;color:var(--am)" id="fichePointsVal${pseudo}">${d.totalPts.toLocaleString('fr')}</div>
+          <div style="font-size:9px;color:var(--t3);text-transform:uppercase">pts actuels</div>
+        </div>
+        <input type="number" id="fichePointsInput${pseudo}" min="0" placeholder="Valeur" style="flex:1;padding:9px 12px;border:1px solid var(--b);border-radius:8px;font-family:inherit;font-size:14px;background:var(--surf2);color:var(--t)">
+      </div>
+      <div style="display:flex;gap:6px">
+        <button onclick="adminUpdatePoints('${pseudo}','add')" style="flex:1;padding:8px;background:#E8F5E9;color:#1B5E20;border:1px solid #C8E6C9;border-radius:8px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer">+ Ajouter</button>
+        <button onclick="adminUpdatePoints('${pseudo}','sub')" style="flex:1;padding:8px;background:#FFEBEE;color:#C62828;border:1px solid #FFCDD2;border-radius:8px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer">− Retirer</button>
+        <button onclick="adminUpdatePoints('${pseudo}','set')" style="flex:1;padding:8px;background:var(--surf2);color:var(--t2);border:1px solid var(--b);border-radius:8px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer">= Définir</button>
+      </div>
+    </div>
+
+    <!-- DÉFIS ÉLÈVE — V11 -->
+    <div class="fiche-block" style="margin-bottom:12px">
+      <div class="fiche-block-title">⚔️ Défis de l'élève</div>
+      <!-- Onglets -->
+      <div style="display:flex;gap:6px;margin-bottom:10px">
+        <button id="defiTabCrees${pseudo}" onclick="renderDefisFiche('${pseudo}','crees')" style="flex:1;padding:6px 4px;background:var(--ac);color:#fff;border:none;border-radius:7px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">Créés</button>
+        <button id="defiTabParticipes${pseudo}" onclick="renderDefisFiche('${pseudo}','participes')" style="flex:1;padding:6px 4px;background:var(--surf2);color:var(--t3);border:1px solid var(--b);border-radius:7px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">Participés</button>
+        <button id="defiTabTermines${pseudo}" onclick="renderDefisFiche('${pseudo}','termines')" style="flex:1;padding:6px 4px;background:var(--surf2);color:var(--t3);border:1px solid var(--b);border-radius:7px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">Terminés</button>
+      </div>
+      <div id="defisFicheContent${pseudo}"><div style="text-align:center;color:var(--t3);font-size:11px;padding:12px">Chargement…</div></div>
+    </div>
+
     <!-- GAINS & LOTS REMPORTÉS -->
     \${(() => {
       const eleveGains = GAINS_DB.filter(g => g.pseudo === d.pseudo);
@@ -2297,8 +2447,121 @@ function openEleve(pseudo) {
     </div>
   `;
   document.getElementById('modal-eleve').classList.add('open');
+  // Charger onglet défis par défaut
+  setTimeout(function(){ renderDefisFiche(pseudo, 'crees'); }, 100);
 }
 function closeEleve() { document.getElementById('modal-eleve').classList.remove('open'); }
+
+// ── GESTION DES POINTS — V11 ──
+function adminUpdatePoints(pseudo, op) {
+  var inputEl = document.getElementById('fichePointsInput' + pseudo);
+  var valEl = document.getElementById('fichePointsVal' + pseudo);
+  if(!inputEl) return;
+  var val = parseInt(inputEl.value, 10);
+  if(isNaN(val) || val < 0) { alert('Valeur invalide'); return; }
+  // Récupérer pts_total actuel
+  var elevs = buildElevs();
+  var d = elevs.find(function(e){ return e.pseudo === pseudo; });
+  if(!d) return;
+  var current = d.totalPts || 0;
+  var newPts;
+  if(op === 'add') newPts = current + val;
+  else if(op === 'sub') newPts = Math.max(0, current - val);
+  else newPts = val;
+  // PATCH Supabase
+  if(!SB_ENABLED) { alert('Mode démo — Supabase désactivé'); return; }
+  var hdrs = {'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=minimal'};
+  fetch(SB_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(pseudo), {
+    method:'PATCH', headers:hdrs,
+    body:JSON.stringify({pts_total: newPts, updated_at: new Date().toISOString()})
+  }).then(function(r) {
+    if(r.ok) {
+      if(valEl) valEl.textContent = newPts.toLocaleString('fr');
+      inputEl.value = '';
+      // Mettre à jour DB.joueurs en mémoire pour que la liste élèves soit cohérente
+      var j = DB.joueurs.find(function(jj){ return jj.pseudo === pseudo; });
+      if(j) j.pts_total = newPts;
+      // Toast
+      var t = document.createElement('div');
+      t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#22C9A0;color:#fff;padding:10px 20px;border-radius:20px;font-weight:700;font-size:14px;z-index:99999';
+      t.textContent = '✅ Points mis à jour : ' + newPts.toLocaleString('fr') + ' pts';
+      document.body.appendChild(t);
+      setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 2500);
+      // Rafraîchir la vue élèves si elle est active
+      if(currentView === 'eleves') setTimeout(renderEleves, 300);
+    } else {
+      alert('Erreur PATCH Supabase');
+    }
+  }).catch(function(e){ alert('Erreur : ' + e.message); });
+}
+
+// ── DÉFIS FICHE ÉLÈVE — V11 ──
+function renderDefisFiche(pseudo, tab) {
+  // Toggle onglets
+  ['crees','participes','termines'].forEach(function(t) {
+    var btn = document.getElementById('defiTab' + t.charAt(0).toUpperCase() + t.slice(1) + pseudo);
+    if(btn) {
+      btn.style.background = t === tab ? 'var(--ac)' : 'var(--surf2)';
+      btn.style.color = t === tab ? '#fff' : 'var(--t3)';
+      btn.style.border = t === tab ? 'none' : '1px solid var(--b)';
+    }
+  });
+  var container = document.getElementById('defisFicheContent' + pseudo);
+  if(!container) return;
+  if(!SB_ENABLED) {
+    container.innerHTML = '<div style="text-align:center;color:var(--t3);font-size:11px;padding:12px">Mode démo — données non disponibles</div>';
+    return;
+  }
+  container.innerHTML = '<div style="text-align:center;color:var(--t3);font-size:11px;padding:12px">Chargement…</div>';
+  var hdrs = {'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY};
+  var url;
+  if(tab === 'crees') {
+    url = SB_URL + '/rest/v1/defis?createur=eq.' + encodeURIComponent(pseudo) + '&order=ts.desc&limit=15&select=id,nom,mise,theme,status,invite,score_createur,score_invite';
+  } else if(tab === 'participes') {
+    url = SB_URL + '/rest/v1/defis?invite=eq.' + encodeURIComponent(pseudo) + '&order=ts.desc&limit=15&select=id,nom,mise,theme,status,createur,score_createur,score_invite';
+  } else {
+    url = SB_URL + '/rest/v1/defis?or=(createur.eq.' + encodeURIComponent(pseudo) + ',invite.eq.' + encodeURIComponent(pseudo) + ')&status=eq.termine&order=ts.desc&limit=20&select=id,nom,mise,theme,status,createur,invite,score_createur,score_invite,gagnant';
+  }
+  fetch(url, {headers: hdrs})
+    .then(function(r){ return r.ok ? r.json() : []; })
+    .then(function(rows) {
+      if(!Array.isArray(rows) || rows.length === 0) {
+        container.innerHTML = '<div style="text-align:center;color:var(--t3);font-size:11px;padding:12px">Aucun défi trouvé</div>';
+        return;
+      }
+      var html = rows.map(function(d) {
+        var statColor = d.status === 'waiting' ? '#F59E0B' : d.status === 'en_cours' ? '#10B981' : '#9A8FBF';
+        var statLabel = d.status === 'waiting' ? '⏳ En attente' : d.status === 'en_cours' ? '⚔️ En cours' : '✅ Terminé';
+        var extra = '';
+        if(tab === 'crees') {
+          extra = '<span style="font-size:10px;color:var(--t3)">Invité : ' + (d.invite || '—') + '</span>';
+        } else if(tab === 'participes') {
+          extra = '<span style="font-size:10px;color:var(--t3)">Créateur : ' + (d.createur || '—') + ' · Mon score : ' + (d.score_invite !== null ? d.score_invite : '—') + '</span>';
+        } else {
+          var isCreateur = d.createur === pseudo;
+          var monScore = isCreateur ? d.score_createur : d.score_invite;
+          var advScore = isCreateur ? d.score_invite : d.score_createur;
+          var won = d.gagnant === pseudo;
+          extra = '<span style="font-size:10px;color:' + (won ? '#10B981' : '#EF4444') + ';font-weight:700">'
+            + (won ? '🏆 Gagné' : '😅 Perdu')
+            + '</span><span style="font-size:10px;color:var(--t3);margin-left:6px">' + (monScore !== null && monScore !== undefined ? monScore : '—') + ' vs ' + (advScore !== null && advScore !== undefined ? advScore : '—') + '</span>';
+        }
+        return '<div style="padding:8px 0;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:8px">'
+          + '<div style="flex:1;min-width:0">'
+          + '<div style="font-size:12px;font-weight:700;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (d.nom || d.id || '?') + '</div>'
+          + '<div style="font-size:10px;color:var(--t3);margin-top:2px">' + (d.mise || 0) + ' pts · ' + (d.theme || '') + ' · ' + extra + '</div>'
+          + '</div>'
+          + '<span style="font-size:10px;font-weight:700;color:' + statColor + ';flex-shrink:0">' + statLabel + '</span>'
+          + '</div>';
+      }).join('');
+      container.innerHTML = html;
+    }).catch(function() {
+      container.innerHTML = '<div style="text-align:center;color:var(--t3);font-size:11px;padding:12px">Erreur de chargement</div>';
+    });
+}
+
+// Charger défis après ouverture fiche (déclenché via setTimeout dans openEleve)
+
 
 // ── DÉFIS ──
 let defiTab = 'pools';
@@ -2341,13 +2604,17 @@ function renderDefis() {
     {v:nJ,              l:'Joueurs actifs', s:'cette période',  c:'var(--gr)', i:'👥', t:'rank'},
     {v:rows.length,     l:'Parties',        s:'sessions total', c:'var(--am)', i:'⚡', t:'histo'},
     {v:rows.length?avg+'%':'—', l:'Score moyen', s:'toutes sessions', c:'var(--bl)', i:'🎯', t:''},
-  ].map(k=>`<div class="kpi-card" style="cursor:${k.t?'pointer':'default'}" onclick="${k.t?`switchDTab('${k.t}',document.getElementById('dt-${k.t}'))`:''}">
-    <div class="kpi-bar" style="background:${k.c}"></div>
-    <div class="kpi-icon">${k.i}</div>
-    <div class="kpi-val">${k.v}</div>
-    <div class="kpi-label">${k.l}</div>
-    <div class="kpi-sub">${k.s}</div>
-  </div>`).join('');
+  ].map(function(k) {
+    var kCursor  = k.t ? 'pointer' : 'default';
+    var kOnclick = k.t ? "switchDTab('" + k.t + "',document.getElementById('dt-" + k.t + "'))" : '';
+    return '<div class="kpi-card" style="cursor:' + kCursor + '" onclick="' + kOnclick + '">'
+      + '<div class="kpi-bar" style="background:' + k.c + '"></div>'
+      + '<div class="kpi-icon">' + k.i + '</div>'
+      + '<div class="kpi-val">' + k.v + '</div>'
+      + '<div class="kpi-label">' + k.l + '</div>'
+      + '<div class="kpi-sub">' + k.s + '</div>'
+      + '</div>';
+  }).join('');
 
   const emj = {Histoire:'📜',Géographie:'🌍',EMC:'⚖️',PSE:'🩺',Roulette:'🎰',Général:'🎯'};
   const avC = [['#EEECFC','#6C5FE8'],['#E6F7F1','#1B9E75'],['#FEF3DC','#B87A10'],['#E8F2FC','#2478CC'],['#F5EDE3','#9A6B3A'],['#FBEAF0','#993556']];
@@ -3963,17 +4230,45 @@ async function trackEvent(event, pseudo, ecole, properties={}) {
 // ── DRILL DOWN ──
 function openDrill(metric, title, data) {
   statsDrillMetric = metric;
-  const panel = document.getElementById('stats-drill-panel');
-  if(!panel) return;
+  var panel = document.getElementById('stats-drill-panel');
+  // Créer le panel s'il n'existe pas encore
+  if(!panel) {
+    panel = document.createElement('div');
+    panel.id = 'stats-drill-panel';
+    panel.style.cssText = 'display:none;margin-top:14px';
+    panel.innerHTML = '<div class="panel"><div class="panel-header" style="display:flex;align-items:center;justify-content:space-between"><span id="stats-drill-title" style="font-weight:700"></span><div style="display:flex;gap:8px"><button onclick="exportDrill()" style="background:var(--gr);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:600;cursor:pointer">⬇ Export</button><button onclick="closeDrill()" style="background:var(--surf2);border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--t2)">✕ Fermer</button></div></div><div id="stats-drill-body" style="padding:16px;max-height:400px;overflow-y:auto"></div></div>';
+    var statsView = document.getElementById('v-stats') || document.body;
+    statsView.appendChild(panel);
+  }
   panel.style.display = 'block';
-  document.getElementById('stats-drill-title').textContent = title;
-  document.getElementById('stats-drill-body').innerHTML = data;
+  var titleEl = document.getElementById('stats-drill-title');
+  var bodyEl = document.getElementById('stats-drill-body');
+  if(titleEl) titleEl.textContent = title;
+  if(bodyEl) bodyEl.innerHTML = data;
   panel.scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 function closeDrill() {
   statsDrillMetric = null;
   const panel = document.getElementById('stats-drill-panel');
   if(panel) panel.style.display = 'none';
+}
+function drillDay(date, label) {
+  var sess = getStatsSessions ? getStatsSessions() : [];
+  var daySess = sess.filter(function(s){ return s.ts && s.ts.startsWith(date); });
+  var html = daySess.length === 0
+    ? '<div style="color:var(--t3);font-size:12px;padding:8px">Aucune session ce jour</div>'
+    : daySess.map(function(s){ return '<div style="padding:6px 0;border-bottom:1px solid var(--b);font-size:12px;color:var(--t)"><b>' + (s.pseudo||'—') + '</b> · ' + (s.theme||'—') + ' · ' + (s.score_pct||0) + '%</div>'; }).join('');
+  openDrill('day', '📅 ' + label + ' — Détail', html);
+}
+function drillHour(h, v) {
+  openDrill('hour', '⏰ ' + h + 'h — ' + v + ' session' + (v>1?'s':''), '<div style="font-size:13px;color:var(--t);padding:8px">Créneau ' + h + 'h : <b>' + v + ' session' + (v>1?'s':'') + '</b> enregistrée' + (v>1?'s':'') + '.</div>');
+}
+function drillTheme(t) {
+  var sess = getStatsSessions ? getStatsSessions() : [];
+  var tSess = sess.filter(function(s){ return s.theme === t || s.matiere === t; });
+  var avg = tSess.length ? Math.round(tSess.reduce(function(a,s){ return a+(s.score_pct||0); },0)/tSess.length) : 0;
+  var html = '<div style="font-size:13px;color:var(--t);padding:8px"><b>' + t + '</b> : ' + tSess.length + ' session' + (tSess.length>1?'s':'') + ' · Score moyen : ' + avg + '%</div>';
+  openDrill('theme', '🎯 Thème : ' + t, html);
 }
 
 // ── RENDER STATS ──
@@ -5960,33 +6255,11 @@ function resetBareme() {
 // ══════════════════════════════════════
 
 let LOTS_ON = false;
-let LOTS_DB = [
-  {id:'l1', emoji:'🍔', titre:'40% sur le 2e menu McDo',
-   desc:"Remise de 40% sur le second menu McDo acheté",
-   cond:'gold_semaine', condLbl:'🥇 Ligue Or pendant 7 jours consécutifs',
-   code:'FLOWIN40', actif:true},
-  {id:'l2', emoji:'🎁', titre:'Bon cadeau 10€',
-   desc:'Bon cadeau pour le top 1 du classement hebdomadaire',
-   cond:'top1_semaine', condLbl:'🏆 Top 1 classement de la semaine',
-   code:'FLOWIN-TOP1', actif:true}
-];
+let LOTS_DB = []; // R4 : vide par défaut — chargé depuis Supabase (config.lots)
 
-// Stock chargé depuis Supabase
-let STOCK_DB = [
-  {id:'s1', lot_id:'l1', lot_nom:'40% McDo', code:'FLOWIN-MC-001', statut:'disponible', pseudo:null, attribue_le:null},
-  {id:'s2', lot_id:'l1', lot_nom:'40% McDo', code:'FLOWIN-MC-002', statut:'disponible', pseudo:null, attribue_le:null},
-  {id:'s3', lot_id:'l1', lot_nom:'40% McDo', code:'FLOWIN-MC-003', statut:'attribue', pseudo:'OliviaDiana', attribue_le:new Date(Date.now()-86400000*2).toISOString()},
-  {id:'s4', lot_id:'l1', lot_nom:'40% McDo', code:'FLOWIN-MC-004', statut:'disponible', pseudo:null, attribue_le:null},
-  {id:'s5', lot_id:'l1', lot_nom:'40% McDo', code:'FLOWIN-MC-005', statut:'attribue', pseudo:'LucasBertin', attribue_le:new Date(Date.now()-86400000*5).toISOString()},
-  {id:'s6', lot_id:'l2', lot_nom:'Bon cadeau 10€', code:'GIFT-2026-001', statut:'disponible', pseudo:null, attribue_le:null},
-  {id:'s7', lot_id:'l2', lot_nom:'Bon cadeau 10€', code:'GIFT-2026-002', statut:'disponible', pseudo:null, attribue_le:null},
-  {id:'s8', lot_id:'l2', lot_nom:'Bon cadeau 10€', code:'GIFT-2026-003', statut:'attribue', pseudo:'RomainDuval', attribue_le:new Date(Date.now()-86400000*1).toISOString()},
-];
-let GAINS_DB = [
-  {id:'g1', pseudo:'OliviaDiana', lot_id:'l1', lot_nom:'40% sur le 2e menu McDo', lot_emoji:'🍔', code:'FLOWIN-MC-003', condition:'gold_semaine', created_at:new Date(Date.now()-86400000*2).toISOString()},
-  {id:'g2', pseudo:'LucasBertin', lot_id:'l1', lot_nom:'40% sur le 2e menu McDo', lot_emoji:'🍔', code:'FLOWIN-MC-005', condition:'gold_semaine', created_at:new Date(Date.now()-86400000*5).toISOString()},
-  {id:'g3', pseudo:'RomainDuval', lot_id:'l2', lot_nom:'Bon cadeau 10€', lot_emoji:'🎁', code:'GIFT-2026-003', condition:'top1_semaine', created_at:new Date(Date.now()-86400000*1).toISOString()},
-];
+// R4 : vide par défaut — chargé depuis Supabase (lots_stock)
+let STOCK_DB = [];
+let GAINS_DB = []; // R4 : vide par défaut — chargé depuis Supabase (gains)
 
 async function loadStockAndGains() {
   if(!SB_ENABLED) return;
@@ -6201,7 +6474,6 @@ async function createPartner(overlay) {
 
   overlay.remove();
   renderStockPanel();
-  renderStockPanel();
   // Scroll vers le nouveau lot
   setTimeout(() => document.getElementById('stock-panel')?.scrollIntoView({behavior:'smooth',block:'start'}), 100);
 }
@@ -6376,9 +6648,10 @@ async function loadLotsFromSupabase() {
 buildNav();
 renderCurrentView();
 loadData();
-loadLotsFromSupabase();
-loadStockAndGains();
-setTimeout(() => { try { renderBareme(); renderStockPanel(); renderGainsPanel(); } catch(e){} }, 200);
+// Chaîner les chargements Supabase pour éviter race condition
+Promise.all([loadLotsFromSupabase(), loadStockAndGains()]).then(function() {
+  try { renderBareme(); renderStockPanel(); renderGainsPanel(); } catch(e){}
+});
 
 // ── MENU MOBILE ──
 function toggleMobileMenu(force) {
