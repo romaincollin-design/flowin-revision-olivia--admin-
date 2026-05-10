@@ -1592,11 +1592,10 @@ const getStats = pseudo => {
   };
 };
 
-// Meilleur total pts: MAX entre sessions.pts_total (cumulatif) ET joueurs.pts_total (PATCH admin)
+// BUG-POINTS-01 fix: MAX(sessions, joueurs.pts_total) pour prendre en compte les PATCH admin
 const getTotalPts = pseudo => {
   const us = DB.sessions.filter(s => s.pseudo === pseudo);
   const fromSessions = us.reduce((a,s) => Math.max(a, s.pts_total||0), 0);
-  // Prendre aussi pts_total depuis joueurs (modifiable par admin PATCH)
   const j = DB.joueurs.find(function(jj){ return jj.pseudo === pseudo; });
   const fromJoueurs = (j && j.pts_total) ? j.pts_total : 0;
   return Math.max(fromSessions, fromJoueurs);
@@ -1887,19 +1886,18 @@ function renderDashboard() {
     { val:avg+'%', label:'Score moyen global', sub:'Toutes matières', trend:0, color:'var(--am)', icon:'🎯', nav:'stats' },
     { val:DB.parrainage.length, label:'Parrainages', sub:`${parrSenders} parrain${parrSenders>1?'s':''}`, trend:newParr7j, color:'#E040A0', icon:'🎁', nav:'parrainage' },
   ].map(k => {
-    var kOnclick    = k.nav ? "navTo('" + k.nav + "')" : 'void(0)';
-    var kStyle      = (k.nav ? 'cursor:pointer;' : '') + 'transition:transform .14s,box-shadow .14s';
-    var kEnter      = k.nav ? "this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 18px rgba(0,0,0,.08)'" : '';
-    var kLeave      = k.nav ? "this.style.transform='';this.style.boxShadow=''" : '';
-    var kNavArrow   = k.nav ? ' <span style="font-size:9px;color:var(--ac)">→</span>' : '';
+    var kOnclick  = k.nav ? "navTo('" + k.nav + "')" : 'void(0)';
+    var kStyle    = (k.nav ? 'cursor:pointer;' : '') + 'transition:transform .14s,box-shadow .14s';
+    var kEnter    = k.nav ? "this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 18px rgba(0,0,0,.08)'" : '';
+    var kLeave    = k.nav ? "this.style.transform='';this.style.boxShadow=''" : '';
+    var kNavArrow = k.nav ? ' <span style="font-size:9px;color:var(--ac)">→</span>' : '';
     return '<div class="kpi-card" onclick="' + kOnclick + '" style="' + kStyle + '" onmouseenter="' + kEnter + '" onmouseleave="' + kLeave + '">'
       + '<div class="kpi-bar" style="background:' + k.color + '"></div>'
       + '<div class="kpi-icon">' + k.icon + '</div>'
       + '<div class="kpi-val">' + k.val + '</div>'
       + '<div class="kpi-label">' + k.label + '</div>'
       + '<div class="kpi-sub">' + k.sub + kNavArrow + '</div>'
-      + trendTag(k.trend)
-      + '</div>';
+      + trendTag(k.trend) + '</div>';
   }).join('');
 
   // Top 5
@@ -6255,11 +6253,10 @@ function resetBareme() {
 // ══════════════════════════════════════
 
 let LOTS_ON = false;
-let LOTS_DB = []; // R4 : vide par défaut — chargé depuis Supabase (config.lots)
+let LOTS_DB = []; // R4 : vide — chargé depuis Supabase
 
-// R4 : vide par défaut — chargé depuis Supabase (lots_stock)
-let STOCK_DB = [];
-let GAINS_DB = []; // R4 : vide par défaut — chargé depuis Supabase (gains)
+let STOCK_DB = []; // R4
+let GAINS_DB = []; // R4
 
 async function loadStockAndGains() {
   if(!SB_ENABLED) return;
@@ -6648,7 +6645,6 @@ async function loadLotsFromSupabase() {
 buildNav();
 renderCurrentView();
 loadData();
-// Chaîner les chargements Supabase pour éviter race condition
 Promise.all([loadLotsFromSupabase(), loadStockAndGains()]).then(function() {
   try { renderBareme(); renderStockPanel(); renderGainsPanel(); } catch(e){}
 });
