@@ -6227,9 +6227,9 @@ async function saveBaremeComplet() {
         {key:'lots_active',   value:LOTS_ON, updated_at:new Date().toISOString()},
       ])
     });
-    if(r.ok) { closeBareme(); renderBareme(); alert('✅ Sauvegardé !'); }
-    else alert('⚠️ Erreur Supabase — code '+r.status);
-  } catch(e) { alert('⚠️ Impossible de joindre Supabase'); }
+    if(r.ok) { closeBareme(); renderBareme(); showAdminToast('✅ Barème sauvegardé !'); }
+    else showAdminToast('⚠️ Erreur Supabase — code ' + r.status, 'error');
+  } catch(e) { showAdminToast('⚠️ Impossible de joindre Supabase', 'error'); }
 }
 
 async function saveBaremeToSupabase() { await saveBaremeComplet(); }
@@ -6288,18 +6288,26 @@ async function attribuerLot(pseudo, lotId) {
     await fetch(SB_URL+'/rest/v1/gains', {
       method:'POST', headers:{...hdrs,'Prefer':'return=minimal'},
       body: JSON.stringify({
-        pseudo, lot_id: lotId, lot_nom: lot?.titre||'Lot', lot_emoji: lot?.emoji||'🎁',
-        code: dispo.code, condition: lot?.cond||'', created_at: new Date().toISOString()
+        pseudo: pseudo, lot_id: lotId, lot_nom: (lot && lot.titre)||'Lot', lot_emoji: (lot && lot.emoji)||'🎁',
+        code: dispo.code, condition: (lot && lot.cond)||'', ts: new Date().toISOString(), created_at: new Date().toISOString()
       })
     });
     // 3. Mettre à jour local
     dispo.statut = 'attribue'; dispo.pseudo = pseudo; dispo.attribue_le = new Date().toISOString();
     GAINS_DB.unshift({pseudo, lot_id:lotId, lot_nom:lot?.titre||'Lot', lot_emoji:lot?.emoji||'🎁', code:dispo.code, condition:lot?.cond||'', created_at:new Date().toISOString()});
-    alert(`✅ Code "${dispo.code}" attribué à ${pseudo} !`);
+    showAdminToast('✅ Code "' + dispo.code + '" attribué à ' + pseudo + ' !');
     if(currentView==='bareme') renderBaremeView();
-  } catch(e) { alert('⚠️ Erreur attribution : '+e.message); }
+  } catch(e) { showAdminToast('⚠️ Erreur attribution : ' + e.message, 'error'); }
 }
 
+function showAdminToast(msg, type) {
+  var bg = (type === 'error') ? '#EF4444' : '#22C9A0';
+  var t = document.createElement('div');
+  t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:' + bg + ';color:#fff;padding:12px 24px;border-radius:20px;font-weight:700;font-size:14px;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,.3);transition:opacity .3s';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function(){ t.style.opacity = '0'; setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 300); }, 2800);
+}
 function toggleLots() {
   LOTS_ON = !LOTS_ON;
   const track = document.getElementById('lots-track');
