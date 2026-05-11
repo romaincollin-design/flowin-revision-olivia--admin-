@@ -8,11 +8,21 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#F4F5F9;--surf:#FFFFFF;--surf2:#F0F1F6;--surf3:#E4E6EE;
-  --b:rgba(0,0,0,.08);--b2:rgba(0,0,0,.14);
-  --t:#1A1C2E;--t2:#4A5068;--t3:#9096B2;
-  --ac:#6C5FE8;--gr:#1B9E75;--grBg:#E6F7F1;
-  --am:#B87A10;--amBg:#FEF3DC;--re:#D63550;--reBg:#FDEAED;--bl:#2478CC;--blBg:#E8F2FC;
+  /* Brand */
+  --ac:#7C5CFC;--ac2:#9B7FFF;--acBg:#F0ECFF;--acBorder:rgba(124,92,252,.2);
+  /* Backgrounds */
+  --bg:#F6F7FB;--surf:#FFFFFF;--surf2:#F1F2F8;--surf3:#E8EAF2;
+  /* Borders */
+  --b:rgba(0,0,0,.07);--b2:rgba(0,0,0,.12);
+  /* Text */
+  --t:#14162A;--t2:#3D4268;--t3:#8B90B8;
+  /* Status */
+  --gr:#0E9E6E;--grBg:#E4F7F0;--grBorder:rgba(14,158,110,.2);
+  --am:#C27C0A;--amBg:#FEF4DC;--amBorder:rgba(194,124,10,.2);
+  --re:#D63050;--reBg:#FDEAED;--reBorder:rgba(214,48,80,.2);
+  --bl:#1E6FCC;--blBg:#E6F0FC;--blBorder:rgba(30,111,204,.2);
+  /* Sidebar */
+  --sb:#16182A;--sb2:#1E2138;--sbT:rgba(255,255,255,.55);--sbTA:rgba(255,255,255,.92);--sbAc:rgba(124,92,252,.18);
 }
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--t);display:flex;height:100vh;overflow:hidden;font-size:13px}
 @media(max-width:768px){
@@ -106,59 +116,64 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 input,select,button{font-family:inherit}
 
 /* SIDEBAR */
-#sidebar{width:210px;background:var(--surf);border-right:1px solid var(--b);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
-.sb-logo{display:flex;align-items:center;gap:10px;padding:16px 14px 14px;border-bottom:1px solid var(--b)}
-.sb-logo-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#6C5FE8,#8B82F0);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
-.sb-logo-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--t)}
-.sb-logo-sub{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
-.sb-section{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;padding:12px 14px 5px}
-.sb-item{display:flex;align-items:center;gap:8px;padding:7px 12px;margin:1px 6px;border-radius:7px;font-size:12px;font-weight:500;color:var(--t2);cursor:pointer;border-left:3px solid transparent;transition:all .14s}
-.sb-item:hover{background:var(--surf2)}
-.sb-item.active{color:var(--ac);background:#EEECFC;border-left-color:var(--ac)}
-.sb-item-icon{font-size:13px;width:18px;text-align:center}
-.sb-badge{margin-left:auto;background:#EEECFC;color:var(--ac);font-size:9px;font-weight:700;padding:1px 7px;border-radius:20px}
-.sb-badge.green{background:var(--grBg);color:var(--gr)}
-.sb-badge.amber{background:var(--amBg);color:var(--am)}
-.sb-footer{margin-top:auto;padding:10px 14px 14px;border-top:1px solid var(--b)}
-.sb-user{display:flex;align-items:center;gap:8px;padding:8px 6px;border-radius:7px}
-.sb-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#6C5FE8,#E040A0);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
-.sb-user-name{font-size:11px;font-weight:600;color:var(--t)}
-.sb-user-role{font-size:9px;color:var(--t3)}
+#sidebar{width:220px;background:var(--sb);border-right:none;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;box-shadow:2px 0 20px rgba(0,0,0,.15)}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:18px 16px 16px;border-bottom:1px solid rgba(255,255,255,.06)}
+.sb-logo-icon{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#7C5CFC,#A97FFF);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 4px 12px rgba(124,92,252,.4)}
+.sb-logo-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#fff}
+.sb-logo-sub{font-size:9px;color:var(--sbT);text-transform:uppercase;letter-spacing:.1em}
+.sb-section{font-size:9px;font-weight:700;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.12em;padding:14px 16px 6px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 12px;margin:1px 8px;border-radius:8px;font-size:12px;font-weight:500;color:var(--sbT);cursor:pointer;transition:all .14s}
+.sb-item:hover{background:rgba(255,255,255,.07);color:var(--sbTA)}
+.sb-item.active{color:#fff;background:var(--sbAc);box-shadow:inset 0 0 0 1px rgba(124,92,252,.3)}
+.sb-item-icon{font-size:13px;width:18px;text-align:center;opacity:.7}
+.sb-item.active .sb-item-icon{opacity:1}
+.sb-badge{margin-left:auto;background:rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-size:9px;font-weight:700;padding:1px 7px;border-radius:20px}
+.sb-badge.green{background:rgba(14,158,110,.25);color:#5DD6A8}
+.sb-badge.amber{background:rgba(194,124,10,.25);color:#F4C060}
+.sb-footer{margin-top:auto;padding:12px 16px 16px;border-top:1px solid rgba(255,255,255,.06)}
+.sb-user{display:flex;align-items:center;gap:9px;padding:8px;border-radius:8px;cursor:pointer;transition:background .15s}
+.sb-user:hover{background:rgba(255,255,255,.06)}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7C5CFC,#E040A0);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.sb-user-name{font-size:11px;font-weight:700;color:#fff}
+.sb-user-role{font-size:9px;color:var(--sbT)}
 
 /* MAIN */
-#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-#topbar{height:52px;background:var(--surf);border-bottom:1px solid var(--b);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
-#topbar-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--t);flex:1}
-#search-global{background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:6px 11px;font-size:11px;color:var(--t);width:200px;outline:none}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+#topbar{height:56px;background:var(--surf);border-bottom:1px solid var(--b);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;box-shadow:0 1px 0 var(--b)}
+#topbar-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--t);flex:1}
+#topbar-breadcrumb{font-size:11px;color:var(--t3);font-weight:500}
+#search-global{background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:7px 12px 7px 32px;font-size:12px;color:var(--t);width:220px;outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238B90B8' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:10px center;transition:border-color .15s}
+#search-global:focus{border-color:var(--ac);background-color:var(--surf)}
 #search-global::placeholder{color:var(--t3)}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--t3);flex-shrink:0;transition:background .3s}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--t3);flex-shrink:0;transition:background .3s}
 .live-dot.on{background:var(--gr);box-shadow:0 0 0 3px var(--grBg);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 3px var(--grBg)}50%{box-shadow:0 0 0 5px var(--grBg)}}
-.live-label{font-size:10px;font-weight:600;color:var(--t3);transition:color .3s}
+.live-label{font-size:11px;font-weight:600;color:var(--t3);transition:color .3s}
 .live-label.on{color:var(--gr)}
-.btn-sync{background:var(--ac);color:#fff;border:none;border-radius:7px;padding:6px 13px;font-size:11px;font-weight:600;cursor:pointer;transition:opacity .2s}
-.btn-sync:hover{opacity:.85}
-.btn-sync:active{opacity:.7}
-#content{flex:1;overflow-y:auto;padding:20px}
+.btn-sync{background:var(--ac);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:.01em}
+.btn-sync:hover{background:var(--ac2);box-shadow:0 3px 12px rgba(124,92,252,.35)}
+.btn-sync:active{opacity:.8}
+#content{flex:1;overflow-y:auto;padding:24px}
 
 /* VIEWS */
 .view{display:none}
 .view.active{display:block}
-.view-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--t);margin-bottom:3px}
-.view-sub{font-size:11px;color:var(--t3);margin-bottom:16px}
+.view-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--t);margin-bottom:4px;letter-spacing:-.02em}
+.view-sub{font-size:12px;color:var(--t3);margin-bottom:20px;font-weight:500}
 
 /* KPI GRID */
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-.kpi-card{background:var(--surf);border:1px solid var(--b);border-radius:11px;padding:16px;position:relative;overflow:hidden}
-.kpi-bar{position:absolute;top:0;left:0;right:0;height:3px}
-.kpi-icon{font-size:20px;margin-bottom:8px}
-.kpi-val{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--t);line-height:1;margin-bottom:3px}
-.kpi-label{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em}
-.kpi-sub{font-size:10px;color:var(--t2);margin-top:4px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi-card{background:var(--surf);border:1px solid var(--b);border-radius:14px;padding:18px;position:relative;overflow:hidden;transition:box-shadow .15s,transform .15s}
+.kpi-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.07);transform:translateY(-1px)}
+.kpi-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.kpi-icon{font-size:22px;margin-bottom:10px;display:block}
+.kpi-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--t);line-height:1;margin-bottom:4px;letter-spacing:-.02em}
+.kpi-label{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.kpi-sub{font-size:11px;color:var(--t2);margin-top:5px;font-weight:500}
 
 /* PANEL */
-.panel{background:var(--surf);border:1px solid var(--b);border-radius:11px;overflow:hidden;margin-bottom:14px}
-.panel-header{padding:12px 16px;border-bottom:1px solid var(--b);font-size:12px;font-weight:700;color:var(--t)}
+.panel{background:var(--surf);border:1px solid var(--b);border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.panel-header{padding:14px 18px;border-bottom:1px solid var(--b);font-size:12px;font-weight:700;color:var(--t);display:flex;align-items:center;justify-content:space-between}
 
 /* TABLE */
 table{width:100%;border-collapse:collapse}
@@ -330,6 +345,34 @@ td.crm-td{padding:0 6px;text-align:center}
 .empty-icon{font-size:30px;opacity:.4}
 .empty-text{font-size:12px}
 
+/* PERIOD BTNS */
+.period-btn{transition:all .15s}
+.period-btn:hover{border-color:var(--ac)!important;color:var(--ac)!important}
+.active-period{border-color:var(--ac)!important;background:var(--acBg)!important;color:var(--ac)!important;font-weight:700!important}
+
+/* SECTION HEADER */
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--b)}
+.section-hdr-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--t)}
+.section-hdr-sub{font-size:11px;color:var(--t3);margin-top:2px}
+
+/* STAT CHIP */
+.stat-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;background:var(--surf2);color:var(--t2)}
+.stat-chip.up{background:var(--grBg);color:var(--gr)}
+.stat-chip.down{background:var(--reBg);color:var(--re)}
+
+/* ACTION BTN */
+.act-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:600;border:1px solid var(--b);background:var(--surf);color:var(--t2);cursor:pointer;transition:all .15s;font-family:inherit}
+.act-btn:hover{border-color:var(--ac);color:var(--ac);background:var(--acBg)}
+.act-btn.primary{background:var(--ac);color:#fff;border-color:var(--ac)}
+.act-btn.primary:hover{background:var(--ac2);border-color:var(--ac2)}
+
+/* NIVEAU BADGE */
+.niveau-badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.02em}
+.niveau-badge.college{background:#EDE9FE;color:#6C5FE8}
+.niveau-badge.lycee{background:#E6F0FC;color:#1E6FCC}
+.niveau-badge.bac{background:#E4F7F0;color:#0E9E6E}
+.niveau-badge.bac-pro{background:#FEF4DC;color:#C27C0A}
+
 /* DASHBOARD GRID */
 .dash-2col{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
 .dash-2eq{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -490,7 +533,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
 <body>
 
 <!-- LOGIN WALL -->
-<div id="login-wall" style="position:fixed;inset:0;background:var(--bg);z-index:99999;display:flex;align-items:center;justify-content:center">
+<div id="login-wall" style="position:fixed;inset:0;background:linear-gradient(135deg,#F0ECFF 0%,#F6F7FB 50%,#E8F0FC 100%);z-index:99999;display:flex;align-items:center;justify-content:center">
   <div style="background:var(--surf);border:1px solid var(--b2);border-radius:16px;padding:36px;width:340px;box-shadow:0 24px 70px rgba(0,0,0,.12);text-align:center">
     <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#6C5FE8,#9B8FF5);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 16px">🌊</div>
     <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--t);margin-bottom:4px">Flowin Admin</div>
@@ -498,7 +541,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
     <input id="login-pwd" type="password" placeholder="Mot de passe admin…" onkeydown="if(event.key==='Enter')checkLogin()" style="width:100%;background:var(--surf2);border:2px solid var(--b);border-radius:9px;padding:10px 14px;font-size:14px;color:var(--t);outline:none;margin-bottom:12px;box-sizing:border-box;transition:border-color .2s" onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--b)'">
     <div id="login-err" style="font-size:10px;color:var(--re);margin-bottom:10px;min-height:14px"></div>
     <button onclick="checkLogin()" style="width:100%;background:var(--ac);color:#fff;border:none;border-radius:9px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s" onmouseenter="this.style.opacity='.85'" onmouseleave="this.style.opacity='1'">Connexion →</button>
-    <div style="font-size:9px;color:var(--t3);margin-top:16px">Flowin V7 · OPCONSULT · 2026</div>
+    <div style="font-size:9px;color:var(--t3);margin-top:16px">Flowin Admin · OPCONSULT · 2026</div>
   </div>
 </div>
 
@@ -540,27 +583,32 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
 
     <!-- DASHBOARD -->
     <div class="view active" id="v-dashboard">
-      <!-- PÉRIODE -->
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-        <span style="font-size:11px;font-weight:600;color:var(--t2)">Période :</span>
-        <button onclick="setDashPeriod(this,'today')" class="period-btn" style="padding:5px 12px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">Aujourd'hui</button>
-        <button onclick="setDashPeriod(this,'7j')" class="period-btn active-period" style="padding:5px 12px;border-radius:20px;border:1px solid var(--ac);background:#EEECFC;font-size:11px;color:var(--ac);cursor:pointer;font-weight:600">7 jours</button>
-        <button onclick="setDashPeriod(this,'30j')" class="period-btn" style="padding:5px 12px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">30 jours</button>
-        <button onclick="setDashPeriod(this,'all')" class="period-btn" style="padding:5px 12px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">Tout</button>
-        <span id="dash-period-label" style="margin-left:auto;font-size:10px;color:var(--t3)"></span>
+
+      <!-- HEADER DASHBOARD -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:16px;flex-wrap:wrap">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--t);letter-spacing:-.02em">Bonjour, Romain 👋</div>
+          <div style="font-size:12px;color:var(--t3);margin-top:3px;font-weight:500" id="dash-date-label">Chargement…</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button onclick="setDashPeriod(this,'today')" class="period-btn" style="padding:5px 12px;border-radius:20px;border:1px solid var(--b);background:var(--surf);font-size:11px;color:var(--t2);cursor:pointer;font-weight:500">Aujourd'hui</button>
+          <button onclick="setDashPeriod(this,'7j')" class="period-btn active-period" style="padding:5px 12px;border-radius:20px;border:1px solid var(--ac);background:var(--acBg);font-size:11px;color:var(--ac);cursor:pointer;font-weight:700">7 jours</button>
+          <button onclick="setDashPeriod(this,'30j')" class="period-btn" style="padding:5px 12px;border-radius:20px;border:1px solid var(--b);background:var(--surf);font-size:11px;color:var(--t2);cursor:pointer;font-weight:500">30 jours</button>
+          <button onclick="setDashPeriod(this,'all')" class="period-btn" style="padding:5px 12px;border-radius:20px;border:1px solid var(--b);background:var(--surf);font-size:11px;color:var(--t2);cursor:pointer;font-weight:500">Tout</button>
+        </div>
       </div>
 
       <!-- KPIs — 4 cartes avec tendance -->
       <div class="kpi-grid" id="dash-kpis"></div>
 
       <!-- LIGNE 1 : Graphique activité + Carte -->
-      <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:16px">
         <div class="panel">
-          <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
-            <span>📈 Activité <span id="dash-chart-period" style="color:var(--t3);font-weight:400;font-size:10px"></span></span>
-            <div style="display:flex;gap:12px;align-items:center;font-size:10px;color:var(--t3)">
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:3px;background:var(--ac);border-radius:2px;display:inline-block"></span>Quiz joués</span>
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:3px;background:var(--gr);border-radius:2px;display:inline-block"></span>Nouveaux élèves</span>
+          <div class="panel-header">
+            <span style="font-size:13px;font-weight:700;color:var(--t)">📈 Activité <span id="dash-chart-period" style="color:var(--t3);font-weight:400;font-size:11px"></span></span>
+            <div style="display:flex;gap:14px;align-items:center;font-size:10px;color:var(--t3)">
+              <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:3px;background:var(--ac);border-radius:2px;display:inline-block"></span>Quiz joués</span>
+              <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:3px;background:var(--gr);border-radius:2px;display:inline-block"></span>Nouveaux élèves</span>
             </div>
           </div>
           <div style="padding:16px 16px 8px">
@@ -582,9 +630,9 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       </div>
 
       <!-- LIGNE 2 : Top Établissements -->
-      <div class="panel" style="margin-bottom:14px">
-        <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
-          <span>🏫 Top établissements</span>
+      <div class="panel" style="margin-bottom:16px">
+        <div class="panel-header">
+          <span style="font-size:13px;font-weight:700;color:var(--t)">🏫 Top établissements</span>
           <button onclick="navTo('etablissements')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600">Voir tous →</button>
         </div>
         <table><thead><tr><th>Établissement</th><th>Élèves</th><th>Quiz/j</th><th>Plan</th><th>Score moy.</th></tr></thead>
@@ -592,10 +640,10 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       </div>
 
       <!-- LIGNE 3 : Top élèves + Matières -->
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px">
         <div class="panel">
-          <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
-            <span>🏆 Top élèves</span>
+          <div class="panel-header">
+            <span style="font-size:13px;font-weight:700;color:var(--t)">🏆 Top élèves</span>
             <button onclick="navTo('eleves')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600">Voir tous →</button>
           </div>
           <table><thead><tr><th>#</th><th>Élève</th><th>École</th><th>Score</th><th>Streak</th><th>Points</th></tr></thead>
@@ -608,7 +656,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       </div>
 
       <!-- LIGNE 4 : Sessions récentes + Parrainages -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
         <div class="panel">
           <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
             <span>⚡ Dernières sessions</span>
@@ -1796,16 +1844,16 @@ function texteUpdate(el) {
 
 // ── NAV ──
 const NAV_ITEMS = [
-  { id:'dashboard',       label:'Dashboard',       icon:'▦',  sec:'Vue globale' },
-  { id:'eleves',          label:'Élèves',          icon:'👤', sec:'Utilisateurs', badgeFn:()=>DB.joueurs.length },
-  { id:'defis',           label:'Défis & Pools',   icon:'⚔️', sec:null, badgeFn:()=>new Set(DB.sessions.map(s=>s.theme||s.matiere)).size, bc:'#B87A10', bb:'#FEF3DC' },
-  { id:'parrainage',      label:'Parrainage',      icon:'🎁', sec:null, badgeFn:()=>DB.parrainage.length, bc:'#1B9E75', bb:'#E6F7F1' },
-  { id:'ligues',          label:'Ligues',           icon:'🏆', sec:'Réseau' },
-  { id:'etablissements',  label:'Établissements',  icon:'🏫', sec:null },
-  { id:'cours',           label:'+ Cours',           icon:'📖', sec:'Contenu', badgeFn:()=>COURS_DB.length },
+  { id:'dashboard',       label:'Dashboard',        icon:'◈',  sec:'Vue globale' },
+  { id:'eleves',          label:'Élèves',           icon:'👥', sec:'CRM', badgeFn:()=>DB.joueurs.length },
+  { id:'ligues',          label:'Ligues',            icon:'🏆', sec:null },
+  { id:'parrainage',      label:'Parrainage',       icon:'🔗', sec:null, badgeFn:()=>DB.parrainage.length, bc:'#0E9E6E', bb:'rgba(14,158,110,.15)' },
+  { id:'etablissements',  label:'Établissements',   icon:'🏫', sec:null },
+  { id:'defis',           label:'Défis & Pools',    icon:'⚔️', sec:'Activité', badgeFn:()=>new Set(DB.sessions.map(s=>s.theme||s.matiere)).size, bc:'#C27C0A', bb:'rgba(194,124,10,.15)' },
   { id:'stats',           label:'Stats & Trafic',   icon:'📊', sec:null },
-  { id:'appcom',          label:'App & Com',        icon:'📲', sec:null },
-  { id:'bareme',          label:'Barème & Lots',    icon:'⭐', sec:'Configuration' },
+  { id:'cours',           label:'Contenus',         icon:'📚', sec:'Pédagogie', badgeFn:()=>COURS_DB.length },
+  { id:'bareme',          label:'Lots & Barème',    icon:'🎁', sec:'Partenaires' },
+  { id:'appcom',          label:'App & Com',        icon:'📲', sec:'Config' },
   { id:'textes',          label:'Textes App',       icon:'✏️', sec:null },
 ];
 let currentView = 'dashboard';
@@ -1857,6 +1905,13 @@ function localDateStr(ts) {
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
 function renderDashboard() {
+  // Date header
+  var dlEl = document.getElementById('dash-date-label');
+  if(dlEl) {
+    var _dateNow = new Date();
+    var _dateStr = _dateNow.toLocaleDateString('fr-FR', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    dlEl.textContent = _dateStr.charAt(0).toUpperCase() + _dateStr.slice(1);
+  }
   const todayLocal = new Date().toLocaleDateString('fr-FR',{year:'numeric',month:'2-digit',day:'2-digit'}).split('/').reverse().join('-');
   const sessToday = DB.sessions.filter(s => {
     if(!s.ts) return false;
