@@ -1118,134 +1118,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
     </div>
 
     <!-- STATS & TRAFIC -->
-    <div class="view" id="v-stats">
-      <!-- Header -->
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px">
-        <div>
-          <div class="view-title" style="margin-bottom:0">Stats & Trafic</div>
-          <div class="view-sub" id="stats-sub">Données de performance · Usage · Annonceurs</div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <button onclick="exportStatsReport()" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:6px 13px;font-size:11px;font-weight:600;cursor:pointer">⬇ Export rapport</button>
-          <span id="stats-sync-ts" style="font-size:10px;color:var(--t3)"></span>
-        </div>
-      </div>
-
-      <!-- FILTRES -->
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;padding:10px 14px;background:var(--surf);border:1px solid var(--b);border-radius:10px">
-
-        <!-- Période -->
-        <span style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em">Fenêtre</span>
-        <div style="display:flex;gap:5px">
-          <button onclick="setStatsPeriod(this,'7j')"  class="stats-period" style="padding:5px 11px;border-radius:20px;border:2px solid var(--ac);background:#EEECFC;font-size:11px;color:var(--ac);cursor:pointer;font-weight:600">7j</button>
-          <button onclick="setStatsPeriod(this,'30j')" class="stats-period" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">30j</button>
-          <button onclick="setStatsPeriod(this,'90j')" class="stats-period" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">3 mois</button>
-          <button onclick="setStatsPeriod(this,'all')" class="stats-period" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">Tout</button>
-        </div>
-
-        <div style="width:1px;height:20px;background:var(--b)"></div>
-
-        <!-- Établissement -->
-        <span style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em">Établissement</span>
-        <select id="stats-etab-select" class="filter-select" onchange="setStatsEtabFromSelect(this)" style="font-size:11px;padding:5px 10px;border-radius:20px;max-width:180px">
-          <option value="all">Tous</option>
-        </select>
-
-        <div style="width:1px;height:20px;background:var(--b)"></div>
-
-        <!-- Matière -->
-        <span style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em">Matière</span>
-        <div style="display:flex;gap:5px">
-          <button onclick="setStatsMatiere(this,'all')" class="stats-mat active-stats-mat" style="padding:5px 11px;border-radius:20px;border:2px solid var(--ac);background:#EEECFC;font-size:11px;color:var(--ac);cursor:pointer;font-weight:600">Toutes</button>
-          <button onclick="setStatsMatiere(this,'Histoire')" class="stats-mat" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">📜 Histoire</button>
-          <button onclick="setStatsMatiere(this,'Géographie')" class="stats-mat" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">🌍 Géo</button>
-          <button onclick="setStatsMatiere(this,'EMC')" class="stats-mat" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">⚖️ EMC</button>
-          <button onclick="setStatsMatiere(this,'PSE')" class="stats-mat" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">🩺 PSE</button>
-        </div>
-
-        <!-- Indicateur filtre actif -->
-        <div id="stats-filter-badge" style="margin-left:auto;display:none">
-          <span id="stats-filter-label" style="font-size:10px;color:var(--ac);font-weight:600;background:#EEECFC;padding:4px 10px;border-radius:20px"></span>
-          <button onclick="resetStatsFilters()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:11px;margin-left:4px" title="Réinitialiser">✕</button>
-        </div>
-
-      </div>
-
-      <!-- ROW 1: KPIs audience -->
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px" id="stats-kpis"></div>
-
-      <!-- ROW 2: Courbe activité + Funnel -->
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px">
-        <div class="panel">
-          <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
-            <span>📈 Activité quotidienne (sessions)</span>
-            <div style="display:flex;gap:6px">
-              <span id="stats-trend-7j" style="font-size:10px;font-weight:600"></span>
-            </div>
-          </div>
-          <div style="padding:16px" id="stats-activity-chart"></div>
-        </div>
-        <div class="panel">
-          <div class="panel-header">🎯 Funnel utilisateur</div>
-          <div style="padding:16px" id="stats-funnel"></div>
-        </div>
-      </div>
-
-      <!-- ROW 3: Engagement + Rétention + Géo -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px">
-        <div class="panel">
-          <div class="panel-header">⏱ Engagement & Temps</div>
-          <div style="padding:16px" id="stats-engagement"></div>
-        </div>
-        <div class="panel">
-          <div class="panel-header">🔁 Rétention cohorte</div>
-          <div style="padding:16px" id="stats-retention"></div>
-        </div>
-        <div class="panel">
-          <div class="panel-header">📍 Géographie</div>
-          <div style="padding:16px" id="stats-geo"></div>
-        </div>
-      </div>
-
-      <!-- ROW 4: Acquisition + Devices + Heatmap horaire -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px">
-        <div class="panel">
-          <div class="panel-header">🔗 Canaux d'acquisition</div>
-          <div style="padding:16px" id="stats-acquisition"></div>
-        </div>
-        <div class="panel">
-          <div class="panel-header">📱 Appareils & OS</div>
-          <div style="padding:16px" id="stats-devices"></div>
-        </div>
-        <div class="panel">
-          <div class="panel-header">🕐 Heatmap horaire</div>
-          <div style="padding:14px" id="stats-heatmap-hour"></div>
-        </div>
-      </div>
-
-      <!-- ROW 5: Top contenus + Matières -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-        <div class="panel">
-          <div class="panel-header">🏆 Top thèmes joués</div>
-          <div style="padding:16px" id="stats-top-themes"></div>
-        </div>
-        <div class="panel">
-          <div class="panel-header">📚 Performance par matière</div>
-          <div style="padding:16px" id="stats-matieres-perf"></div>
-        </div>
-      </div>
-
-      <!-- ROW 6: Deck annonceurs -->
-      <div class="panel" style="margin-bottom:14px">
-        <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
-          <span>💼 Pitch deck annonceurs — chiffres clés</span>
-          <span class="bdg green">Prêt à partager</span>
-        </div>
-        <div style="padding:16px" id="stats-pitch"></div>
-      </div>
-
-    </div>
-
+    
     <!-- APP & COM -->
     <div class="view" id="v-appcom">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
@@ -1617,7 +1490,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
 
     <!-- ══ VUE ANALYTICS ══ -->
     <div class="view" id="v-analytics">
-      <!-- TABS internes -->
+      <!-- TABS HEADER -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
         <div>
           <div class="view-title">📊 Analytics</div>
@@ -1630,7 +1503,136 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
           <button class="defis-tab" onclick="analyticsTab('export',this)">Export annonceur</button>
         </div>
       </div>
-      <div id="analytics-content"></div>
+      <!-- TAB TRAFIC : v-stats intégré directement ici (IDs stables) -->
+      <div id="analytics-tab-trafic">
+      <!-- Header -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px">
+        <div>
+          <div class="view-title" style="margin-bottom:0">Stats & Trafic</div>
+          <div class="view-sub" id="stats-sub">Données de performance · Usage · Annonceurs</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button onclick="exportStatsReport()" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:6px 13px;font-size:11px;font-weight:600;cursor:pointer">⬇ Export rapport</button>
+          <span id="stats-sync-ts" style="font-size:10px;color:var(--t3)"></span>
+        </div>
+      </div>
+
+      <!-- FILTRES -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;padding:10px 14px;background:var(--surf);border:1px solid var(--b);border-radius:10px">
+
+        <!-- Période -->
+        <span style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em">Fenêtre</span>
+        <div style="display:flex;gap:5px">
+          <button onclick="setStatsPeriod(this,'7j')"  class="stats-period" style="padding:5px 11px;border-radius:20px;border:2px solid var(--ac);background:#EEECFC;font-size:11px;color:var(--ac);cursor:pointer;font-weight:600">7j</button>
+          <button onclick="setStatsPeriod(this,'30j')" class="stats-period" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">30j</button>
+          <button onclick="setStatsPeriod(this,'90j')" class="stats-period" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">3 mois</button>
+          <button onclick="setStatsPeriod(this,'all')" class="stats-period" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">Tout</button>
+        </div>
+
+        <div style="width:1px;height:20px;background:var(--b)"></div>
+
+        <!-- Établissement -->
+        <span style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em">Établissement</span>
+        <select id="stats-etab-select" class="filter-select" onchange="setStatsEtabFromSelect(this)" style="font-size:11px;padding:5px 10px;border-radius:20px;max-width:180px">
+          <option value="all">Tous</option>
+        </select>
+
+        <div style="width:1px;height:20px;background:var(--b)"></div>
+
+        <!-- Matière -->
+        <span style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em">Matière</span>
+        <div style="display:flex;gap:5px">
+          <button onclick="setStatsMatiere(this,'all')" class="stats-mat active-stats-mat" style="padding:5px 11px;border-radius:20px;border:2px solid var(--ac);background:#EEECFC;font-size:11px;color:var(--ac);cursor:pointer;font-weight:600">Toutes</button>
+          <button onclick="setStatsMatiere(this,'Histoire')" class="stats-mat" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">📜 Histoire</button>
+          <button onclick="setStatsMatiere(this,'Géographie')" class="stats-mat" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">🌍 Géo</button>
+          <button onclick="setStatsMatiere(this,'EMC')" class="stats-mat" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">⚖️ EMC</button>
+          <button onclick="setStatsMatiere(this,'PSE')" class="stats-mat" style="padding:5px 11px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:11px;color:var(--t2);cursor:pointer">🩺 PSE</button>
+        </div>
+
+        <!-- Indicateur filtre actif -->
+        <div id="stats-filter-badge" style="margin-left:auto;display:none">
+          <span id="stats-filter-label" style="font-size:10px;color:var(--ac);font-weight:600;background:#EEECFC;padding:4px 10px;border-radius:20px"></span>
+          <button onclick="resetStatsFilters()" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:11px;margin-left:4px" title="Réinitialiser">✕</button>
+        </div>
+
+      </div>
+
+      <!-- ROW 1: KPIs audience -->
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px" id="stats-kpis"></div>
+
+      <!-- ROW 2: Courbe activité + Funnel -->
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px">
+        <div class="panel">
+          <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
+            <span>📈 Activité quotidienne (sessions)</span>
+            <div style="display:flex;gap:6px">
+              <span id="stats-trend-7j" style="font-size:10px;font-weight:600"></span>
+            </div>
+          </div>
+          <div style="padding:16px" id="stats-activity-chart"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">🎯 Funnel utilisateur</div>
+          <div style="padding:16px" id="stats-funnel"></div>
+        </div>
+      </div>
+
+      <!-- ROW 3: Engagement + Rétention + Géo -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px">
+        <div class="panel">
+          <div class="panel-header">⏱ Engagement & Temps</div>
+          <div style="padding:16px" id="stats-engagement"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">🔁 Rétention cohorte</div>
+          <div style="padding:16px" id="stats-retention"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">📍 Géographie</div>
+          <div style="padding:16px" id="stats-geo"></div>
+        </div>
+      </div>
+
+      <!-- ROW 4: Acquisition + Devices + Heatmap horaire -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px">
+        <div class="panel">
+          <div class="panel-header">🔗 Canaux d'acquisition</div>
+          <div style="padding:16px" id="stats-acquisition"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">📱 Appareils & OS</div>
+          <div style="padding:16px" id="stats-devices"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">🕐 Heatmap horaire</div>
+          <div style="padding:14px" id="stats-heatmap-hour"></div>
+        </div>
+      </div>
+
+      <!-- ROW 5: Top contenus + Matières -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div class="panel">
+          <div class="panel-header">🏆 Top thèmes joués</div>
+          <div style="padding:16px" id="stats-top-themes"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">📚 Performance par matière</div>
+          <div style="padding:16px" id="stats-matieres-perf"></div>
+        </div>
+      </div>
+
+      <!-- ROW 6: Deck annonceurs -->
+      <div class="panel" style="margin-bottom:14px">
+        <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
+          <span>💼 Pitch deck annonceurs — chiffres clés</span>
+          <span class="bdg green">Prêt à partager</span>
+        </div>
+        <div style="padding:16px" id="stats-pitch"></div>
+      </div>
+
+      </div>
+      <!-- TAB AUTRES : rendu dynamique -->
+      <div id="analytics-content" style="display:none"></div>
     </div>
 
     <!-- ══ VUE PARTENAIRES ══ -->
@@ -2010,45 +2012,23 @@ function renderAnalyticsHub() {
   analyticsTab('trafic', document.querySelector('#analytics-tabs .defis-tab'));
 }
 function analyticsTab(tab, btn) {
-  if(btn) { document.querySelectorAll('#analytics-tabs .defis-tab').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active'); }
-  var el = document.getElementById('analytics-content');
-  if(!el) return;
+  if(btn) {
+    document.querySelectorAll('#analytics-tabs .defis-tab').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+  }
+  var traficEl = document.getElementById('analytics-tab-trafic');
+  var dynEl    = document.getElementById('analytics-content');
+  if(!traficEl || !dynEl) return;
   if(tab === 'trafic') {
-    // Afficher v-stats directement — ses IDs sont fixes dans le DOM
-    el.innerHTML = '<div id="analytics-stats-proxy" style="min-height:200px"></div>';
-    // Rendre v-stats visible dans le proxy
-    var statsV = document.getElementById('v-stats');
-    if(statsV) {
-      statsV.classList.add('active');
-      // Déplacer dans le proxy visuellement via un wrapper
-      el.innerHTML = '';
-      el.appendChild(statsV);
-      try { renderStats(); } catch(e) { console.warn('renderStats error:', e); }
-    } else {
-      el.innerHTML = '<div style="padding:40px;text-align:center;color:var(--t3)">Stats non disponibles</div>';
-    }
-  } else if(tab === 'engagement') {
-    // Remettre v-stats dans #content si on quitte Trafic
-    var statsV2 = document.getElementById('v-stats');
-    if(statsV2 && statsV2.parentNode === el) {
-      document.getElementById('content').appendChild(statsV2);
-      statsV2.classList.remove('active');
-    }
-    renderAnalyticsEngagement(el);
-  } else if(tab === 'niveaux') {
-    var statsV3 = document.getElementById('v-stats');
-    if(statsV3 && statsV3.parentNode === el) {
-      document.getElementById('content').appendChild(statsV3);
-      statsV3.classList.remove('active');
-    }
-    renderAnalyticsNiveaux(el);
-  } else if(tab === 'export') {
-    var statsV4 = document.getElementById('v-stats');
-    if(statsV4 && statsV4.parentNode === el) {
-      document.getElementById('content').appendChild(statsV4);
-      statsV4.classList.remove('active');
-    }
-    renderAnalyticsExport(el);
+    traficEl.style.display = '';
+    dynEl.style.display = 'none';
+    try { renderStats(); } catch(e) { console.warn('renderStats error:', e); }
+  } else {
+    traficEl.style.display = 'none';
+    dynEl.style.display = '';
+    if(tab === 'engagement') renderAnalyticsEngagement(dynEl);
+    else if(tab === 'niveaux')    renderAnalyticsNiveaux(dynEl);
+    else if(tab === 'export')     renderAnalyticsExport(dynEl);
   }
 }
 
