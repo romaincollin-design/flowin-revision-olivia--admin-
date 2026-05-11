@@ -5240,6 +5240,650 @@ function getLigueForPts(pts) {
   return null;
 }
 
+function renderEleves() {
+  const elevs = buildElevs();
+  document.getElementById('eleves-sub').textContent = `${elevs.filter(d=>d.isActif).length} actifs · ${elevs.filter(d=>!d.isActif).length} inactifs · ${elevs.length} total`;
+
+  const search = document.getElementById('eleves-search').value.toLowerCase();
+
+  let data = elevs.filter(d => !isFakeAccount(d.j));
+  if(search) data = data.filter(d =>
+    `${d.j.prenom} ${d.j.nom}`.toLowerCase().includes(search) ||
+    (d.j.ecole||'').toLowerCase().includes(search) ||
+    (d.j.email||'').toLowerCase().includes(search) ||
+    (d.j.classe||'').toLowerCase().includes(search)
+  );
+
+  // Tri
+  data.sort((a,b) => {
+    let va, vb;
+    switch(elevesSort) {
+      case 'name':    va=`${a.j.prenom} ${a.j.nom}`; vb=`${b.j.prenom} ${b.j.nom}`; return elevesSortDir*(va.localeCompare(vb));
+      case 'etab':    va=a.j.ecole||''; vb=b.j.ecole||''; return elevesSortDir*(va.localeCompare(vb));
+      case 'classe':  va=a.j.classe||''; vb=b.j.classe||''; return elevesSortDir*(va.localeCompare(vb));
+      case 'score':   return elevesSortDir*(b.avg-a.avg)*-1;
+      case 'streak':  return elevesSortDir*(b.maxStreak-a.maxStreak)*-1;
+      case 'pts':     return elevesSortDir*(b.totalPts-a.totalPts)*-1;
+      case 'ligue':   return elevesSortDir*(b.totalPts-a.totalPts)*-1;
+      case 'activite':return elevesSortDir*(new Date(b.last||0)-new Date(a.last||0))*-1;
+      case 'cnx':     return elevesSortDir*(new Date(b.lastCnx||0)-new Date(a.lastCnx||0));
+      case 'statut':  va=a.isActif?'Actif':'Inactif'; vb=b.isActif?'Actif':'Inactif'; return elevesSortDir*(va.localeCompare(vb));
+      default:        return new Date(b.j.ts||0)-new Date(a.j.ts||0);
+    }
+  });
+
+  document.getElementById('eleves-count').textContent = `${data.length} élève${data.length>1?'s':''}`;
+  crmSelections['eleves'] = crmSelections['eleves'] || new Set();
+
+  document.getElementById('eleves-tbody').innerHTML = data.map(d => {
+    const pwaBadge = d.j.pwa_installed ? `<span class="pwa-badge">📱 App</span>` : '<span style="color:var(--t3);font-size:10px">—</span>';
+    const sel = crmSelections['eleves'].has(d.pseudo);
+    return `
+    <tr class="eleve-row" data-id="${d.pseudo}" style="${sel?'background:rgba(176,108,228,.07)':''}" >
+      <td class="crm-td" onclick="event.stopPropagation()"><input type="checkbox" class="crm-check" ${sel?'checked':''} onchange="crmToggle('eleves','${d.pseudo}',this.checked)"></td>
+      <td><div style="display:flex;align-items:center;gap:9px">${ava(d.j.prenom,d.j.nom,d.idx,30)}<div><div style="font-size:12px;font-weight:600;color:var(--t)">${d.j.prenom} ${d.j.nom}</div><div style="font-size:9px;color:var(--t3)">${d.j.email||'—'}</div></div></div></td>
+      <td style="font-size:11px">${d.j.ecole||'—'}</td>
+      <td style="font-size:11px">${d.j.classe||'—'}</td>
+      <td>${scorePill(d.avg)}</td>
+      <td>${d.maxStreak>0?`🔥 ${d.maxStreak}j`:'<span style="color:var(--t3)">—</span>'}</td>
+      <td style="font-weight:700;color:var(--am)">${d.totalPts.toLocaleString('fr')}</td>
+      <td>${lguePill(d.totalPts)}</td>
+      <td>${pwaBadge}</td>
+      <td style="font-size:10px;color:var(--t3)">${d.last?ago(d.last):'—'}</td>
+      <td style="font-size:10px;color:${d.lastCnx?'var(--t)':'var(--t3)'};font-weight:${d.lastCnx?600:400}">
+        ${d.lastCnx
+          ? '<span style="font-weight:700">'+ago(d.lastCnx)+'</span><div style="font-size:9px;color:var(--t3);font-weight:400;margin-top:1px">'+new Date(d.lastCnx).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'})+' · '+new Date(d.lastCnx).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+(d.connexions[0]&&d.connexions[0].duree_min>0?' · '+d.connexions[0].duree_min+'min':'')+'</div>'
+          : '<span style="color:var(--t3)">—</span>'}
+      </td>
+      <td>${bdg(d.isActif?'green':'amber',d.isActif?'Actif':'Inactif')}</td>
+    </tr>`;
+  }).join('') || `<tr><td colspan="12"><div class="empty"><div class="empty-icon">👤</div><div class="empty-text">Aucun élève trouvé</div></div></td></tr>`;
+
+  document.getElementById('eleves-tbody').querySelectorAll('.eleve-row').forEach(tr => {
+    tr.style.cursor = 'pointer';
+    tr.addEventListener('click', function(e) {
+      if(e.target.closest('.crm-td') || e.target.tagName === 'INPUT') return;
+      openEleve(this.dataset.id);
+    });
+  });
+}
+
+function buildElevs() {
+  // Exclure comptes fake/test des stats admin
+  return DB.joueurs.filter(j => !isFakeAccount(j)).map((j,idx) => {
+    const pseudo = j.pseudo || j.prenom || '';
+    const pseudoLow = pseudo.toLowerCase().trim();
+    const st = getStats(pseudo);
+    const totalPts = getTotalPts(pseudo);
+    // Calculer la ligue
+    const lgMap = [{k:'bronze',min:0},{k:'silver',min:500},{k:'gold',min:1500},{k:'diamond',min:3000},{k:'legend',min:5000}];
+    const lg = lgMap.slice().reverse().find(l => totalPts >= l.min) || lgMap[0];
+    // Connexions — match insensible à la casse (pseudo peut varier)
+    let cnx = (DB.connexions||[]).filter(c => {
+      if(!c.pseudo) return false;
+      const cp = c.pseudo.toLowerCase().trim();
+      return cp === pseudoLow
+        || cp === (j.prenom||'').toLowerCase().trim()
+        || cp === (j.pseudo||'').toLowerCase().trim()
+        || (j.email && c.pseudo.toLowerCase() === j.email.toLowerCase());
+    });
+    // Trier par date desc
+    cnx.sort((a,b) => new Date(b.ts||0) - new Date(a.ts||0));
+
+    // FALLBACK : si pas de connexions enregistrées, reconstruire depuis les sessions
+    if(cnx.length === 0) {
+      const userSessions = (DB.sessions||[]).filter(s => {
+        if(!s.pseudo) return false;
+        return s.pseudo.toLowerCase().trim() === pseudoLow && !s._demo;
+      });
+      // Grouper par jour pour créer une "connexion" par jour de jeu
+      const dayMap = {};
+      userSessions.forEach(s => {
+        if(!s.ts) return;
+        const day = localDateStr(s.ts);
+        if(!dayMap[day] || new Date(s.ts) < new Date(dayMap[day].ts)) {
+          dayMap[day] = { pseudo, ts: s.ts, device: 'Session', duree_min: 0, _from_session: true };
+        }
+      });
+      cnx = Object.values(dayMap).sort((a,b) => new Date(b.ts) - new Date(a.ts));
+    }
+
+    const lastCnx = cnx[0]?.ts || null;
+    return { j, idx, pseudo, ...st, totalPts, isActif: st.us.length>0, league: lg.k, connexions: cnx, lastCnx };
+  });
+}
+
+function renderDefis() {
+  const per = (document.getElementById('defis-periode')||{value:'7'}).value||'7';
+  const mat = (document.getElementById('defis-matiere')||{value:''}).value||'';
+  const q   = ((document.getElementById('defis-search')||{value:''}).value||'').toLowerCase();
+  const cut = per==='0' ? '' : new Date(Date.now()-parseInt(per)*86400000).toISOString();
+  let rows  = per==='0' ? [...DB.sessions] : DB.sessions.filter(s=>s.ts>cut);
+  if(mat) rows = rows.filter(s=>(s.matiere||s.theme||'').includes(mat));
+  if(q)   rows = rows.filter(s=>(s.pseudo||'').toLowerCase().includes(q)||(s.theme||s.matiere||'').toLowerCase().includes(q));
+
+  const cnt = document.getElementById('defis-count');
+  if(cnt) cnt.textContent = rows.length + ' sessions';
+
+  const nP = new Set(rows.map(s=>s.theme||s.matiere||'Général')).size;
+  const nJ = new Set(rows.map(s=>s.pseudo)).size;
+  const avg = rows.length ? Math.round(rows.reduce((a,s)=>a+(s.score_pct||0),0)/rows.length) : 0;
+
+  document.getElementById('defis-kpis').innerHTML = [
+    {v:nP,              l:'Pools actives',  s:'thèmes joués',   c:'var(--ac)', i:'🎮', t:'pools'},
+    {v:nJ,              l:'Joueurs actifs', s:'cette période',  c:'var(--gr)', i:'👥', t:'rank'},
+    {v:rows.length,     l:'Parties',        s:'sessions total', c:'var(--am)', i:'⚡', t:'histo'},
+    {v:rows.length?avg+'%':'—', l:'Score moyen', s:'toutes sessions', c:'var(--bl)', i:'🎯', t:''},
+  ].map(function(k) {
+    var kCursor  = k.t ? 'pointer' : 'default';
+    var kOnclick = k.t ? "switchDTab('" + k.t + "',document.getElementById('dt-" + k.t + "'))" : '';
+    return '<div class="kpi-card" style="cursor:' + kCursor + '" onclick="' + kOnclick + '">'
+      + '<div class="kpi-bar" style="background:' + k.c + '"></div>'
+      + '<div class="kpi-icon">' + k.i + '</div>'
+      + '<div class="kpi-val">' + k.v + '</div>'
+      + '<div class="kpi-label">' + k.l + '</div>'
+      + '<div class="kpi-sub">' + k.s + '</div>'
+      + '</div>';
+  }).join('');
+
+  const emj = {Histoire:'📜',Géographie:'🌍',EMC:'⚖️',PSE:'🩺',Roulette:'🎰',Général:'🎯'};
+  const avC = [['#EEECFC','#6C5FE8'],['#E6F7F1','#1B9E75'],['#FEF3DC','#B87A10'],['#E8F2FC','#2478CC'],['#F5EDE3','#9A6B3A'],['#FBEAF0','#993556']];
+  const pools = {};
+  rows.forEach(s => {
+    const t = s.theme||s.matiere||'Général';
+    if(!pools[t]) pools[t]=[];
+    if(!pools[t].find(p=>p.pseudo===s.pseudo)) pools[t].push(s);
+  });
+  const elevs = buildElevs();
+  const pdata = Object.entries(pools).sort((a,b)=>b[1].length-a[1].length).map(([theme,joueurs],pi) => {
+    const sorted = [...joueurs].sort((a,b)=>(b.score_pct||0)-(a.score_pct||0));
+    const pavg   = sorted.length ? Math.round(sorted.reduce((a,s)=>a+(s.score_pct||0),0)/sorted.length) : 0;
+    return {theme, sorted, pavg, pi};
+  });
+  window._poolsData = pdata;
+
+  const pEl = document.getElementById('defis-pools');
+  if(pEl) pEl.innerHTML = pdata.length ? pdata.map(p => {
+    const w  = p.sorted[0];
+    const we = w ? elevs.find(e=>e.pseudo===w.pseudo) : null;
+    const wn = we ? we.j.prenom+' '+we.j.nom : w?.pseudo||'—';
+    const col = scColor(p.pavg);
+    const avH = p.sorted.slice(0,3).map((s,i) => {
+      const d  = elevs.find(e=>e.pseudo===s.pseudo);
+      const [bg,fg] = avC[i%avC.length];
+      const ini = d ? (d.j.prenom[0]||'?')+(d.j.nom[0]||'') : (s.pseudo||'?').slice(0,2);
+      return `<div class="pool-av" style="background:${bg};color:${fg}">${ini.toUpperCase()}</div>`;
+    }).join('') + (p.sorted.length>3 ? `<div class="pool-av" style="background:var(--surf2);color:var(--t3)">+${p.sorted.length-3}</div>` : '');
+    return `<div class="pool-row" onclick="openPoolPanel(${p.pi})">
+      <div class="pc-th">
+        <div style="width:32px;min-width:32px;height:32px;border-radius:8px;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:14px">${emj[p.theme]||'🎯'}</div>
+        <div style="min-width:0;overflow:hidden">
+          <div class="pool-nm">${p.theme}</div>
+          <div class="pool-sb"><span class="pool-dot"></span>Actif · ${p.sorted.length}j</div>
+        </div>
+      </div>
+      <div class="pc-pl"><div class="pool-avs">${avH}</div></div>
+      <div class="pc-sc"><div class="pool-sc" style="color:${col}">${p.pavg}%</div></div>
+      <div class="pc-ld"><div class="pool-ln">${wn}</div><div class="pool-ls" style="color:${w?scColor(w.score_pct||0):'var(--t3)'}">${w?w.score_pct||0:0}%</div></div>
+      <div class="pc-vr">Voir →</div>
+    </div>`;
+  }).join('') : `<div class="empty"><div class="empty-icon">⚔️</div><div class="empty-text">Aucune pool active</div></div>`;
+
+  renderTL(window._tlMode||'all', rows);
+
+  document.getElementById('defis-histo').innerHTML = `<div class="panel"><div class="panel-header">📋 Historique</div><table><thead><tr><th>Joueur</th><th>Thème</th><th>Score</th><th>Pts</th><th>Date</th></tr></thead><tbody>${
+    DB.sessions.slice(0,30).map(s=>`<tr><td style="font-weight:600">${s.pseudo||'—'}</td><td style="font-size:11px">${s.theme||s.matiere||'—'}</td><td>${scorePill(s.score_pct||0)}</td><td style="font-weight:700;color:var(--am)">+${s.pts_round||0}</td><td style="font-size:10px;color:var(--t3)">${ago(s.ts)}</td></tr>`).join('')
+  }</tbody></table></div>`;
+
+  const sm={};
+  DB.sessions.forEach(s=>{if(!s.pseudo)return;if(!sm[s.pseudo])sm[s.pseudo]={n:0,pts:0,wins:0,ecole:s.ecole,pseudo:s.pseudo};sm[s.pseudo].n++;sm[s.pseudo].pts=Math.max(sm[s.pseudo].pts,s.pts_total||0);if((s.score_pct||0)>=80)sm[s.pseudo].wins++;});
+  document.getElementById('defis-rank').innerHTML = `<div class="panel"><div class="panel-header">🏆 Classement</div><table><thead><tr><th>#</th><th>Joueur</th><th>École</th><th>Sessions</th><th>Wins</th><th>Pts</th></tr></thead><tbody>${
+    Object.values(sm).sort((a,b)=>b.pts-a.pts).slice(0,20).map((r,i) => {
+      const jd = DB.joueurs.find(j=>j.pseudo===r.pseudo);
+      return `<tr><td style="font-weight:800">${['🥇','🥈','🥉'][i]||'#'+(i+1)}</td><td style="font-weight:600;font-size:12px">${jd?jd.prenom+' '+jd.nom:r.pseudo}</td><td style="font-size:11px">${r.ecole||'—'}</td><td>${r.n}</td><td>${r.wins?'⚡'+r.wins:'—'}</td><td style="font-weight:700;color:var(--am)">${r.pts.toLocaleString('fr')}</td></tr>`;
+    }).join('')
+  }</tbody></table></div>`;
+}
+
+function renderParrainage() {
+  const elevs  = buildElevs();
+  const pp     = (typeof BAREME_CONFIG!=='undefined' && BAREME_CONFIG.pts_parrainage) ? BAREME_CONFIG.pts_parrainage : 100;
+  const snd    = {};
+  DB.parrainage.forEach(p => {
+    if(!p.sender) return;
+    const me = elevs.find(e => {
+      const fn = (e.j.prenom+' '+e.j.nom).toLowerCase();
+      const ps = (p.sender||'').toLowerCase();
+      return ps===fn || ps===(e.pseudo||'').toLowerCase();
+    });
+    const k = me ? (me.j.prenom+' '+me.j.nom) : p.sender;
+    if(!snd[k]) snd[k] = {name:k, etab:me?(me.j.ecole||'—'):(p.sender_etab||'—'), elev:me||null, fils:[], chs:[], last:null};
+    snd[k].fils.push(p.destinataire);
+    snd[k].chs.push(p.channel);
+    if(!snd[k].last || p.ts>snd[k].last) snd[k].last = p.ts;
+  });
+
+  const q   = ((document.getElementById('parr-search')||{value:''}).value||'').toLowerCase();
+  const ev  = (document.getElementById('parr-etab')||{value:''}).value||'';
+  const cv  = (document.getElementById('parr-canal')||{value:''}).value||'';
+  const all = Object.values(snd);
+
+  const es = document.getElementById('parr-etab');
+  if(es) {
+    const etabs = [...new Set(all.map(r=>r.etab).filter(e=>e&&e!=='—'))].sort();
+    const cur = es.value;
+    es.innerHTML = '<option value="">Toutes</option>' + etabs.map(e=>`<option value="${e}"${e===cur?' selected':''}>${e}</option>`).join('');
+  }
+
+  const totalP = DB.parrainage.reduce((s,p)=>s+(p.pts||pp),0);
+  const topC   = DB.parrainage.length ? Object.entries(DB.parrainage.reduce((acc,p)=>{acc[p.channel]=(acc[p.channel]||0)+1;return acc},{})).sort((a,b)=>b[1]-a[1])[0][0] : '—';
+  const chI    = {whatsapp:'💬 WhatsApp',telegram:'✈️ Telegram',copy:'📋 Copie',native:'↗️ Partage'};
+
+  document.getElementById('parr-kpis').innerHTML = [
+    {v:DB.parrainage.length, l:'Invitations',       s:'total',          c:'#E040A0', i:'🎁'},
+    {v:all.length,           l:'Parrains actifs',   s:'≥1 filleul',     c:'var(--ac)',i:'👤'},
+    {v:totalP,               l:'Points distribués', s:pp+' pts/parr.',  c:'var(--am)',i:'⭐'},
+    {v:chI[topC]||topC,      l:'Canal favori',      s:'le plus utilisé',c:'var(--gr)',i:'📡'},
+  ].map(k=>`<div class="kpi-card" style="cursor:default"><div class="kpi-bar" style="background:${k.c}"></div><div class="kpi-icon">${k.i}</div><div class="kpi-val" style="font-size:${typeof k.v==='string'&&k.v.length>8?'13px':'26px'}">${k.v}</div><div class="kpi-label">${k.l}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+
+  let data = all.filter(r => {
+    if(q && !r.name.toLowerCase().includes(q) && !(r.etab||'').toLowerCase().includes(q)) return false;
+    if(ev && r.etab!==ev) return false;
+    if(cv && !r.chs.includes(cv)) return false;
+    return true;
+  }).sort((a,b) => {
+    const d = _psd;
+    if(_psk==='name')    return d * a.name.localeCompare(b.name);
+    if(_psk==='etab')    return d * (a.etab||'').localeCompare(b.etab||'');
+    if(_psk==='filleuls'||_psk==='pts') return d * (a.fils.length-b.fils.length);
+    if(_psk==='recent')  return d * (new Date(a.last||0)-new Date(b.last||0));
+    return 0;
+  });
+
+  const cntEl = document.getElementById('parr-cnt');
+  if(cntEl) cntEl.textContent = data.length + ' parrain' + (data.length>1?'s':'');
+  crmSelections['parr'] = crmSelections['parr'] || new Set();
+  const tC = r => { const f={}; r.chs.forEach(ch=>f[ch]=(f[ch]||0)+1); return Object.entries(f).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—'; };
+
+  document.getElementById('parr-tbody').innerHTML = data.length ? data.map(r => {
+    const d   = r.elev;
+    const sel = crmSelections['parr'].has(r.name);
+    const ch  = tC(r);
+    const av_html = d ? ava(d.j.prenom,d.j.nom,d.idx,28) : `<div style="width:28px;height:28px;border-radius:50%;background:var(--surf2);color:var(--t3);font-size:11px;display:flex;align-items:center;justify-content:center">${(r.name[0]||'?').toUpperCase()}</div>`;
+    return `<tr style="${sel?'background:rgba(108,95,232,.07)':''}">
+      <td class="crm-td"><input type="checkbox" ${sel?'checked':''} onchange="crmToggle('parr','${r.name.replace(/'/g,"\'")}',this.checked)"></td>
+      <td><div style="display:flex;align-items:center;gap:8px">${av_html}<div style="font-size:12px;font-weight:600;color:var(--t);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name}</div></div></td>
+      <td style="font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.etab}</td>
+      <td><span style="font-size:16px;font-weight:800;color:var(--ac)">${r.fils.length}</span></td>
+      <td><span class="bdg purple">${chI[ch]||ch}</span></td>
+      <td style="font-weight:700;color:var(--am)">+${r.fils.length*pp}</td>
+      <td style="font-size:10px;color:var(--t3)">${ago(r.last)}</td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="7"><div class="empty"><div class="empty-icon">🎁</div><div class="empty-text">Aucun parrain</div></div></td></tr>`;
+}
+
+function renderLigues() {
+  const allElevs = buildElevs();
+  const ligueSearch  = ((document.getElementById('ligues-search')||{value:''}).value||'').toLowerCase();
+  const ligueFilter  = (document.getElementById('ligues-ligue')||{value:''}).value||'';
+  const ligueEtab    = (document.getElementById('ligues-etab')||{value:''}).value||'';
+  const ligueSort    = (document.getElementById('ligues-sort')||{value:'pts'}).value||'pts';
+
+  // Peupler établissements dynamiquement
+  const ligueEtabSel = document.getElementById('ligues-etab');
+  if(ligueEtabSel) {
+    const etabs = [...new Set(allElevs.map(d=>d.j.ecole).filter(Boolean))].sort();
+    ligueEtabSel.innerHTML = '<option value="">Tous établissements</option>'+etabs.map(e=>`<option value="${e}"${e===ligueEtab?' selected':''}>${e}</option>`).join('');
+  }
+
+  let elevs = allElevs.filter(d => d.isActif);
+  if(ligueSearch) elevs = elevs.filter(d=>`${d.j.prenom} ${d.j.nom}`.toLowerCase().includes(ligueSearch)||(d.j.ecole||'').toLowerCase().includes(ligueSearch));
+  if(ligueEtab)   elevs = elevs.filter(d=>d.j.ecole===ligueEtab);
+
+  const total = allElevs.length;
+  const ligueSections = ligueFilter
+    ? LEAGUES.filter(l=>l.key===ligueFilter).slice().reverse()
+    : LEAGUES.slice().reverse();
+
+  const liguesCount = document.getElementById('ligues-count');
+  if(liguesCount) liguesCount.textContent = elevs.length + ' joueurs';
+
+  document.getElementById('ligues-sub').textContent =
+    `${elevs.length} joueurs actifs sur ${total} inscrits`;
+
+  const RANK_ICONS = ['🥇','🥈','🥉'];
+
+  document.getElementById('ligues-content').innerHTML = ligueSections.map(lg => {
+
+  // Attacher les clics après rendu
+  setTimeout(() => {
+    document.querySelectorAll('.ligue-row').forEach(el => {
+      el.addEventListener('click', function() { openEleve(this.dataset.id || this.dataset.pseudo); });
+    });
+  }, 50);
+    let members = elevs
+      .filter(d => getTotalPts(d.pseudo) >= lg.min && getTotalPts(d.pseudo) < lg.max);
+    members = members.sort((a,b) => ligueSort==='score'?b.avg-a.avg:ligueSort==='streak'?b.maxStreak-a.maxStreak:getTotalPts(b.pseudo)-getTotalPts(a.pseudo));
+    if(!members.length) return '';
+
+    const lgNext = LEAGUES[LEAGUES.indexOf(lg)+1];
+
+    const rows = members.map((d, i) => {
+      const pts = getTotalPts(d.pseudo);
+      const pct = lg.max > lg.min ? Math.min(100, Math.round((pts-lg.min)/(lg.max-lg.min)*100)) : 100;
+      const isTop3 = i < 3;
+      const rank = i < 3 ? RANK_ICONS[i] : `<span style="font-size:11px;font-weight:700;color:var(--t3);min-width:20px;text-align:center">#${i+1}</span>`;
+
+      return `<div class="ligue-row" data-id="${d.pseudo}" data-pseudo="${d.pseudo}" style="display:flex;align-items:center;gap:12px;padding:${isTop3?'11px':'8px'} 14px;border-bottom:1px solid var(--b);cursor:pointer;background:${isTop3?lg.bg+'30':'transparent'};transition:background .1s" onmouseenter="this.style.background='${isTop3?lg.bg+'55':'var(--surf2)'}'" onmouseleave="this.style.background='${isTop3?lg.bg+'30':'transparent'}'">
+        <!-- Rang -->
+        <div style="width:28px;text-align:center;font-size:${isTop3?'18':'12'}px;flex-shrink:0">${rank}</div>
+        <!-- Avatar -->
+        ${ava(d.j.prenom, d.j.nom, d.idx, isTop3?32:26)}
+        <!-- Nom + école -->
+        <div style="flex:1;min-width:0">
+          <div style="font-size:${isTop3?'13':'12'}px;font-weight:${isTop3?700:500};color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.j.prenom} ${d.j.nom}</div>
+          <div style="font-size:9px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.j.ecole||'—'}</div>
+        </div>
+        <!-- Stats inline -->
+        <div style="display:flex;align-items:center;gap:14px;flex-shrink:0">
+          ${scorePill(d.avg)}
+          ${d.maxStreak>0?`<span style="font-size:11px;color:var(--t3);white-space:nowrap">🔥 ${d.maxStreak}j</span>`:'<span style="font-size:11px;color:var(--surf3)">—</span>'}
+          <!-- Points + barre progression -->
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;min-width:100px">
+            <span style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:${lg.color}">${pts.toLocaleString('fr')} pts</span>
+            <div style="width:100%;height:3px;background:var(--surf3);border-radius:2px;overflow:hidden">
+              <div style="height:100%;width:${pct}%;background:${lg.color};border-radius:2px;transition:width .4s"></div>
+            </div>
+            <span style="font-size:8px;color:var(--t3)">${lgNext?pct+'% → '+lgNext.name:'MAX'}</span>
+          </div>
+          <span style="font-size:11px;color:var(--t3)">›</span>
+        </div>
+      </div>`;
+    }).join('');
+
+    // Score moyen de la ligue
+    const lgAvg = members.length ? Math.round(members.reduce((a,d)=>a+d.avg,0)/members.length) : 0;
+    const lgPts = members.length ? Math.round(members.reduce((a,d)=>a+getTotalPts(d.pseudo),0)/members.length) : 0;
+
+    return `<div class="ligue-section">
+      <div class="ligue-section-header" style="cursor:pointer" onclick="toggleLigue('lg-${lg.name}')">
+        <div class="ligue-icon-big" style="background:${lg.bg};color:${lg.color}">${lg.icon}</div>
+        <div style="flex:1">
+          <div class="ligue-section-title" style="color:${lg.color}">Ligue ${lg.name}</div>
+          <div style="display:flex;gap:12px;margin-top:2px">
+            <span class="ligue-section-sub">${members.length} joueur${members.length>1?'s':''}</span>
+            <span class="ligue-section-sub">· ${lg.min.toLocaleString('fr')}–${lg.max===99999?'∞':lg.max.toLocaleString('fr')} pts</span>
+            <span class="ligue-section-sub">· Score moy. <strong style="color:${scColor(lgAvg)}">${lgAvg}%</strong></span>
+            <span class="ligue-section-sub">· Moy. <strong style="color:${lg.color}">${lgPts.toLocaleString('fr')} pts</strong></span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:${lg.color};opacity:.2">${members.length}</span>
+          <span style="font-size:12px;color:var(--t3)" id="lg-chevron-${lg.name}">▾</span>
+        </div>
+      </div>
+      <div class="panel" id="lg-${lg.name}" style="margin-bottom:0;overflow:hidden">
+        <div style="display:flex;padding:7px 14px;background:var(--surf2);border-bottom:1px solid var(--b)">
+          <span style="width:28px"></span>
+          <span style="width:32px"></span>
+          <span style="flex:1;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;padding-left:12px">Élève</span>
+          <span style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-right:14px">Score</span>
+          <span style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-right:14px">Streak</span>
+          <span style="font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;min-width:100px;text-align:right">Points</span>
+          <span style="width:20px"></span>
+        </div>
+        ${rows}
+      </div>
+    </div>`;
+  }).filter(Boolean).join('') || `<div class="empty"><div class="empty-icon">🏆</div><div class="empty-text">Aucun joueur actif</div></div>`;
+}
+
+function renderEtabs() {
+  const now = new Date();
+  const cutoff7 = new Date(Date.now()-7*24*3600*1000).toISOString();
+  const etabSearch = ((document.getElementById('etab-search')||{value:''}).value||'').toLowerCase();
+  const etabSortF  = (document.getElementById('etab-sort-filter')||{value:'eleves'}).value||'eleves';
+
+  let etabData = ETABS.map(e=>{
+    const filterWords = e.filter.toLowerCase().split(' ').filter(w=>w.length>3);
+    const matchEtab = str => str && filterWords.some(w => str.toLowerCase().includes(w));
+    const ses = DB.sessions.filter(s=>matchEtab(s.ecole));
+    const ses7 = ses.filter(s=>s.ts>cutoff7);
+    const elevesLive = DB.joueurs.filter(j=>matchEtab(j.ecole));
+    const avg = ses.length?Math.round(ses.reduce((a,s)=>a+(s.score_pct||0),0)/ses.length):0;
+    const actifs = new Set(ses.map(s=>s.pseudo)).size;
+    const tr = TRAFFIC[e.key]||{clics:{},dau:0,wau:0,retention28j:0,tempsSession:0,partages:0,completionRate:0};
+    return {...e, ses, ses7, elevesLive, avg, actifs, tr};
+  });
+
+  if(etabSearch) etabData = etabData.filter(e=>e.name.toLowerCase().includes(etabSearch)||(e.ville||'').toLowerCase().includes(etabSearch));
+  etabData.sort((a,b)=>etabSortF==='score'?b.avg-a.avg:etabSortF==='sessions'?b.ses.length-a.ses.length:etabSortF==='name'?a.name.localeCompare(b.name):b.elevesLive.length-a.elevesLive.length);
+
+  const etabCountEl = document.getElementById('etab-count');
+  if(etabCountEl) etabCountEl.textContent = etabData.length + ' établissement' + (etabData.length>1?'s':'');
+
+  // Sync timestamp
+  document.getElementById('etab-last-sync').textContent = `Sync : ${now.toLocaleDateString('fr-FR')} ${now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}`;
+  document.getElementById('etab-sub').textContent = `${etabData.length} établissements · ${DB.joueurs.length} élèves · ${DB.sessions.length} sessions au total`;
+
+  // ── GLOBAL KPIs ──
+  const totalEleves = DB.joueurs.length;
+  const totalSessions = DB.sessions.length;
+  const globalAvg = DB.sessions.length?Math.round(DB.sessions.reduce((a,s)=>a+(s.score_pct||0),0)/DB.sessions.length):0;
+  const totalClics = etabData.reduce((a,e)=>a+Object.values(e.tr.clics).reduce((x,v)=>x+v,0),0);
+  const totalPartages = etabData.reduce((a,e)=>a+e.tr.partages,0);
+  document.getElementById('etab-global-kpis').innerHTML = [
+    { val:totalEleves,          label:'Élèves inscrits',    sub:`sur ${etabData.length} établissements`,     color:'var(--ac)',  icon:'👤' },
+    { val:totalSessions,        label:'Sessions jouées',    sub:'depuis le lancement',                       color:'var(--gr)',  icon:'⚡' },
+    { val:globalAvg+'%',        label:'Score moyen global', sub:'toutes matières confondues',                color:'var(--am)',  icon:'🎯' },
+    { val:totalClics,           label:'Clics entrants',     sub:'QR · lien · social · search',              color:'var(--bl)',  icon:'🔗' },
+    { val:totalPartages,        label:'Partages sociaux',   sub:'WhatsApp · Telegram · natif',              color:'#E040A0',    icon:'📤' },
+  ].map(k=>`<div class="kpi-card"><div class="kpi-bar" style="background:${k.color}"></div><div class="kpi-icon">${k.icon}</div><div class="kpi-val">${k.val}</div><div class="kpi-label">${k.label}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  // ── BAR CHART sessions 7j ──
+  const maxSes7 = Math.max(...etabData.map(e=>e.ses7.length), 1);
+  const etabColors = {vence:'var(--ac)',cezanne:'var(--gr)',grasse:'var(--am)',massena:'var(--re)'};
+  document.getElementById('etab-bar-chart').innerHTML = etabData.map(e=>{
+    const w = Math.round((e.ses7.length/maxSes7)*100);
+    const avg7 = e.ses7.length?Math.round(e.ses7.reduce((a,s)=>a+(s.score_pct||0),0)/e.ses7.length):0;
+    return `<div class="etab-bar-row">
+      <div class="etab-bar-label" title="${e.nom}">${e.type} ${e.nom.split('—')[0].trim()}</div>
+      <div class="etab-bar-track"><div class="etab-bar-fill" style="width:${w}%;background:${etabColors[e.key]||'var(--ac)'}"></div></div>
+      <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
+        <span class="etab-bar-val" style="color:${etabColors[e.key]||'var(--ac)'}">${e.ses7.length}</span>
+        <span style="font-size:9px;color:var(--t3)">sess.</span>
+        <span style="font-size:10px;color:${scColor(avg7)};background:${avg7?'':'transparent'};padding:1px 5px;border-radius:10px">${avg7?avg7+'%':'—'}</span>
+      </div>
+    </div>`;
+  }).join('');
+  const totalSes7 = etabData.reduce((a,e)=>a+e.ses7.length,0);
+  const trend = totalSes7>=10?'📈 Activité soutenue':totalSes7>=5?'📊 Activité modérée':'📉 Activité faible';
+  document.getElementById('etab-trend').textContent = trend;
+
+  // ── MATIÈRES GLOBAL ──
+  const mat={};
+  DB.sessions.forEach(s=>{if(s.matiere)mat[s.matiere]=(mat[s.matiere]||0)+1;});
+  const mc={Histoire:'var(--ac)',Géographie:'var(--gr)',EMC:'#E040A0'};
+  document.getElementById('etab-matieres-global').innerHTML = Object.entries(mat).sort((a,b)=>b[1]-a[1]).map(([m,n])=>{
+    const pct=Math.round(n/(DB.sessions.length||1)*100);
+    return `<div class="mat-bar"><div class="mat-row"><span style="color:var(--t);font-weight:500">${m}</span><span style="color:var(--t3)">${n} · ${pct}%</span></div><div class="mat-track"><div class="mat-fill" style="width:${pct}%;background:${mc[m]||'var(--bl)'}"></div></div></div>`;
+  }).join('') || '<div style="font-size:11px;color:var(--t3)">Aucune session</div>';
+
+  // ── CLICS & TRAFIC ──
+  const clicSources = [
+    { key:'qr',       label:'QR Code',       icon:'◉', color:'var(--ac)' },
+    { key:'lien',     label:'Lien direct',   icon:'🔗', color:'var(--bl)' },
+    { key:'whatsapp', label:'WhatsApp',      icon:'💬', color:'var(--gr)' },
+    { key:'search',   label:'Recherche',     icon:'🔍', color:'var(--am)' },
+  ];
+  const clicTotals = {};
+  clicSources.forEach(src=>{ clicTotals[src.key] = etabData.reduce((a,e)=>a+(e.tr.clics[src.key]||0),0); });
+  const maxClic = Math.max(...Object.values(clicTotals), 1);
+  const totalClicsAll = Object.values(clicTotals).reduce((a,v)=>a+v,0);
+  document.getElementById('etab-clics').innerHTML = `
+    <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:16px">
+      <span style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--t)">${totalClicsAll}</span>
+      <span style="font-size:11px;color:var(--t3)">clics entrants (30j)</span>
+    </div>
+    ${clicSources.map(src=>{
+      const n=clicTotals[src.key]; const pct=Math.round(n/totalClicsAll*100)||0;
+      return `<div class="clic-row">
+        <div class="clic-source"><span style="font-size:14px">${src.icon}</span><span>${src.label}</span></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:80px;height:5px;background:var(--surf3);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round(n/maxClic*100)}%;background:${src.color};border-radius:3px"></div></div>
+          <span class="clic-count" style="color:${src.color}">${n}</span>
+          <span class="clic-pct">${pct}%</span>
+        </div>
+      </div>`;
+    }).join('')}
+    <div style="margin-top:12px;padding:10px;background:var(--grBg);border-radius:8px;font-size:10px;color:var(--gr);font-weight:600">✓ QR Code = canal n°1 · recommander aux profs</div>
+  `;
+
+  // ── CANAUX ACQUISITION ──
+  const parrByChannel = {};
+  DB.parrainage.forEach(p=>{ parrByChannel[p.channel]=(parrByChannel[p.channel]||0)+1; });
+  const chLabels = {whatsapp:{l:'WhatsApp',ic:'💬',c:'var(--gr)'},telegram:{l:'Telegram',ic:'✈️',c:'var(--bl)'},copy:{l:'Lien copié',ic:'📋',c:'var(--am)'},native:{l:'Partage natif',ic:'📤',c:'var(--ac)'}};
+  const totalParr = Object.values(parrByChannel).reduce((a,v)=>a+v,0);
+  document.getElementById('etab-canaux').innerHTML = `
+    <div style="display:flex;align-items:baseline;gap:4px;margin-bottom:16px">
+      <span style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--t)">${totalParr}</span>
+      <span style="font-size:11px;color:var(--t3)">partages enregistrés</span>
+    </div>
+    ${Object.entries(parrByChannel).sort((a,b)=>b[1]-a[1]).map(([ch,n])=>{
+      const info=chLabels[ch]||{l:ch,ic:'↗️',c:'var(--t3)'};
+      const pct=Math.round(n/totalParr*100)||0;
+      return `<div class="clic-row">
+        <div class="clic-source"><span style="font-size:14px">${info.ic}</span><span>${info.l}</span></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:80px;height:5px;background:var(--surf3);border-radius:3px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${info.c};border-radius:3px"></div></div>
+          <span class="clic-count" style="color:${info.c}">${n}</span>
+          <span class="clic-pct">${pct}%</span>
+        </div>
+      </div>`;
+    }).join('')}
+    <div style="margin-top:12px;padding:10px;background:var(--blBg);border-radius:8px;font-size:10px;color:var(--bl);font-weight:600">📊 ${DB.parrainage.length} invitations · +${DB.parrainage.length*100} pts distribués</div>
+  `;
+
+  // ── RÉTENTION & ENGAGEMENT ──
+  const avgRetention = Math.round(etabData.reduce((a,e)=>a+e.tr.retention28j,0)/etabData.length);
+  const avgTemps = (etabData.reduce((a,e)=>a+e.tr.tempsSession,0)/etabData.length).toFixed(1);
+  const avgCompletion = Math.round(etabData.reduce((a,e)=>a+e.tr.completionRate,0)/etabData.length);
+  const streakActifs = buildElevs().filter(d=>d.maxStreak>=3).length;
+  document.getElementById('etab-retention').innerHTML = `
+    ${[
+      { val:avgRetention+'%', label:'Rétention 28j',         sub:'reviennent après J+7',   color:'var(--ac)', bg:'#EEECFC' },
+      { val:avgTemps+'min',   label:'Durée moy. session',    sub:'par quiz joué',          color:'var(--gr)', bg:'var(--grBg)' },
+      { val:avgCompletion+'%',label:'Taux de complétion',    sub:'rounds terminés',        color:'var(--am)', bg:'var(--amBg)' },
+      { val:streakActifs,     label:'Streak ≥ 3j actifs',    sub:'joueurs réguliers',      color:'var(--bl)', bg:'var(--blBg)' },
+    ].map(r=>`<div class="ret-stat">
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--t)">${r.label}</div>
+        <div style="font-size:9px;color:var(--t3);margin-top:1px">${r.sub}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="ret-val" style="color:${r.color}">${r.val}</div>
+      </div>
+    </div>`).join('')}
+    <div style="margin-top:12px;padding:10px;background:var(--amBg);border-radius:8px;font-size:10px;color:var(--am);font-weight:600">⭐ Argument clé partenaires : ${avgRetention}% rétention à 28j</div>
+  `;
+
+  // ── CARTES ÉTABLISSEMENTS ──
+  document.getElementById('etab-grid').innerHTML = etabData.map(e=>{
+    const totalClicE = Object.values(e.tr.clics).reduce((a,v)=>a+v,0);
+    return `<div class="etab-card" onclick="openEtab('${e.key}')">
+      <div class="etab-card-header">
+        <div class="etab-icon-wrap" style="background:${e.planColor}20">${e.type}</div>
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:700;color:var(--t);line-height:1.3">${e.nom}</div>
+          <div style="margin-top:4px;display:flex;gap:4px">${bdg(e.planType,e.plan)}</div>
+        </div>
+      </div>
+      <div class="etab-card-body">
+        <div class="etab-stat-row"><span style="color:var(--t3);font-size:11px">Référent</span><span style="color:var(--t);font-weight:500;font-size:11px">${e.ref}</span></div>
+        <div class="etab-stat-row"><span style="color:var(--t3);font-size:11px">Élèves</span><span style="font-weight:700;color:var(--ac)">${e.elevesLive.length}</span></div>
+        <div class="etab-stat-row"><span style="color:var(--t3);font-size:11px">Score moy.</span><span style="font-weight:700;color:${scColor(e.avg)}">${e.avg?e.avg+'%':'—'}</span></div>
+        <div class="etab-stat-row"><span style="color:var(--t3);font-size:11px">Clics entrants</span><span style="font-weight:700;color:var(--bl)">${totalClicE}</span></div>
+        <div class="etab-stat-row"><span style="color:var(--t3);font-size:11px">Rétention 28j</span><span style="font-weight:700;color:var(--gr)">${e.tr.retention28j}%</span></div>
+        <div class="etab-stat-row"><span style="color:var(--t3);font-size:11px">Renouvellement</span><span style="font-size:10px;color:${e.planType==='red'?'var(--re)':'var(--t3)'}">${e.renew}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  window._etabData = etabData;
+}
+
+function renderAppCom() {
+  buildEmojiGrid();
+  buildEmojiQuick();
+  buildColorPalette();
+  applyColor();
+  updateQR();
+  if(Object.keys(msgConversations).length===0) initMsgData();
+  // Always render msg so it works whichever tab is active
+  renderMsgList();
+  selectConv(msgSelected);
+  loadPushTemplate('inactif3');
+}
+function openFicheEleve(pseudo) {
+  navTo('eleves');
+  setTimeout(function(){
+    var rows = document.querySelectorAll('#eleves-tbody tr');
+    rows.forEach(function(r){ if(r.dataset.pseudo === pseudo) r.click(); });
+  }, 400);
+}
+
+function renderChart() {
+  var canvas = document.getElementById('dash-chart-canvas');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  if(!ctx) return;
+  var w = canvas.offsetWidth || 400;
+  canvas.width = w;
+  var sessions = DB.sessions || [];
+  var days = [];
+  for(var i=6;i>=0;i--){
+    var d = new Date(); d.setDate(d.getDate()-i);
+    var key = d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+    var count = sessions.filter(function(s){
+      if(!s.ts) return false;
+      return new Date(s.ts).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}) === key;
+    }).length;
+    days.push({label:key, val:count});
+  }
+  var max = Math.max.apply(null, days.map(function(d){ return d.val; })) || 1;
+  var h = 100; var pad = 8; var barW = Math.floor((w - pad*2) / days.length) - 4;
+  ctx.clearRect(0,0,w,h);
+  days.forEach(function(d,i){
+    var bh = Math.round(d.val/max*(h-20));
+    var x = pad + i*(barW+4);
+    var y = h - bh - 4;
+    ctx.fillStyle = d.val ? '#7C5CFC' : 'rgba(124,92,252,.15)';
+    ctx.beginPath(); ctx.roundRect(x, y, barW, bh, 4); ctx.fill();
+  });
+  var labelsEl = document.getElementById('dash-chart-labels');
+  if(labelsEl) labelsEl.innerHTML = days.map(function(d){ return '<span>'+d.label+'</span>'; }).join('');
+}
+
+function renderMatieres() {
+  var el = document.getElementById('dash-matieres');
+  if(!el) return;
+  var sessions = DB.sessions || [];
+  var counts = {};
+  sessions.forEach(function(s){ var m = s.matiere||s.theme||'Autre'; counts[m]=(counts[m]||0)+1; });
+  var total = sessions.length || 1;
+  var sorted = Object.entries(counts).sort(function(a,b){ return b[1]-a[1]; }).slice(0,5);
+  if(!sorted.length){ el.innerHTML = '<div style="color:var(--t3);font-size:11px;text-align:center;padding:12px">Aucune donnée</div>'; return; }
+  var colors = ['#7C5CFC','#0E9E6E','#C27C0A','#E040A0','#1E6FCC'];
+  el.innerHTML = sorted.map(function(kv,i){
+    var pct = Math.round(kv[1]/total*100);
+    return '<div style="margin-bottom:10px">'
+      + '<div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:var(--t);margin-bottom:4px"><span>'+kv[0]+'</span><span>'+pct+'%</span></div>'
+      + '<div style="height:6px;background:var(--surf2);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:'+colors[i%colors.length]+';border-radius:3px"></div></div>'
+      + '</div>';
+  }).join('');
+}
+
+
 // ── INIT ──
 buildNav();
 renderCurrentView();
