@@ -156,7 +156,7 @@ input,select,button{font-family:inherit}
 #content{flex:1;overflow-y:auto;padding:28px 32px;overflow-x:hidden}
 
 /* VIEWS */
-.view{display:none}
+.view{display:none;padding-top:0}
 .view.active{display:block}
 .view-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--t);margin-bottom:4px;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .view-sub{font-size:12px;color:var(--t3);margin-bottom:20px;font-weight:500}
@@ -2040,7 +2040,14 @@ function exportKPI() { showAdminToast('Export PDF — disponible prochainement')
 var DB_PARTENAIRES = [];
 
 function renderPartenairesHub() {
-  partenairesTab('crm', document.querySelector('#partenaires-tabs .tb2'));
+  // Reset tous les tabs
+  document.querySelectorAll('#partenaires-tabs .tb2').forEach(function(b){ b.classList.remove('on'); });
+  var firstTab = document.querySelector('#partenaires-tabs .tb2');
+  if(firstTab) firstTab.classList.add('on');
+  // Vider et recharger CRM
+  var el = document.getElementById('partenaires-content');
+  if(el) el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3)">Chargement…</div>';
+  setTimeout(function(){ renderPartenaireCRM(document.getElementById('partenaires-content')); }, 50);
 }
 
 function partenairesTab(tab, btn) {
@@ -2142,6 +2149,17 @@ function savePartenaire() {
       if(r.ok){ closeModalPartenaire(); showAdminToast('Partenaire créé !'); renderPartenaireCRM(document.getElementById('partenaires-content')); }
       else { showAdminToast('Erreur création', 'error'); }
     }).catch(function(){ showAdminToast('Erreur réseau', 'error'); });
+}
+
+function refreshStock(){ var el=document.getElementById('partenaires-content'); if(el) renderPartenairesStock(el); }
+
+function toggleLotActif(id, actif) {
+  if(typeof LOTS_DB === 'undefined') return;
+  var lot = LOTS_DB.find(function(l){ return l.id===id; });
+  if(lot) lot.actif = actif;
+  showAdminToast(actif ? 'Lot activé — visible élèves' : 'Lot désactivé');
+  // Sauvegarder dans config
+  try { saveBaremeComplet(); } catch(e){}
 }
 
 function togglePartenaire(id, actif) {
@@ -2247,13 +2265,14 @@ function toggleEnAvant(id, val) {
 function renderPartenairesStock(el) {
   el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3)">Chargement…</div>';
   var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
-  // Charger gains groupés par lot
   Promise.all([
     fetch(SB_URL+'/rest/v1/gains?order=lot_nom.asc', {headers:hdrs}).then(function(r){ return r.ok?r.json():[]; }),
     fetch(SB_URL+'/rest/v1/lots_stock?order=partenaire.asc', {headers:hdrs}).then(function(r){ return r.ok?r.json():[]; })
   ]).then(function(results) {
     var gains = results[0] || [];
     var stock = results[1] || [];
+    // Inclure aussi les lots de la config (LOTS_DB)
+    var configLots = (typeof LOTS_DB !== 'undefined') ? LOTS_DB : [];
     // Grouper par lot_nom
     var byLot = {};
     gains.forEach(function(g) {
@@ -2272,23 +2291,38 @@ function renderPartenairesStock(el) {
       + kpiCard('✅','Utilisés', totalUtil, Math.round(totalUtil/Math.max(totalDist,1)*100)+'% taux utilisation', '#0E9E6E')
       + kpiCard('⏳','En attente', totalDist-totalUtil, 'non encore utilisés', '#C27C0A')
       + '</div>';
-    // Par lot
-    if(Object.keys(byLot).length) {
-      html += '<div class="panel"><div class="panel-header"><span>📊 Stock par lot</span></div><table><thead><tr><th>Lot</th><th>Distribués</th><th>Utilisés</th><th>En attente</th><th>Taux</th></tr></thead><tbody>';
-      Object.values(byLot).forEach(function(l) {
+    // Lots config + lots depuis gains
+    var allLots = {};
+    configLots.forEach(function(l){
+      allLots[l.id||l.titre] = {nom:l.titre||l.nom||'Lot', emoji:l.emoji||'🎁', distribues:0, utilises:0, actif:l.actif!==false, id:l.id};
+    });
+    Object.entries(byLot).forEach(function(kv){
+      if(!allLots[kv[0]]) allLots[kv[0]] = kv[1];
+      else { allLots[kv[0]].distribues = kv[1].distribues; allLots[kv[0]].utilises = kv[1].utilises; }
+    });
+    var lotsArr = Object.values(allLots);
+    if(lotsArr.length) {
+      html += '<div class="panel"><div class="panel-header"><span>📊 Stock par lot</span><button class="act-btn" onclick="refreshStock()">↻</button></div>'
+        + '<table><thead><tr><th>Lot</th><th>Distribués</th><th>Utilisés</th><th>En attente</th><th>Taux</th><th>Visible élèves</th></tr></thead><tbody>';
+      lotsArr.forEach(function(l) {
         var taux = l.distribues ? Math.round(l.utilises/l.distribues*100) : 0;
         var color = taux >= 80 ? 'var(--gr)' : taux >= 40 ? 'var(--am)' : 'var(--t3)';
+        var switchHtml = l.id ? '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px">'
+          + '<input type="checkbox"'+(l.actif?' checked':'')
+          + ' onchange="toggleLotActif(" + JSON.stringify(l.id) + ",this.checked)"> Actif</label>' : '—';
         html += '<tr>'
           + '<td><span style="font-size:16px">'+(l.emoji||'🎁')+'</span> <strong>'+l.nom+'</strong></td>'
           + '<td>'+l.distribues+'</td>'
           + '<td style="color:var(--gr);font-weight:700">'+l.utilises+'</td>'
           + '<td style="color:var(--am);font-weight:700">'+(l.distribues-l.utilises)+'</td>'
           + '<td><span style="font-weight:800;color:'+color+'">'+taux+'%</span></td>'
+          + '<td>'+switchHtml+'</td>'
           + '</tr>';
       });
       html += '</tbody></table></div>';
     } else {
-      html += '<div class="empty"><div class="empty-icon">📦</div><div class="empty-text">Aucun code distribué pour l\'instant</div></div>';
+      html += '<div class="empty"><div class="empty-icon">📦</div>'
+        + '<div class="empty-text">Aucun lot configuré — allez dans Paramètres → Lots</div></div>';
     }
     el.innerHTML = html;
   }).catch(function(e) {
