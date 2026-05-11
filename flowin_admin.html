@@ -2457,40 +2457,34 @@ function adminUpdatePoints(pseudo, op) {
   if(!inputEl) return;
   var val = parseInt(inputEl.value, 10);
   if(isNaN(val) || val < 0) { alert('Valeur invalide'); return; }
-  // Récupérer pts_total actuel
   var elevs = buildElevs();
   var d = elevs.find(function(e){ return e.pseudo === pseudo; });
   if(!d) return;
   var current = d.totalPts || 0;
-  var newPts;
-  if(op === 'add') newPts = current + val;
-  else if(op === 'sub') newPts = Math.max(0, current - val);
-  else newPts = val;
-  // PATCH Supabase
-  if(!SB_ENABLED) { alert('Mode démo — Supabase désactivé'); return; }
-  var hdrs = {'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=minimal'};
-  fetch(SB_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(pseudo), {
-    method:'PATCH', headers:hdrs,
-    body:JSON.stringify({pts_total: newPts, updated_at: new Date().toISOString()})
+  var montant, sourceLabel;
+  if(op === 'add')      { montant = val;                    sourceLabel = 'admin_add'; }
+  else if(op === 'sub') { montant = -Math.min(val, current); sourceLabel = 'admin_sub'; }
+  else                  { montant = val - current;           sourceLabel = 'admin_set'; }
+  if(!SB_ENABLED) { alert('Mode demo — Supabase desactive'); return; }
+  var hdrs = {'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
+  // Appel RPC add_points() — SECURITY DEFINER, jamais PATCH direct
+  fetch(SB_URL + '/rest/v1/rpc/add_points', {
+    method: 'POST', headers: hdrs,
+    body: JSON.stringify({ montant: montant, source_label: sourceLabel })
   }).then(function(r) {
     if(r.ok) {
+      var newPts = Math.max(0, current + montant);
       if(valEl) valEl.textContent = newPts.toLocaleString('fr');
       inputEl.value = '';
-      // Mettre à jour DB.joueurs en mémoire pour que la liste élèves soit cohérente
       var j = DB.joueurs.find(function(jj){ return jj.pseudo === pseudo; });
       if(j) j.pts_total = newPts;
-      // Toast
-      var t = document.createElement('div');
-      t.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#22C9A0;color:#fff;padding:10px 20px;border-radius:20px;font-weight:700;font-size:14px;z-index:99999';
-      t.textContent = '✅ Points mis à jour : ' + newPts.toLocaleString('fr') + ' pts';
-      document.body.appendChild(t);
-      setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 2500);
-      // Rafraîchir la vue élèves si elle est active
+      var opLabel = op === 'add' ? ('+' + val) : op === 'sub' ? ('-' + val) : ('= ' + val);
+      showAdminToast('Points mis a jour : ' + opLabel + ' pts pour ' + pseudo);
       if(currentView === 'eleves') setTimeout(renderEleves, 300);
     } else {
-      alert('Erreur PATCH Supabase');
+      r.text().then(function(t){ showAdminToast('Erreur RPC : ' + t, 'error'); });
     }
-  }).catch(function(e){ alert('Erreur : ' + e.message); });
+  }).catch(function(e){ showAdminToast('Erreur : ' + e.message, 'error'); });
 }
 
 // ── DÉFIS FICHE ÉLÈVE — V11 ──
