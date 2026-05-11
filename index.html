@@ -6037,6 +6037,105 @@ function renderEleves() {
 
 
 
+// ── CRM ENGINE ──
+const crmSelections = {}; // { 'eleves': Set, 'parr': Set, ... }
+
+function crmToggle(ns, id, checked) {
+  if (!crmSelections[ns]) crmSelections[ns] = new Set();
+  checked ? crmSelections[ns].add(id) : crmSelections[ns].delete(id);
+  crmUpdateBar(ns);
+}
+
+function crmToggleAll(ns, checked) {
+  if (!crmSelections[ns]) crmSelections[ns] = new Set();
+  const rows = document.querySelectorAll(`#${ns==='eleves'?'eleves':'parr'}-tbody .crm-check`);
+  rows.forEach(cb => {
+    const id = cb.closest('tr').dataset.id;
+    if (id) { checked ? crmSelections[ns].add(id) : crmSelections[ns].delete(id); }
+    cb.checked = checked;
+  });
+  crmUpdateBar(ns);
+}
+
+function crmDeselectAll(ns) {
+  if (crmSelections[ns]) crmSelections[ns].clear();
+  const allCb = document.getElementById(`${ns==='eleves'?'eleves':'parr'}-check-all`);
+  if (allCb) allCb.checked = false;
+  document.querySelectorAll(`#${ns==='eleves'?'eleves':'parr'}-tbody .crm-check`).forEach(cb => cb.checked = false);
+  crmUpdateBar(ns);
+}
+
+function crmUpdateBar(ns) {
+  const bar = document.getElementById(`${ns}-crm-bar`);
+  const cnt = document.getElementById(`${ns}-crm-count`);
+  const n = crmSelections[ns] ? crmSelections[ns].size : 0;
+  if (bar) { bar.classList.toggle('show', n > 0); }
+  if (cnt) cnt.textContent = n;
+}
+
+function crmGetSelected(ns) {
+  if (ns === 'eleves') {
+    const elevs = buildElevs();
+    return [...(crmSelections[ns]||[])].map(id => elevs.find(e => e.pseudo === id)).filter(Boolean);
+  }
+  if (ns === 'parr') {
+    // rebuild rows from DB
+    const names = [...(crmSelections[ns]||[])];
+    return names.map(name => {
+      const p = DB.parrainage.filter(p => p.sender === name || `${p.sender}` === name);
+      const j = DB.joueurs.find(j => `${j.prenom} ${j.nom}` === name || j.pseudo === name);
+      return { name, email: j ? j.email : '', etab: j ? j.ecole : (p[0]?.sender_etab||''), filleuls: p.length };
+    });
+  }
+  return [];
+}
+
+function crmExportCSV(ns) {
+  const sel = crmGetSelected(ns);
+  if (!sel.length) { alert('Sélectionnez au moins une ligne.'); return; }
+  let csv = '', headers = [], rows = [];
+  if (ns === 'eleves') {
+    headers = ['Prénom','Nom','Email','École','Classe','Points','Score%','Streak','Ligue','App installée','Actif'];
+    rows = sel.map(d => [d.j.prenom,d.j.nom,d.j.email||'',d.j.ecole||'',d.j.classe||'',d.totalPts,Math.round(d.avg)+'%',d.maxStreak,d.league||'',d.j.pwa_installed?'Oui':'Non',d.isActif?'Oui':'Non']);
+  } else if (ns === 'parr') {
+    headers = ['Nom','Email','École','Nb filleuls'];
+    rows = sel.map(r => [r.name,r.email,r.etab,r.filleuls]);
+  }
+  csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `flowin_${ns}_export.csv`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function crmMessageGroupe(ns) {
+  const sel = crmGetSelected(ns);
+  if (!sel.length) { alert('Sélectionnez au moins une ligne.'); return; }
+  const emails = ns === 'eleves'
+    ? sel.map(d => d.j.email).filter(Boolean)
+    : sel.map(r => r.email).filter(Boolean);
+  if (!emails.length) { alert('Aucun email disponible dans la sélection.'); return; }
+  // Ouvrir client mail avec tous les destinataires en BCC
+  const mailto = `mailto:?bcc=${emails.join(',')}&subject=Flowin — Message de votre professeur&body=Bonjour,%0D%0A%0D%0A`;
+  window.open(mailto);
+  // Aussi proposer copie pour WhatsApp
+  const names = ns === 'eleves' ? sel.map(d => `${d.j.prenom} ${d.j.nom}`).join(', ') : sel.map(r => r.name).join(', ');
+  const waText = encodeURIComponent(`Bonjour ! Message Flowin pour : ${names}`);
+  if (confirm(`Email ouvert avec ${emails.length} destinataire(s).\n\nOuvrir aussi WhatsApp ?`)) {
+    window.open(`https://wa.me/?text=${waText}`);
+  }
+}
+
+function isFakeAccount(j) {
+  const email = (j.email||'').toLowerCase();
+  const ecole = (j.ecole||'').toLowerCase();
+  const fakeEmails = ['example','fake@','demo@','admin@','trial@'];
+  const fakeEcoles = ['demo','exemple'];
+  return fakeEmails.some(f=>email.includes(f))
+    || fakeEcoles.some(f=>ecole===f);
+}
+
+
 // ── INIT ──
 buildNav();
 renderCurrentView();
