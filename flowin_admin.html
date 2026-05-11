@@ -116,7 +116,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 input,select,button{font-family:inherit}
 
 /* SIDEBAR */
-#sidebar{width:220px;background:var(--sb);border-right:none;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;box-shadow:2px 0 20px rgba(0,0,0,.15)}
+#sidebar{width:220px;min-width:220px;background:var(--sb);border-right:none;display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;box-shadow:2px 0 20px rgba(0,0,0,.15)}
 .sb-logo{display:flex;align-items:center;gap:10px;padding:18px 16px 16px;border-bottom:1px solid rgba(255,255,255,.06)}
 .sb-logo-icon{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#7C5CFC,#A97FFF);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 4px 12px rgba(124,92,252,.4)}
 .sb-logo-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#fff}
@@ -138,8 +138,8 @@ input,select,button{font-family:inherit}
 .sb-user-role{font-size:9px;color:var(--sbT)}
 
 /* MAIN */
-#main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
-#topbar{height:56px;background:var(--surf);border-bottom:1px solid var(--b);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;box-shadow:0 1px 0 var(--b)}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);min-width:0}
+#topbar{height:56px;background:var(--surf);border-bottom:1px solid var(--b);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;box-shadow:0 1px 0 var(--b);overflow:hidden;min-width:0}
 #topbar-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--t);flex:1}
 #topbar-breadcrumb{font-size:11px;color:var(--t3);font-weight:500}
 #search-global{background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:7px 12px 7px 32px;font-size:12px;color:var(--t);width:220px;outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238B90B8' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:10px center;transition:border-color .15s}
@@ -153,16 +153,16 @@ input,select,button{font-family:inherit}
 .btn-sync{background:var(--ac);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:.01em}
 .btn-sync:hover{background:var(--ac2);box-shadow:0 3px 12px rgba(124,92,252,.35)}
 .btn-sync:active{opacity:.8}
-#content{flex:1;overflow-y:auto;padding:24px}
+#content{flex:1;overflow-y:auto;padding:28px 32px;overflow-x:hidden}
 
 /* VIEWS */
 .view{display:none}
 .view.active{display:block}
-.view-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--t);margin-bottom:4px;letter-spacing:-.02em}
+.view-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--t);margin-bottom:4px;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .view-sub{font-size:12px;color:var(--t3);margin-bottom:20px;font-weight:500}
 
 /* KPI GRID */
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
 .kpi-card{background:var(--surf);border:1px solid var(--b);border-radius:14px;padding:18px;position:relative;overflow:hidden;transition:box-shadow .15s,transform .15s}
 .kpi-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.07);transform:translateY(-1px)}
 .kpi-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
@@ -345,6 +345,21 @@ td.crm-td{padding:0 6px;text-align:center}
 .empty-icon{font-size:30px;opacity:.4}
 .empty-text{font-size:12px}
 
+/* GRILLES RESPONSIVES */
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;margin-bottom:16px}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:14px}
+.grid-14{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;margin-bottom:16px}
+.grid-21{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-bottom:16px}
+@media(max-width:1100px){
+  .grid-14,.grid-21{grid-template-columns:1fr}
+  .grid-3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+}
+
+/* SCROLL FIX */
+.view{overflow-x:hidden}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+table th,table td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
 /* PERIOD BTNS */
 .period-btn{transition:all .15s}
 .period-btn:hover{border-color:var(--ac)!important;color:var(--ac)!important}
@@ -374,7 +389,7 @@ td.crm-td{padding:0 6px;text-align:center}
 .niveau-badge.bac-pro{background:#FEF4DC;color:#C27C0A}
 
 /* DASHBOARD GRID */
-.dash-2col{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
+.dash-2col{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-bottom:14px}
 .dash-2eq{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .scroll-panel{max-height:220px;overflow-y:auto}
 .session-row{display:flex;align-items:center;gap:9px;padding:9px 14px;border-bottom:1px solid var(--b)}
@@ -641,7 +656,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       <div class="kpi-grid" id="dash-kpis"></div>
 
       <!-- LIGNE 1 : Graphique activité + Carte -->
-      <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:16px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;margin-bottom:16px">
         <div class="panel">
           <div class="panel-header">
             <span style="font-size:13px;font-weight:700;color:var(--t)">📈 Activité <span id="dash-chart-period" style="color:var(--t3);font-weight:400;font-size:11px"></span></span>
@@ -679,7 +694,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       </div>
 
       <!-- LIGNE 3 : Top élèves + Matières -->
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-bottom:16px">
         <div class="panel">
           <div class="panel-header">
             <span style="font-size:13px;font-weight:700;color:var(--t)">🏆 Top élèves</span>
@@ -695,7 +710,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       </div>
 
       <!-- LIGNE 4 : Sessions récentes + Parrainages -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:16px">
         <div class="panel">
           <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
             <span>⚡ Dernières sessions</span>
@@ -1101,7 +1116,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       <div class="kpi-grid" style="grid-template-columns:repeat(5,1fr)" id="etab-global-kpis"></div>
 
       <!-- TRAFIC + ENGAGEMENT CHART -->
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-bottom:14px">
         <div class="panel">
           <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
             <span>📈 Sessions par établissement (7 derniers jours)</span>
@@ -1116,7 +1131,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       </div>
 
       <!-- CLICS & TRAFIC -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:14px">
         <div class="panel">
           <div class="panel-header">🔗 Clics de redirection</div>
           <div style="padding:16px" id="etab-clics"></div>
@@ -1213,7 +1228,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
     <div class="view" id="v-appcom">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
         <div>
-          <div class="view-title" style="margin-bottom:0">App & Communication</div>
+          <div class="view-title" style="margin-bottom:0;font-size:16px">App & Communication</div>
           <div class="view-sub" style="margin-bottom:0">Vignette PWA · QR Code · RGPD · Messagerie · Push automatiques</div>
         </div>
         <div style="margin-left:auto;display:flex;gap:8px">
@@ -1651,7 +1666,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px" id="stats-kpis"></div>
 
       <!-- ROW 2: Courbe activité + Funnel -->
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-bottom:14px">
         <div class="panel">
           <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
             <span>📈 Activité quotidienne (sessions)</span>
@@ -1668,7 +1683,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       </div>
 
       <!-- ROW 3: Engagement + Rétention + Géo -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:14px">
         <div class="panel">
           <div class="panel-header">⏱ Engagement & Temps</div>
           <div style="padding:16px" id="stats-engagement"></div>
@@ -1684,7 +1699,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       </div>
 
       <!-- ROW 4: Acquisition + Devices + Heatmap horaire -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:14px">
         <div class="panel">
           <div class="panel-header">🔗 Canaux d'acquisition</div>
           <div style="padding:16px" id="stats-acquisition"></div>
