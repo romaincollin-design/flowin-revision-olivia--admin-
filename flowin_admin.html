@@ -153,21 +153,21 @@ input,select,button{font-family:inherit}
 .btn-sync{background:var(--ac);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:.01em}
 .btn-sync:hover{background:var(--ac2);box-shadow:0 3px 12px rgba(124,92,252,.35)}
 .btn-sync:active{opacity:.8}
-#content{flex:1;overflow-y:auto;padding:20px 24px;overflow-x:hidden}
+#content{flex:1;overflow-y:auto;padding:28px 32px;overflow-x:hidden}
 
 /* VIEWS */
 .view{display:none}
 .view.active{display:block}
 .view-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--t);margin-bottom:4px;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.view-sub{font-size:12px;color:var(--t3);margin-bottom:14px;font-weight:500}
+.view-sub{font-size:12px;color:var(--t3);margin-bottom:20px;font-weight:500}
 
 /* KPI GRID */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
-.kpi-card{background:var(--surf);border:1px solid var(--b);border-radius:12px;padding:14px 16px;position:relative;overflow:hidden;transition:box-shadow .15s,transform .15s}
+.kpi-card{background:var(--surf);border:1px solid var(--b);border-radius:14px;padding:18px;position:relative;overflow:hidden;transition:box-shadow .15s,transform .15s}
 .kpi-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.07);transform:translateY(-1px)}
 .kpi-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
 .kpi-icon{font-size:22px;margin-bottom:10px;display:block}
-.kpi-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--t);line-height:1;margin-bottom:3px;letter-spacing:-.02em}
+.kpi-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--t);line-height:1;margin-bottom:4px;letter-spacing:-.02em}
 .kpi-label{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
 .kpi-sub{font-size:11px;color:var(--t2);margin-top:5px;font-weight:500}
 
@@ -638,100 +638,61 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
     <!-- DASHBOARD -->
     <div class="view active" id="v-dashboard">
 
-      <!-- TOPBAR DASHBOARD -->
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:16px;flex-wrap:wrap">
         <div>
-          <div style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--t);letter-spacing:-.03em;line-height:1.1">🎯 Pilotage</div>
-          <div style="font-size:12px;color:var(--t3);margin-top:4px;font-weight:500" id="dash-date-label">Chargement…</div>
+          <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--t);letter-spacing:-.03em">🎯 Pilotage</div>
+          <div style="font-size:12px;color:var(--t3);margin-top:3px;font-weight:500" id="dash-date-label">Chargement…</div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <div style="display:flex;gap:4px;background:var(--surf2);border:1px solid var(--b);border-radius:10px;padding:3px">
-            <button onclick="setDashPeriod(this,'today')" class="period-btn" style="padding:5px 12px;border-radius:7px;border:none;background:transparent;font-size:11px;color:var(--t2);cursor:pointer;font-weight:500;font-family:inherit">Aujourd'hui</button>
-            <button onclick="setDashPeriod(this,'7j')" class="period-btn active-period" style="padding:5px 12px;border-radius:7px;border:none;background:var(--surf);font-size:11px;color:var(--t);cursor:pointer;font-weight:700;font-family:inherit;box-shadow:0 1px 3px rgba(0,0,0,.08)">7 jours</button>
-            <button onclick="setDashPeriod(this,'30j')" class="period-btn" style="padding:5px 12px;border-radius:7px;border:none;background:transparent;font-size:11px;color:var(--t2);cursor:pointer;font-weight:500;font-family:inherit">30 jours</button>
-            <button onclick="setDashPeriod(this,'all')" class="period-btn" style="padding:5px 12px;border-radius:7px;border:none;background:transparent;font-size:11px;color:var(--t2);cursor:pointer;font-weight:500;font-family:inherit">Tout</button>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <div style="display:flex;gap:3px;background:var(--surf2);border:1px solid var(--b);border-radius:10px;padding:3px">
+            <button onclick="setDashPeriod(this,'today')" class="period-btn" style="padding:5px 11px;border-radius:7px;border:none;background:transparent;font-size:11px;color:var(--t2);cursor:pointer;font-family:inherit">Aujourd'hui</button>
+            <button onclick="setDashPeriod(this,'7j')" class="period-btn active-period" style="padding:5px 11px;border-radius:7px;border:none;background:var(--surf);font-size:11px;color:var(--t);cursor:pointer;font-weight:700;font-family:inherit;box-shadow:0 1px 3px rgba(0,0,0,.08)">7 jours</button>
+            <button onclick="setDashPeriod(this,'30j')" class="period-btn" style="padding:5px 11px;border-radius:7px;border:none;background:transparent;font-size:11px;color:var(--t2);cursor:pointer;font-family:inherit">30 jours</button>
+            <button onclick="setDashPeriod(this,'all')" class="period-btn" style="padding:5px 11px;border-radius:7px;border:none;background:transparent;font-size:11px;color:var(--t2);cursor:pointer;font-family:inherit">Tout</button>
           </div>
           <button onclick="navTo('analytics')" class="act-btn">📊 Rapports</button>
         </div>
       </div>
 
-      <!-- KPI CARDS — 4 grandes cartes -->
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px" id="dash-kpis"></div>
+      <!-- KPI CARDS -->
+      <div class="kpi-grid" id="dash-kpis"></div>
 
-      <!-- CORPS — 3 colonnes style Flowin Events -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px" id="dash-3col">
-
-        <!-- COLONNE 1 : Activité récente -->
+      <!-- 3 COLONNES -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
         <div>
-          <div style="font-size:9px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;gap:6px">
-            <span style="width:6px;height:6px;border-radius:50%;background:#22C9A0;display:inline-block"></span>
-            EN TEMPS RÉEL
-          </div>
-          <div id="dash-realtime" style="display:flex;flex-direction:column;gap:8px"></div>
+          <div style="font-size:9px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:#22C9A0;display:inline-block"></span>EN TEMPS RÉEL</div>
+          <div id="dash-realtime" style="display:flex;flex-direction:column;gap:6px"></div>
         </div>
-
-        <!-- COLONNE 2 : Top joueurs -->
         <div>
-          <div style="font-size:9px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
-            <span>🏆 TOP JOUEURS</span>
-            <button onclick="navTo('eleves')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:700;padding:0;font-family:inherit">Voir tous →</button>
-          </div>
+          <div style="font-size:9px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between"><span>🏆 TOP JOUEURS</span><button onclick="navTo('eleves')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:700;font-family:inherit">Voir tous →</button></div>
           <div id="dash-top-joueurs" style="display:flex;flex-direction:column;gap:6px"></div>
         </div>
-
-        <!-- COLONNE 3 : Lots & Parrainages -->
         <div>
-          <div style="font-size:9px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
-            <span>🎁 LOTS & PARRAINAGE</span>
-            <button onclick="navTo('partenaires')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:700;padding:0;font-family:inherit">Voir →</button>
-          </div>
-          <div id="dash-lots-parr" style="display:flex;flex-direction:column;gap:8px"></div>
+          <div style="font-size:9px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between"><span>🎁 LOTS & PARRAINAGE</span><button onclick="navTo('partenaires')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:700;font-family:inherit">Voir →</button></div>
+          <div id="dash-lots-parr" style="display:flex;flex-direction:column;gap:6px"></div>
         </div>
-
       </div>
 
-      <!-- LIGNE 2 : Graphique + Matières -->
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px">
+      <!-- GRAPHIQUE + MATIERES -->
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px">
         <div class="panel" style="margin:0">
-          <div class="panel-header">
-            <span>📈 Activité <span id="dash-chart-period" style="color:var(--t3);font-weight:400;font-size:11px"></span></span>
-            <div style="display:flex;gap:14px;font-size:10px;color:var(--t3)">
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:3px;background:var(--ac);border-radius:2px;display:inline-block"></span>Sessions</span>
-              <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:3px;background:var(--gr);border-radius:2px;display:inline-block"></span>Nouveaux</span>
-            </div>
+          <div class="panel-header"><span>📈 Activité <span id="dash-chart-period" style="color:var(--t3);font-weight:400;font-size:11px"></span></span>
+            <div style="display:flex;gap:12px;font-size:10px;color:var(--t3)"><span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:3px;background:var(--ac);border-radius:2px;display:inline-block"></span>Sessions</span><span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:3px;background:var(--gr);border-radius:2px;display:inline-block"></span>Nouveaux</span></div>
           </div>
-          <div style="padding:16px 16px 8px">
-            <canvas id="dash-chart-canvas" height="110" style="width:100%;display:block"></canvas>
-            <div id="dash-chart-labels" style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-top:4px"></div>
-          </div>
+          <div style="padding:14px 14px 6px"><canvas id="dash-chart-canvas" height="100" style="width:100%;display:block"></canvas><div id="dash-chart-labels" style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-top:4px"></div></div>
         </div>
         <div class="panel" style="margin:0">
           <div class="panel-header">📚 Matières</div>
-          <div class="mat-bar-wrap" id="dash-matieres" style="padding:12px"></div>
+          <div class="mat-bar-wrap" id="dash-matieres" style="padding:10px 12px"></div>
         </div>
       </div>
 
-      <!-- LIGNE 3 : Top établissements -->
+      <!-- TOP ETABS -->
       <div class="panel" style="margin-bottom:4px">
-        <div class="panel-header">
-          <span>🏫 Top établissements</span>
-          <button onclick="navTo('etablissements')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">Voir tous →</button>
-        </div>
-        <table><thead><tr><th>Établissement</th><th>Élèves</th><th>Quiz/j</th><th>Score moy.</th></tr></thead>
-        <tbody id="dash-top-etabs"></tbody></table>
+        <div class="panel-header"><span>🏫 Top établissements</span><button onclick="navTo('etablissements')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">Voir tous →</button></div>
+        <table><thead><tr><th>Établissement</th><th>Élèves</th><th>Quiz/j</th><th>Score moy.</th></tr></thead><tbody id="dash-top-etabs"></tbody></table>
       </div>
 
-    </div>
-
-    <!-- MODAL BARÈME -->
-    <div class="modal-overlay" id="modal-bareme" onclick="if(event.target===this)closeBareme()">
-      <div class="modal-box" style="max-width:700px">
-        <div class="modal-header">
-          <span class="modal-header-title">⭐ Barème & Ligues — Paramétrage</span>
-          <button class="modal-close" onclick="closeBareme()">✕</button>
-        </div>
-        <div class="modal-body" id="modal-bareme-body"></div>
-      </div>
     </div>
 
     <!-- ÉLÈVES -->
@@ -1394,28 +1355,34 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
     <!-- ══ VUE ANALYTICS ══ -->
     <div class="view" id="v-analytics">
       <!-- TABS HEADER -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
         <div>
           <div class="view-title">📊 Analytics</div>
-          <div class="view-sub" style="margin-bottom:0">Trafic, engagement, données pour annonceurs</div>
+          <div class="view-sub">Trafic, engagement, données pour annonceurs</div>
         </div>
         <div style="display:flex;gap:4px" id="analytics-tabs">
-          <button class="tb2 on" onclick="analyticsTab('trafic',this)">Trafic</button>
-          <button class="tb2" onclick="analyticsTab('engagement',this)">Engagement</button>
-          <button class="tb2" onclick="analyticsTab('niveaux',this)">Niveaux & Lieux</button>
-          <button class="tb2" onclick="analyticsTab('export',this)">Export</button>
+          <button class="defis-tab active" onclick="analyticsTab('trafic',this)">Trafic</button>
+          <button class="defis-tab" onclick="analyticsTab('engagement',this)">Engagement</button>
+          <button class="defis-tab" onclick="analyticsTab('niveaux',this)">Niveaux & Lieux</button>
+          <button class="defis-tab" onclick="analyticsTab('export',this)">Export annonceur</button>
         </div>
       </div>
       <!-- TAB TRAFIC : v-stats intégré directement ici (IDs stables) -->
       <div id="analytics-tab-trafic">
-      <!-- Export + sync discrets -->
-      <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-bottom:12px">
-        <span id="stats-sync-ts" style="font-size:10px;color:var(--t3)"></span>
-        <button onclick="exportStatsReport()" class="act-btn">⬇ Export rapport</button>
+      <!-- Header -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px">
+        <div>
+          <div class="view-title" style="margin-bottom:0">Stats & Trafic</div>
+          <div class="view-sub" id="stats-sub">Données de performance · Usage · Annonceurs</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button onclick="exportStatsReport()" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:6px 13px;font-size:11px;font-weight:600;cursor:pointer">⬇ Export rapport</button>
+          <span id="stats-sync-ts" style="font-size:10px;color:var(--t3)"></span>
+        </div>
       </div>
 
       <!-- FILTRES -->
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;padding:8px 12px;background:var(--surf);border:1px solid var(--b);border-radius:8px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;padding:10px 14px;background:var(--surf);border:1px solid var(--b);border-radius:10px">
 
         <!-- Période -->
         <span style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em">Fenêtre</span>
@@ -5243,41 +5210,9 @@ async function loadLotsFromSupabase() {
   } catch(e) {}
 }
 
-// ── LOGIN ──
-function checkLogin() {
-  var input = document.getElementById('login-pwd');
-  var err = document.getElementById('login-err');
-  var pwd = (input ? input.value : '').trim();
-  if(pwd === 'flowin2026') {
-    document.getElementById('login-wall').style.display = 'none';
-    sessionStorage.setItem('flowin_auth','1');
-    sessionStorage.setItem('flowin_auth_ts', Date.now().toString());
-    navTo('dashboard');
-    loadData();
-  } else {
-    if(err) err.textContent = 'Mot de passe incorrect';
-    if(input) { input.style.borderColor='red'; setTimeout(function(){ input.style.borderColor=''; },2000); }
-  }
-}
-
-// Auto-login si session valide
-(function(){
-  if(sessionStorage.getItem('flowin_auth')==='1') {
-    var ts = parseInt(sessionStorage.getItem('flowin_auth_ts')||'0');
-    if(Date.now() - ts < 8 * 3600 * 1000) {
-      document.addEventListener('DOMContentLoaded', function(){
-        var wall = document.getElementById('login-wall');
-        if(wall) wall.style.display = 'none';
-      });
-    } else {
-      sessionStorage.removeItem('flowin_auth');
-    }
-  }
-})();
-
 // ── INIT ──
 buildNav();
-navTo('dashboard');
+renderCurrentView();
 loadData();
 Promise.all([loadLotsFromSupabase(), loadStockAndGains()]).then(function() {
   try { renderBareme(); renderStockPanel(); renderGainsPanel(); } catch(e){}
