@@ -5939,6 +5939,104 @@ function kpiCard(icon, label, val, sub, color) {
     + '</div>';
 }
 
+
+// ── TRI ÉLÈVES ──
+let elevesSort = 'date';
+let elevesSortDir = -1; // -1 = desc, 1 = asc
+
+function sortEleves(col) {
+  if(elevesSort === col) {
+    elevesSortDir *= -1;
+  } else {
+    elevesSort = col;
+    elevesSortDir = col === 'name' || col === 'etab' || col === 'classe' || col === 'statut' ? 1 : -1;
+  }
+  // Mettre à jour les flèches
+  const cols = ['name','etab','classe','score','streak','pts','ligue','activite','cnx','statut'];
+  cols.forEach(c => {
+    const el = document.getElementById('sort-arrow-'+c);
+    if(!el) return;
+    if(c === elevesSort) {
+      el.textContent = elevesSortDir === -1 ? '↓' : '↑';
+      el.style.color = 'var(--ac)';
+    } else {
+      el.textContent = '↕';
+      el.style.color = 'var(--t3)';
+    }
+  });
+  renderEleves();
+}
+
+function renderEleves() {
+  const elevs = buildElevs();
+  document.getElementById('eleves-sub').textContent = `${elevs.filter(d=>d.isActif).length} actifs · ${elevs.filter(d=>!d.isActif).length} inactifs · ${elevs.length} total`;
+
+  const search = document.getElementById('eleves-search').value.toLowerCase();
+
+  let data = elevs.filter(d => !isFakeAccount(d.j));
+  if(search) data = data.filter(d =>
+    `${d.j.prenom} ${d.j.nom}`.toLowerCase().includes(search) ||
+    (d.j.ecole||'').toLowerCase().includes(search) ||
+    (d.j.email||'').toLowerCase().includes(search) ||
+    (d.j.classe||'').toLowerCase().includes(search)
+  );
+
+  // Tri
+  data.sort((a,b) => {
+    let va, vb;
+    switch(elevesSort) {
+      case 'name':    va=`${a.j.prenom} ${a.j.nom}`; vb=`${b.j.prenom} ${b.j.nom}`; return elevesSortDir*(va.localeCompare(vb));
+      case 'etab':    va=a.j.ecole||''; vb=b.j.ecole||''; return elevesSortDir*(va.localeCompare(vb));
+      case 'classe':  va=a.j.classe||''; vb=b.j.classe||''; return elevesSortDir*(va.localeCompare(vb));
+      case 'score':   return elevesSortDir*(b.avg-a.avg)*-1;
+      case 'streak':  return elevesSortDir*(b.maxStreak-a.maxStreak)*-1;
+      case 'pts':     return elevesSortDir*(b.totalPts-a.totalPts)*-1;
+      case 'ligue':   return elevesSortDir*(b.totalPts-a.totalPts)*-1;
+      case 'activite':return elevesSortDir*(new Date(b.last||0)-new Date(a.last||0))*-1;
+      case 'cnx':     return elevesSortDir*(new Date(b.lastCnx||0)-new Date(a.lastCnx||0));
+      case 'statut':  va=a.isActif?'Actif':'Inactif'; vb=b.isActif?'Actif':'Inactif'; return elevesSortDir*(va.localeCompare(vb));
+      default:        return new Date(b.j.ts||0)-new Date(a.j.ts||0);
+    }
+  });
+
+  document.getElementById('eleves-count').textContent = `${data.length} élève${data.length>1?'s':''}`;
+  crmSelections['eleves'] = crmSelections['eleves'] || new Set();
+
+  document.getElementById('eleves-tbody').innerHTML = data.map(d => {
+    const pwaBadge = d.j.pwa_installed ? `<span class="pwa-badge">📱 App</span>` : '<span style="color:var(--t3);font-size:10px">—</span>';
+    const sel = crmSelections['eleves'].has(d.pseudo);
+    return `
+    <tr class="eleve-row" data-id="${d.pseudo}" style="${sel?'background:rgba(176,108,228,.07)':''}" >
+      <td class="crm-td" onclick="event.stopPropagation()"><input type="checkbox" class="crm-check" ${sel?'checked':''} onchange="crmToggle('eleves','${d.pseudo}',this.checked)"></td>
+      <td><div style="display:flex;align-items:center;gap:9px">${ava(d.j.prenom,d.j.nom,d.idx,30)}<div><div style="font-size:12px;font-weight:600;color:var(--t)">${d.j.prenom} ${d.j.nom}</div><div style="font-size:9px;color:var(--t3)">${d.j.email||'—'}</div></div></div></td>
+      <td style="font-size:11px">${d.j.ecole||'—'}</td>
+      <td style="font-size:11px">${d.j.classe||'—'}</td>
+      <td>${scorePill(d.avg)}</td>
+      <td>${d.maxStreak>0?`🔥 ${d.maxStreak}j`:'<span style="color:var(--t3)">—</span>'}</td>
+      <td style="font-weight:700;color:var(--am)">${d.totalPts.toLocaleString('fr')}</td>
+      <td>${lguePill(d.totalPts)}</td>
+      <td>${pwaBadge}</td>
+      <td style="font-size:10px;color:var(--t3)">${d.last?ago(d.last):'—'}</td>
+      <td style="font-size:10px;color:${d.lastCnx?'var(--t)':'var(--t3)'};font-weight:${d.lastCnx?600:400}">
+        ${d.lastCnx
+          ? '<span style="font-weight:700">'+ago(d.lastCnx)+'</span><div style="font-size:9px;color:var(--t3);font-weight:400;margin-top:1px">'+new Date(d.lastCnx).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'})+' · '+new Date(d.lastCnx).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+(d.connexions[0]&&d.connexions[0].duree_min>0?' · '+d.connexions[0].duree_min+'min':'')+'</div>'
+          : '<span style="color:var(--t3)">—</span>'}
+      </td>
+      <td>${bdg(d.isActif?'green':'amber',d.isActif?'Actif':'Inactif')}</td>
+    </tr>`;
+  }).join('') || `<tr><td colspan="12"><div class="empty"><div class="empty-icon">👤</div><div class="empty-text">Aucun élève trouvé</div></div></td></tr>`;
+
+  document.getElementById('eleves-tbody').querySelectorAll('.eleve-row').forEach(tr => {
+    tr.style.cursor = 'pointer';
+    tr.addEventListener('click', function(e) {
+      if(e.target.closest('.crm-td') || e.target.tagName === 'INPUT') return;
+      openEleve(this.dataset.id);
+    });
+  });
+}
+
+
+
 // ── INIT ──
 buildNav();
 renderCurrentView();
