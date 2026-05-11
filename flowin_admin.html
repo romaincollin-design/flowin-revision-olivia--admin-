@@ -547,6 +547,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
 
 <!-- SIDEBAR -->
 <nav id="sidebar">
+  <!-- LOGO -->
   <div class="sb-logo">
     <div class="sb-logo-icon">🌊</div>
     <div>
@@ -554,8 +555,40 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       <div class="sb-logo-sub">Admin · SaaS</div>
     </div>
   </div>
-  <div id="sb-nav"></div>
+
+  <!-- NAV 5 RUBRIQUES -->
+  <div style="padding:10px 0;flex:1;overflow-y:auto">
+    <div class="sb-item" id="nav-dashboard" onclick="navTo('dashboard')">
+      <span class="sb-item-icon">🏠</span>
+      <span>Accueil</span>
+      <span class="sb-live-chip" id="sb-live-chip" style="display:none;margin-left:auto;background:#22C9A0;color:#fff;font-size:8px;font-weight:800;padding:2px 6px;border-radius:20px;letter-spacing:.04em">LIVE</span>
+    </div>
+    <div class="sb-item" id="nav-eleves" onclick="navTo('eleves')">
+      <span class="sb-item-icon">👥</span>
+      <span>Joueurs</span>
+      <span class="sb-badge" id="sb-badge-joueurs">—</span>
+    </div>
+    <div class="sb-item" id="nav-analytics" onclick="navTo('analytics')">
+      <span class="sb-item-icon">📊</span>
+      <span>Analytics</span>
+    </div>
+    <div class="sb-item" id="nav-partenaires" onclick="navTo('partenaires')">
+      <span class="sb-item-icon">🎁</span>
+      <span>Partenaires</span>
+      <span class="sb-badge green" id="sb-badge-lots">—</span>
+    </div>
+    <div class="sb-item" id="nav-parametres" onclick="navTo('parametres')">
+      <span class="sb-item-icon">⚙️</span>
+      <span>Paramètres</span>
+    </div>
+  </div>
+
+  <!-- FOOTER USER -->
   <div class="sb-footer">
+    <div style="display:flex;align-items:center;gap:8px;padding:4px 4px 8px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:10px">
+      <div class="live-dot" id="live-dot" style="flex-shrink:0"></div>
+      <span class="live-label" id="live-label" style="font-size:10px">Chargement…</span>
+    </div>
     <div class="sb-user">
       <div class="sb-avatar">R</div>
       <div>
@@ -573,11 +606,17 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
     <button id="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
-    <div id="topbar-title">Dashboard</div>
-    <input id="search-global" type="text" placeholder="🔍 Rechercher…" oninput="onGlobalSearch(this.value)">
-    <div class="live-dot" id="live-dot"></div>
-    <span class="live-label" id="live-label">Chargement…</span>
-    <button class="btn-sync" onclick="loadData()">↻ Sync</button>
+    <!-- BREADCRUMB -->
+    <div style="flex:1;display:flex;align-items:center;gap:8px">
+      <span style="font-size:13px;color:var(--t3);font-weight:500">Flowin</span>
+      <span style="color:var(--t3);font-size:12px">/</span>
+      <span id="topbar-title" style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--t)">Dashboard</span>
+    </div>
+    <input id="search-global" type="text" placeholder="Rechercher (joueur, partenaire…)" oninput="onGlobalSearch(this.value)">
+    <button class="btn-sync" onclick="loadData()" title="Synchroniser">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:5px"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10"/><path d="M20.49 15a9 9 0 01-14.85 3.36L1 14"/></svg>
+      Sync
+    </button>
   </header>
   <div id="content">
 
@@ -1576,6 +1615,61 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
   </div>
 </div>
 
+    <!-- ══ VUE ANALYTICS ══ -->
+    <div class="view" id="v-analytics">
+      <!-- TABS internes -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+        <div>
+          <div class="view-title">📊 Analytics</div>
+          <div class="view-sub">Trafic, engagement, données pour annonceurs</div>
+        </div>
+        <div style="display:flex;gap:4px" id="analytics-tabs">
+          <button class="defis-tab active" onclick="analyticsTab('trafic',this)">Trafic</button>
+          <button class="defis-tab" onclick="analyticsTab('engagement',this)">Engagement</button>
+          <button class="defis-tab" onclick="analyticsTab('niveaux',this)">Niveaux & Lieux</button>
+          <button class="defis-tab" onclick="analyticsTab('export',this)">Export annonceur</button>
+        </div>
+      </div>
+      <div id="analytics-content"></div>
+    </div>
+
+    <!-- ══ VUE PARTENAIRES ══ -->
+    <div class="view" id="v-partenaires">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+        <div>
+          <div class="view-title">🎁 Partenaires & Lots</div>
+          <div class="view-sub">Gestion des partenaires, stocks et distribution</div>
+        </div>
+        <div style="display:flex;gap:4px" id="partenaires-tabs">
+          <button class="defis-tab active" onclick="partenairesTab('lots',this)">Lots & Stock</button>
+          <button class="defis-tab" onclick="partenairesTab('distribution',this)">Distribution</button>
+          <button class="defis-tab" onclick="partenairesTab('validation',this)">Validation QR</button>
+          <button class="defis-tab" onclick="partenairesTab('vitrine',this)">Vitrine app</button>
+        </div>
+      </div>
+      <div id="partenaires-content"></div>
+    </div>
+
+    <!-- ══ VUE PARAMÈTRES ══ -->
+    <div class="view" id="v-parametres">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+        <div>
+          <div class="view-title">⚙️ Paramètres</div>
+          <div class="view-sub">Barème, contenus, textes, configuration</div>
+        </div>
+        <div style="display:flex;gap:4px" id="parametres-tabs">
+          <button class="defis-tab active" onclick="parametresTab('bareme',this)">Barème & Ligues</button>
+          <button class="defis-tab" onclick="parametresTab('contenus',this)">Contenus</button>
+          <button class="defis-tab" onclick="parametresTab('textes',this)">Textes app</button>
+          <button class="defis-tab" onclick="parametresTab('appcom',this)">App & Com</button>
+        </div>
+      </div>
+      <div id="parametres-content"></div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
 <script>
 // ── CONFIG ──
 const SB_URL = 'https://ywcqtupgoxfzkddqkztk.supabase.co';
@@ -1843,57 +1937,291 @@ function texteUpdate(el) {
 }
 
 // ── NAV ──
+// Navigation 5 rubriques — les anciennes vues sont proxifiées
 const NAV_ITEMS = [
-  { id:'dashboard',       label:'Dashboard',        icon:'◈',  sec:'Vue globale' },
-  { id:'eleves',          label:'Élèves',           icon:'👥', sec:'CRM', badgeFn:()=>DB.joueurs.length },
-  { id:'ligues',          label:'Ligues',            icon:'🏆', sec:null },
-  { id:'parrainage',      label:'Parrainage',       icon:'🔗', sec:null, badgeFn:()=>DB.parrainage.length, bc:'#0E9E6E', bb:'rgba(14,158,110,.15)' },
-  { id:'etablissements',  label:'Établissements',   icon:'🏫', sec:null },
-  { id:'defis',           label:'Défis & Pools',    icon:'⚔️', sec:'Activité', badgeFn:()=>new Set(DB.sessions.map(s=>s.theme||s.matiere)).size, bc:'#C27C0A', bb:'rgba(194,124,10,.15)' },
-  { id:'stats',           label:'Stats & Trafic',   icon:'📊', sec:null },
-  { id:'cours',           label:'Contenus',         icon:'📚', sec:'Pédagogie', badgeFn:()=>COURS_DB.length },
-  { id:'bareme',          label:'Lots & Barème',    icon:'🎁', sec:'Partenaires' },
-  { id:'appcom',          label:'App & Com',        icon:'📲', sec:'Config' },
-  { id:'textes',          label:'Textes App',       icon:'✏️', sec:null },
+  { id:'dashboard' },
+  { id:'eleves' },
+  { id:'analytics' },
+  { id:'partenaires' },
+  { id:'parametres' },
 ];
+
+// Mapping rubriques → label topbar
+const VIEW_LABELS = {
+  dashboard:'Dashboard', eleves:'Joueurs', analytics:'Analytics',
+  partenaires:'Partenaires & Lots', parametres:'Paramètres',
+  // anciennes vues (accès legacy)
+  ligues:'Ligues', parrainage:'Parrainage', etablissements:'Établissements',
+  defis:'Défis', stats:'Stats', cours:'Contenus', bareme:'Barème', appcom:'App & Com', textes:'Textes'
+};
 let currentView = 'dashboard';
 
 function buildNav() {
-  const nav = document.getElementById('sb-nav');
-  nav.innerHTML = NAV_ITEMS.map(item => {
-    const sec = item.sec ? `<div class="sb-section">${item.sec}</div>` : '';
-    const badge = item.badgeFn ? `<span class="sb-badge" id="badge-${item.id}" style="${item.bc?`background:${item.bb};color:${item.bc}`:''}">${item.badgeFn()}</span>` : '';
-    return `${sec}<div class="sb-item${item.id===currentView?' active':''}" id="nav-${item.id}" onclick="navTo('${item.id}')">
-      <span class="sb-item-icon">${item.icon}</span>${item.label}${badge}
-    </div>`;
-  }).join('');
+  // La nav est maintenant statique dans le HTML sidebar
+  // On met juste à jour les badges
+  updateBadges();
 }
 
 function updateBadges() {
-  NAV_ITEMS.filter(i=>i.badgeFn).forEach(i => {
-    const el = document.getElementById('badge-'+i.id);
-    if(el) el.textContent = i.badgeFn();
-  });
+  var nbJ = document.getElementById('sb-badge-joueurs');
+  if(nbJ) nbJ.textContent = DB.joueurs.length || '—';
+  var nbL = document.getElementById('sb-badge-lots');
+  if(nbL) {
+    var lotsCount = (typeof window.LOTS_DB_CACHE !== 'undefined') ? window.LOTS_DB_CACHE.filter(function(l){ return l.actif !== false; }).length : 0;
+    nbL.textContent = lotsCount || '—';
+  }
 }
+
+// MAP : rubrique → quelle ancienne vue ou fonction render appeler
+var RUBRIQUE_MAP = {
+  dashboard: function(){ renderDashboard(); },
+  eleves:    function(){ renderEleves(); },
+  analytics: function(){ renderAnalyticsHub(); },
+  partenaires: function(){ renderPartenairesHub(); },
+  parametres:  function(){ renderParametresHub(); }
+};
 
 function navTo(id) {
   currentView = id;
-  document.querySelectorAll('.sb-item').forEach(el => el.classList.remove('active'));
-  const ni = document.getElementById('nav-'+id);
+  // Sidebar actif
+  document.querySelectorAll('.sb-item').forEach(function(el){ el.classList.remove('active'); });
+  var ni = document.getElementById('nav-' + id);
   if(ni) ni.classList.add('active');
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  const vEl = document.getElementById('v-'+id);
+  // Vues
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+  var vEl = document.getElementById('v-' + id);
   if(vEl) vEl.classList.add('active');
-  const titles = {dashboard:'Dashboard',eleves:'Élèves',defis:'Défis & Pools',parrainage:'Parrainage',ligues:'Ligues & Classements',etablissements:'Établissements',cours:'Cours & Contenus',stats:'Stats & Trafic',appcom:'App & Communication',bareme:'Barème & Lots',textes:'Textes de l\'App'};
-  document.getElementById('topbar-title').textContent = titles[id]||id;
+  // Breadcrumb
+  var titleEl = document.getElementById('topbar-title');
+  if(titleEl) titleEl.textContent = VIEW_LABELS[id] || id;
+  // Render
   renderCurrentView();
 }
 
 function renderCurrentView() {
-  const r = {dashboard:renderDashboard,eleves:renderEleves,defis:renderDefis,parrainage:renderParrainage,ligues:renderLigues,etablissements:renderEtabs,cours:renderCours,stats:renderStats,appcom:renderAppCom,bareme:renderBaremeView,textes:renderTextes};
-  if(r[currentView]) {
-    if(currentView === 'bareme') { requestAnimationFrame(() => { try { renderBaremeView(); } catch(e){ console.error(e); } }); }
-    else { try { r[currentView](); } catch(e) { console.warn('renderCurrentView error:', currentView, e); } }
+  var fn = RUBRIQUE_MAP[currentView];
+  if(fn) {
+    try { fn(); } catch(e) { console.warn('renderCurrentView error:', currentView, e); }
+  }
+}
+
+// ── HUB ANALYTICS ──
+function renderAnalyticsHub() {
+  analyticsTab('trafic', document.querySelector('#analytics-tabs .defis-tab'));
+}
+function analyticsTab(tab, btn) {
+  if(btn) { document.querySelectorAll('#analytics-tabs .defis-tab').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active'); }
+  var el = document.getElementById('analytics-content');
+  if(!el) return;
+  if(tab === 'trafic') {
+    // Injecter la vue stats dans analytics-content
+    renderStats();
+    var statsV = document.getElementById('v-stats');
+    if(statsV) el.innerHTML = statsV.innerHTML;
+  } else if(tab === 'engagement') {
+    renderAnalyticsEngagement(el);
+  } else if(tab === 'niveaux') {
+    renderAnalyticsNiveaux(el);
+  } else if(tab === 'export') {
+    renderAnalyticsExport(el);
+  }
+}
+
+function renderAnalyticsEngagement(el) {
+  var sessions = DB.sessions || [];
+  var joueurs = DB.joueurs || [];
+  var totalSess = sessions.length;
+  var avgScore = totalSess ? Math.round(sessions.reduce(function(a,s){ return a+(s.score_pct||0); },0)/totalSess) : 0;
+  var quizPlayers = new Set(sessions.map(function(s){ return s.pseudo; })).size;
+  var defiPlayers = new Set((DB.connexions||[]).filter(function(c){ return c.source==='defi'; }).map(function(c){ return c.pseudo; })).size;
+  var html = '<div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">'
+    + kpiCard('⚡','Sessions totales', totalSess, '', '#7C5CFC')
+    + kpiCard('🎯','Score moyen', avgScore+'%', '', '#0E9E6E')
+    + kpiCard('⚔️','Joueurs en défi', defiPlayers, 'sur '+quizPlayers+' actifs', '#C27C0A')
+    + '</div>';
+  // Répartition Quiz vs Défis
+  var quizCnt = sessions.length;
+  var defiCnt = (DB.connexions||[]).filter(function(c){ return c.source==='defi'; }).length;
+  var total = quizCnt + defiCnt || 1;
+  html += '<div class="panel"><div class="panel-header"><span>⚖️ Révision vs Jeu (défis)</span></div><div style="padding:20px">'
+    + '<div style="display:flex;height:12px;border-radius:6px;overflow:hidden;margin-bottom:10px">'
+    + '<div style="width:'+Math.round(quizCnt/total*100)+'%;background:#7C5CFC"></div>'
+    + '<div style="flex:1;background:#F4A83A"></div>'
+    + '</div>'
+    + '<div style="display:flex;gap:20px;font-size:12px">'
+    + '<span><span style="display:inline-block;width:10px;height:10px;background:#7C5CFC;border-radius:2px;margin-right:5px"></span>Quiz révision '+Math.round(quizCnt/total*100)+'%</span>'
+    + '<span><span style="display:inline-block;width:10px;height:10px;background:#F4A83A;border-radius:2px;margin-right:5px"></span>Défis '+Math.round(defiCnt/total*100)+'%</span>'
+    + '</div></div></div>';
+  el.innerHTML = html;
+}
+
+function renderAnalyticsNiveaux(el) {
+  var joueurs = DB.joueurs || [];
+  // Répartition par CP/ville
+  var villes = {};
+  joueurs.forEach(function(j){ var v = j.ville||j.cp_etab||'Non renseigné'; villes[v]=(villes[v]||0)+1; });
+  var topVilles = Object.entries(villes).sort(function(a,b){ return b[1]-a[1]; }).slice(0,10);
+  var html = '<div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">'
+    + kpiCard('📍','Villes représentées', Object.keys(villes).length, '', '#7C5CFC')
+    + kpiCard('🏫','Établissements', new Set(joueurs.map(function(j){ return j.etablissement||j.ecole; }).filter(Boolean)).size, '', '#0E9E6E')
+    + kpiCard('👥','Joueurs total', joueurs.length, 'inscrits', '#C27C0A')
+    + '</div>';
+  html += '<div class="panel"><div class="panel-header"><span>📍 Top villes</span></div><div style="padding:16px">';
+  var maxV = topVilles[0] ? topVilles[0][1] : 1;
+  topVilles.forEach(function(kv){
+    html += '<div class="etab-bar-row"><div class="etab-bar-label">'+kv[0]+'</div>'
+      +'<div class="etab-bar-track"><div class="etab-bar-fill" style="width:'+Math.round(kv[1]/maxV*100)+'%;background:#7C5CFC"></div></div>'
+      +'<div class="etab-bar-val">'+kv[1]+'</div></div>';
+  });
+  html += '</div></div>';
+  el.innerHTML = html;
+}
+
+function renderAnalyticsExport(el) {
+  var j = DB.joueurs || [];
+  var s = DB.sessions || [];
+  el.innerHTML = '<div class="panel"><div class="panel-header"><span>📤 Export données annonceurs</span></div><div style="padding:20px">'
+    + '<div style="background:var(--acBg);border:1px solid var(--acBorder);border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px;color:var(--ac);font-weight:600">'
+    + 'ℹ️ Ces exports sont anonymisés — pas de données personnelles identifiables. Conformes RGPD.</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
+    + '<div class="panel" style="margin:0"><div style="padding:16px"><div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:6px">📊 Rapport audience</div><div style="font-size:11px;color:var(--t3);margin-bottom:12px">'+j.length+' joueurs · '+s.length+' sessions</div><button class="act-btn primary" onclick="exportAnnonceur()">Télécharger CSV</button></div></div>'
+    + '<div class="panel" style="margin:0"><div style="padding:16px"><div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:6px">📈 KPIs engagements</div><div style="font-size:11px;color:var(--t3);margin-bottom:12px">Temps, clics, rétention</div><button class="act-btn" onclick="exportKPI()">Télécharger PDF</button></div></div>'
+    + '</div></div></div>';
+}
+
+function exportAnnonceur() {
+  var rows = ['Ville,CP,Niveau,Sessions,Score moyen'];
+  var j = DB.joueurs || [];
+  var villes = {};
+  j.forEach(function(jj){ var k = (jj.ville||'?')+'|'+(jj.cp_etab||'?'); villes[k]=(villes[k]||0)+1; });
+  Object.entries(villes).forEach(function(kv){ var parts=kv[0].split('|'); rows.push(parts[0]+','+parts[1]+',Bac Pro,'+kv[1]+',—'); });
+  var sep = String.fromCharCode(10); var blob = new Blob([rows.join(sep)], {type:'text/csv'});
+  var a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='flowin_audience.csv'; a.click();
+}
+function exportKPI() { showAdminToast('Export PDF — disponible prochainement'); }
+
+// ── HUB PARTENAIRES ──
+function renderPartenairesHub() {
+  partenairesTab('lots', document.querySelector('#partenaires-tabs .defis-tab'));
+}
+function partenairesTab(tab, btn) {
+  if(btn) { document.querySelectorAll('#partenaires-tabs .defis-tab').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active'); }
+  var el = document.getElementById('partenaires-content');
+  if(!el) return;
+  if(tab === 'lots') {
+    // Injecter la vue barème
+    renderBaremeView();
+    var barV = document.getElementById('v-bareme');
+    if(barV) { el.innerHTML = ''; el.appendChild(barV.cloneNode(true)); }
+  } else if(tab === 'distribution') {
+    renderPartenairesDistrib(el);
+  } else if(tab === 'validation') {
+    renderPartenairesQR(el);
+  } else if(tab === 'vitrine') {
+    renderPartenairesVitrine(el);
+  }
+}
+
+function renderPartenairesDistrib(el) {
+  var gains = [];
+  if(typeof window._GAINS_CACHE !== 'undefined') gains = window._GAINS_CACHE;
+  var html = '<div class="panel"><div class="panel-header"><span>📦 Historique distribution</span><button class="act-btn" onclick="loadGainsForDistrib()">Actualiser</button></div>'
+    + '<table><thead><tr><th>Élève</th><th>Lot</th><th>Code</th><th>Date</th><th>Statut</th></tr></thead>'
+    + '<tbody id="distrib-tbody"></tbody></table></div>';
+  el.innerHTML = html;
+  loadGainsForDistrib();
+}
+
+function loadGainsForDistrib() {
+  var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
+  fetch(SB_URL+'/rest/v1/gains?order=ts.desc&limit=100',{headers:hdrs})
+    .then(function(r){ return r.ok?r.json():[]; })
+    .then(function(gains){
+      window._GAINS_CACHE = gains;
+      var tb = document.getElementById('distrib-tbody');
+      if(!tb) return;
+      if(!gains.length){ tb.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--t3);padding:20px">Aucune distribution</td></tr>'; return; }
+      tb.innerHTML = gains.map(function(g){
+        var date = g.ts ? new Date(g.ts).toLocaleDateString('fr-FR') : '—';
+        var statut = g.utilise ? '<span class="bdg green">Utilisé</span>' : '<span class="bdg amber">Distribué</span>';
+        return '<tr><td>'+( g.pseudo||'—')+'</td><td>'+(g.lot_titre||'—')+'</td><td><code style="background:var(--surf2);padding:2px 6px;border-radius:4px;font-size:11px">'+(g.code||'—')+'</code></td><td>'+date+'</td><td>'+statut+'</td></tr>';
+      }).join('');
+    }).catch(function(){});
+}
+
+function renderPartenairesQR(el) {
+  el.innerHTML = '<div class="panel"><div class="panel-header"><span>📱 Validation QR code chez le partenaire</span></div><div style="padding:24px;text-align:center">'
+    + '<div style="font-size:48px;margin-bottom:12px">📱</div>'
+    + '<div style="font-size:15px;font-weight:700;color:var(--t);margin-bottom:6px">Scanner un code lot</div>'
+    + '<div style="font-size:12px;color:var(--t3);margin-bottom:20px">Scannez le QR code présenté par l\'eleve pour valider et décompter son lot</div>'
+    + '<input id="qr-code-input" placeholder="Code lot (saisie manuelle)…" style="width:100%;max-width:300px;background:var(--surf2);border:2px solid var(--b);border-radius:10px;padding:12px 16px;font-size:16px;text-align:center;outline:none;font-family:inherit;letter-spacing:.1em;margin-bottom:12px">'
+    + '<br><button class="act-btn primary" onclick="validateLotQR()" style="margin-top:4px">✅ Valider ce code</button>'
+    + '<div id="qr-result" style="margin-top:16px;font-size:13px;font-weight:600"></div>'
+    + '</div></div>';
+}
+
+function validateLotQR() {
+  var code = (document.getElementById('qr-code-input').value||'').trim().toUpperCase();
+  if(!code){ showAdminToast('Saisis un code', 'error'); return; }
+  var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+  fetch(SB_URL+'/rest/v1/gains?code=eq.'+encodeURIComponent(code)+'&select=*',{headers:hdrs})
+    .then(function(r){ return r.ok?r.json():[]; })
+    .then(function(rows){
+      var res = document.getElementById('qr-result');
+      if(!rows.length){ res.innerHTML='<span style="color:var(--re)">❌ Code introuvable</span>'; return; }
+      var g = rows[0];
+      if(g.utilise){ res.innerHTML='<span style="color:var(--am)">⚠️ Déjà utilisé le '+new Date(g.utilise_ts||g.ts).toLocaleDateString('fr-FR')+'</span>'; return; }
+      // Marquer comme utilisé
+      fetch(SB_URL+'/rest/v1/gains?code=eq.'+encodeURIComponent(code),{
+        method:'PATCH',headers:hdrs,
+        body:JSON.stringify({utilise:true, utilise_ts:new Date().toISOString()})
+      }).then(function(r2){
+        if(r2.ok){ res.innerHTML='<span style="color:var(--gr)">✅ Validé ! Lot "'+( g.lot_titre||code)+'" décompté pour '+( g.pseudo||'?')+'</span>'; document.getElementById('qr-code-input').value=''; }
+        else { res.innerHTML='<span style="color:var(--re)">❌ Erreur validation</span>'; }
+      });
+    }).catch(function(){ document.getElementById('qr-result').innerHTML='<span style="color:var(--re)">❌ Erreur réseau</span>'; });
+}
+
+function renderPartenairesVitrine(el) {
+  el.innerHTML = '<div class="panel"><div class="panel-header"><span>🌟 Mise en avant partenaires dans l\'app</span></div><div style="padding:16px">'
+    + '<div style="background:var(--amBg);border:1px solid var(--amBorder);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--am);font-weight:600;margin-bottom:16px">'
+    + '⭐ Les partenaires marqués "En avant" apparaissent dans l\'ecran de récompenses de l\'app eleve</div>'
+    + '<div id="vitrine-list">Chargement…</div></div></div>';
+  // Charger les partenaires
+  if(typeof renderLotsPanel === 'function') {
+    var lotsCache = (typeof window.LOTS_DB_CACHE !== 'undefined') ? window.LOTS_DB_CACHE : [];
+    var html = lotsCache.length ? lotsCache.map(function(l){
+      return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--b)">'
+        +'<div style="font-size:22px">'+( l.emoji||'🎁')+'</div>'
+        +'<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--t)">'+( l.titre||l.nom||'Lot')+'</div>'
+        +'<div style="font-size:11px;color:var(--t3)">'+( l.description||'')+'</div></div>'
+        +'<label style="display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer">'
+        +'<input type="checkbox"'+(l.en_avant?' checked':'')+'> En avant</label>'
+        +'</div>';
+    }).join('') : '<div style="color:var(--t3);font-size:12px;text-align:center;padding:20px">Aucun lot configure</div>';
+    document.getElementById('vitrine-list').innerHTML = html;
+  }
+}
+
+// ── HUB PARAMÈTRES ──
+function renderParametresHub() {
+  parametresTab('bareme', document.querySelector('#parametres-tabs .defis-tab'));
+}
+function parametresTab(tab, btn) {
+  if(btn) { document.querySelectorAll('#parametres-tabs .defis-tab').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active'); }
+  var el = document.getElementById('parametres-content');
+  if(!el) return;
+  if(tab === 'bareme') {
+    // Clone la vue barème
+    var barV = document.getElementById('v-bareme');
+    if(barV){ el.innerHTML = ''; var clone = barV.cloneNode(true); clone.style.display='block'; el.appendChild(clone); }
+    requestAnimationFrame(function(){ try{ renderBaremeView(); }catch(e){} });
+  } else if(tab === 'contenus') {
+    renderCours(); var cv = document.getElementById('v-cours'); if(cv){ el.innerHTML=''; el.appendChild(cv.cloneNode(true)); }
+  } else if(tab === 'textes') {
+    renderTextes(); var tv = document.getElementById('v-textes'); if(tv){ el.innerHTML=''; el.appendChild(tv.cloneNode(true)); }
+  } else if(tab === 'appcom') {
+    renderAppCom(); var av = document.getElementById('v-appcom'); if(av){ el.innerHTML=''; el.appendChild(av.cloneNode(true)); }
   }
 }
 
