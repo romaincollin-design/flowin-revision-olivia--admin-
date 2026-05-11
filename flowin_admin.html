@@ -1637,19 +1637,85 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
 
     <!-- ══ VUE PARTENAIRES ══ -->
     <div class="view" id="v-partenaires">
+
+      <!-- TOPBAR VUE -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
         <div>
           <div class="view-title">🎁 Partenaires & Lots</div>
-          <div class="view-sub">Gestion des partenaires, stocks et distribution</div>
+          <div class="view-sub" id="partenaires-sub">CRM partenaires · Stocks · Distribution · Validation</div>
         </div>
-        <div style="display:flex;gap:4px" id="partenaires-tabs">
-          <button class="defis-tab active" onclick="partenairesTab('lots',this)">Lots & Stock</button>
-          <button class="defis-tab" onclick="partenairesTab('distribution',this)">Distribution</button>
-          <button class="defis-tab" onclick="partenairesTab('validation',this)">Validation QR</button>
-          <button class="defis-tab" onclick="partenairesTab('vitrine',this)">Vitrine app</button>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="act-btn primary" onclick="openNouveauPartenaire()">+ Nouveau partenaire</button>
         </div>
       </div>
+
+      <!-- TABS -->
+      <div style="display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--b);padding-bottom:0" id="partenaires-tabs">
+        <button class="tb2 on" onclick="partenairesTab('crm',this)">CRM Partenaires</button>
+        <button class="tb2" onclick="partenairesTab('stock',this)">Stock & Codes</button>
+        <button class="tb2" onclick="partenairesTab('distribution',this)">Distribution</button>
+        <button class="tb2" onclick="partenairesTab('validation',this)">Validation QR</button>
+      </div>
+
+      <!-- CONTENU DYNAMIQUE -->
       <div id="partenaires-content"></div>
+
+      <!-- FICHE PARTENAIRE (slide-in) -->
+      <div id="fiche-partenaire-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:9999;backdrop-filter:blur(4px)" onclick="closeFichePartenaire()"></div>
+      <div id="fiche-partenaire-panel" style="position:fixed;top:0;right:-500px;width:480px;height:100vh;background:var(--surf);border-left:1px solid var(--b2);z-index:10000;display:flex;flex-direction:column;transition:right .3s cubic-bezier(.4,0,.2,1);box-shadow:-8px 0 32px rgba(0,0,0,.12);overflow-y:auto">
+        <div id="fiche-partenaire-content"></div>
+      </div>
+
+      <!-- MODAL NOUVEAU PARTENAIRE -->
+      <div id="modal-partenaire" class="modal-overlay">
+        <div class="modal-box med">
+          <div class="modal-header">
+            <span class="modal-header-title" id="modal-partenaire-title">Nouveau partenaire</span>
+            <button class="modal-close" onclick="closeModalPartenaire()">✕</button>
+          </div>
+          <div class="modal-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+              <div>
+                <div style="font-size:11px;font-weight:700;color:var(--t3);margin-bottom:5px">NOM *</div>
+                <input id="mp-nom" placeholder="Ex: Subway Vence" style="width:100%;background:var(--surf2);border:1.5px solid var(--b);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--t);outline:none;font-family:inherit">
+              </div>
+              <div>
+                <div style="font-size:11px;font-weight:700;color:var(--t3);margin-bottom:5px">EMOJI / ICÔNE</div>
+                <input id="mp-emoji" placeholder="🎁" style="width:100%;background:var(--surf2);border:1.5px solid var(--b);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--t);outline:none;font-family:inherit">
+              </div>
+            </div>
+            <div style="margin-bottom:12px">
+              <div style="font-size:11px;font-weight:700;color:var(--t3);margin-bottom:5px">DESCRIPTION</div>
+              <textarea id="mp-desc" rows="2" placeholder="Offre, description courte…" style="width:100%;background:var(--surf2);border:1.5px solid var(--b);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--t);outline:none;resize:none;font-family:inherit"></textarea>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+              <div>
+                <div style="font-size:11px;font-weight:700;color:var(--t3);margin-bottom:5px">CONTACT NOM</div>
+                <input id="mp-contact-nom" placeholder="Prénom Nom" style="width:100%;background:var(--surf2);border:1.5px solid var(--b);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--t);outline:none;font-family:inherit">
+              </div>
+              <div>
+                <div style="font-size:11px;font-weight:700;color:var(--t3);margin-bottom:5px">CONTACT EMAIL</div>
+                <input id="mp-contact-email" type="email" placeholder="contact@partenaire.fr" style="width:100%;background:var(--surf2);border:1.5px solid var(--b);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--t);outline:none;font-family:inherit">
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+              <div>
+                <div style="font-size:11px;font-weight:700;color:var(--t3);margin-bottom:5px">TÉLÉPHONE</div>
+                <input id="mp-tel" placeholder="06 xx xx xx xx" style="width:100%;background:var(--surf2);border:1.5px solid var(--b);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--t);outline:none;font-family:inherit">
+              </div>
+              <div>
+                <div style="font-size:11px;font-weight:700;color:var(--t3);margin-bottom:5px">SITE WEB</div>
+                <input id="mp-site" placeholder="https://…" style="width:100%;background:var(--surf2);border:1.5px solid var(--b);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--t);outline:none;font-family:inherit">
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end">
+              <button class="act-btn" onclick="closeModalPartenaire()">Annuler</button>
+              <button class="act-btn primary" onclick="savePartenaire()">Enregistrer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- ══ VUE PARAMÈTRES ══ -->
@@ -2106,111 +2172,364 @@ function exportAnnonceur() {
 function exportKPI() { showAdminToast('Export PDF — disponible prochainement'); }
 
 // ── HUB PARTENAIRES ──
+// ── PARTENAIRES CRM ──
+var DB_PARTENAIRES = [];
+
 function renderPartenairesHub() {
-  partenairesTab('lots', document.querySelector('#partenaires-tabs .defis-tab'));
+  partenairesTab('crm', document.querySelector('#partenaires-tabs .tb2'));
 }
+
 function partenairesTab(tab, btn) {
-  if(btn) { document.querySelectorAll('#partenaires-tabs .defis-tab').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active'); }
+  if(btn) { document.querySelectorAll('#partenaires-tabs .tb2').forEach(function(b){ b.classList.remove('on'); }); btn.classList.add('on'); }
   var el = document.getElementById('partenaires-content');
   if(!el) return;
-  if(tab === 'lots') {
-    var barV = document.getElementById('v-bareme');
-    if(barV) {
-      barV.classList.add('active');
-      el.innerHTML = '';
-      el.appendChild(barV);
-      requestAnimationFrame(function(){ try{ renderBaremeView(); }catch(e){} });
-    }
-  } else if(tab === 'distribution') {
-    var barV2 = document.getElementById('v-bareme');
-    if(barV2 && barV2.parentNode === el){ document.getElementById('content').appendChild(barV2); barV2.classList.remove('active'); }
-    renderPartenairesDistrib(el);
-  } else if(tab === 'validation') {
-    renderPartenairesQR(el);
-  } else if(tab === 'vitrine') {
-    renderPartenairesVitrine(el);
-  }
+  if(tab === 'crm')          renderPartenaireCRM(el);
+  else if(tab === 'stock')   renderPartenairesStock(el);
+  else if(tab === 'distribution') renderPartenairesDistrib(el);
+  else if(tab === 'validation')   renderPartenairesQR(el);
 }
 
-function renderPartenairesDistrib(el) {
-  var gains = [];
-  if(typeof window._GAINS_CACHE !== 'undefined') gains = window._GAINS_CACHE;
-  var html = '<div class="panel"><div class="panel-header"><span>📦 Historique distribution</span><button class="act-btn" onclick="loadGainsForDistrib()">Actualiser</button></div>'
-    + '<table><thead><tr><th>Élève</th><th>Lot</th><th>Code</th><th>Date</th><th>Statut</th></tr></thead>'
-    + '<tbody id="distrib-tbody"></tbody></table></div>';
-  el.innerHTML = html;
-  loadGainsForDistrib();
-}
-
-function loadGainsForDistrib() {
+// ── CRM PARTENAIRES ──
+function loadPartenaires(cb) {
+  if(!SB_ENABLED) { cb([]); return; }
   var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
-  fetch(SB_URL+'/rest/v1/gains?order=ts.desc&limit=100',{headers:hdrs})
+  fetch(SB_URL+'/rest/v1/partenaires?order=ts.desc', {headers:hdrs})
     .then(function(r){ return r.ok?r.json():[]; })
-    .then(function(gains){
-      window._GAINS_CACHE = gains;
-      var tb = document.getElementById('distrib-tbody');
-      if(!tb) return;
-      if(!gains.length){ tb.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--t3);padding:20px">Aucune distribution</td></tr>'; return; }
-      tb.innerHTML = gains.map(function(g){
-        var date = g.ts ? new Date(g.ts).toLocaleDateString('fr-FR') : '—';
-        var statut = g.utilise ? '<span class="bdg green">Utilisé</span>' : '<span class="bdg amber">Distribué</span>';
-        return '<tr><td>'+( g.pseudo||'—')+'</td><td>'+(g.lot_titre||'—')+'</td><td><code style="background:var(--surf2);padding:2px 6px;border-radius:4px;font-size:11px">'+(g.code||'—')+'</code></td><td>'+date+'</td><td>'+statut+'</td></tr>';
-      }).join('');
-    }).catch(function(){});
+    .then(function(rows){ DB_PARTENAIRES = rows||[]; cb(DB_PARTENAIRES); })
+    .catch(function(){ cb([]); });
 }
+
+function renderPartenaireCRM(el) {
+  el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3)">Chargement…</div>';
+  loadPartenaires(function(parts) {
+    if(!parts.length) {
+      el.innerHTML = '<div class="empty"><div class="empty-icon">🎁</div><div class="empty-text">Aucun partenaire — cliquez "+ Nouveau partenaire"</div></div>';
+      return;
+    }
+    // KPIs
+    var actifs = parts.filter(function(p){ return p.actif; }).length;
+    var enAvant = parts.filter(function(p){ return p.en_avant; }).length;
+    var html = '<div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">'
+      + kpiCard('🤝','Partenaires', parts.length, actifs+' actifs', '#7C5CFC')
+      + kpiCard('✅','Actifs', actifs, 'publies dans l\'app', '#0E9E6E')
+      + kpiCard('⭐','En avant', enAvant, 'mis en avant', '#C27C0A')
+      + '</div>';
+    // Grille cartes
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px">';
+    parts.forEach(function(p) {
+      var initials = (p.nom||'?').substring(0,2).toUpperCase();
+      var statut = p.actif
+        ? '<span class="bdg green">Actif</span>'
+        : '<span class="bdg gray">Inactif</span>';
+      var avant = p.en_avant ? '<span class="bdg amber" style="margin-left:4px">⭐ En avant</span>' : '';
+      html += '<div class="panel" style="margin:0;cursor:pointer;transition:box-shadow .15s" onclick="openFichePartenaire(\'' + p.id + '\')" onmouseenter="this.style.boxShadow=\'0 6px 24px rgba(0,0,0,.1)\'" onmouseleave="this.style.boxShadow=\'\'"><div style="padding:16px">'
+        + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">'
+        + '<div style="width:44px;height:44px;border-radius:12px;background:var(--acBg);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">' + (p.emoji||'🎁') + '</div>'
+        + '<div style="flex:1;min-width:0">'
+        + '<div style="font-size:14px;font-weight:800;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (p.nom||'—') + '</div>'
+        + '<div style="font-size:11px;color:var(--t3);margin-top:2px">' + (p.contact_email||p.site_web||'Aucun contact') + '</div>'
+        + '</div>'
+        + '<div>' + statut + avant + '</div>'
+        + '</div>'
+        + '<div style="font-size:11px;color:var(--t2);margin-bottom:12px;min-height:32px">' + (p.description||'Aucune description') + '</div>'
+        + '<div style="display:flex;gap:6px">'
+        + '<button class="act-btn" onclick="event.stopPropagation();openFichePartenaire(\'' + p.id + '\')" style="flex:1">Voir fiche</button>'
+        + '<button class="act-btn" onclick="event.stopPropagation();togglePartenaire(\'' + p.id + '\',' + (!p.actif) + ')" style="font-size:10px">' + (p.actif?'Désactiver':'Activer') + '</button>'
+        + '</div>'
+        + '</div></div>';
+    });
+    html += '</div>';
+    el.innerHTML = html;
+  });
+}
+
+function openNouveauPartenaire() {
+  document.getElementById('mp-nom').value = '';
+  document.getElementById('mp-emoji').value = '';
+  document.getElementById('mp-desc').value = '';
+  document.getElementById('mp-contact-nom').value = '';
+  document.getElementById('mp-contact-email').value = '';
+  document.getElementById('mp-tel').value = '';
+  document.getElementById('mp-site').value = '';
+  document.getElementById('modal-partenaire-title').textContent = 'Nouveau partenaire';
+  document.getElementById('modal-partenaire').classList.add('open');
+}
+
+function closeModalPartenaire() {
+  document.getElementById('modal-partenaire').classList.remove('open');
+}
+
+function savePartenaire() {
+  var nom = (document.getElementById('mp-nom').value||'').trim();
+  if(!nom){ showAdminToast('Le nom est obligatoire', 'error'); return; }
+  var data = {
+    nom: nom,
+    emoji: document.getElementById('mp-emoji').value||'🎁',
+    description: document.getElementById('mp-desc').value||'',
+    contact_nom: document.getElementById('mp-contact-nom').value||'',
+    contact_email: document.getElementById('mp-contact-email').value||'',
+    contact_tel: document.getElementById('mp-tel').value||'',
+    site_web: document.getElementById('mp-site').value||'',
+    actif: true, en_avant: false
+  };
+  var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+  fetch(SB_URL+'/rest/v1/partenaires', {method:'POST',headers:hdrs,body:JSON.stringify(data)})
+    .then(function(r){
+      if(r.ok){ closeModalPartenaire(); showAdminToast('Partenaire créé !'); renderPartenaireCRM(document.getElementById('partenaires-content')); }
+      else { showAdminToast('Erreur création', 'error'); }
+    }).catch(function(){ showAdminToast('Erreur réseau', 'error'); });
+}
+
+function togglePartenaire(id, actif) {
+  var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+  fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+id, {method:'PATCH',headers:hdrs,body:JSON.stringify({actif:actif})})
+    .then(function(r){ if(r.ok){ showAdminToast(actif?'Partenaire activé':'Partenaire désactivé'); renderPartenaireCRM(document.getElementById('partenaires-content')); } })
+    .catch(function(){});
+}
+
+function openFichePartenaire(id) {
+  loadPartenaires(function(parts) {
+    var p = parts.find(function(x){ return x.id===id; });
+    if(!p) return;
+    var panel = document.getElementById('fiche-partenaire-panel');
+    var overlay = document.getElementById('fiche-partenaire-overlay');
+    // Charger les gains de ce partenaire
+    var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
+    fetch(SB_URL+'/rest/v1/gains?partenaire_id=eq.'+encodeURIComponent(id)+'&order=ts.desc&limit=20', {headers:hdrs})
+      .then(function(r){ return r.ok?r.json():[]; })
+      .then(function(gains) {
+        var distribues = gains.length;
+        var utilises = gains.filter(function(g){ return g.utilise; }).length;
+        var html = '<div style="padding:20px 20px 0">'
+          // Header
+          + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--b)">'
+          + '<div style="width:50px;height:50px;border-radius:14px;background:var(--acBg);display:flex;align-items:center;justify-content:center;font-size:26px">'+(p.emoji||'🎁')+'</div>'
+          + '<div style="flex:1"><div style="font-size:18px;font-weight:800;color:var(--t)">'+(p.nom||'—')+'</div>'
+          + '<div style="font-size:11px;color:var(--t3);margin-top:2px">'+(p.description||'')+'</div></div>'
+          + '<button class="modal-close" onclick="closeFichePartenaire()">✕</button>'
+          + '</div>'
+          // KPIs stock
+          + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">'
+          + '<div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--t)">'+distribues+'</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">Distribués</div></div>'
+          + '<div style="background:var(--grBg);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--gr)">'+utilises+'</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">Utilisés</div></div>'
+          + '<div style="background:var(--amBg);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--am)">'+(distribues-utilises)+'</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">En attente</div></div>'
+          + '</div>'
+          // Coordonnées
+          + '<div style="background:var(--surf2);border-radius:10px;padding:14px;margin-bottom:14px">'
+          + '<div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Coordonnées</div>'
+          + infoRow('Contact', p.contact_nom||'—')
+          + infoRow('Email', p.contact_email||'—')
+          + infoRow('Tél', p.contact_tel||'—')
+          + infoRow('Site', p.site_web||'—')
+          + infoRow('Statut', p.actif?'Actif':'Inactif')
+          + '</div>'
+          // Toggle en avant
+          + '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--amBg);border-radius:10px;margin-bottom:14px">'
+          + '<div><div style="font-size:13px;font-weight:700;color:var(--t)">⭐ Mettre en avant dans l\'app</div>'
+          + '<div style="font-size:11px;color:var(--t3)">Visible sur l\'ecran recompenses eleve</div></div>'
+          + '<label style="position:relative;display:inline-block;width:44px;height:24px"><input type="checkbox" id="toggle-en-avant-'+p.id+'" '+(p.en_avant?'checked':'')+'style="opacity:0;width:0;height:0" onchange="toggleEnAvant(\'' + p.id + '\',this.checked)"><span style="position:absolute;cursor:pointer;inset:0;background:'+(p.en_avant?'var(--ac)':'#ccc')+';border-radius:24px;transition:.3s" id="toggle-track-'+p.id+'"><span style="position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:'+(p.en_avant?'23px':'3px')+';transition:.3s" id="toggle-knob-'+p.id+'"></span></span></label>'
+          + '</div>'
+          // Historique gains
+          + '<div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Derniers codes distribués</div>'
+          + '<div style="max-height:280px;overflow-y:auto">';
+        if(!gains.length) {
+          html += '<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">Aucun code distribué</div>';
+        } else {
+          gains.forEach(function(g) {
+            var date = g.ts ? new Date(g.ts).toLocaleDateString('fr-FR') : '—';
+            var statutColor = g.utilise ? 'var(--gr)' : 'var(--am)';
+            var statutLabel = g.utilise ? '✅ Utilisé' : '⏳ Distribué';
+            html += '<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--b)">'
+              + '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--t)">'+(g.pseudo||'—')+'</div>'
+              + '<div style="font-size:10px;color:var(--t3)">'+(g.lot_nom||'Lot')+' · '+date+'</div></div>'
+              + '<code style="background:var(--surf2);padding:3px 8px;border-radius:5px;font-size:11px;letter-spacing:.08em">'+(g.code||'—')+'</code>'
+              + '<span style="font-size:10px;font-weight:700;color:'+statutColor+'">'+statutLabel+'</span>'
+              + '</div>';
+          });
+        }
+        html += '</div></div>';
+        document.getElementById('fiche-partenaire-content').innerHTML = html;
+        panel.style.right = '0';
+        overlay.style.display = 'block';
+      }).catch(function() {
+        document.getElementById('fiche-partenaire-content').innerHTML = '<div style="padding:20px;color:var(--re)">Erreur chargement</div>';
+        panel.style.right = '0';
+        overlay.style.display = 'block';
+      });
+  });
+}
+
+function infoRow(k, v) {
+  return '<div class="info-row"><span class="info-key">'+k+'</span><span class="info-val">'+v+'</span></div>';
+}
+
+function closeFichePartenaire() {
+  document.getElementById('fiche-partenaire-panel').style.right = '-500px';
+  document.getElementById('fiche-partenaire-overlay').style.display = 'none';
+}
+
+function toggleEnAvant(id, val) {
+  var track = document.getElementById('toggle-track-'+id);
+  var knob = document.getElementById('toggle-knob-'+id);
+  if(track) track.style.background = val ? 'var(--ac)' : '#ccc';
+  if(knob) knob.style.left = val ? '23px' : '3px';
+  var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+  fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+id, {method:'PATCH',headers:hdrs,body:JSON.stringify({en_avant:val})})
+    .then(function(r){ if(r.ok) showAdminToast(val?'Mis en avant !':'Retiré de la vitrine'); })
+    .catch(function(){});
+}
+
+// ── STOCK & CODES ──
+function renderPartenairesStock(el) {
+  el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3)">Chargement…</div>';
+  var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
+  // Charger gains groupés par lot
+  Promise.all([
+    fetch(SB_URL+'/rest/v1/gains?order=lot_nom.asc', {headers:hdrs}).then(function(r){ return r.ok?r.json():[]; }),
+    fetch(SB_URL+'/rest/v1/lots_stock?order=partenaire.asc', {headers:hdrs}).then(function(r){ return r.ok?r.json():[]; })
+  ]).then(function(results) {
+    var gains = results[0] || [];
+    var stock = results[1] || [];
+    // Grouper par lot_nom
+    var byLot = {};
+    gains.forEach(function(g) {
+      var k = g.lot_nom || g.lot_id || 'Sans nom';
+      if(!byLot[k]) byLot[k] = {nom:k, emoji:g.lot_emoji||'🎁', distribues:0, utilises:0, codes:[]};
+      byLot[k].distribues++;
+      if(g.utilise) byLot[k].utilises++;
+      byLot[k].codes.push(g);
+    });
+    var html = '';
+    // KPIs globaux
+    var totalDist = gains.length;
+    var totalUtil = gains.filter(function(g){ return g.utilise; }).length;
+    html += '<div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">'
+      + kpiCard('📦','Total distribués', totalDist, 'tous lots', '#7C5CFC')
+      + kpiCard('✅','Utilisés', totalUtil, Math.round(totalUtil/Math.max(totalDist,1)*100)+'% taux utilisation', '#0E9E6E')
+      + kpiCard('⏳','En attente', totalDist-totalUtil, 'non encore utilisés', '#C27C0A')
+      + '</div>';
+    // Par lot
+    if(Object.keys(byLot).length) {
+      html += '<div class="panel"><div class="panel-header"><span>📊 Stock par lot</span></div><table><thead><tr><th>Lot</th><th>Distribués</th><th>Utilisés</th><th>En attente</th><th>Taux</th></tr></thead><tbody>';
+      Object.values(byLot).forEach(function(l) {
+        var taux = l.distribues ? Math.round(l.utilises/l.distribues*100) : 0;
+        var color = taux >= 80 ? 'var(--gr)' : taux >= 40 ? 'var(--am)' : 'var(--t3)';
+        html += '<tr>'
+          + '<td><span style="font-size:16px">'+(l.emoji||'🎁')+'</span> <strong>'+l.nom+'</strong></td>'
+          + '<td>'+l.distribues+'</td>'
+          + '<td style="color:var(--gr);font-weight:700">'+l.utilises+'</td>'
+          + '<td style="color:var(--am);font-weight:700">'+(l.distribues-l.utilises)+'</td>'
+          + '<td><span style="font-weight:800;color:'+color+'">'+taux+'%</span></td>'
+          + '</tr>';
+      });
+      html += '</tbody></table></div>';
+    } else {
+      html += '<div class="empty"><div class="empty-icon">📦</div><div class="empty-text">Aucun code distribué pour l\'instant</div></div>';
+    }
+    el.innerHTML = html;
+  }).catch(function(e) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Erreur chargement stock</div></div>';
+  });
+}
+
+// ── DISTRIBUTION ──
+function renderPartenairesDistrib(el) {
+  el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3)">Chargement…</div>';
+  var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
+  fetch(SB_URL+'/rest/v1/gains?order=ts.desc&limit=200', {headers:hdrs})
+    .then(function(r){ return r.ok?r.json():[]; })
+    .then(function(gains) {
+      var html = '<div class="panel"><div class="panel-header">'
+        + '<span>📦 Historique distribution ('+gains.length+' codes)</span>'
+        + '<button class="act-btn" onclick="refreshDistrib()">↻ Actualiser</button>'
+        + '</div>';
+      if(!gains.length) {
+        html += '<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Aucun code distribué</div></div>';
+      } else {
+        html += '<table><thead><tr><th>Élève</th><th>Lot</th><th>Code</th><th>Date</th><th>Statut</th></tr></thead><tbody>';
+        gains.forEach(function(g) {
+          var date = g.ts ? new Date(g.ts).toLocaleDateString('fr-FR') : '—';
+          var statut = g.utilise
+            ? '<span class="bdg green">✅ Utilisé</span>'
+            : '<span class="bdg amber">⏳ Distribué</span>';
+          html += '<tr>'
+            + '<td><strong>'+(g.pseudo||'—')+'</strong></td>'
+            + '<td><span style="margin-right:5px">'+(g.lot_emoji||'🎁')+'</span>'+(g.lot_nom||'—')+'</td>'
+            + '<td><code style="background:var(--surf2);padding:3px 8px;border-radius:5px;font-size:11px;letter-spacing:.06em">'+(g.code||'—')+'</code></td>'
+            + '<td>'+date+'</td>'
+            + '<td>'+statut+'</td>'
+            + '</tr>';
+        });
+        html += '</tbody></table>';
+      }
+      html += '</div>';
+      el.innerHTML = html;
+    }).catch(function(){ el.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Erreur chargement</div></div>'; });
+}
+
+// ── VALIDATION QR ──
+function refreshDistrib() { var el = document.getElementById('partenaires-content'); if(el) renderPartenairesDistrib(el); }
 
 function renderPartenairesQR(el) {
-  el.innerHTML = '<div class="panel"><div class="panel-header"><span>📱 Validation QR code chez le partenaire</span></div><div style="padding:24px;text-align:center">'
-    + '<div style="font-size:48px;margin-bottom:12px">📱</div>'
-    + '<div style="font-size:15px;font-weight:700;color:var(--t);margin-bottom:6px">Scanner un code lot</div>'
-    + '<div style="font-size:12px;color:var(--t3);margin-bottom:20px">Scannez le QR code présenté par l\'eleve pour valider et décompter son lot</div>'
-    + '<input id="qr-code-input" placeholder="Code lot (saisie manuelle)…" style="width:100%;max-width:300px;background:var(--surf2);border:2px solid var(--b);border-radius:10px;padding:12px 16px;font-size:16px;text-align:center;outline:none;font-family:inherit;letter-spacing:.1em;margin-bottom:12px">'
-    + '<br><button class="act-btn primary" onclick="validateLotQR()" style="margin-top:4px">✅ Valider ce code</button>'
-    + '<div id="qr-result" style="margin-top:16px;font-size:13px;font-weight:600"></div>'
-    + '</div></div>';
+  el.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'
+    + '<div class="panel" style="margin:0"><div class="panel-header"><span>📱 Scanner un code</span></div>'
+    + '<div style="padding:24px;text-align:center">'
+    + '<div style="font-size:56px;margin-bottom:14px">📱</div>'
+    + '<div style="font-size:15px;font-weight:800;color:var(--t);margin-bottom:6px">Validation lot partenaire</div>'
+    + '<div style="font-size:12px;color:var(--t3);margin-bottom:20px;line-height:1.5">Saisissez le code presente par l\'eleve pour valider et décompter son lot</div>'
+    + '<input id="qr-code-input" placeholder="CODE-LOT…" style="width:100%;max-width:260px;background:var(--surf2);border:2px solid var(--b);border-radius:10px;padding:14px 16px;font-size:18px;text-align:center;outline:none;font-family:inherit;letter-spacing:.12em;font-weight:700;display:block;margin:0 auto 14px">'
+    + '<button class="act-btn primary" onclick="validateLotQR()" style="font-size:13px;padding:10px 24px">✅ Valider ce code</button>'
+    + '<div id="qr-result" style="margin-top:18px;font-size:13px;font-weight:700;min-height:20px"></div>'
+    + '</div></div>'
+    + '<div class="panel" style="margin:0"><div class="panel-header"><span>📋 Comment ça marche</span></div>'
+    + '<div style="padding:16px;display:flex;flex-direction:column;gap:12px">'
+    + stepQR('1','L\'eleve gagne un lot','Il recoit un code dans son profil Flowin')
+    + stepQR('2','Il se rend chez le partenaire','Il presente son code ou le QR de son profil')
+    + stepQR('3','Le partenaire scanne ou saisit','Ici, dans cet ecran')
+    + stepQR('4','Validation automatique','Le code passe à "Utilisé", le stock se met à jour')
+    + '</div></div>'
+    + '</div>';
+}
+
+function stepQR(n, titre, desc) {
+  return '<div style="display:flex;align-items:flex-start;gap:10px">'
+    + '<div style="width:26px;height:26px;border-radius:50%;background:var(--acBg);color:var(--ac);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+n+'</div>'
+    + '<div><div style="font-size:12px;font-weight:700;color:var(--t)">'+titre+'</div>'
+    + '<div style="font-size:11px;color:var(--t3);margin-top:2px">'+desc+'</div></div></div>';
 }
 
 function validateLotQR() {
   var code = (document.getElementById('qr-code-input').value||'').trim().toUpperCase();
-  if(!code){ showAdminToast('Saisis un code', 'error'); return; }
+  var res = document.getElementById('qr-result');
+  if(!code){ res.innerHTML='<span style="color:var(--am)">⚠️ Saisis un code d\'abord</span>'; return; }
+  res.innerHTML = '<span style="color:var(--t3)">Vérification…</span>';
   var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
-  fetch(SB_URL+'/rest/v1/gains?code=eq.'+encodeURIComponent(code)+'&select=*',{headers:hdrs})
+  fetch(SB_URL+'/rest/v1/gains?code=eq.'+encodeURIComponent(code)+'&select=*', {headers:hdrs})
     .then(function(r){ return r.ok?r.json():[]; })
-    .then(function(rows){
-      var res = document.getElementById('qr-result');
+    .then(function(rows) {
       if(!rows.length){ res.innerHTML='<span style="color:var(--re)">❌ Code introuvable</span>'; return; }
       var g = rows[0];
-      if(g.utilise){ res.innerHTML='<span style="color:var(--am)">⚠️ Déjà utilisé le '+new Date(g.utilise_ts||g.ts).toLocaleDateString('fr-FR')+'</span>'; return; }
-      // Marquer comme utilisé
-      fetch(SB_URL+'/rest/v1/gains?code=eq.'+encodeURIComponent(code),{
-        method:'PATCH',headers:hdrs,
+      if(g.utilise) {
+        var d = g.utilise_ts||g.ts;
+        res.innerHTML='<span style="color:var(--am)">⚠️ Déjà utilisé le '+new Date(d).toLocaleDateString('fr-FR')+'</span>';
+        return;
+      }
+      fetch(SB_URL+'/rest/v1/gains?code=eq.'+encodeURIComponent(code), {
+        method:'PATCH', headers:hdrs,
         body:JSON.stringify({utilise:true, utilise_ts:new Date().toISOString()})
-      }).then(function(r2){
-        if(r2.ok){ res.innerHTML='<span style="color:var(--gr)">✅ Validé ! Lot "'+( g.lot_titre||code)+'" décompté pour '+( g.pseudo||'?')+'</span>'; document.getElementById('qr-code-input').value=''; }
-        else { res.innerHTML='<span style="color:var(--re)">❌ Erreur validation</span>'; }
+      }).then(function(r2) {
+        if(r2.ok) {
+          document.getElementById('qr-code-input').value = '';
+          res.innerHTML='<div style="background:var(--grBg);border:1px solid var(--grBorder);border-radius:10px;padding:14px;margin-top:8px">'
+            +'<div style="font-size:15px;font-weight:800;color:var(--gr);margin-bottom:4px">✅ Code validé !</div>'
+            +'<div style="font-size:12px;color:var(--t2)"><strong>'+(g.pseudo||'?')+'</strong> · '+(g.lot_nom||code)+'</div>'
+            +'</div>';
+          showAdminToast('Code validé — lot décompté');
+        } else {
+          res.innerHTML='<span style="color:var(--re)">❌ Erreur lors de la validation</span>';
+        }
       });
-    }).catch(function(){ document.getElementById('qr-result').innerHTML='<span style="color:var(--re)">❌ Erreur réseau</span>'; });
-}
-
-function renderPartenairesVitrine(el) {
-  el.innerHTML = '<div class="panel"><div class="panel-header"><span>🌟 Mise en avant partenaires dans l\'app</span></div><div style="padding:16px">'
-    + '<div style="background:var(--amBg);border:1px solid var(--amBorder);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--am);font-weight:600;margin-bottom:16px">'
-    + '⭐ Les partenaires marqués "En avant" apparaissent dans l\'ecran de récompenses de l\'app eleve</div>'
-    + '<div id="vitrine-list">Chargement…</div></div></div>';
-  // Charger les partenaires
-  if(typeof renderLotsPanel === 'function') {
-    var lotsCache = (typeof window.LOTS_DB_CACHE !== 'undefined') ? window.LOTS_DB_CACHE : [];
-    var html = lotsCache.length ? lotsCache.map(function(l){
-      return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--b)">'
-        +'<div style="font-size:22px">'+( l.emoji||'🎁')+'</div>'
-        +'<div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--t)">'+( l.titre||l.nom||'Lot')+'</div>'
-        +'<div style="font-size:11px;color:var(--t3)">'+( l.description||'')+'</div></div>'
-        +'<label style="display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer">'
-        +'<input type="checkbox"'+(l.en_avant?' checked':'')+'> En avant</label>'
-        +'</div>';
-    }).join('') : '<div style="color:var(--t3);font-size:12px;text-align:center;padding:20px">Aucun lot configure</div>';
-    document.getElementById('vitrine-list').innerHTML = html;
-  }
+    }).catch(function(){ res.innerHTML='<span style="color:var(--re)">❌ Erreur réseau</span>'; });
 }
 
 // ── HUB PARAMÈTRES ──
@@ -2785,7 +3104,7 @@ function openEleve(pseudo) {
 
     <!-- DÉFIS ÉLÈVE — V11 -->
     <div class="fiche-block" style="margin-bottom:12px">
-      <div class="fiche-block-title">⚔️ Défis de l'élève</div>
+      <div class="fiche-block-title">⚔️ Défis de l\'eleve</div>
       <!-- Onglets -->
       <div style="display:flex;gap:6px;margin-bottom:10px">
         <button id="defiTabCrees${pseudo}" onclick="renderDefisFiche('${pseudo}','crees')" style="flex:1;padding:6px 4px;background:var(--ac);color:#fff;border:none;border-radius:7px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">Créés</button>
@@ -5517,7 +5836,7 @@ function buildAddCoursHTML(editing, id) {
         <span style="font-size:22px">🤖</span>
         <div>
           <div style="font-size:12px;font-weight:700;color:var(--t)">Génération IA — disponible en V2</div>
-          <div style="font-size:10px;color:var(--t3);margin-top:2px">Upload le document, remplis le formulaire manuellement pour l'instant</div>
+          <div style="font-size:10px;color:var(--t3);margin-top:2px">Upload le document, remplis le formulaire manuellement pour l\'instant</div>
         </div>
         <span class="bdg amber" style="margin-left:auto;flex-shrink:0">Bientôt</span>
       </div>
