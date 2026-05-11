@@ -748,53 +748,129 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
     <div class="view" id="v-bareme">
 
       <!-- HEADER -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
         <div>
-          <div class="view-title" style="margin-bottom:2px">⭐ Barème & Lots</div>
-          <div class="view-sub">Points, ligues et récompenses partenaires</div>
+          <div class="view-title">⭐ Barème & Lots</div>
+          <div class="view-sub">Points, ligues et récompenses</div>
         </div>
         <div style="display:flex;gap:8px" id="bareme-actions">
-          <button onclick="loadStockAndGains().then(function(){renderStockPanel();renderGainsPanel()})" class="act-btn">↻ Actualiser</button>
+          <button onclick="resetBareme()" class="act-btn">↺ Reset</button>
           <button onclick="saveBaremeComplet()" class="act-btn primary">✓ Sauvegarder</button>
         </div>
       </div>
 
       <!-- TABS -->
-      <div style="display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--b);padding-bottom:0">
-        <button class="tb2 on" id="bareme-tab-bareme" onclick="baremeTab('bareme',this)">⭐ Barème & Ligues</button>
+      <div style="display:flex;gap:0;margin-bottom:28px;border-bottom:2px solid var(--b)">
+        <button class="tb2 on" id="bareme-tab-bareme" onclick="baremeTab('bareme',this)">⭐ Points & Ligues</button>
         <button class="tb2" id="bareme-tab-lots" onclick="baremeTab('lots',this)">🎁 Lots partenaires</button>
       </div>
 
-      <!-- CONTENU ONGLET BARÈME -->
+      <!-- SECTION POINTS & LIGUES -->
       <div id="bareme-section-bareme">
 
-      <!-- LIGNE 1 : Points + Ligues -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-        <div class="panel">
-          <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between">
-            <span>⭐ Points par action</span>
-            <button onclick="resetBareme()" style="font-size:10px;padding:3px 9px;border-radius:20px;background:var(--surf2);border:1px solid var(--b);cursor:pointer;color:var(--t2)">↺ Reset</button>
-          </div>
-          <div style="padding:16px">
-            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Bonne réponse (base)</label><span><span class="bsl-val" id="bvp-pts_bonne_reponse">15</span><span class="bsl-unit"> pts</span></span></div><input type="range" min="1" max="50" step="1" value="15" style="width:100%;accent-color:var(--am)" oninput="BAREME['pts_bonne_reponse'].val=parseInt(this.value);document.getElementById('bvp-pts_bonne_reponse').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>1</span><span>50</span></div></div>
-            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Bonus streak (2e bonne)</label><span><span class="bsl-val" id="bvp-pts_streak_bonus_2e">5</span><span class="bsl-unit"> pts</span></span></div><input type="range" min="0" max="20" step="1" value="5" style="width:100%;accent-color:var(--am)" oninput="BAREME['pts_streak_bonus_2e'].val=parseInt(this.value);document.getElementById('bvp-pts_streak_bonus_2e').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>0</span><span>20</span></div></div>
-            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Bonus streak (3e+)</label><span><span class="bsl-val" id="bvp-pts_streak_bonus_sup">2</span><span class="bsl-unit"> pts</span></span></div><input type="range" min="0" max="10" step="1" value="2" style="width:100%;accent-color:var(--am)" oninput="BAREME['pts_streak_bonus_sup'].val=parseInt(this.value);document.getElementById('bvp-pts_streak_bonus_sup').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>0</span><span>10</span></div></div>
-            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Quiz parfait (100%)</label><span><span class="bsl-val" id="bvp-pts_perfect_bonus">10</span><span class="bsl-unit"> pts bonus</span></span></div><input type="range" min="0" max="100" step="5" value="10" style="width:100%;accent-color:var(--am)" oninput="BAREME['pts_perfect_bonus'].val=parseInt(this.value);document.getElementById('bvp-pts_perfect_bonus').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>0</span><span>100</span></div></div>
-            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Parrainage réussi</label><span><span class="bsl-val" id="bvp-pts_parrainage">100</span><span class="bsl-unit"> pts</span></span></div><input type="range" min="10" max="500" step="10" value="100" style="width:100%;accent-color:var(--am)" oninput="BAREME['pts_parrainage'].val=parseInt(this.value);document.getElementById('bvp-pts_parrainage').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>10</span><span>500</span></div></div>
-            <div class="bsl"><div class="bsl-top"><label class="bsl-lbl">Questions par quiz</label><span><span class="bsl-val" id="bvp-nb_questions_quiz">5</span><span class="bsl-unit"> questions</span></span></div><input type="range" min="3" max="20" step="1" value="5" style="width:100%;accent-color:var(--am)" oninput="BAREME['nb_questions_quiz'].val=parseInt(this.value);document.getElementById('bvp-nb_questions_quiz').textContent=this.value;renderBareme()"><div class="bsl-bnds"><span>3</span><span>20</span></div></div>
+        <!-- POINTS PAR ACTION -->
+        <div style="margin-bottom:32px">
+          <div style="font-size:11px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:20px">Points par action</div>
+
+          <div style="display:flex;flex-direction:column;gap:24px;max-width:600px">
+
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
+                <div style="font-size:16px;font-weight:700;color:var(--t)">Bonne réponse</div>
+                <div style="font-size:28px;font-weight:800;color:var(--ac);font-family:'Syne',sans-serif"><span id="bvp-pts_bonne_reponse">15</span> <span style="font-size:14px;color:var(--t3)">pts</span></div>
+              </div>
+              <input type="range" min="1" max="50" step="1" value="15" style="width:100%;accent-color:var(--ac);height:6px" oninput="BAREME['pts_bonne_reponse'].val=parseInt(this.value);document.getElementById('bvp-pts_bonne_reponse').textContent=this.value;renderBareme()">
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:4px"><span>1 pt</span><span>50 pts</span></div>
+            </div>
+
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
+                <div style="font-size:16px;font-weight:700;color:var(--t)">Bonus streak — 2e bonne</div>
+                <div style="font-size:28px;font-weight:800;color:var(--ac);font-family:'Syne',sans-serif"><span id="bvp-pts_streak_bonus_2e">5</span> <span style="font-size:14px;color:var(--t3)">pts</span></div>
+              </div>
+              <input type="range" min="0" max="20" step="1" value="5" style="width:100%;accent-color:var(--ac);height:6px" oninput="BAREME['pts_streak_bonus_2e'].val=parseInt(this.value);document.getElementById('bvp-pts_streak_bonus_2e').textContent=this.value;renderBareme()">
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:4px"><span>0 pt</span><span>20 pts</span></div>
+            </div>
+
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
+                <div style="font-size:16px;font-weight:700;color:var(--t)">Bonus streak — 3e et +</div>
+                <div style="font-size:28px;font-weight:800;color:var(--ac);font-family:'Syne',sans-serif"><span id="bvp-pts_streak_bonus_sup">2</span> <span style="font-size:14px;color:var(--t3)">pts</span></div>
+              </div>
+              <input type="range" min="0" max="10" step="1" value="2" style="width:100%;accent-color:var(--ac);height:6px" oninput="BAREME['pts_streak_bonus_sup'].val=parseInt(this.value);document.getElementById('bvp-pts_streak_bonus_sup').textContent=this.value;renderBareme()">
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:4px"><span>0 pt</span><span>10 pts</span></div>
+            </div>
+
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
+                <div style="font-size:16px;font-weight:700;color:var(--t)">Quiz parfait (100%)</div>
+                <div style="font-size:28px;font-weight:800;color:var(--gr);font-family:'Syne',sans-serif"><span id="bvp-pts_perfect_bonus">10</span> <span style="font-size:14px;color:var(--t3)">pts bonus</span></div>
+              </div>
+              <input type="range" min="0" max="100" step="5" value="10" style="width:100%;accent-color:var(--gr);height:6px" oninput="BAREME['pts_perfect_bonus'].val=parseInt(this.value);document.getElementById('bvp-pts_perfect_bonus').textContent=this.value;renderBareme()">
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:4px"><span>0 pt</span><span>100 pts</span></div>
+            </div>
+
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
+                <div style="font-size:16px;font-weight:700;color:var(--t)">Parrainage réussi</div>
+                <div style="font-size:28px;font-weight:800;color:var(--am);font-family:'Syne',sans-serif"><span id="bvp-pts_parrainage">100</span> <span style="font-size:14px;color:var(--t3)">pts</span></div>
+              </div>
+              <input type="range" min="10" max="500" step="10" value="100" style="width:100%;accent-color:var(--am);height:6px" oninput="BAREME['pts_parrainage'].val=parseInt(this.value);document.getElementById('bvp-pts_parrainage').textContent=this.value;renderBareme()">
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:4px"><span>10 pts</span><span>500 pts</span></div>
+            </div>
+
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
+                <div style="font-size:16px;font-weight:700;color:var(--t)">Questions par quiz</div>
+                <div style="font-size:28px;font-weight:800;color:var(--t);font-family:'Syne',sans-serif"><span id="bvp-nb_questions_quiz">5</span> <span style="font-size:14px;color:var(--t3)">questions</span></div>
+              </div>
+              <input type="range" min="3" max="20" step="1" value="5" style="width:100%;accent-color:var(--t2);height:6px" oninput="BAREME['nb_questions_quiz'].val=parseInt(this.value);document.getElementById('bvp-nb_questions_quiz').textContent=this.value;renderBareme()">
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:4px"><span>3</span><span>20</span></div>
+            </div>
+
           </div>
         </div>
-        <div class="panel">
-          <div class="panel-header">🏆 Seuils de ligue</div>
-          <div style="padding:16px">
-            <div style="margin-bottom:10px;padding:12px;background:#F5EDE3;border-radius:9px;border-left:3px solid #9A6B3A"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🥉</span><span style="font-size:13px;font-weight:700;color:#9A6B3A;min-width:60px">Bronze</span><span style="font-size:11px;color:#9A6B3A">0 — <input type="number" value="499" style="width:70px;border:1px solid #9A6B3A;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;color:#9A6B3A;background:rgba(255,255,255,.8);outline:none" onchange="LIGUES_SEUILS[0].max=parseInt(this.value);LIGUES_SEUILS[1].min=parseInt(this.value)+1;renderBareme()"> pts</span></div></div>
-            <div style="margin-bottom:10px;padding:12px;background:#F0F1F4;border-radius:9px;border-left:3px solid #6B7280"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🥈</span><span style="font-size:13px;font-weight:700;color:#6B7280;min-width:60px">Argent</span><span style="font-size:11px;color:#6B7280">500 — <input type="number" value="1499" style="width:70px;border:1px solid #6B7280;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;color:#6B7280;background:rgba(255,255,255,.8);outline:none" onchange="LIGUES_SEUILS[1].max=parseInt(this.value);LIGUES_SEUILS[2].min=parseInt(this.value)+1;renderBareme()"> pts</span></div></div>
-            <div style="margin-bottom:10px;padding:12px;background:#FEF3DC;border-radius:9px;border-left:3px solid #B87A10"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🥇</span><span style="font-size:13px;font-weight:700;color:#B87A10;min-width:60px">Or</span><span style="font-size:11px;color:#B87A10">1500 — <input type="number" value="2999" style="width:70px;border:1px solid #B87A10;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;color:#B87A10;background:rgba(255,255,255,.8);outline:none" onchange="LIGUES_SEUILS[2].max=parseInt(this.value);LIGUES_SEUILS[3].min=parseInt(this.value)+1;renderBareme()"> pts</span></div></div>
-            <div style="margin-bottom:10px;padding:12px;background:#E8F2FC;border-radius:9px;border-left:3px solid #2478CC"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">💎</span><span style="font-size:13px;font-weight:700;color:#2478CC;min-width:60px">Platine</span><span style="font-size:11px;color:#2478CC">3000 — <input type="number" value="4999" style="width:70px;border:1px solid #2478CC;border-radius:5px;padding:3px 7px;font-size:11px;font-weight:700;color:#2478CC;background:rgba(255,255,255,.8);outline:none" onchange="LIGUES_SEUILS[3].max=parseInt(this.value);LIGUES_SEUILS[4].min=parseInt(this.value)+1;renderBareme()"> pts</span></div></div>
-            <div style="padding:12px;background:#EEECFC;border-radius:9px;border-left:3px solid #6C5FE8"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">👑</span><span style="font-size:13px;font-weight:700;color:#6C5FE8;min-width:60px">Légende</span><span style="font-size:11px;color:#6C5FE8">≥ 5000 pts — ∞ 👑</span></div></div>
+
+        <!-- SÉPARATEUR -->
+        <div style="border-top:1px solid var(--b);margin-bottom:32px;max-width:600px"></div>
+
+        <!-- LIGUES -->
+        <div style="margin-bottom:32px">
+          <div style="font-size:11px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:20px">Seuils de ligue</div>
+          <div style="display:flex;flex-direction:column;gap:12px;max-width:600px">
+
+            <div style="display:flex;align-items:center;gap:16px;padding:16px 20px;background:#F5EDE3;border-radius:12px;border-left:4px solid #9A6B3A">
+              <span style="font-size:28px">🥉</span>
+              <div style="font-size:18px;font-weight:800;color:#9A6B3A;min-width:80px">Bronze</div>
+              <div style="flex:1;font-size:14px;color:#9A6B3A">0 — <input type="number" value="499" style="width:80px;border:1.5px solid #9A6B3A;border-radius:6px;padding:5px 10px;font-size:14px;font-weight:700;color:#9A6B3A;background:rgba(255,255,255,.8);outline:none" onchange="LIGUES_SEUILS[0].max=parseInt(this.value);LIGUES_SEUILS[1].min=parseInt(this.value)+1;renderBareme()"> pts</div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:16px;padding:16px 20px;background:#F0F1F4;border-radius:12px;border-left:4px solid #6B7280">
+              <span style="font-size:28px">🥈</span>
+              <div style="font-size:18px;font-weight:800;color:#6B7280;min-width:80px">Argent</div>
+              <div style="flex:1;font-size:14px;color:#6B7280">500 — <input type="number" value="1499" style="width:80px;border:1.5px solid #6B7280;border-radius:6px;padding:5px 10px;font-size:14px;font-weight:700;color:#6B7280;background:rgba(255,255,255,.8);outline:none" onchange="LIGUES_SEUILS[1].max=parseInt(this.value);LIGUES_SEUILS[2].min=parseInt(this.value)+1;renderBareme()"> pts</div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:16px;padding:16px 20px;background:#FEF3DC;border-radius:12px;border-left:4px solid #B87A10">
+              <span style="font-size:28px">🥇</span>
+              <div style="font-size:18px;font-weight:800;color:#B87A10;min-width:80px">Or</div>
+              <div style="flex:1;font-size:14px;color:#B87A10">1500 — <input type="number" value="2999" style="width:80px;border:1.5px solid #B87A10;border-radius:6px;padding:5px 10px;font-size:14px;font-weight:700;color:#B87A10;background:rgba(255,255,255,.8);outline:none" onchange="LIGUES_SEUILS[2].max=parseInt(this.value);LIGUES_SEUILS[3].min=parseInt(this.value)+1;renderBareme()"> pts</div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:16px;padding:16px 20px;background:#E8F2FC;border-radius:12px;border-left:4px solid #2478CC">
+              <span style="font-size:28px">💎</span>
+              <div style="font-size:18px;font-weight:800;color:#2478CC;min-width:80px">Platine</div>
+              <div style="flex:1;font-size:14px;color:#2478CC">3000 — <input type="number" value="4999" style="width:80px;border:1.5px solid #2478CC;border-radius:6px;padding:5px 10px;font-size:14px;font-weight:700;color:#2478CC;background:rgba(255,255,255,.8);outline:none" onchange="LIGUES_SEUILS[3].max=parseInt(this.value);LIGUES_SEUILS[4].min=parseInt(this.value)+1;renderBareme()"> pts</div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:16px;padding:16px 20px;background:#EEECFC;border-radius:12px;border-left:4px solid #6C5FE8">
+              <span style="font-size:28px">👑</span>
+              <div style="font-size:18px;font-weight:800;color:#6C5FE8;min-width:80px">Légende</div>
+              <div style="flex:1;font-size:14px;color:#6C5FE8">≥ 5000 pts — sans limite</div>
+            </div>
+
           </div>
         </div>
-      </div>
 
       </div><!-- /bareme-section-bareme -->
 
