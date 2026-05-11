@@ -5243,6 +5243,38 @@ async function loadLotsFromSupabase() {
   } catch(e) {}
 }
 
+// ── LOGIN ──
+function checkLogin() {
+  var input = document.getElementById('login-pwd');
+  var err = document.getElementById('login-err');
+  var pwd = (input ? input.value : '').trim();
+  if(pwd === 'flowin2026') {
+    document.getElementById('login-wall').style.display = 'none';
+    sessionStorage.setItem('flowin_auth','1');
+    sessionStorage.setItem('flowin_auth_ts', Date.now().toString());
+    navTo('dashboard');
+    loadData();
+  } else {
+    if(err) err.textContent = 'Mot de passe incorrect';
+    if(input) { input.style.borderColor='red'; setTimeout(function(){ input.style.borderColor=''; },2000); }
+  }
+}
+
+// Auto-login si session valide
+(function(){
+  if(sessionStorage.getItem('flowin_auth')==='1') {
+    var ts = parseInt(sessionStorage.getItem('flowin_auth_ts')||'0');
+    if(Date.now() - ts < 8 * 3600 * 1000) {
+      document.addEventListener('DOMContentLoaded', function(){
+        var wall = document.getElementById('login-wall');
+        if(wall) wall.style.display = 'none';
+      });
+    } else {
+      sessionStorage.removeItem('flowin_auth');
+    }
+  }
+})();
+
 // ── INIT ──
 buildNav();
 navTo('dashboard');
