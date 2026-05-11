@@ -5884,6 +5884,27 @@ function renderMatieres() {
 }
 
 
+
+
+function isFakeAccount(j) {
+  const email = (j.email||'').toLowerCase();
+  const ecole = (j.ecole||'').toLowerCase();
+  const fakeEmails = ['example','fake@','demo@','admin@','trial@'];
+  const fakeEcoles = ['demo','exemple'];
+  return fakeEmails.some(f=>email.includes(f))
+    || fakeEcoles.some(f=>ecole===f);
+}
+
+function kpiCard(icon, label, val, sub, color) {
+  return '<div class="kpi-card">'
+    + '<div class="kpi-bar" style="background:' + (color||'var(--ac)') + '"></div>'
+    + '<div class="kpi-icon">' + icon + '</div>'
+    + '<div class="kpi-val">' + val + '</div>'
+    + '<div class="kpi-label">' + label + '</div>'
+    + '<div class="kpi-sub">' + (sub||'') + '</div>'
+    + '</div>';
+}
+
 // ── INIT ──
 buildNav();
 renderCurrentView();
