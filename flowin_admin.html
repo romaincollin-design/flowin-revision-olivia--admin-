@@ -4789,6 +4789,7 @@ function checkLogin() {
     document.getElementById('login-wall').style.display = 'none';
     sessionStorage.setItem('flowin_auth','1');
     sessionStorage.setItem('flowin_auth_ts', Date.now().toString());
+    navTo('dashboard');
     loadData();
   } else {
     if(err) err.textContent = 'Mot de passe incorrect';
@@ -7487,7 +7488,7 @@ async function loadLotsFromSupabase() {
 
 // ── INIT ──
 buildNav();
-renderCurrentView();
+navTo('dashboard');
 loadData();
 Promise.all([loadLotsFromSupabase(), loadStockAndGains()]).then(function() {
   try { renderBareme(); renderStockPanel(); renderGainsPanel(); } catch(e){}
