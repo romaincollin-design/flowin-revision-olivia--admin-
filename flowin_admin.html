@@ -748,16 +748,25 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
     <div class="view" id="v-bareme">
 
       <!-- HEADER -->
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
         <div>
-          <div class="view-title" style="margin-bottom:2px">⭐ Barème & Lots partenaires</div>
-          <div class="view-sub">Configurez les points, les ligues et les récompenses</div>
+          <div class="view-title" style="margin-bottom:2px">⭐ Barème & Lots</div>
+          <div class="view-sub">Points, ligues et récompenses partenaires</div>
         </div>
-        <div style="display:flex;gap:8px">
-          <button onclick="loadStockAndGains().then(()=>{renderStockPanel();renderGainsPanel()})" style="background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:8px 14px;font-size:11px;cursor:pointer;color:var(--t2);font-weight:600">↻ Actualiser</button>
-          <button onclick="saveBaremeComplet()" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer">✓ Sauvegarder</button>
+        <div style="display:flex;gap:8px" id="bareme-actions">
+          <button onclick="loadStockAndGains().then(function(){renderStockPanel();renderGainsPanel()})" class="act-btn">↻ Actualiser</button>
+          <button onclick="saveBaremeComplet()" class="act-btn primary">✓ Sauvegarder</button>
         </div>
       </div>
+
+      <!-- TABS -->
+      <div style="display:flex;gap:4px;margin-bottom:20px;border-bottom:2px solid var(--b);padding-bottom:0">
+        <button class="tb2 on" id="bareme-tab-bareme" onclick="baremeTab('bareme',this)">⭐ Barème & Ligues</button>
+        <button class="tb2" id="bareme-tab-lots" onclick="baremeTab('lots',this)">🎁 Lots partenaires</button>
+      </div>
+
+      <!-- CONTENU ONGLET BARÈME -->
+      <div id="bareme-section-bareme">
 
       <!-- LIGNE 1 : Points + Ligues -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
@@ -787,7 +796,10 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
         </div>
       </div>
 
-      <!-- LIGNE 2 : Lots & Stock -->
+      </div><!-- /bareme-section-bareme -->
+
+      <!-- SECTION LOTS -->
+      <div id="bareme-section-lots" style="display:none">
       <div class="panel" style="margin-bottom:14px">
         <div class="panel-header" style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px">
           <div style="display:flex;align-items:center;gap:12px">
@@ -817,7 +829,9 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
         </div>
       </div>
 
-    </div>
+      </div><!-- /bareme-section-lots -->
+
+    </div><!-- /v-bareme -->
 
     <!-- MODAL BARÈME -->
     <div class="modal-overlay" id="modal-bareme" onclick="if(event.target===this)closeBareme()">
@@ -6578,22 +6592,46 @@ function renderBareme() {
     </div>`).join('');
 }
 
-function renderBaremeView() {
-  // Sliders et ligues sont en HTML statique — pas besoin de JS
-  // Toggle state
+// Onglets barème
+function baremeTab(tab, btn) {
+  if(btn) {
+    document.querySelectorAll('#v-bareme .tb2').forEach(function(b){ b.classList.remove('on'); });
+    btn.classList.add('on');
+  }
+  var sBar = document.getElementById('bareme-section-bareme');
+  var sLots = document.getElementById('bareme-section-lots');
+  var actions = document.getElementById('bareme-actions');
+  if(tab === 'bareme') {
+    if(sBar) sBar.style.display = '';
+    if(sLots) sLots.style.display = 'none';
+    if(actions) actions.style.display = 'flex';
+  } else {
+    if(sBar) sBar.style.display = 'none';
+    if(sLots) sLots.style.display = '';
+    if(actions) actions.style.display = 'none';
+    renderBaremeLots();
+  }
+}
+
+function renderBaremeLots() {
+  // Sync toggle état
   var track = document.getElementById('lots-track');
   var thumb = document.getElementById('lots-thumb');
   var lbl = document.getElementById('lots-lbl');
   var banner = document.getElementById('lots-off-banner');
   if(track) {
     track.style.background = LOTS_ON ? 'var(--ac)' : '#D1D5DB';
-    thumb.style.left = LOTS_ON ? '20px' : '3px';
-    lbl.textContent = LOTS_ON ? 'Activé' : 'Désactivé';
-    lbl.style.color = LOTS_ON ? 'var(--ac)' : 'var(--t3)';
+    if(thumb) thumb.style.left = LOTS_ON ? '20px' : '3px';
+    if(lbl) { lbl.textContent = LOTS_ON ? 'Activé' : 'Désactivé'; lbl.style.color = LOTS_ON ? 'var(--ac)' : 'var(--t3)'; }
     if(banner) banner.style.display = LOTS_ON ? 'none' : 'block';
   }
   renderStockPanel();
   renderGainsPanel();
+}
+
+function renderBaremeView() {
+  // Par défaut : onglet barème actif
+  baremeTab('bareme', document.getElementById('bareme-tab-bareme'));
 }
 
 function renderStockPanel() {
