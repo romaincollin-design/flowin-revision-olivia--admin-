@@ -2014,15 +2014,40 @@ function analyticsTab(tab, btn) {
   var el = document.getElementById('analytics-content');
   if(!el) return;
   if(tab === 'trafic') {
-    // Injecter la vue stats dans analytics-content
-    renderStats();
+    // Afficher v-stats directement — ses IDs sont fixes dans le DOM
+    el.innerHTML = '<div id="analytics-stats-proxy" style="min-height:200px"></div>';
+    // Rendre v-stats visible dans le proxy
     var statsV = document.getElementById('v-stats');
-    if(statsV) el.innerHTML = statsV.innerHTML;
+    if(statsV) {
+      statsV.classList.add('active');
+      // Déplacer dans le proxy visuellement via un wrapper
+      el.innerHTML = '';
+      el.appendChild(statsV);
+      try { renderStats(); } catch(e) { console.warn('renderStats error:', e); }
+    } else {
+      el.innerHTML = '<div style="padding:40px;text-align:center;color:var(--t3)">Stats non disponibles</div>';
+    }
   } else if(tab === 'engagement') {
+    // Remettre v-stats dans #content si on quitte Trafic
+    var statsV2 = document.getElementById('v-stats');
+    if(statsV2 && statsV2.parentNode === el) {
+      document.getElementById('content').appendChild(statsV2);
+      statsV2.classList.remove('active');
+    }
     renderAnalyticsEngagement(el);
   } else if(tab === 'niveaux') {
+    var statsV3 = document.getElementById('v-stats');
+    if(statsV3 && statsV3.parentNode === el) {
+      document.getElementById('content').appendChild(statsV3);
+      statsV3.classList.remove('active');
+    }
     renderAnalyticsNiveaux(el);
   } else if(tab === 'export') {
+    var statsV4 = document.getElementById('v-stats');
+    if(statsV4 && statsV4.parentNode === el) {
+      document.getElementById('content').appendChild(statsV4);
+      statsV4.classList.remove('active');
+    }
     renderAnalyticsExport(el);
   }
 }
@@ -2109,11 +2134,16 @@ function partenairesTab(tab, btn) {
   var el = document.getElementById('partenaires-content');
   if(!el) return;
   if(tab === 'lots') {
-    // Injecter la vue barème
-    renderBaremeView();
     var barV = document.getElementById('v-bareme');
-    if(barV) { el.innerHTML = ''; el.appendChild(barV.cloneNode(true)); }
+    if(barV) {
+      barV.classList.add('active');
+      el.innerHTML = '';
+      el.appendChild(barV);
+      requestAnimationFrame(function(){ try{ renderBaremeView(); }catch(e){} });
+    }
   } else if(tab === 'distribution') {
+    var barV2 = document.getElementById('v-bareme');
+    if(barV2 && barV2.parentNode === el){ document.getElementById('content').appendChild(barV2); barV2.classList.remove('active'); }
     renderPartenairesDistrib(el);
   } else if(tab === 'validation') {
     renderPartenairesQR(el);
@@ -2211,17 +2241,24 @@ function parametresTab(tab, btn) {
   if(btn) { document.querySelectorAll('#parametres-tabs .defis-tab').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active'); }
   var el = document.getElementById('parametres-content');
   if(!el) return;
+  // Helper pour déplacer une vue dans parametres-content
+  function moveView(id, renderFn) {
+    var v = document.getElementById(id);
+    // Remettre toutes les vues paramètres dans content
+    ['v-bareme','v-cours','v-textes','v-appcom'].forEach(function(vid){
+      var vv = document.getElementById(vid);
+      if(vv && vv.parentNode === el){ document.getElementById('content').appendChild(vv); vv.classList.remove('active'); }
+    });
+    if(v){ v.classList.add('active'); el.innerHTML=''; el.appendChild(v); if(renderFn) requestAnimationFrame(function(){ try{ renderFn(); }catch(e){} }); }
+  }
   if(tab === 'bareme') {
-    // Clone la vue barème
-    var barV = document.getElementById('v-bareme');
-    if(barV){ el.innerHTML = ''; var clone = barV.cloneNode(true); clone.style.display='block'; el.appendChild(clone); }
-    requestAnimationFrame(function(){ try{ renderBaremeView(); }catch(e){} });
+    moveView('v-bareme', renderBaremeView);
   } else if(tab === 'contenus') {
-    renderCours(); var cv = document.getElementById('v-cours'); if(cv){ el.innerHTML=''; el.appendChild(cv.cloneNode(true)); }
+    moveView('v-cours', renderCours);
   } else if(tab === 'textes') {
-    renderTextes(); var tv = document.getElementById('v-textes'); if(tv){ el.innerHTML=''; el.appendChild(tv.cloneNode(true)); }
+    moveView('v-textes', renderTextes);
   } else if(tab === 'appcom') {
-    renderAppCom(); var av = document.getElementById('v-appcom'); if(av){ el.innerHTML=''; el.appendChild(av.cloneNode(true)); }
+    moveView('v-appcom', renderAppCom);
   }
 }
 
