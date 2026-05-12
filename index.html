@@ -4064,6 +4064,288 @@ function coursKpi(icon, val, label, color, bg) {
     + '</div>';
 }
 
+// ─────────────────────────────────────────────────────────────────
+// ÉDITION FICHES & QUESTIONS — modals simples pour corrections rapides
+// ─────────────────────────────────────────────────────────────────
+
+function editFicheEssentiel(themeId) {
+  var theme = SB_THEMES.find(function(t){ return t.id === themeId; });
+  var fiche = SB_FICHES.find(function(f){ return f.theme_id === themeId; });
+  var visuel = SB_VISUELS.find(function(v){ return v.theme_id === themeId; });
+  if(!fiche) { showAdminToast('Aucune fiche pour ce thème', 'error'); return; }
+
+  // Construire modal
+  var modal = document.createElement('div');
+  modal.id = 'edit-fiche-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = '<div style="background:var(--surf);border-radius:14px;width:100%;max-width:760px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">'
+    + '<div style="padding:18px 22px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surf);z-index:1">'
+    + '<div style="font-size:15px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">✏️ Modifier — ' + (theme ? theme.title : themeId) + '</div>'
+    + '<button id="edit-close-btn" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px">✕</button>'
+    + '</div>'
+    + '<div style="padding:20px 22px;display:flex;flex-direction:column;gap:18px">'
+
+    + '<div><div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">💡 L\'essentiel (HTML)</div>'
+    + '<textarea id="edit-essentiel" rows="5" style="width:100%;border:1px solid var(--b);border-radius:8px;padding:10px 12px;font-size:12px;font-family:Menlo,Consolas,monospace;background:var(--surf2);color:var(--t);resize:vertical;line-height:1.6;box-sizing:border-box"></textarea>'
+    + '<div style="font-size:10px;color:var(--t3);margin-top:4px">Balises HTML autorisées : &lt;b&gt; pour gras, &lt;br&gt; pour saut de ligne</div></div>'
+
+    + '<div><div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">🗓 Chronologie (JSON — tableau [["date","texte"]])</div>'
+    + '<textarea id="edit-chrono" rows="6" style="width:100%;border:1px solid var(--b);border-radius:8px;padding:10px 12px;font-size:11px;font-family:Menlo,Consolas,monospace;background:var(--surf2);color:var(--t);resize:vertical;line-height:1.5;box-sizing:border-box"></textarea></div>'
+
+    + '<div><div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">📌 Dates clés (JSON — [["année","événement"]])</div>'
+    + '<textarea id="edit-dates" rows="4" style="width:100%;border:1px solid var(--b);border-radius:8px;padding:10px 12px;font-size:11px;font-family:Menlo,Consolas,monospace;background:var(--surf2);color:var(--t);resize:vertical;line-height:1.5;box-sizing:border-box"></textarea></div>'
+
+    + '<div><div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">📖 Vocabulaire (JSON — [["mot","définition"]])</div>'
+    + '<textarea id="edit-vocab" rows="6" style="width:100%;border:1px solid var(--b);border-radius:8px;padding:10px 12px;font-size:11px;font-family:Menlo,Consolas,monospace;background:var(--surf2);color:var(--t);resize:vertical;line-height:1.5;box-sizing:border-box"></textarea></div>'
+
+    + '<div><div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">🎨 Visuel (HTML/SVG)</div>'
+    + '<textarea id="edit-visuel" rows="5" style="width:100%;border:1px solid var(--b);border-radius:8px;padding:10px 12px;font-size:11px;font-family:Menlo,Consolas,monospace;background:var(--surf2);color:var(--t);resize:vertical;line-height:1.5;box-sizing:border-box"></textarea></div>'
+
+    + '<div id="edit-result" style="display:none;padding:10px 12px;border-radius:8px;font-size:12px;font-weight:600;text-align:center"></div>'
+
+    + '<div style="display:flex;gap:10px;justify-content:flex-end;padding-top:8px;border-top:1px solid var(--b)">'
+    + '<button id="edit-cancel" style="background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:9px 18px;font-size:13px;cursor:pointer;font-family:inherit;color:var(--t2)">Annuler</button>'
+    + '<button id="edit-save" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">💾 Enregistrer</button>'
+    + '</div></div></div>';
+  document.body.appendChild(modal);
+
+  // Remplir les valeurs
+  document.getElementById('edit-essentiel').value = fiche.essentiel || '';
+  document.getElementById('edit-chrono').value    = JSON.stringify(fiche.chrono || [], null, 2);
+  document.getElementById('edit-dates').value     = JSON.stringify(fiche.dates  || [], null, 2);
+  document.getElementById('edit-vocab').value     = JSON.stringify(fiche.vocab  || [], null, 2);
+  document.getElementById('edit-visuel').value    = visuel ? (visuel.contenu || '') : '';
+
+  // Handlers
+  var closeFn = function(){ var m = document.getElementById('edit-fiche-modal'); if(m) m.remove(); };
+  document.getElementById('edit-close-btn').addEventListener('click', closeFn);
+  document.getElementById('edit-cancel').addEventListener('click', closeFn);
+
+  document.getElementById('edit-save').addEventListener('click', async function() {
+    var saveBtn  = document.getElementById('edit-save');
+    var resultEl = document.getElementById('edit-result');
+    saveBtn.disabled = true; saveBtn.textContent = '⏳ Enregistrement…';
+
+    // Parser les JSON
+    var chrono, dates, vocab;
+    try { chrono = JSON.parse(document.getElementById('edit-chrono').value || '[]'); }
+    catch(e) { resultEl.style.cssText = resultEl.style.cssText + ';display:block;background:var(--reBg);color:var(--re)'; resultEl.textContent = 'JSON Chronologie invalide : ' + e.message; saveBtn.disabled = false; saveBtn.textContent = '💾 Enregistrer'; return; }
+    try { dates = JSON.parse(document.getElementById('edit-dates').value || '[]'); }
+    catch(e) { resultEl.style.cssText = resultEl.style.cssText + ';display:block;background:var(--reBg);color:var(--re)'; resultEl.textContent = 'JSON Dates invalide : ' + e.message; saveBtn.disabled = false; saveBtn.textContent = '💾 Enregistrer'; return; }
+    try { vocab = JSON.parse(document.getElementById('edit-vocab').value || '[]'); }
+    catch(e) { resultEl.style.cssText = resultEl.style.cssText + ';display:block;background:var(--reBg);color:var(--re)'; resultEl.textContent = 'JSON Vocabulaire invalide : ' + e.message; saveBtn.disabled = false; saveBtn.textContent = '💾 Enregistrer'; return; }
+
+    var essentielVal = document.getElementById('edit-essentiel').value;
+    var visuelVal    = document.getElementById('edit-visuel').value;
+
+    var hdrs = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+
+    try {
+      // PATCH fiche
+      var r1 = await fetch(SB_URL+'/rest/v1/fiches?theme_id=eq.'+encodeURIComponent(themeId), {
+        method:'PATCH', headers:hdrs,
+        body:JSON.stringify({essentiel:essentielVal, chrono:chrono, dates:dates, vocab:vocab, updated_at:new Date().toISOString()})
+      });
+      if(!r1.ok) throw new Error('Fiche : ' + r1.status);
+
+      // PATCH ou INSERT visuel
+      if(visuelVal.trim()) {
+        if(visuel) {
+          await fetch(SB_URL+'/rest/v1/visuels?id=eq.'+visuel.id, {
+            method:'PATCH', headers:hdrs,
+            body:JSON.stringify({contenu:visuelVal, updated_at:new Date().toISOString()})
+          });
+        } else {
+          await fetch(SB_URL+'/rest/v1/visuels', {
+            method:'POST', headers:hdrs,
+            body:JSON.stringify({theme_id:themeId, titre:'Visuel '+themeId, contenu:visuelVal, type:'schema', actif:true})
+          });
+        }
+      }
+
+      // Maj cache local
+      fiche.essentiel = essentielVal;
+      fiche.chrono = chrono;
+      fiche.dates = dates;
+      fiche.vocab = vocab;
+      if(visuel) visuel.contenu = visuelVal;
+
+      resultEl.style.cssText = 'padding:10px 12px;border-radius:8px;font-size:12px;font-weight:600;text-align:center;background:var(--grBg);color:var(--gr);display:block';
+      resultEl.textContent = '✅ Modifications enregistrées';
+      showAdminToast('Fiche mise à jour ✅', 'success');
+      setTimeout(function(){ closeFn(); renderCoursHub(); }, 700);
+    } catch(e) {
+      resultEl.style.cssText = 'padding:10px 12px;border-radius:8px;font-size:12px;font-weight:600;text-align:center;background:var(--reBg);color:var(--re);display:block';
+      resultEl.textContent = '❌ Erreur : ' + e.message;
+      saveBtn.disabled = false; saveBtn.textContent = '💾 Enregistrer';
+    }
+  });
+}
+
+function editFicheQuestions(themeId) {
+  var theme = SB_THEMES.find(function(t){ return t.id === themeId; });
+  var questions = SB_QUESTIONS.filter(function(q){ return q.theme_id === themeId; });
+
+  var modal = document.createElement('div');
+  modal.id = 'edit-q-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+  var html = '<div style="background:var(--surf);border-radius:14px;width:100%;max-width:760px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">'
+    + '<div style="padding:18px 22px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surf);z-index:1">'
+    + '<div style="font-size:15px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">❓ Questions — ' + (theme ? theme.title : themeId) + '</div>'
+    + '<button id="edit-q-close" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px">✕</button>'
+    + '</div>'
+    + '<div style="padding:20px 22px"><div style="font-size:11px;color:var(--t3);margin-bottom:12px">' + questions.length + ' question(s). Clique sur une question pour la modifier.</div>'
+    + '<div id="q-list" style="display:flex;flex-direction:column;gap:10px"></div>'
+    + '<button id="q-add-btn" style="margin-top:14px;width:100%;background:var(--ac);color:#fff;border:none;border-radius:8px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">+ Ajouter une question</button>'
+    + '</div></div>';
+  modal.innerHTML = html;
+  document.body.appendChild(modal);
+
+  function renderQList() {
+    var listEl = document.getElementById('q-list');
+    if(!listEl) return;
+    listEl.innerHTML = '';
+    var qs = SB_QUESTIONS.filter(function(q){ return q.theme_id === themeId; });
+    if(!qs.length) {
+      listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">Aucune question. Clique sur "+ Ajouter".</div>';
+      return;
+    }
+    qs.forEach(function(q, i) {
+      var row = document.createElement('div');
+      row.style.cssText = 'background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:10px 12px;cursor:pointer';
+      row.innerHTML = '<div style="display:flex;align-items:center;gap:10px"><span style="font-size:11px;color:var(--t3);font-weight:700">Q' + (i+1) + '</span>'
+        + '<div style="flex:1;font-size:12px;color:var(--t);line-height:1.4">' + (q.q||'(vide)') + '</div>'
+        + '<button class="q-edit-btn" data-id="' + q.id + '" style="background:var(--acBg);border:1px solid var(--acBorder);color:var(--ac);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:600">✏️</button>'
+        + '<button class="q-del-btn" data-id="' + q.id + '" style="background:var(--reBg);border:1px solid var(--reBorder);color:var(--re);padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;font-weight:600">🗑</button></div>';
+      listEl.appendChild(row);
+    });
+    listEl.querySelectorAll('.q-edit-btn').forEach(function(b) {
+      b.addEventListener('click', function(e){ e.stopPropagation(); editSingleQuestion(b.dataset.id, themeId, renderQList); });
+    });
+    listEl.querySelectorAll('.q-del-btn').forEach(function(b) {
+      b.addEventListener('click', async function(e) {
+        e.stopPropagation();
+        if(!confirm('Supprimer cette question ?')) return;
+        var hdrs = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=minimal'};
+        var r = await fetch(SB_URL+'/rest/v1/questions?id=eq.'+b.dataset.id, {method:'DELETE', headers:hdrs});
+        if(r.ok) {
+          SB_QUESTIONS = SB_QUESTIONS.filter(function(q){ return q.id !== b.dataset.id; });
+          showAdminToast('Question supprimée');
+          renderQList();
+        } else {
+          showAdminToast('Erreur suppression', 'error');
+        }
+      });
+    });
+  }
+  renderQList();
+
+  document.getElementById('edit-q-close').addEventListener('click', function(){
+    var m = document.getElementById('edit-q-modal'); if(m) m.remove(); renderCoursHub();
+  });
+  document.getElementById('q-add-btn').addEventListener('click', function(){
+    editSingleQuestion(null, themeId, renderQList);
+  });
+}
+
+function editSingleQuestion(qId, themeId, callback) {
+  var existing = qId ? SB_QUESTIONS.find(function(q){ return q.id === qId; }) : null;
+
+  var modal = document.createElement('div');
+  modal.id = 'edit-single-q-modal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = '<div style="background:var(--surf);border-radius:14px;width:100%;max-width:580px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.4)">'
+    + '<div style="padding:18px 22px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between">'
+    + '<div style="font-size:14px;font-weight:800;color:var(--t)">' + (existing ? '✏️ Modifier' : '+ Nouvelle') + ' question</div>'
+    + '<button id="sq-close" style="width:28px;height:28px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:13px">✕</button></div>'
+    + '<div style="padding:18px 22px;display:flex;flex-direction:column;gap:12px">'
+    + '<div><div style="font-size:11px;color:var(--t3);font-weight:700;margin-bottom:5px;text-transform:uppercase">Question</div>'
+    + '<textarea id="sq-q" rows="2" style="width:100%;border:1px solid var(--b);border-radius:8px;padding:9px 11px;font-size:13px;font-family:inherit;background:var(--surf2);color:var(--t);box-sizing:border-box;resize:vertical"></textarea></div>'
+    + '<div><div style="font-size:11px;color:var(--t3);font-weight:700;margin-bottom:5px;text-transform:uppercase">4 réponses (clic sur le rond pour marquer la bonne)</div>'
+    + '<div id="sq-opts" style="display:flex;flex-direction:column;gap:6px"></div></div>'
+    + '<div style="display:flex;gap:10px"><div style="flex:1"><div style="font-size:11px;color:var(--t3);font-weight:700;margin-bottom:5px;text-transform:uppercase">Difficulté</div>'
+    + '<select id="sq-diff" style="width:100%;border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:12px;font-family:inherit;background:var(--surf2);color:var(--t)"><option value="facile">😊 Facile</option><option value="moyen" selected>🤔 Moyen</option><option value="difficile">🔥 Difficile</option></select></div></div>'
+    + '<div><div style="font-size:11px;color:var(--t3);font-weight:700;margin-bottom:5px;text-transform:uppercase">Explication (optionnel)</div>'
+    + '<textarea id="sq-expl" rows="2" style="width:100%;border:1px solid var(--b);border-radius:8px;padding:9px 11px;font-size:12px;font-family:inherit;background:var(--surf2);color:var(--t);box-sizing:border-box;resize:vertical"></textarea></div>'
+    + '<div id="sq-result" style="display:none;padding:9px 12px;border-radius:8px;font-size:12px;font-weight:600;text-align:center"></div>'
+    + '<div style="display:flex;gap:10px;justify-content:flex-end;padding-top:6px"><button id="sq-cancel" style="background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:8px 16px;font-size:12px;cursor:pointer;font-family:inherit;color:var(--t2)">Annuler</button>'
+    + '<button id="sq-save" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">💾 Enregistrer</button></div>'
+    + '</div></div>';
+  document.body.appendChild(modal);
+
+  document.getElementById('sq-q').value    = existing ? (existing.q||'') : '';
+  document.getElementById('sq-diff').value = existing ? (existing.difficulte||'moyen') : 'moyen';
+  document.getElementById('sq-expl').value = existing ? (existing.expl||'') : '';
+
+  var currentBon = existing ? existing.bon : 0;
+  var opts = existing && Array.isArray(existing.opts) ? existing.opts.slice() : ['','','',''];
+  while(opts.length < 4) opts.push('');
+
+  function renderOpts() {
+    var optsEl = document.getElementById('sq-opts');
+    optsEl.innerHTML = '';
+    for(var i = 0; i < 4; i++) {
+      var ok = i === currentBon;
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:8px';
+      row.innerHTML = '<button data-idx="' + i + '" class="sq-mark" style="width:28px;height:28px;border-radius:50%;border:2px solid ' + (ok?'var(--gr)':'var(--b)') + ';background:' + (ok?'var(--gr)':'var(--surf2)') + ';color:' + (ok?'#fff':'var(--t3)') + ';cursor:pointer;font-size:13px;flex-shrink:0">' + (ok?'✓':(i+1)) + '</button>'
+        + '<input type="text" data-idx="' + i + '" class="sq-opt-inp" value="' + (opts[i]||'').replace(/"/g,'&quot;') + '" style="flex:1;border:1px solid var(--b);border-radius:8px;padding:8px 11px;font-size:12px;font-family:inherit;background:' + (ok?'var(--grBg)':'var(--surf2)') + ';color:var(--t);box-sizing:border-box">';
+      optsEl.appendChild(row);
+    }
+    optsEl.querySelectorAll('.sq-mark').forEach(function(b) {
+      b.addEventListener('click', function(){
+        currentBon = parseInt(b.dataset.idx);
+        opts = Array.from(optsEl.querySelectorAll('.sq-opt-inp')).map(function(i){ return i.value; });
+        renderOpts();
+      });
+    });
+  }
+  renderOpts();
+
+  var closeFn = function(){ var m = document.getElementById('edit-single-q-modal'); if(m) m.remove(); };
+  document.getElementById('sq-close').addEventListener('click', closeFn);
+  document.getElementById('sq-cancel').addEventListener('click', closeFn);
+
+  document.getElementById('sq-save').addEventListener('click', async function(){
+    var btn = document.getElementById('sq-save');
+    var resultEl = document.getElementById('sq-result');
+    var q   = document.getElementById('sq-q').value.trim();
+    var diff = document.getElementById('sq-diff').value;
+    var expl = document.getElementById('sq-expl').value.trim();
+    var optsVal = Array.from(document.querySelectorAll('.sq-opt-inp')).map(function(i){ return i.value.trim(); });
+
+    if(!q) { resultEl.style.cssText = 'padding:9px 12px;border-radius:8px;font-size:12px;font-weight:600;text-align:center;display:block;background:var(--reBg);color:var(--re)'; resultEl.textContent = 'La question est obligatoire'; return; }
+    if(optsVal.filter(function(o){return o;}).length < 2) { resultEl.style.cssText = 'padding:9px 12px;border-radius:8px;font-size:12px;font-weight:600;text-align:center;display:block;background:var(--reBg);color:var(--re)'; resultEl.textContent = 'Au moins 2 options requises'; return; }
+
+    btn.disabled = true; btn.textContent = '⏳';
+    var hdrs = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+    var body = {theme_id:themeId, q:q, opts:optsVal, bon:currentBon, expl:expl, difficulte:diff, statut:'validé', actif:true, updated_at:new Date().toISOString()};
+
+    try {
+      var r, data;
+      if(existing) {
+        r = await fetch(SB_URL+'/rest/v1/questions?id=eq.'+existing.id, {method:'PATCH', headers:hdrs, body:JSON.stringify(body)});
+        if(!r.ok) throw new Error(r.status);
+        data = await r.json();
+        var idx = SB_QUESTIONS.findIndex(function(qq){ return qq.id === existing.id; });
+        if(idx >= 0 && data && data[0]) SB_QUESTIONS[idx] = data[0];
+      } else {
+        r = await fetch(SB_URL+'/rest/v1/questions', {method:'POST', headers:hdrs, body:JSON.stringify(body)});
+        if(!r.ok) throw new Error(r.status);
+        data = await r.json();
+        if(data && data[0]) SB_QUESTIONS.push(data[0]);
+      }
+      showAdminToast(existing ? 'Question modifiée' : 'Question ajoutée', 'success');
+      closeFn();
+      if(callback) callback();
+    } catch(e) {
+      resultEl.style.cssText = 'padding:9px 12px;border-radius:8px;font-size:12px;font-weight:600;text-align:center;display:block;background:var(--reBg);color:var(--re)';
+      resultEl.textContent = '❌ Erreur : ' + e.message;
+      btn.disabled = false; btn.textContent = '💾 Enregistrer';
+    }
+  });
+}
+
 function coursOpenTheme(theme) { coursCurrentTheme = theme; renderCoursHub(); }
 function coursBackToHub()       { coursCurrentTheme = null;  renderCoursHub(); }
 
@@ -4131,7 +4413,8 @@ function renderCoursThemeDetail(themeObj, el) {
   // ── Onglets identiques à l'app élève (Révision / Visuel / Cours / Quiz) ──
   html += '<div class="panel" style="margin-bottom:14px">';
   html += '<div class="panel-header"><span>📖 Aperçu — exactement comme dans l\'app élève</span>';
-  html += '<button onclick="showAdminToast(\'Édition disponible prochainement\')" style="background:none;border:none;font-size:11px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">✏️ Modifier</button>';
+  var themeIdEsc = (themeObj.id||'').replace(/'/g,"\\'");
+  html += '<button onclick="editFicheEssentiel(\'' + themeIdEsc + '\')" style="background:var(--acBg);border:1px solid var(--acBorder);font-size:11px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit;padding:5px 12px;border-radius:7px">✏️ Modifier la fiche</button>';
   html += '</div>';
   html += '<div class="fc-wrap" style="padding:18px 20px">';
 
@@ -4201,7 +4484,7 @@ function renderCoursThemeDetail(themeObj, el) {
   // ── QUESTIONS ──
   html += '<div class="panel" style="margin-bottom:14px">';
   html += '<div class="panel-header"><span>❓ Banque de questions ('+qList.length+')</span>';
-  html += '<button onclick="showAdminToast(\'Ajout de question disponible prochainement\')" style="background:none;border:none;font-size:11px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
+  html += '<button onclick="editFicheQuestions(\'' + themeIdEsc + '\')" style="background:var(--acBg);border:1px solid var(--acBorder);font-size:11px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit;padding:5px 12px;border-radius:7px">✏️ Gérer questions</button>';
   html += '</div>';
   if(!qList.length) {
     html += '<div style="padding:30px;text-align:center;color:var(--t3);font-size:12px">Aucune question.</div>';
