@@ -3189,7 +3189,7 @@ async function renderStats() {
     dp.id = 'stats-drill-panel';
     dp.style.cssText = 'display:none;margin-top:14px';
     dp.innerHTML = `<div class="panel"><div class="panel-header" style="display:flex;align-items:center;justify-content:space-between"><span id="stats-drill-title" style="font-weight:700"></span><div style="display:flex;gap:8px"><button onclick="exportDrill()" style="background:var(--gr);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:600;cursor:pointer">⬇ Export</button><button onclick="closeDrill()" style="background:var(--surf2);border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--t2)">✕ Fermer</button></div></div><div id="stats-drill-body" style="padding:16px;max-height:400px;overflow-y:auto"></div></div>`;
-    document.getElementById('v-stats').appendChild(dp);
+    var vsParent = document.getElementById('v-stats') || document.getElementById('analytics-tab-trafic') || document.body; vsParent.appendChild(dp);
   }
 }
 
