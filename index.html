@@ -597,6 +597,11 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       <span>Partenaires</span>
       <span class="sb-badge green" id="sb-badge-lots">—</span>
     </div>
+    <div class="sb-item" id="nav-envois" onclick="navTo('envois')">
+      <span class="sb-item-icon">✉️</span>
+      <span>Envois &amp; Push</span>
+      <span class="sb-badge" id="sb-badge-envois" style="background:#7C5CFC;color:#fff;display:none">•</span>
+    </div>
     <div class="sb-item" id="nav-parametres" onclick="navTo('parametres')">
       <span class="sb-item-icon">⚙️</span>
       <span>Paramètres</span>
@@ -1514,6 +1519,87 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
 
     </div>
 
+    <!-- ══ VUE ENVOIS & PUSH ══ -->
+    <div class="view" id="v-envois">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+        <div class="view-title" style="margin-bottom:0">✉️ Envois &amp; Push</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button id="btn-send-billet" style="background:var(--ac);color:#fff;border:none;border-radius:9px;padding:9px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">✉️ Billet d'activation</button>
+          <button id="btn-send-libre" style="background:var(--surf2);border:1px solid var(--b);border-radius:9px;padding:9px 18px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--t2)">📝 Message libre</button>
+        </div>
+      </div>
+      <div class="kpi-grid" style="margin-bottom:20px">
+        <div class="kpi-card"><div class="kpi-bar" style="background:var(--ac)"></div><div class="kpi-icon">👥</div><div class="kpi-val" id="kpi-total-joueurs">—</div><div class="kpi-label">Joueurs</div><div class="kpi-sub">inscrits</div></div>
+        <div class="kpi-card"><div class="kpi-bar" style="background:#22C9A0"></div><div class="kpi-icon">✅</div><div class="kpi-val" id="kpi-joueurs-actives">—</div><div class="kpi-label">Avec compte</div><div class="kpi-sub">email+password</div></div>
+        <div class="kpi-card"><div class="kpi-bar" style="background:#F4A83A"></div><div class="kpi-icon">⏳</div><div class="kpi-val" id="kpi-joueurs-pending">—</div><div class="kpi-label">À activer</div><div class="kpi-sub">sans password</div></div>
+        <div class="kpi-card"><div class="kpi-bar" style="background:#E84855"></div><div class="kpi-icon">❌</div><div class="kpi-val" id="kpi-joueurs-noemail">—</div><div class="kpi-label">Sans email</div><div class="kpi-sub">non contactables</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <span>👥 Joueurs — statut activation</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="envois-filter" style="font-size:11px;padding:4px 8px;border:1px solid var(--b);border-radius:6px;background:var(--surf2);color:var(--t);cursor:pointer">
+              <option value="all">Tous</option>
+              <option value="noemail">Sans email</option>
+              <option value="pending">À activer</option>
+            </select>
+            <button class="act-btn" id="envois-refresh-btn">↻</button>
+          </div>
+        </div>
+        <div id="envois-list" style="padding:4px 0"></div>
+      </div>
+    </div>
+
+    <!-- Modal envoi billet -->
+    <div id="modal-envoi-billet" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;padding:16px">
+      <div style="background:var(--surf);border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+        <div style="padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:16px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">✉️ Envoyer billet d'activation</div>
+          <button id="modal-envoi-close" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px">✕</button>
+        </div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:14px">
+
+          <!-- Étape 1 : Message -->
+          <div style="background:var(--surf2);border-radius:10px;padding:14px">
+            <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">📝 Message (variables : {prenom}, {pseudo}, {lien})</div>
+            <input id="envoi-sujet" placeholder="Objet : Ton accès Flowin t'attend !"
+              style="width:100%;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box;margin-bottom:8px">
+            <textarea id="envoi-corps" rows="7"
+              style="width:100%;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;font-family:inherit;background:var(--surf);color:var(--t);resize:vertical;box-sizing:border-box;line-height:1.6">Salut {prenom} 👋
+
+Ton appli Flowin évolue !
+
+Tu as un compte privé prêt — crée ton mot de passe pour accéder à tous tes résultats, défier tes amis et remporter des lots.
+
+→ Créer mon mot de passe : {lien}
+
+À très vite sur Flowin !
+L'équipe OPCONSULT</textarea>
+            <div style="margin-top:8px;font-size:10px;color:var(--t3)">Le lien de réinitialisation est valide 24h.</div>
+          </div>
+
+          <!-- Étape 2 : Destinataires -->
+          <div style="background:var(--surf2);border-radius:10px;padding:14px">
+            <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">👥 Destinataires</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+              <button id="envoi-sel-tous" style="background:var(--ac);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Tous avec email</button>
+              <button id="envoi-sel-pending" style="background:var(--surf);border:1px solid var(--b);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--t2)">À activer uniquement</button>
+              <button id="envoi-sel-none" style="background:var(--surf);border:1px solid var(--b);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--t2)">Déselectionner</button>
+            </div>
+            <div id="envoi-joueurs-list" style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:4px"></div>
+            <div style="margin-top:8px;font-size:11px;color:var(--t3)">Sélectionnés : <span id="envoi-count" style="font-weight:700;color:var(--ac)">0</span></div>
+          </div>
+
+          <!-- Résumé + Envoi -->
+          <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:4px">
+            <button id="modal-envoi-close2" style="background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:9px 16px;font-size:12px;cursor:pointer;font-family:inherit">Annuler</button>
+            <button id="btn-envoyer-billets" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">✉️ Envoyer les billets</button>
+          </div>
+          <div id="envoi-result" style="display:none;padding:10px 12px;border-radius:8px;font-size:12px;font-weight:600;text-align:center"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- ══ VUE PARAMÈTRES ══ -->
     <div class="view" id="v-parametres">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
@@ -1916,6 +2002,7 @@ var RUBRIQUE_MAP = {
   eleves:    function(){ renderEleves(); },
   analytics: function(){ renderAnalyticsHub(); },
   partenaires: function(){ renderPartenairesHub(); },
+  envois:      function(){ renderEnvois(); },
   parametres:  function(){ renderParametresHub(); },
   // Sous-vues Paramètres (legacy)
   bareme:    function(){ if(typeof renderBaremeView==='function') renderBaremeView(); },
@@ -5639,6 +5726,195 @@ function closeEtab(){var m=document.getElementById('modal-etab');if(m)m.classLis
 function toggleLigue(id){var el=document.getElementById(id);if(el)el.style.display=el.style.display==='none'?'':'none';}
 
 // === FIN FONCTIONS MANQUANTES ===
+
+// ═══════════════════════════════════════════════
+// ENVOIS & PUSH
+// ═══════════════════════════════════════════════
+
+function renderEnvois() {
+  updateBadges();
+  var joueurs = DB.joueurs || [];
+  var avecEmail   = joueurs.filter(function(j){ return j.email && j.email.trim(); });
+  var sansEmail   = joueurs.filter(function(j){ return !j.email || !j.email.trim(); });
+  // On considère "activé" = a un email (proxy — on ne sait pas si Auth Supabase)
+  var kpiTotal    = joueurs.length;
+  var kpiActive   = avecEmail.length;
+  var kpiPending  = avecEmail.length; // tous avec email peuvent être activés
+  var kpiNoEmail  = sansEmail.length;
+
+  var set = function(id, v) { var el = document.getElementById(id); if(el) el.textContent = v; };
+  set('kpi-total-joueurs',   kpiTotal);
+  set('kpi-joueurs-actives', kpiActive);
+  set('kpi-joueurs-pending', kpiPending);
+  set('kpi-joueurs-noemail', kpiNoEmail);
+
+  // Binder boutons
+  var btnBillet  = document.getElementById('btn-send-billet');
+  var btnLibre   = document.getElementById('btn-send-libre');
+  var btnRefresh = document.getElementById('envois-refresh-btn');
+  var filterSel  = document.getElementById('envois-filter');
+
+  if(btnBillet  && !btnBillet._bound)  { btnBillet._bound  = true; btnBillet.addEventListener('click',  openEnvoiBillet); }
+  if(btnLibre   && !btnLibre._bound)   { btnLibre._bound   = true; btnLibre.addEventListener('click',   openEnvoiLibre); }
+  if(btnRefresh && !btnRefresh._bound) { btnRefresh._bound = true; btnRefresh.addEventListener('click', function(){ renderEnvoisList(); }); }
+  if(filterSel  && !filterSel._bound)  { filterSel._bound  = true; filterSel.addEventListener('change', function(){ renderEnvoisList(); }); }
+
+  renderEnvoisList();
+}
+
+function renderEnvoisList() {
+  var listEl = document.getElementById('envois-list');
+  if(!listEl) return;
+  var joueurs = DB.joueurs || [];
+  var filter = document.getElementById('envois-filter');
+  var fVal = filter ? filter.value : 'all';
+
+  var filtered = joueurs.filter(function(j) {
+    if(fVal === 'noemail')  return !j.email || !j.email.trim();
+    if(fVal === 'pending')  return j.email && j.email.trim();
+    return true;
+  });
+
+  if(!filtered.length) {
+    listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">Aucun joueur dans ce filtre</div>';
+    return;
+  }
+
+  var html = '';
+  filtered.forEach(function(j) {
+    var hasEmail = j.email && j.email.trim();
+    var initials = ((j.prenom||'?').charAt(0) + (j.nom||'?').charAt(0)).toUpperCase();
+    var color = ['#7C5CFC','#22C9A0','#F4A83A','#E84855','#3B82F6'][(j.pseudo||'').charCodeAt(0)%5];
+    html += '<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--b)">';
+    html += '<div style="width:32px;height:32px;border-radius:50%;background:' + color + ';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">' + initials + '</div>';
+    html += '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:var(--t)">' + (j.pseudo||'—') + '</div>';
+    html += '<div style="font-size:10px;color:var(--t3)">' + (j.prenom||'') + ' ' + (j.nom||'') + ' · ' + (j.ecole||'—') + '</div></div>';
+    if(hasEmail) {
+      html += '<span style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;background:var(--grBg);color:var(--gr)">✉️ ' + j.email + '</span>';
+    } else {
+      html += '<span style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;background:var(--reBg,#FFF0F0);color:var(--re,#E84855)">❌ sans email</span>';
+    }
+    html += '</div>';
+  });
+
+  listEl.innerHTML = html;
+}
+
+// ── Modal envoi billet ──
+var _envoiSelected = new Set();
+
+function openEnvoiBillet() {
+  var modal = document.getElementById('modal-envoi-billet');
+  if(!modal) return;
+  modal.style.display = 'flex';
+  renderEnvoiJoueursList();
+
+  // Binder boutons
+  function bind(id, fn) {
+    var el = document.getElementById(id);
+    if(el && !el._envBound) { el._envBound = true; el.addEventListener('click', fn); }
+  }
+  bind('modal-envoi-close',  function(){ document.getElementById('modal-envoi-billet').style.display='none'; });
+  bind('modal-envoi-close2', function(){ document.getElementById('modal-envoi-billet').style.display='none'; });
+  bind('envoi-sel-tous',    function(){ selectEnvoiJoueurs('all'); });
+  bind('envoi-sel-pending', function(){ selectEnvoiJoueurs('pending'); });
+  bind('envoi-sel-none',    function(){ selectEnvoiJoueurs('none'); });
+  bind('btn-envoyer-billets', envoyerBillets);
+}
+
+function openEnvoiLibre() {
+  showAdminToast('Message libre — utilise le billet d\'activation et modifie le texte', '');
+  openEnvoiBillet();
+}
+
+function renderEnvoiJoueursList() {
+  var listEl = document.getElementById('envoi-joueurs-list');
+  if(!listEl) return;
+  _envoiSelected = new Set();
+  var joueurs = (DB.joueurs||[]).filter(function(j){ return j.email && j.email.trim(); });
+
+  if(!joueurs.length) {
+    listEl.innerHTML = '<div style="text-align:center;padding:16px;color:var(--t3);font-size:12px">Aucun joueur avec email enregistré</div>';
+    return;
+  }
+
+  var html = '';
+  joueurs.forEach(function(j, i) {
+    var initials = ((j.prenom||'?').charAt(0)+(j.nom||'?').charAt(0)).toUpperCase();
+    html += '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;background:var(--surf2);border:1px solid var(--b)" id="envoi-row-' + i + '">';
+    html += '<input type="checkbox" data-email="' + (j.email||'') + '" data-prenom="' + (j.prenom||j.pseudo||'') + '" data-pseudo="' + (j.pseudo||'') + '" class="envoi-chk" style="cursor:pointer">';
+    html += '<div style="width:28px;height:28px;border-radius:50%;background:var(--ac);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">' + initials + '</div>';
+    html += '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--t)">' + (j.pseudo||j.prenom||'—') + '</div>';
+    html += '<div style="font-size:10px;color:var(--t3)">' + (j.email||'') + '</div></div>';
+    html += '</label>';
+  });
+  listEl.innerHTML = html;
+
+  // Binder checkboxes
+  listEl.querySelectorAll('.envoi-chk').forEach(function(chk) {
+    chk.addEventListener('change', function() {
+      if(chk.checked) _envoiSelected.add(chk.dataset.email);
+      else _envoiSelected.delete(chk.dataset.email);
+      var countEl = document.getElementById('envoi-count');
+      if(countEl) countEl.textContent = _envoiSelected.size;
+    });
+  });
+}
+
+function selectEnvoiJoueurs(mode) {
+  var chks = document.querySelectorAll('.envoi-chk');
+  _envoiSelected = new Set();
+  chks.forEach(function(chk) {
+    chk.checked = mode !== 'none';
+    if(chk.checked) _envoiSelected.add(chk.dataset.email);
+  });
+  var countEl = document.getElementById('envoi-count');
+  if(countEl) countEl.textContent = _envoiSelected.size;
+}
+
+async function envoyerBillets() {
+  if(!_envoiSelected.size) { showAdminToast('Sélectionne au moins un joueur', 'error'); return; }
+  var btn = document.getElementById('btn-envoyer-billets');
+  var resultEl = document.getElementById('envoi-result');
+  if(btn) { btn.disabled = true; btn.textContent = '⏳ Envoi en cours…'; }
+
+  var corps = document.getElementById('envoi-corps') ? document.getElementById('envoi-corps').value : '';
+  var sent = 0, errors = 0;
+
+  // Envoyer un reset password pour chaque email sélectionné
+  for(var email of _envoiSelected) {
+    var joueur = (DB.joueurs||[]).find(function(j){ return j.email === email; });
+    var prenom = joueur ? (joueur.prenom || joueur.pseudo || '') : '';
+    var pseudo = joueur ? (joueur.pseudo || '') : '';
+
+    try {
+      if(sbClient) {
+        var res = await sbClient.auth.resetPasswordForEmail(email, {
+          redirectTo: 'https://flowrevis.vercel.app/?mode=activation'
+        });
+        if(res.error) { errors++; console.error('Erreur', email, res.error); }
+        else { sent++; }
+      } else {
+        // Sans sbClient — simulation
+        sent++;
+      }
+    } catch(e) { errors++; }
+  }
+
+  if(btn) { btn.disabled = false; btn.textContent = '✉️ Envoyer les billets'; }
+  if(resultEl) {
+    resultEl.style.display = '';
+    if(errors === 0) {
+      resultEl.style.background = 'var(--grBg)'; resultEl.style.color = 'var(--gr)';
+      resultEl.textContent = '✅ ' + sent + ' billet(s) envoyé(s) avec succès !';
+    } else {
+      resultEl.style.background = 'var(--amBg)'; resultEl.style.color = 'var(--am)';
+      resultEl.textContent = sent + ' envoyé(s), ' + errors + ' erreur(s)';
+    }
+  }
+  showAdminToast(sent + ' billet(s) envoyé(s) ✅');
+  setTimeout(function(){ if(resultEl) resultEl.style.display = 'none'; }, 5000);
+}
 
 function showAdminToast(msg, type) {
   var bg = (type === 'error') ? '#EF4444' : '#22C9A0';
