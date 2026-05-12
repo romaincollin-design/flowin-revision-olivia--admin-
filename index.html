@@ -1698,7 +1698,7 @@ async function loadData() {
       dot.className = 'live-dot on';
       lbl.className = 'live-label on';
       lbl.textContent = `Live Supabase (${j.length} élèves)`;
-      // Charger le contenu pédagogique depuis Supabase (niveaux → themes → fiches/visuels/questions/quiz_config)
+      // Charger le contenu pédagogique depuis Supabase
       Promise.all([
         fetch(SB_URL+'/rest/v1/themes?order=ordre.asc&limit=200', {headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
         fetch(SB_URL+'/rest/v1/fiches?order=created_at.asc&limit=500', {headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
@@ -1706,21 +1706,16 @@ async function loadData() {
         fetch(SB_URL+'/rest/v1/questions?actif=eq.true&order=created_at.asc&limit=5000', {headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
         fetch(SB_URL+'/rest/v1/quiz_config?order=created_at.asc&limit=200', {headers:hdrs}).then(function(r){return r.ok?r.json():[];})
       ]).then(function(results) {
-        var sbThemes    = results[0];
-        var sbFiches    = results[1];
-        var sbVisuels   = results[2];
-        var sbQuestions = results[3];
-        var sbQuizCfg   = results[4];
-        if(Array.isArray(sbThemes)    && sbThemes.length)    { SB_THEMES    = sbThemes;    console.log('✅ Themes:', sbThemes.length); }
-        if(Array.isArray(sbFiches)    && sbFiches.length)    { SB_FICHES    = sbFiches;    console.log('✅ Fiches:', sbFiches.length); }
-        if(Array.isArray(sbVisuels)   && sbVisuels.length)   { SB_VISUELS   = sbVisuels;   console.log('✅ Visuels:', sbVisuels.length); }
-        if(Array.isArray(sbQuestions) && sbQuestions.length) { SB_QUESTIONS = sbQuestions; console.log('✅ Questions:', sbQuestions.length); }
-        if(Array.isArray(sbQuizCfg)   && sbQuizCfg.length)   { SB_QUIZ_CFG  = sbQuizCfg;  console.log('✅ QuizConfig:', sbQuizCfg.length); }
+        if(Array.isArray(results[0]) && results[0].length) { SB_THEMES    = results[0]; console.log('Themes:', results[0].length); }
+        if(Array.isArray(results[1]) && results[1].length) { SB_FICHES    = results[1]; console.log('Fiches:', results[1].length); }
+        if(Array.isArray(results[2]) && results[2].length) { SB_VISUELS   = results[2]; console.log('Visuels:', results[2].length); }
+        if(Array.isArray(results[3]) && results[3].length) { SB_QUESTIONS = results[3]; console.log('Questions:', results[3].length); }
+        if(Array.isArray(results[4]) && results[4].length) { SB_QUIZ_CFG  = results[4]; console.log('QuizCfg:', results[4].length); }
         updateBadges();
         if(typeof currentView !== 'undefined' && currentView === 'cours') {
           try { renderCoursHub(); } catch(e) {}
         }
-      }).catch(function(e){ console.log('ℹ️ Contenu pédagogique non chargé:', e.message); });
+      }).catch(function(e){ console.log('Contenu non chargé:', e.message); });
       console.log(`✅ Supabase OK — ${j.length} joueurs, ${DB.sessions.length} sessions, ${DB.parrainage.length} parrainages, ${DB.connexions.length} connexions`);
     } else {
       throw new Error('Réponse Supabase invalide');
@@ -2327,7 +2322,7 @@ function renderPartenairesStock(el) {
         var color = taux >= 80 ? 'var(--gr)' : taux >= 40 ? 'var(--am)' : 'var(--t3)';
         var switchHtml = l.id ? '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px">'
           + '<input type="checkbox"'+(l.actif?' checked':'')
-          + ' onchange="toggleLotActif(" + JSON.stringify(l.id) + ",this.checked)"> Actif</label>' : '—';
+          + ' onchange="toggleLotActif(' + JSON.stringify(l.id) + ',this.checked)"> Actif</label>' : '—';
         html += '<tr>'
           + '<td><span style="font-size:16px">'+(l.emoji||'🎁')+'</span> <strong>'+l.nom+'</strong></td>'
           + '<td>'+l.distribues+'</td>'
@@ -2582,7 +2577,7 @@ function renderDashboard() {
       return '<div onclick="navTo(\''+k.nav+'\')" style="background:var(--surf);border:1px solid var(--b);border-radius:14px;padding:20px 18px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden" onmouseenter="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 8px 24px rgba(0,0,0,.08)\'" onmouseleave="this.style.transform=\'\';this.style.boxShadow=\'\'">'
         + '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:'+k.color+'"></div>'
         + '<div style="font-size:10px;font-weight:800;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">'+k.label+'</div>'
-        + '<div style="font-family:Syne,sans-serif;font-size:32px;font-weight:800;color:var(--t);line-height:1;margin-bottom:6px;letter-spacing:-.03em">'+k.val+'</div>'
+        + '<div style="font-family:\'Syne\',sans-serif;font-size:32px;font-weight:800;color:var(--t);line-height:1;margin-bottom:6px;letter-spacing:-.03em">'+k.val+'</div>'
         + '<div style="font-size:11px;color:var(--t3);font-weight:500">'+k.sub+'</div>'
         + '</div>';
     }).join('');
@@ -3334,12 +3329,12 @@ function exportStatsReport() {
 // ── COURS & CONTENUS ──
 
 // Données cours — fallback local (remplacé par Supabase au chargement)
-// ── Données pédagogiques Supabase (chargées dans loadData) ──
-var SB_THEMES    = [];   // niveaux → themes
-var SB_FICHES    = [];   // contenu : essentiel, chrono, dates, vocab, photos
-var SB_VISUELS   = [];   // SVG/schémas par thème
-var SB_QUESTIONS = [];   // banque de questions
-var SB_QUIZ_CFG  = [];   // paramètres quiz par thème
+var SB_THEMES    = [];
+var SB_FICHES    = [];
+var SB_VISUELS   = [];
+var SB_QUESTIONS = [];
+var SB_QUIZ_CFG  = [];
+
 
 
 let coursFilterMat = 'all';
@@ -3360,119 +3355,46 @@ function setCoursFilter(btn, filterType, val) {
 // ── COURS HUB ──
 var coursCurrentTheme = null;
 
-// ── COURS : couleurs et emojis par matière ──
 var COURS_MAT_COULEURS = { 'Histoire':'var(--ac)', 'Géographie':'var(--gr)', 'EMC':'#E040A0', 'PSE':'#E84855' };
 var COURS_MAT_EMOJI    = { 'Histoire':'📜', 'Géographie':'🌍', 'EMC':'⚖️', 'PSE':'🩺' };
 var COURS_MAT_ORDER    = ['Histoire','Géographie','EMC','PSE'];
-var coursCurrentTheme  = null;  // id du thème ouvert (null = hub)
+var coursCurrentTheme  = null;
 
-function getMatCouleur(mat) {
-  if(!mat) return 'var(--ac)';
-  return COURS_MAT_COULEURS[mat] || COURS_MAT_COULEURS[mat.replace('e','é')] || 'var(--ac)';
-}
-function getMatEmoji(mat) {
-  if(!mat) return '📚';
-  return COURS_MAT_EMOJI[mat] || COURS_MAT_EMOJI[mat.replace('e','é')] || '📚';
-}
+function getMatCouleur(mat) { return COURS_MAT_COULEURS[mat] || COURS_MAT_COULEURS[mat&&mat.replace('e','é')] || 'var(--ac)'; }
+function getMatEmoji(mat)   { return COURS_MAT_EMOJI[mat]    || COURS_MAT_EMOJI[mat&&mat.replace('e','é')]    || '📚'; }
 
-// ── Construire l'arbre thème→fiches/visuels/questions/quizConfig depuis SB_* ──
 function buildCoursData() {
   var map = {};
   SB_THEMES.forEach(function(t) {
-    map[t.id] = {
-      id:       t.id,
-      num:      t.num,
-      title:    t.title,
-      mat:      t.mat,
-      emoji:    t.emoji,
-      color:    t.color,
-      ordre:    t.ordre,
-      actif:    t.actif,
-      fiche:    null,
-      visuels:  [],
-      questions:[],
-      quizCfg:  null
-    };
+    map[t.id] = { id:t.id, num:t.num, title:t.title, mat:t.mat, emoji:t.emoji, color:t.color, ordre:t.ordre, actif:t.actif, fiche:null, visuels:[], questions:[], quizCfg:null };
   });
-  SB_FICHES.forEach(function(f) {
-    if(map[f.theme_id]) map[f.theme_id].fiche = f;
-  });
-  SB_VISUELS.forEach(function(v) {
-    if(map[v.theme_id]) map[v.theme_id].visuels.push(v);
-  });
-  SB_QUESTIONS.forEach(function(q) {
-    if(map[q.theme_id]) map[q.theme_id].questions.push(q);
-  });
-  SB_QUIZ_CFG.forEach(function(c) {
-    if(map[c.theme_id]) map[c.theme_id].quizCfg = c;
-  });
+  SB_FICHES.forEach(function(f)    { if(map[f.theme_id]) map[f.theme_id].fiche = f; });
+  SB_VISUELS.forEach(function(v)   { if(map[v.theme_id]) map[v.theme_id].visuels.push(v); });
+  SB_QUESTIONS.forEach(function(q) { if(map[q.theme_id]) map[q.theme_id].questions.push(q); });
+  SB_QUIZ_CFG.forEach(function(c)  { if(map[c.theme_id]) map[c.theme_id].quizCfg = c; });
   return map;
 }
 
-// ── Hub principal ──
 function renderCoursHub() {
   updateBadges();
   var el = document.getElementById('cours-hub-content');
   if(!el) return;
-
   if(coursCurrentTheme) {
     var map = buildCoursData();
-    if(map[coursCurrentTheme]) {
-      renderCoursThemeDetail(map[coursCurrentTheme], el);
-      return;
-    }
+    if(map[coursCurrentTheme]) { renderCoursThemeDetail(map[coursCurrentTheme], el); return; }
     coursCurrentTheme = null;
   }
-
-  var map        = buildCoursData();
-  var themes     = Object.values(map);
-  var totalT     = themes.length;
-  var totalF     = SB_FICHES.length;
-  var totalV     = SB_VISUELS.length;
-  var totalQ     = SB_QUESTIONS.length;
-
+  var map = buildCoursData();
+  var themes = Object.values(map);
   var subEl = document.getElementById('cours-hub-sub');
-  if(subEl) subEl.textContent = totalT + ' thèmes · ' + totalF + ' fiches · ' + totalQ + ' questions · ' + totalV + ' visuels';
-
+  if(subEl) subEl.textContent = themes.length + ' themes · ' + SB_FICHES.length + ' fiches · ' + SB_QUESTIONS.length + ' questions · ' + SB_VISUELS.length + ' visuels';
   var html = '';
-
-  // KPIs
   html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">';
-  html += coursKpi('📚', totalT,  'Thèmes',    'var(--ac)', 'var(--acBg)');
-  html += coursKpi('❓', totalQ,  'Questions', 'var(--am)', 'var(--amBg)');
-  html += coursKpi('📄', totalF,  'Fiches',    'var(--gr)', 'var(--grBg)');
-  html += coursKpi('🖼', totalV,  'Visuels',   'var(--bl)', 'var(--blBg)');
+  html += coursKpi('📚', themes.length,       'Themes',    'var(--ac)', 'var(--acBg)');
+  html += coursKpi('❓', SB_QUESTIONS.length, 'Questions', 'var(--am)', 'var(--amBg)');
+  html += coursKpi('📄', SB_FICHES.length,    'Fiches',    'var(--gr)', 'var(--grBg)');
+  html += coursKpi('🖼', SB_VISUELS.length,   'Visuels',   'var(--bl)', 'var(--blBg)');
   html += '</div>';
-
-  // Répartition questions par matière
-  if(totalQ > 0) {
-    html += '<div class="panel" style="margin-bottom:20px">';
-    html += '<div class="panel-header"><span>🎯 Banque de questions</span>';
-    html += '<span style="font-size:10px;color:var(--t3);font-weight:400">' + totalQ + ' questions · ' + totalT + ' thèmes</span></div>';
-    html += '<div style="padding:14px 16px;display:flex;flex-direction:column;gap:7px">';
-    var matCount = {};
-    SB_QUESTIONS.forEach(function(q) {
-      var t = map[q.theme_id];
-      var m = t ? t.mat : '?';
-      if(!matCount[m]) matCount[m] = 0;
-      matCount[m]++;
-    });
-    COURS_MAT_ORDER.forEach(function(mat) {
-      var n = matCount[mat] || 0;
-      if(!n) return;
-      var pct = Math.round(n / totalQ * 100);
-      var c = getMatCouleur(mat);
-      html += '<div style="display:flex;align-items:center;gap:10px">';
-      html += '<span style="font-size:11px;color:var(--t);width:110px;flex-shrink:0">' + getMatEmoji(mat) + ' ' + mat + '</span>';
-      html += '<div style="flex:1;height:6px;background:var(--surf3);border-radius:3px;overflow:hidden">';
-      html += '<div style="height:100%;width:' + pct + '%;background:' + c + ';border-radius:3px"></div></div>';
-      html += '<span style="font-size:10px;color:var(--t3);width:40px;text-align:right;flex-shrink:0">' + n + ' q.</span>';
-      html += '</div>';
-    });
-    html += '</div></div>';
-  }
-
-  // Sections par matière
   COURS_MAT_ORDER.forEach(function(mat) {
     var themed = themes.filter(function(t){ return t.mat === mat; });
     if(!themed.length) return;
@@ -3480,42 +3402,29 @@ function renderCoursHub() {
     var couleur = getMatCouleur(mat);
     var emoji   = getMatEmoji(mat);
     var totalQM = themed.reduce(function(s,t){ return s+t.questions.length; }, 0);
-
     html += '<div style="margin-bottom:24px">';
     html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid ' + couleur + '">';
     html += '<span style="font-size:20px">' + emoji + '</span>';
     html += '<span style="font-size:14px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">' + mat + '</span>';
-    html += '<span style="font-size:10px;color:var(--t3);margin-left:auto">' + themed.length + ' thème' + (themed.length>1?'s':'') + ' · ' + totalQM + ' q.</span>';
+    html += '<span style="font-size:10px;color:var(--t3);margin-left:auto">' + themed.length + ' themes · ' + totalQM + ' q.</span>';
     html += '</div>';
     html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">';
-
     themed.forEach(function(t) {
-      var qCount = t.questions.length;
-      var vCount = t.visuels.length;
-      var hasFiche = !!t.fiche;
-      var cfg = t.quizCfg;
-
       html += '<div class="panel" style="margin:0;cursor:pointer;border-left:3px solid ' + couleur + '"';
       html += ' onclick="coursOpenTheme(' + JSON.stringify(t.id) + ')"';
       html += ' onmouseenter="this.style.boxShadow=\'0 4px 14px rgba(0,0,0,.09)\'"';
       html += ' onmouseleave="this.style.boxShadow=\'none\'">';
       html += '<div style="padding:14px 16px">';
-
       html += '<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">';
       html += '<div style="width:36px;height:36px;border-radius:9px;background:' + couleur + '20;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">' + (t.emoji||'📄') + '</div>';
-      html += '<div style="flex:1;min-width:0">';
-      html += '<div style="font-size:12px;font-weight:800;color:var(--t);line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">' + t.title + '</div>';
-      html += '<div style="font-size:10px;color:var(--t3);margin-top:2px">' + mat + '</div>';
-      html += '</div></div>';
-
+      html += '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:800;color:var(--t);line-height:1.3">' + t.title + '</div>';
+      html += '<div style="font-size:10px;color:var(--t3);margin-top:2px">' + mat + '</div></div></div>';
       html += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">';
-      if(hasFiche) html += '<span style="font-size:10px;background:var(--acBg);color:var(--ac);border-radius:20px;padding:2px 8px;font-weight:600">📄 Fiche</span>';
-      if(qCount)   html += '<span style="font-size:10px;background:var(--amBg);color:var(--am);border-radius:20px;padding:2px 8px;font-weight:600">❓ ' + qCount + ' q.</span>';
-      if(vCount)   html += '<span style="font-size:10px;background:var(--blBg);color:var(--bl);border-radius:20px;padding:2px 8px;font-weight:600">🖼 ' + vCount + '</span>';
-      if(cfg && cfg.quiz_actif) html += '<span style="font-size:10px;background:var(--grBg);color:var(--gr);border-radius:20px;padding:2px 8px;font-weight:600">✅ Quiz actif</span>';
-      if(!hasFiche && !qCount) html += '<span style="font-size:10px;background:var(--surf2);color:var(--t3);border-radius:20px;padding:2px 8px">Vide</span>';
+      if(t.fiche)             html += '<span style="font-size:10px;background:var(--acBg);color:var(--ac);border-radius:20px;padding:2px 8px;font-weight:600">📄 Fiche</span>';
+      if(t.questions.length)  html += '<span style="font-size:10px;background:var(--amBg);color:var(--am);border-radius:20px;padding:2px 8px;font-weight:600">❓ ' + t.questions.length + ' q.</span>';
+      if(t.visuels.length)    html += '<span style="font-size:10px;background:var(--blBg);color:var(--bl);border-radius:20px;padding:2px 8px;font-weight:600">🖼 ' + t.visuels.length + '</span>';
+      if(t.quizCfg && t.quizCfg.quiz_actif) html += '<span style="font-size:10px;background:var(--grBg);color:var(--gr);border-radius:20px;padding:2px 8px;font-weight:600">✅ Quiz</span>';
       html += '</div>';
-
       html += '<div style="border-top:1px solid var(--b);padding-top:8px;display:flex;justify-content:space-between;align-items:center">';
       html += '<span style="font-size:10px;color:var(--t3)">n°' + (t.num||'-') + '</span>';
       html += '<span style="font-size:10px;color:' + couleur + ';font-weight:700">Ouvrir →</span>';
@@ -3523,15 +3432,11 @@ function renderCoursHub() {
     });
     html += '</div></div>';
   });
-
   if(!themes.length) {
-    html += '<div style="text-align:center;padding:40px;color:var(--t3)">';
-    html += '<div style="font-size:40px;margin-bottom:12px">📚</div>';
-    html += '<div style="font-size:14px;font-weight:700;color:var(--t2)">Aucun thème chargé</div>';
-    html += '<div style="font-size:12px;margin-top:6px">Le SQL flowin_schema_v2.sql a-t-il été exécuté dans Supabase ?</div>';
-    html += '</div>';
+    html += '<div style="text-align:center;padding:40px;color:var(--t3)"><div style="font-size:40px;margin-bottom:12px">📚</div>';
+    html += '<div style="font-size:14px;font-weight:700;color:var(--t2)">Aucun theme chargé</div>';
+    html += '<div style="font-size:12px;margin-top:6px">flowin_schema_v2.sql exécuté dans Supabase ?</div></div>';
   }
-
   el.innerHTML = html;
 }
 
@@ -3546,192 +3451,108 @@ function coursKpi(icon, val, label, color, bg) {
 function coursOpenTheme(id)  { coursCurrentTheme = id;   renderCoursHub(); }
 function coursBackToHub()    { coursCurrentTheme = null; renderCoursHub(); }
 
-// ── Détail d'un thème ──
 function renderCoursThemeDetail(t, el) {
   var couleur = t.color || getMatCouleur(t.mat) || 'var(--ac)';
-  var f       = t.fiche;
-  var qList   = t.questions || [];
-  var vList   = t.visuels  || [];
-  var cfg     = t.quizCfg;
-
+  var f = t.fiche; var qList = t.questions; var vList = t.visuels; var cfg = t.quizCfg;
   var html = '';
-
-  // Breadcrumb
   html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">';
   html += '<button onclick="coursBackToHub()" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:6px 12px;font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit">← Retour</button>';
   html += '<span style="font-size:12px;color:var(--t3)">Cours /</span>';
-  html += '<span style="font-size:12px;font-weight:700;color:var(--t)">' + t.title + '</span>';
-  html += '</div>';
-
-  // Header thème
+  html += '<span style="font-size:12px;font-weight:700;color:var(--t)">' + t.title + '</span></div>';
   html += '<div class="panel" style="margin-bottom:16px;border-left:3px solid ' + couleur + '">';
   html += '<div style="padding:16px;display:flex;align-items:center;gap:12px">';
   html += '<div style="width:48px;height:48px;border-radius:12px;background:' + couleur + '20;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">' + (t.emoji||'📄') + '</div>';
-  html += '<div style="flex:1">';
-  html += '<div style="font-size:16px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">' + t.title + '</div>';
-  html += '<div style="font-size:11px;color:var(--t3);margin-top:3px">' + t.mat + ' · Bac Pro</div>';
-  html += '</div>';
+  html += '<div style="flex:1"><div style="font-size:16px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">' + t.title + '</div>';
+  html += '<div style="font-size:11px;color:var(--t3);margin-top:3px">' + t.mat + ' · Bac Pro</div></div>';
   html += '<div style="display:flex;gap:8px">';
   html += '<div style="background:var(--acBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--ac)">' + (f?'✅':'—') + '</div><div style="font-size:9px;color:var(--t3)">Fiche</div></div>';
   html += '<div style="background:var(--amBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--am)">' + qList.length + '</div><div style="font-size:9px;color:var(--t3)">Questions</div></div>';
   html += '<div style="background:var(--blBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--bl)">' + vList.length + '</div><div style="font-size:9px;color:var(--t3)">Visuels</div></div>';
   html += '</div></div></div>';
-
-  // ── 1. FICHE CONTENU ──
+  // Fiche
   html += '<div class="panel" style="margin-bottom:14px">';
   html += '<div class="panel-header"><span>📄 Fiche contenu</span>';
-  html += '<button onclick="openEditFiche(' + JSON.stringify(t.id) + ')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">' + (f?'✏️ Modifier':'+ Créer') + '</button>';
-  html += '</div>';
+  html += '<button onclick="showAdminToast(\'Edition fiche — bientôt disponible\')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">' + (f?'✏️ Modifier':'+ Créer') + '</button></div>';
   if(!f) {
-    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucune fiche — <button onclick="openEditFiche(' + JSON.stringify(t.id) + ')" style="background:none;border:none;color:var(--ac);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Créer</button></div>';
+    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucune fiche</div>';
   } else {
     html += '<div style="padding:14px 16px">';
-    if(f.essentiel) {
-      html += '<div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Essentiel</div>';
-      html += '<div style="font-size:12px;color:var(--t2);line-height:1.7;margin-bottom:12px;border-left:3px solid ' + couleur + ';padding-left:10px">' + f.essentiel + '</div>';
-    }
+    if(f.essentiel) html += '<div style="font-size:12px;color:var(--t2);line-height:1.7;border-left:3px solid ' + couleur + ';padding-left:10px;margin-bottom:10px">' + f.essentiel + '</div>';
     if(f.chrono && f.chrono.length) {
-      html += '<div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Chronologie (' + f.chrono.length + ' entrées)</div>';
-      html += '<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:12px">';
+      html += '<div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;margin-bottom:6px">Chrono (' + f.chrono.length + ')</div>';
+      html += '<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px">';
       f.chrono.slice(0,3).forEach(function(c) {
-        html += '<div style="display:flex;gap:10px;font-size:11px">';
-        html += '<span style="color:' + couleur + ';font-weight:700;flex-shrink:0;min-width:80px">' + c[0] + '</span>';
-        html += '<span style="color:var(--t2)">' + c[1] + '</span></div>';
+        html += '<div style="display:flex;gap:10px;font-size:11px"><span style="color:' + couleur + ';font-weight:700;flex-shrink:0;min-width:80px">' + c[0] + '</span><span style="color:var(--t2)">' + c[1] + '</span></div>';
       });
-      if(f.chrono.length > 3) html += '<div style="font-size:10px;color:var(--t3)">+ ' + (f.chrono.length-3) + ' autres…</div>';
+      if(f.chrono.length>3) html += '<div style="font-size:10px;color:var(--t3)">+ ' + (f.chrono.length-3) + ' autres</div>';
       html += '</div>';
     }
     if(f.vocab && f.vocab.length) {
-      html += '<div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Vocabulaire (' + f.vocab.length + ' mots)</div>';
-      html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">';
-      f.vocab.slice(0,5).forEach(function(v) {
-        html += '<span style="background:' + couleur + '15;border:1px solid ' + couleur + '30;border-radius:20px;padding:3px 10px;font-size:10px;color:var(--t);font-weight:600">' + v[0] + '</span>';
-      });
-      if(f.vocab.length > 5) html += '<span style="font-size:10px;color:var(--t3)">+' + (f.vocab.length-5) + '</span>';
+      html += '<div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;margin-bottom:6px">Vocab (' + f.vocab.length + ')</div>';
+      html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
+      f.vocab.slice(0,5).forEach(function(v) { html += '<span style="background:' + couleur + '15;border:1px solid ' + couleur + '30;border-radius:20px;padding:3px 10px;font-size:10px;color:var(--t);font-weight:600">' + v[0] + '</span>'; });
       html += '</div>';
     }
     html += '</div>';
   }
   html += '</div>';
-
-  // ── 2. VISUELS ──
+  // Questions
   html += '<div class="panel" style="margin-bottom:14px">';
-  html += '<div class="panel-header"><span>🖼 Visuels & Schémas</span>';
-  html += '<button onclick="openAddVisuel(' + JSON.stringify(t.id) + ')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
-  html += '</div>';
-  if(!vList.length) {
-    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucun visuel — <button onclick="openAddVisuel(' + JSON.stringify(t.id) + ')" style="background:none;border:none;color:var(--ac);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Ajouter</button></div>';
-  } else {
-    html += '<div style="padding:14px;display:flex;flex-direction:column;gap:8px">';
-    vList.forEach(function(v) {
-      html += '<div style="background:var(--surf2);border-radius:9px;padding:12px;display:flex;align-items:center;gap:12px">';
-      html += '<span style="font-size:20px">🖼</span>';
-      html += '<div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--t)">' + (v.titre||'Visuel') + '</div>';
-      html += '<div style="font-size:10px;color:var(--t3)">' + (v.type||'schema') + '</div></div>';
-      html += '<button onclick="openEditVisuel(' + JSON.stringify(v.id) + ')" style="background:var(--surf3);border:none;border-radius:7px;padding:5px 10px;font-size:10px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit">✏️</button>';
-      html += '</div>';
-    });
-    html += '</div>';
-  }
-  html += '</div>';
-
-  // ── 3. QUESTIONS ──
-  html += '<div class="panel" style="margin-bottom:14px">';
-  html += '<div class="panel-header"><span>❓ Questions</span>';
-  html += '<div style="display:flex;gap:8px;align-items:center">';
-  html += '<span style="font-size:10px;color:var(--t3)">' + qList.length + ' questions</span>';
-  html += '<button onclick="openAddQuestion(' + JSON.stringify(t.id) + ')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
-  html += '</div></div>';
+  html += '<div class="panel-header"><span>❓ Questions (' + qList.length + ')</span>';
+  html += '<button onclick="openAddQuestion(' + JSON.stringify(t.id) + ')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button></div>';
   if(!qList.length) {
-    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucune question — <button onclick="openAddQuestion(' + JSON.stringify(t.id) + ')" style="background:none;border:none;color:var(--ac);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Créer la première</button></div>';
+    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucune question</div>';
   } else {
-    var difficColors = { facile:'var(--gr)', moyen:'var(--am)', difficile:'var(--re)' };
+    var diff = {facile:'😊',moyen:'🤔',difficile:'🔥'};
     html += '<div style="padding:8px 0">';
-    qList.forEach(function(q, i) {
+    qList.forEach(function(q,i) {
       html += '<div style="padding:10px 16px;' + (i<qList.length-1?'border-bottom:1px solid var(--b)':'') + '">';
       html += '<div style="display:flex;align-items:flex-start;gap:10px">';
-      html += '<span style="font-size:14px;flex-shrink:0;margin-top:1px">' + (q.difficulte==='facile'?'😊':q.difficulte==='difficile'?'🔥':'🤔') + '</span>';
-      html += '<div style="flex:1;min-width:0">';
-      html += '<div style="font-size:12px;font-weight:600;color:var(--t);line-height:1.4;margin-bottom:6px">' + q.q + '</div>';
-      html += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px">';
-      if(q.opts && Array.isArray(q.opts)) {
-        q.opts.forEach(function(r, ri) {
-          var isBonne = ri === q.bon;
-          html += '<span style="font-size:10px;padding:3px 8px;border-radius:20px;' + (isBonne?'background:var(--grBg);color:var(--gr);font-weight:700;border:1px solid var(--grBorder)':'background:var(--surf2);color:var(--t3);border:1px solid var(--b)') + '">' + (isBonne?'✓ ':'') + r + '</span>';
-        });
-      }
+      html += '<span style="font-size:14px;flex-shrink:0">' + (diff[q.difficulte]||'🤔') + '</span>';
+      html += '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--t);line-height:1.4;margin-bottom:6px">' + q.q + '</div>';
+      html += '<div style="display:flex;gap:5px;flex-wrap:wrap">';
+      if(q.opts && Array.isArray(q.opts)) q.opts.forEach(function(r,ri) {
+        var ok = ri===q.bon;
+        html += '<span style="font-size:10px;padding:3px 8px;border-radius:20px;' + (ok?'background:var(--grBg);color:var(--gr);font-weight:700;border:1px solid var(--grBorder)':'background:var(--surf2);color:var(--t3);border:1px solid var(--b)') + '">' + (ok?'✓ ':'') + r + '</span>';
+      });
       html += '</div>';
-      if(q.expl) html += '<div style="font-size:10px;color:var(--t3);font-style:italic">' + q.expl + '</div>';
+      if(q.expl) html += '<div style="font-size:10px;color:var(--t3);font-style:italic;margin-top:4px">' + q.expl + '</div>';
       html += '</div></div></div>';
     });
     html += '</div>';
   }
   html += '</div>';
-
-  // ── 4. QUIZ CONFIG ──
-  html += '<div class="panel" style="margin-bottom:14px">';
-  html += '<div class="panel-header"><span>🎯 Configuration Quiz</span></div>';
-  html += '<div style="padding:14px 16px">';
-  if(!cfg) {
-    html += '<div style="font-size:11px;color:var(--t3)">Config non chargée</div>';
-  } else {
-    html += '<div style="display:flex;flex-direction:column;gap:10px">';
-    html += '<div style="display:flex;align-items:center;justify-content:space-between">';
-    html += '<span style="font-size:12px;color:var(--t)">Quiz rapide (' + cfg.nb_questions + ' questions)</span>';
-    html += '<span style="font-size:11px;font-weight:700;color:' + (cfg.quiz_actif?'var(--gr)':'var(--t3)') + '">' + (cfg.quiz_actif?'✅ Actif':'⏸ Inactif') + '</span>';
-    html += '</div>';
-    html += '<div style="display:flex;align-items:center;justify-content:space-between">';
-    html += '<span style="font-size:12px;color:var(--t)">Quiz complet (toutes questions)</span>';
-    html += '<span style="font-size:11px;font-weight:700;color:' + (cfg.quiz_complet_actif?'var(--gr)':'var(--t3)') + '">' + (cfg.quiz_complet_actif?'✅ Actif':'⏸ Inactif') + '</span>';
-    html += '</div>';
-    html += '<div style="display:flex;align-items:center;justify-content:space-between">';
-    html += '<span style="font-size:12px;color:var(--t)">Ordre aléatoire</span>';
-    html += '<span style="font-size:11px;font-weight:700;color:' + (cfg.ordre_aleatoire?'var(--gr)':'var(--t3)') + '">' + (cfg.ordre_aleatoire?'✅':'❌') + '</span>';
-    html += '</div>';
-    html += '</div>';
+  // Quiz config
+  if(cfg) {
+    html += '<div class="panel" style="margin-bottom:14px"><div class="panel-header"><span>🎯 Quiz Config</span></div>';
+    html += '<div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px">';
+    html += '<div style="display:flex;justify-content:space-between"><span style="font-size:12px">Quiz rapide (' + cfg.nb_questions + ' q.)</span><span style="font-weight:700;color:' + (cfg.quiz_actif?'var(--gr)':'var(--t3)') + '">' + (cfg.quiz_actif?'✅ Actif':'⏸ Inactif') + '</span></div>';
+    html += '<div style="display:flex;justify-content:space-between"><span style="font-size:12px">Quiz complet</span><span style="font-weight:700;color:' + (cfg.quiz_complet_actif?'var(--gr)':'var(--t3)') + '">' + (cfg.quiz_complet_actif?'✅ Actif':'⏸ Inactif') + '</span></div>';
+    html += '</div></div>';
   }
-  html += '</div></div>';
-
   el.innerHTML = html;
 }
 
-// ── Fonctions modal fiche, visuel, question (stubs — ouvrent modal existant) ──
-function openEditFiche(themeId) {
-  var t = SB_THEMES.find(function(x){ return x.id === themeId; });
-  var title = t ? t.title : themeId;
-  showAdminToast('Édition fiche "' + title + '" — bientôt disponible');
-}
-function openAddVisuel(themeId) {
-  showAdminToast('Ajout visuel — bientôt disponible');
-}
-function openEditVisuel(id) {
-  showAdminToast('Édition visuel — bientôt disponible');
-}
 function openAddQuestion(themeId) {
+  var t = SB_THEMES.find(function(x){ return x.id === themeId; });
   var modalTitle = document.getElementById('modal-question-title');
   var modalBody  = document.getElementById('modal-question-body');
   if(!modalTitle || !modalBody) return;
-  var t = SB_THEMES.find(function(x){ return x.id === themeId; });
-  var tTitle = t ? t.title : themeId;
-  modalTitle.textContent = 'Ajouter une question — ' + tTitle;
+  modalTitle.textContent = 'Ajouter une question — ' + (t ? t.title : themeId);
   var html = '<div style="display:flex;flex-direction:column;gap:14px;padding:4px 0">';
-  html += '<div><label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.04em">Question</label>';
+  html += '<div><label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase">Question</label>';
   html += '<textarea id="nq-q" rows="3" style="width:100%;border:1px solid var(--b);border-radius:8px;padding:10px;font-size:13px;font-family:inherit;margin-top:4px;resize:vertical;background:var(--surf2);color:var(--t)"></textarea></div>';
-  html += '<div id="nq-opts-wrap">';
   for(var i=0;i<4;i++) {
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">';
+    html += '<div style="display:flex;align-items:center;gap:8px">';
     html += '<input type="radio" name="nq-bon" value="' + i + '" id="nq-bon-' + i + '"' + (i===0?' checked':'') + '>';
     html += '<input id="nq-opt-' + i + '" placeholder="Option ' + String.fromCharCode(65+i) + '" style="flex:1;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;font-family:inherit;background:var(--surf2);color:var(--t)">';
     html += '</div>';
   }
-  html += '</div>';
-  html += '<div><label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.04em">Explication (après réponse)</label>';
+  html += '<div><label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase">Explication</label>';
   html += '<input id="nq-expl" style="width:100%;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;font-family:inherit;margin-top:4px;background:var(--surf2);color:var(--t)"></div>';
-  html += '<div><label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.04em">Difficulté</label>';
-  html += '<select id="nq-diff" style="width:100%;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;font-family:inherit;margin-top:4px;background:var(--surf2);color:var(--t)">';
-  html += '<option value="facile">😊 Facile</option><option value="moyen" selected>🤔 Moyen</option><option value="difficile">🔥 Difficile</option>';
-  html += '</select></div>';
-  html += '<button onclick="saveNewQuestion(' + JSON.stringify(themeId) + ')" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">💾 Enregistrer dans Supabase</button>';
+  html += '<select id="nq-diff" style="width:100%;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;font-family:inherit;background:var(--surf2);color:var(--t)">';
+  html += '<option value="facile">😊 Facile</option><option value="moyen" selected>🤔 Moyen</option><option value="difficile">🔥 Difficile</option></select>';
+  html += '<button onclick="saveNewQuestion(' + JSON.stringify(themeId) + ')" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">💾 Enregistrer</button>';
   html += '</div>';
   modalBody.innerHTML = html;
   document.getElementById('modal-question').style.display = 'flex';
@@ -3745,39 +3566,21 @@ function saveNewQuestion(themeId) {
   var expl = (document.getElementById('nq-expl')||{}).value||'';
   var diff = (document.getElementById('nq-diff')||{}).value||'moyen';
   var opts = [];
-  for(var i=0;i<4;i++) {
-    opts.push((document.getElementById('nq-opt-'+i)||{}).value||'');
-  }
-  if(!q.trim()) return showAdminToast('La question est vide', 'error');
-  if(opts.filter(function(o){return o.trim();}).length < 2) return showAdminToast('Au moins 2 options requises', 'error');
-
-  var hdrs = { 'apikey':SB_KEY, 'Authorization':'Bearer '+SB_KEY, 'Content-Type':'application/json', 'Prefer':'return=representation' };
+  for(var i=0;i<4;i++) opts.push((document.getElementById('nq-opt-'+i)||{}).value||'');
+  if(!q.trim()) return showAdminToast('Question vide', 'error');
+  var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
   fetch(SB_URL+'/rest/v1/questions', {
     method:'POST', headers:hdrs,
-    body: JSON.stringify({ theme_id:themeId, q:q.trim(), opts:opts, bon:bon, expl:expl.trim(), difficulte:diff, actif:true })
-  })
-  .then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); })
-  .then(function(rows) {
-    var newQ = Array.isArray(rows) ? rows[0] : rows;
-    if(newQ) {
-      SB_QUESTIONS.push(newQ);
-      showAdminToast('Question ajoutée ✅');
-      closeQuestion();
-      renderCoursHub();
-    }
-  })
-  .catch(function(e){ showAdminToast('Erreur Supabase: '+e, 'error'); });
+    body: JSON.stringify({theme_id:themeId, q:q.trim(), opts:opts, bon:bon, expl:expl.trim(), difficulte:diff, actif:true})
+  }).then(function(r){ return r.ok?r.json():Promise.reject(r.status); })
+    .then(function(rows) {
+      var nq = Array.isArray(rows)?rows[0]:rows;
+      if(nq) { SB_QUESTIONS.push(nq); showAdminToast('Question ajoutée ✅'); closeQuestion(); renderCoursHub(); }
+    }).catch(function(e){ showAdminToast('Erreur: '+e, 'error'); });
 }
 
-function renderCours() {
-  renderCoursHub();
-}
-
-function toggleQBank(id) {
-  var el = document.getElementById(id);
-  if(!el) return;
-  el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}
+function renderCours()    { renderCoursHub(); }
+function toggleQBank(id)  { var el=document.getElementById(id); if(el) el.style.display=el.style.display==='none'?'block':'none'; }
 
 
 // ── FICHE COURS (modal) ──
@@ -4752,7 +4555,7 @@ function renderStockPanel() {
       // Nom + condition
       + '<div style="flex:1;min-width:0">'
       + '<input value="' + lot.titre.replace(/"/g,'&quot;') + '" oninput="LOTS_DB[' + li + '].titre=this.value"'
-      + ' style="font-size:14px;font-weight:800;font-family:Syne,sans-serif;color:var(--t);border:none;background:transparent;outline:none;width:100%;border-bottom:1.5px solid transparent;padding:0 0 2px;transition:border-color .15s"'
+      + ' style="font-size:14px;font-weight:800;font-family:\'Syne\',sans-serif;color:var(--t);border:none;background:transparent;outline:none;width:100%;border-bottom:1.5px solid transparent;padding:0 0 2px;transition:border-color .15s"'
       + ' onfocus="this.style.borderBottomColor=\'var(--ac)\'" onblur="this.style.borderBottomColor=\'transparent\'">'
       + '<div style="margin-top:5px">'
       + '<select onchange="LOTS_DB[' + li + '].cond=this.value;LOTS_DB[' + li + '].condLbl=this.options[this.selectedIndex].text"'
@@ -4763,9 +4566,9 @@ function renderStockPanel() {
 
       // Compteurs
       + '<div style="display:flex;gap:20px;flex-shrink:0;text-align:center">'
-      + '<div><div style="font-family:Syne,sans-serif;font-size:28px;font-weight:800;color:' + stockColor + ';line-height:1">' + st.dispo + '</div>'
+      + '<div><div style="font-family:\'Syne\',sans-serif;font-size:28px;font-weight:800;color:' + stockColor + ';line-height:1">' + st.dispo + '</div>'
       + '<div style="font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;margin-top:2px">Dispo</div></div>'
-      + '<div><div style="font-family:Syne,sans-serif;font-size:28px;font-weight:800;color:var(--ac);line-height:1">' + st.attribue + '</div>'
+      + '<div><div style="font-family:\'Syne\',sans-serif;font-size:28px;font-weight:800;color:var(--ac);line-height:1">' + st.attribue + '</div>'
       + '<div style="font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;margin-top:2px">Attribués</div></div>'
       + '</div>'
 
@@ -4801,34 +4604,30 @@ function toggleStockDetail(lotId) {
 }
 
 function openAddCodes(lotId, lotNom, lotEmoji) {
-  const ov = document.createElement('div');
+  var ov = document.createElement('div');
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
-  ov.innerHTML = `
-    <div style="background:#fff;border-radius:14px;width:100%;max-width:480px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.2)">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-        <span style="font-size:24px">${lotEmoji}</span>
-        <div>
-          <div style="font-size:14px;font-weight:800;color:var(--t)">Ajouter des codes — ${lotNom}</div>
-          <div style="font-size:11px;color:var(--t3)">Un code par ligne</div>
-        </div>
-        <button onclick="this.closest('[style*=fixed]').remove()" style="margin-left:auto;width:28px;height:28px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px">✕</button>
-      </div>
-      <textarea id="codes-input" rows="8" placeholder="FLOWIN-MC-001&#10;FLOWIN-MC-002&#10;FLOWIN-MC-003&#10;..." style="width:100%;border:1px solid var(--b);border-radius:8px;padding:10px;font-family:monospace;font-size:12px;color:var(--t);background:var(--surf2);outline:none;resize:vertical;box-sizing:border-box"></textarea>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
-        <span id="codes-count-lbl" style="font-size:11px;color:var(--t3)">0 code(s) détecté(s)</span>
-        <div style="display:flex;gap:8px">
-          <button onclick="this.closest('[style*=fixed]').remove()" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:7px 14px;font-size:12px;cursor:pointer">Annuler</button>
-          <button onclick="saveCodes('${lotId}','${lotNom}',this.closest('[style*=fixed]'))" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer">✓ Importer</button>
-        </div>
-      </div>
-    </div>`;
+  var html = '<div style="background:#fff;border-radius:14px;width:100%;max-width:480px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.2)">';
+  html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">';
+  html += '<span style="font-size:24px">' + lotEmoji + '</span>';
+  html += '<div><div style="font-size:14px;font-weight:800;color:var(--t)">Ajouter des codes — ' + lotNom + '</div>';
+  html += '<div style="font-size:11px;color:var(--t3)">Un code par ligne</div></div>';
+  html += '<button onclick="this.closest(\'[style*=fixed]\').remove()" style="margin-left:auto;width:28px;height:28px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px">✕</button></div>';
+  html += '<textarea id="codes-input" rows="8" placeholder="FLOWIN-MC-001" style="width:100%;border:1px solid var(--b);border-radius:8px;padding:10px;font-family:monospace;font-size:12px;color:var(--t);background:var(--surf2);outline:none;resize:vertical;box-sizing:border-box"></textarea>';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">';
+  html += '<span id="codes-count-lbl" style="font-size:11px;color:var(--t3)">0 code(s)</span>';
+  html += '<div style="display:flex;gap:8px">';
+  html += '<button onclick="this.closest(\'[style*=fixed]\').remove()" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:7px 14px;font-size:12px;cursor:pointer">Annuler</button>';
+  html += '<button onclick="saveCodes(' + JSON.stringify(lotId) + ',' + JSON.stringify(lotNom) + ',this.closest(\'[style*=fixed]\'))" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer">✓ Importer</button>';
+  html += '</div></div></div>';
+  ov.innerHTML = html;
   document.body.appendChild(ov);
-  const ta = ov.querySelector('#codes-input');
-  ta.addEventListener('input', () => {
-    const codes = ta.value.split('\n').map(c=>c.trim()).filter(Boolean);
-    ov.querySelector('#codes-count-lbl').textContent = codes.length + ' code(s) détecté(s)';
+  var ta = ov.querySelector('#codes-input');
+  ta.addEventListener('input', function() {
+    var codes = ta.value.split('\n').map(function(c){return c.trim();}).filter(Boolean);
+    ov.querySelector('#codes-count-lbl').textContent = codes.length + ' code(s)';
   });
 }
+
 
 async function saveCodes(lotId, lotNom, overlay) {
   if(!SB_ENABLED) { alert('Mode démo — Supabase désactivé'); return; }
@@ -4853,39 +4652,40 @@ async function saveCodes(lotId, lotNom, overlay) {
 }
 
 function openAttribuer(lotId) {
-  const lot = LOTS_DB.find(l=>l.id===lotId);
-  const dispo = STOCK_DB.filter(s=>s.lot_id===lotId&&s.statut==='disponible').length;
-  const elevs = buildElevs().sort((a,b)=>b.totalPts-a.totalPts);
-  const ov = document.createElement('div');
+  var lot = LOTS_DB.find(function(l){ return l.id===lotId; });
+  var dispo = STOCK_DB.filter(function(s){ return s.lot_id===lotId && s.statut==='disponible'; }).length;
+  var elevs = buildElevs().sort(function(a,b){ return b.totalPts-a.totalPts; });
+  var ov = document.createElement('div');
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
-  ov.innerHTML = `
-    <div style="background:#fff;border-radius:14px;width:100%;max-width:480px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.2)">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-        <span style="font-size:24px">${lot?.emoji||'🎁'}</span>
-        <div>
-          <div style="font-size:14px;font-weight:800;color:var(--t)">Attribuer — ${lot?.titre||''}</div>
-          <div style="font-size:11px;color:var(--gr)">${dispo} code(s) disponible(s)</div>
-        </div>
-        <button onclick="this.closest('[style*=fixed]').remove()" style="margin-left:auto;width:28px;height:28px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px">✕</button>
-      </div>
-      <input id="attrib-search" type="text" placeholder="🔍 Rechercher un élève…" oninput="filterAttribList(this.value)" style="width:100%;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;margin-bottom:10px;box-sizing:border-box;outline:none;background:var(--surf2)">
-      <div id="attrib-list" style="max-height:280px;overflow-y:auto;border:1px solid var(--b);border-radius:8px">
-        ${elevs.map(d => {
-          const dejGagne = GAINS_DB.some(g=>g.pseudo===d.pseudo&&g.lot_id===lotId);
-          return `<div class="attrib-row" data-pseudo="${d.pseudo}" data-nom="${(d.j.prenom+' '+d.j.nom).toLowerCase()}" onclick="if(!${dejGagne})confirmAttrib('${lotId}','${d.pseudo}','${d.j.prenom} ${d.j.nom}',this.closest('[style*=fixed]'))" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--b);cursor:${dejGagne?'default':'pointer'};background:${dejGagne?'#FEF3DC':''}">
-            ${ava(d.j.prenom,d.j.nom,d.idx,26)}
-            <div style="flex:1">
-              <div style="font-size:12px;font-weight:600;color:var(--t)">${d.j.prenom} ${d.j.nom}</div>
-              <div style="font-size:10px;color:var(--t3)">${d.j.ecole||'—'} · ${d.totalPts.toLocaleString('fr')} pts</div>
-            </div>
-            ${dejGagne ? '<span class="bdg amber">Déjà gagné</span>' : '<span class="bdg green">Attribuer →</span>'}
-          </div>`;
-        }).join('') || '<div style="padding:16px;color:var(--t3);font-size:11px">Aucun élève</div>'}
-      </div>
-    </div>`;
+  var html = '<div style="background:#fff;border-radius:14px;width:100%;max-width:480px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.2)">';
+  html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">';
+  html += '<span style="font-size:24px">' + (lot?lot.emoji||'🎁':'🎁') + '</span>';
+  html += '<div><div style="font-size:14px;font-weight:800;color:var(--t)">Attribuer — ' + (lot?lot.titre||'':'') + '</div>';
+  html += '<div style="font-size:11px;color:var(--gr)">' + dispo + ' code(s) disponible(s)</div></div>';
+  html += '<button onclick="this.closest(\'[style*=fixed]\').remove()" style="margin-left:auto;width:28px;height:28px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px">✕</button></div>';
+  html += '<input id="attrib-search" placeholder="🔍 Rechercher un élève…" oninput="filterAttribList(this.value)" style="width:100%;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;margin-bottom:10px;box-sizing:border-box;outline:none;background:var(--surf2)">';
+  html += '<div id="attrib-list" style="max-height:280px;overflow-y:auto;border:1px solid var(--b);border-radius:8px">';
+  if(elevs.length) {
+    elevs.forEach(function(d) {
+      var dejGagne = GAINS_DB.some(function(g){ return g.pseudo===d.pseudo && g.lot_id===lotId; });
+      html += '<div class="attrib-row" data-pseudo="' + d.pseudo + '" data-nom="' + (d.j.prenom+' '+d.j.nom).toLowerCase() + '"';
+      if(!dejGagne) html += ' onclick="confirmAttrib(' + JSON.stringify(lotId) + ',' + JSON.stringify(d.pseudo) + ',' + JSON.stringify(d.j.prenom+' '+d.j.nom) + ',this.closest(\'[style*=fixed]\'))"';
+      html += ' style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--b);cursor:' + (dejGagne?'default':'pointer') + ';background:' + (dejGagne?'#FEF3DC':'') + '">';
+      html += ava(d.j.prenom,d.j.nom,d.idx,26);
+      html += '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--t)">' + d.j.prenom + ' ' + d.j.nom + '</div>';
+      html += '<div style="font-size:10px;color:var(--t3)">' + (d.j.ecole||'—') + ' · ' + d.totalPts.toLocaleString('fr') + ' pts</div></div>';
+      html += dejGagne ? '<span class="bdg amber">Déjà gagné</span>' : '<span class="bdg green">Attribuer →</span>';
+      html += '</div>';
+    });
+  } else {
+    html += '<div style="padding:16px;color:var(--t3);font-size:11px">Aucun élève</div>';
+  }
+  html += '</div></div>';
+  ov.innerHTML = html;
   document.body.appendChild(ov);
   window._attribOverlay = ov;
 }
+
 
 function filterAttribList(val) {
   document.querySelectorAll('.attrib-row').forEach(row => {
@@ -5162,89 +4962,60 @@ function deletePartner(i) {
 }
 
 function addPartner() {
-  const EMOJIS_LIST = ['🍔','🍕','🎬','🎁','🛒','☕','🍦','🎮','🎫','🏋️','📚','🎵','🎯','🍣','🎪','🏄','🍿','🎭','🧁','🏪'];
-  let selectedEmoji = '🎁';
-  const ov = document.createElement('div');
+  var EMOJIS_LIST = ['🍔','🍕','🎬','🎁','🛒','☕','🍦','🎮','🎫','🏋️','📚','🎵','🎯','🍣','🎪','🏄','🍿','🎭','🧁','🏪'];
+  var ov = document.createElement('div');
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto';
-  ov.innerHTML = `
-    <div style="background:#fff;border-radius:16px;width:100%;max-width:520px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.2)">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--t)">+ Nouveau partenaire</div>
-        <button onclick="this.closest('[style*=fixed]').remove()" style="width:32px;height:32px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:16px">✕</button>
-      </div>
-
-      <!-- EMOJI PICKER -->
-      <div style="margin-bottom:18px">
-        <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:8px">Icône partenaire</label>
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
-          ${EMOJIS_LIST.map(e => `<button onclick="selectEmoji(this,'${e}')" data-emoji="${e}"
-            style="width:38px;height:38px;border-radius:8px;border:2px solid ${e==='🎁'?'var(--ac)':'var(--b)'};background:${e==='🎁'?'#EEECFC':'var(--surf2)'};font-size:20px;cursor:pointer;transition:all .15s">${e}</button>`).join('')}
-        </div>
-      </div>
-
-      <!-- INFOS PARTENAIRE -->
-      <div style="display:grid;gap:14px;margin-bottom:18px">
-        <div>
-          <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Nom du partenaire *</label>
-          <input id="np-nom" type="text" placeholder="Ex: McDonald's, Cinéma Pathé, Pizza Hut…"
-            style="width:100%;border:1.5px solid var(--b);border-radius:9px;padding:10px 13px;font-size:13px;font-weight:600;color:var(--t);background:var(--surf2);outline:none;box-sizing:border-box;transition:border-color .15s"
-            onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--b)'">
-        </div>
-        <div>
-          <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Description de l'offre *</label>
-          <input id="np-desc" type="text" placeholder="Ex: 40% de réduction sur le 2e menu acheté"
-            style="width:100%;border:1.5px solid var(--b);border-radius:9px;padding:10px 13px;font-size:13px;color:var(--t);background:var(--surf2);outline:none;box-sizing:border-box;transition:border-color .15s"
-            onfocus="this.style.borderColor='var(--ac)'" onblur="this.style.borderColor='var(--b)'">
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-          <div>
-            <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Condition d'attribution</label>
-            <select id="np-cond" style="width:100%;border:1.5px solid var(--b);border-radius:9px;padding:10px 10px;font-size:12px;background:var(--surf2);color:var(--t2);font-family:inherit;outline:none;cursor:pointer">
-              <option value="gold_semaine">🥇 Ligue Or 7j consécutifs</option>
-              <option value="top1_semaine">🏆 Top 1 classement semaine</option>
-            </select>
-          </div>
-          <div>
-            <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Préfixe code promo</label>
-            <input id="np-prefix" type="text" placeholder="FLOWIN-MC" maxlength="15"
-              style="width:100%;border:1.5px solid var(--b);border-radius:9px;padding:10px 13px;font-size:12px;font-weight:700;font-family:monospace;color:var(--ac);background:var(--surf2);outline:none;box-sizing:border-box;text-transform:uppercase"
-              oninput="this.value=this.value.toUpperCase();updateStockPreview()">
-          </div>
-        </div>
-      </div>
-
-      <!-- STOCK INITIAL -->
-      <div style="background:var(--surf2);border-radius:10px;padding:16px;margin-bottom:18px;border:1px solid var(--b)">
-        <label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:10px">📦 Stock initial de codes</label>
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-          <label style="font-size:12px;color:var(--t2)">Quantité :</label>
-          <input id="np-qty" type="number" min="1" max="500" value="10"
-            oninput="updateStockPreview()"
-            style="width:70px;border:1.5px solid var(--b);border-radius:7px;padding:6px 10px;font-size:14px;font-weight:700;color:var(--t);background:var(--surf);outline:none;text-align:center">
-          <span style="font-size:11px;color:var(--t3)">codes générés automatiquement</span>
-        </div>
-        <div style="background:var(--surf);border-radius:7px;padding:10px;border:1px solid var(--b);max-height:100px;overflow-y:auto;font-family:monospace;font-size:11px;color:var(--ac);line-height:1.8" id="np-preview">
-          FLOWIN-001, FLOWIN-002, FLOWIN-003…
-        </div>
-        <div style="font-size:10px;color:var(--t3);margin-top:6px">💡 Les codes sont générés automatiquement. Vous pouvez aussi saisir vos propres codes après création.</div>
-      </div>
-
-      <div style="display:flex;justify-content:flex-end;gap:10px">
-        <button onclick="this.closest('[style*=fixed]').remove()" style="background:var(--surf2);border:1px solid var(--b);border-radius:9px;padding:10px 18px;font-size:12px;cursor:pointer;font-family:inherit;color:var(--t2);font-weight:600">Annuler</button>
-        <button onclick="createPartner(this.closest('[style*=fixed]'))" style="background:var(--ac);color:#fff;border:none;border-radius:9px;padding:10px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">✓ Créer le partenaire</button>
-      </div>
-    </div>`;
+  var html = '<div style="background:#fff;border-radius:16px;width:100%;max-width:480px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.2)">';
+  html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">';
+  html += '<div style="font-family:Syne,sans-serif;font-size:18px;font-weight:800;color:var(--t)">+ Nouveau partenaire</div>';
+  html += '<button onclick="this.closest(\'[style*=fixed]\').remove()" style="width:32px;height:32px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:16px">✕</button></div>';
+  html += '<div style="margin-bottom:16px"><label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:8px">Icône</label>';
+  html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
+  EMOJIS_LIST.forEach(function(e) {
+    var isSel = e==='🎁';
+    html += '<button onclick="selectEmoji(this,' + JSON.stringify(e) + ')" data-emoji="' + e + '" style="width:38px;height:38px;border-radius:8px;border:2px solid ' + (isSel?'var(--ac)':'var(--b)') + ';background:' + (isSel?'#EEECFC':'var(--surf2)') + ';font-size:20px;cursor:pointer">' + e + '</button>';
+  });
+  html += '</div></div>';
+  html += '<div style="display:grid;gap:12px;margin-bottom:16px">';
+  html += '<div><label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;display:block;margin-bottom:4px">Nom *</label>';
+  html += '<input id="np-nom" placeholder="Ex: McDonald\'s" style="width:100%;border:1.5px solid var(--b);border-radius:8px;padding:10px;font-size:13px;font-weight:600;color:var(--t);background:var(--surf2);outline:none;box-sizing:border-box"></div>';
+  html += '<div><label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;display:block;margin-bottom:4px">Description *</label>';
+  html += '<input id="np-desc" placeholder="Ex: 40% sur le 2e menu" style="width:100%;border:1.5px solid var(--b);border-radius:8px;padding:10px;font-size:13px;color:var(--t);background:var(--surf2);outline:none;box-sizing:border-box"></div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">';
+  html += '<div><label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;display:block;margin-bottom:4px">Email</label>';
+  html += '<input id="np-email" type="email" style="width:100%;border:1.5px solid var(--b);border-radius:8px;padding:10px;font-size:12px;color:var(--t);background:var(--surf2);outline:none;box-sizing:border-box"></div>';
+  html += '<div><label style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;display:block;margin-bottom:4px">Téléphone</label>';
+  html += '<input id="np-tel" type="tel" style="width:100%;border:1.5px solid var(--b);border-radius:8px;padding:10px;font-size:12px;color:var(--t);background:var(--surf2);outline:none;box-sizing:border-box"></div>';
+  html += '</div></div>';
+  html += '<div style="display:flex;justify-content:flex-end;gap:8px">';
+  html += '<button onclick="this.closest(\'[style*=fixed]\').remove()" style="background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:10px 18px;font-size:12px;cursor:pointer">Annuler</button>';
+  html += '<button onclick="saveNewPartner(this.closest(\'[style*=fixed]\'))" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer">Enregistrer</button>';
+  html += '</div></div>';
+  ov.innerHTML = html;
   document.body.appendChild(ov);
-  updateStockPreview();
 }
 
 function selectEmoji(btn, emoji) {
-  document.querySelectorAll('[data-emoji]').forEach(b => {
-    b.style.border = '2px solid var(--b)'; b.style.background = 'var(--surf2)';
-  });
-  btn.style.border = '2px solid var(--ac)'; btn.style.background = '#EEECFC';
-  window._selectedEmoji = emoji;
+  btn.closest('div').querySelectorAll('button').forEach(function(b){ b.style.borderColor='var(--b)'; b.style.background='var(--surf2)'; });
+  btn.style.borderColor='var(--ac)'; btn.style.background='#EEECFC'; btn.dataset.selected='1';
 }
+
+function saveNewPartner(overlay) {
+  var nom  = (document.getElementById('np-nom').value||'').trim();
+  if(!nom) { showAdminToast('Le nom est obligatoire', 'error'); return; }
+  var emojiBtn = overlay.querySelector('[data-selected="1"]');
+  var emoji = emojiBtn ? emojiBtn.dataset.emoji : '🎁';
+  var data = { nom:nom, emoji:emoji, description:(document.getElementById('np-desc').value||'').trim(),
+    contact_email:(document.getElementById('np-email').value||'').trim(),
+    contact_tel:(document.getElementById('np-tel').value||'').trim(),
+    actif:true, en_avant:false, ts:new Date().toISOString() };
+  var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+  fetch(SB_URL+'/rest/v1/partenaires', {method:'POST',headers:hdrs,body:JSON.stringify(data)})
+    .then(function(r){ if(r.ok){ overlay.remove(); showAdminToast('Partenaire créé ! ✅'); renderPartenaireCRM(document.getElementById('partenaires-content')); } else showAdminToast('Erreur','error'); })
+    .catch(function(){ showAdminToast('Erreur réseau','error'); });
+}
+
+
 
 function updateStockPreview() {
   const prefix = (document.getElementById('np-prefix')?.value || 'FLOWIN').toUpperCase().replace(/[^A-Z0-9-]/g,'') || 'FLOWIN';
