@@ -2,10 +2,8 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Flowin Admin CDC v1778599590</title>
+<title>Flowin · Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -598,21 +596,6 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       <span class="sb-item-icon">🎁</span>
       <span>Partenaires</span>
       <span class="sb-badge green" id="sb-badge-lots">—</span>
-    </div>
-    <div class="sb-item" id="nav-parrainage" onclick="navTo('parrainage')">
-      <span class="sb-item-icon">🔗</span>
-      <span>Parrainage</span>
-      <span class="sb-badge" id="sb-badge-parrainage">—</span>
-    </div>
-    <div class="sb-item" id="nav-defis" onclick="navTo('defis')">
-      <span class="sb-item-icon">⚔️</span>
-      <span>Défis</span>
-      <span class="sb-badge" id="sb-badge-defis">—</span>
-    </div>
-    <div class="sb-item" id="nav-envois" onclick="navTo('envois')">
-      <span class="sb-item-icon">✉️</span>
-      <span>Envois &amp; Push</span>
-      <span class="sb-badge" id="sb-badge-envois" style="background:#7C5CFC;color:#fff;display:none">•</span>
     </div>
     <div class="sb-item" id="nav-parametres" onclick="navTo('parametres')">
       <span class="sb-item-icon">⚙️</span>
@@ -1531,87 +1514,6 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
 
     </div>
 
-    <!-- ══ VUE ENVOIS & PUSH ══ -->
-    <div class="view" id="v-envois">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-        <div class="view-title" style="margin-bottom:0">✉️ Envois &amp; Push</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button id="btn-send-billet" style="background:var(--ac);color:#fff;border:none;border-radius:9px;padding:9px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">✉️ Billet d'activation</button>
-          <button id="btn-send-libre" style="background:var(--surf2);border:1px solid var(--b);border-radius:9px;padding:9px 18px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--t2)">📝 Message libre</button>
-        </div>
-      </div>
-      <div class="kpi-grid" style="margin-bottom:20px">
-        <div class="kpi-card"><div class="kpi-bar" style="background:var(--ac)"></div><div class="kpi-icon">👥</div><div class="kpi-val" id="kpi-total-joueurs">—</div><div class="kpi-label">Joueurs</div><div class="kpi-sub">inscrits</div></div>
-        <div class="kpi-card"><div class="kpi-bar" style="background:#22C9A0"></div><div class="kpi-icon">✅</div><div class="kpi-val" id="kpi-joueurs-actives">—</div><div class="kpi-label">Avec compte</div><div class="kpi-sub">email+password</div></div>
-        <div class="kpi-card"><div class="kpi-bar" style="background:#F4A83A"></div><div class="kpi-icon">⏳</div><div class="kpi-val" id="kpi-joueurs-pending">—</div><div class="kpi-label">À activer</div><div class="kpi-sub">sans password</div></div>
-        <div class="kpi-card"><div class="kpi-bar" style="background:#E84855"></div><div class="kpi-icon">❌</div><div class="kpi-val" id="kpi-joueurs-noemail">—</div><div class="kpi-label">Sans email</div><div class="kpi-sub">non contactables</div></div>
-      </div>
-      <div class="panel">
-        <div class="panel-header">
-          <span>👥 Joueurs — statut activation</span>
-          <div style="display:flex;gap:8px;align-items:center">
-            <select id="envois-filter" style="font-size:11px;padding:4px 8px;border:1px solid var(--b);border-radius:6px;background:var(--surf2);color:var(--t);cursor:pointer">
-              <option value="all">Tous</option>
-              <option value="noemail">Sans email</option>
-              <option value="pending">À activer</option>
-            </select>
-            <button class="act-btn" id="envois-refresh-btn">↻</button>
-          </div>
-        </div>
-        <div id="envois-list" style="padding:4px 0"></div>
-      </div>
-    </div>
-
-    <!-- Modal envoi billet -->
-    <div id="modal-envoi-billet" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;padding:16px">
-      <div style="background:var(--surf);border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
-        <div style="padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between">
-          <div style="font-size:16px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">✉️ Envoyer billet d'activation</div>
-          <button id="modal-envoi-close" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px">✕</button>
-        </div>
-        <div style="padding:16px;display:flex;flex-direction:column;gap:14px">
-
-          <!-- Étape 1 : Message -->
-          <div style="background:var(--surf2);border-radius:10px;padding:14px">
-            <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">📝 Message (variables : {prenom}, {pseudo}, {lien})</div>
-            <input id="envoi-sujet" placeholder="Objet : Ton accès Flowin t'attend !"
-              style="width:100%;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box;margin-bottom:8px">
-            <textarea id="envoi-corps" rows="7"
-              style="width:100%;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;font-family:inherit;background:var(--surf);color:var(--t);resize:vertical;box-sizing:border-box;line-height:1.6">Salut {prenom} 👋
-
-Ton appli Flowin évolue !
-
-Tu as un compte privé prêt — crée ton mot de passe pour accéder à tous tes résultats, défier tes amis et remporter des lots.
-
-→ Créer mon mot de passe : {lien}
-
-À très vite sur Flowin !
-L'équipe OPCONSULT</textarea>
-            <div style="margin-top:8px;font-size:10px;color:var(--t3)">Le lien de réinitialisation est valide 24h.</div>
-          </div>
-
-          <!-- Étape 2 : Destinataires -->
-          <div style="background:var(--surf2);border-radius:10px;padding:14px">
-            <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">👥 Destinataires</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-              <button id="envoi-sel-tous" style="background:var(--ac);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Tous avec email</button>
-              <button id="envoi-sel-pending" style="background:var(--surf);border:1px solid var(--b);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--t2)">À activer uniquement</button>
-              <button id="envoi-sel-none" style="background:var(--surf);border:1px solid var(--b);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--t2)">Déselectionner</button>
-            </div>
-            <div id="envoi-joueurs-list" style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:4px"></div>
-            <div style="margin-top:8px;font-size:11px;color:var(--t3)">Sélectionnés : <span id="envoi-count" style="font-weight:700;color:var(--ac)">0</span></div>
-          </div>
-
-          <!-- Résumé + Envoi -->
-          <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:4px">
-            <button id="modal-envoi-close2" style="background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:9px 16px;font-size:12px;cursor:pointer;font-family:inherit">Annuler</button>
-            <button id="btn-envoyer-billets" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">✉️ Envoyer les billets</button>
-          </div>
-          <div id="envoi-result" style="display:none;padding:10px 12px;border-radius:8px;font-size:12px;font-weight:600;text-align:center"></div>
-        </div>
-      </div>
-    </div>
-
     <!-- ══ VUE PARAMÈTRES ══ -->
     <div class="view" id="v-parametres">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
@@ -1796,24 +1698,31 @@ async function loadData() {
       dot.className = 'live-dot on';
       lbl.className = 'live-label on';
       lbl.textContent = `Live Supabase (${j.length} élèves)`;
-      // Charger contenu pédagogique — 5 tables (sans colonne inexistante)
+      // Charger fiches et questions depuis Supabase (silencieux si tables absentes)
       Promise.all([
-        fetch(SB_URL+'/rest/v1/themes?order=num.asc&limit=200',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
-        fetch(SB_URL+'/rest/v1/fiches?order=created_at.asc&limit=500',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
-        fetch(SB_URL+'/rest/v1/visuels?order=created_at.asc&limit=200',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];}),
-        fetch(SB_URL+'/rest/v1/questions?order=created_at.asc&limit=5000',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
-        fetch(SB_URL+'/rest/v1/quiz_config?order=created_at.asc&limit=200',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];})
+        fetch(`${SB_URL}/rest/v1/fiches?order=ordre.asc,created_at.asc&limit=500`,{headers:hdrs}).then(r=>r.ok?r.json():null),
+        fetch(`${SB_URL}/rest/v1/questions?order=created_at.asc&limit=2000`,{headers:hdrs}).then(r=>r.ok?r.json():null)
       ]).then(function(results) {
-        if(Array.isArray(results[0])&&results[0].length) SB_THEMES    = results[0];
-        if(Array.isArray(results[1])&&results[1].length) SB_FICHES    = results[1];
-        if(Array.isArray(results[2])&&results[2].length) SB_VISUELS   = results[2];
-        if(Array.isArray(results[3])&&results[3].length) SB_QUESTIONS = results[3];
-        if(Array.isArray(results[4])&&results[4].length) SB_QUIZ_CFG  = results[4];
+        var sbFiches = results[0];
+        var sbQuestions = results[1];
+        if(sbFiches && Array.isArray(sbFiches) && sbFiches.length > 0) {
+          COURS_DB = sbFiches;
+          console.log('✅ Fiches Supabase:', sbFiches.length);
+        } else {
+          console.log('ℹ️ Fiches: fallback local (' + COURS_DB.length + ')');
+        }
+        if(sbQuestions && Array.isArray(sbQuestions) && sbQuestions.length > 0) {
+          QUESTIONS_DB = sbQuestions;
+          console.log('✅ Questions Supabase:', sbQuestions.length);
+        } else {
+          console.log('ℹ️ Questions: fallback local (' + QUESTIONS_DB.length + ')');
+        }
+        // Mettre à jour le badge et re-render si on est sur la vue cours
         updateBadges();
         if(typeof currentView !== 'undefined' && currentView === 'cours') {
           try { renderCoursHub(); } catch(e) {}
         }
-      }).catch(function(e){ console.log('Contenu pédagogique non chargé:', e.message); });
+      }).catch(function(e){ console.log('ℹ️ Fiches/questions non chargées:', e.message); });
       console.log(`✅ Supabase OK — ${j.length} joueurs, ${DB.sessions.length} sessions, ${DB.parrainage.length} parrainages, ${DB.connexions.length} connexions`);
     } else {
       throw new Error('Réponse Supabase invalide');
@@ -1981,9 +1890,9 @@ const NAV_ITEMS = [
 const VIEW_LABELS = {
   dashboard:'Dashboard', eleves:'Joueurs', analytics:'Analytics',
   cours:'Cours & Contenus', partenaires:'Partenaires & Lots', parametres:'Paramètres',
-  envois:'Envois & Push',
-  parrainage:'Parrainage', ligues:'Ligues', etablissements:'Établissements',
-  defis:'Défis', bareme:'Barème', appcom:'App & Com', textes:'Textes'
+  // anciennes vues (accès legacy)
+  ligues:'Ligues', parrainage:'Parrainage', etablissements:'Établissements',
+  defis:'Défis', stats:'Stats', cours:'Contenus', bareme:'Barème', appcom:'App & Com', textes:'Textes'
 };
 let currentView = 'dashboard';
 
@@ -2010,27 +1919,23 @@ function updateBadges() {
 
 // MAP : rubrique → quelle ancienne vue ou fonction render appeler
 var RUBRIQUE_MAP = {
-  dashboard:      function(){ renderDashboard(); },
-  eleves:         function(){ renderEleves(); },
-  analytics:      function(){ renderAnalyticsHub(); },
-  partenaires:    function(){ renderPartenairesHub(); },
-  envois:         function(){ renderEnvois(); },
-  parametres:     function(){ renderParametresHub(); },
-  parrainage:     function(){ renderParrainage(); },
-  defis:          function(){ renderDefis(); },
-  ligues:         function(){ renderLigues(); },
-  etablissements: function(){ renderEtabs(); },
-  appcom:         function(){ renderAppCom(); },
-  cours:          function(){ if(typeof renderCoursHub==='function') renderCoursHub(); },
-  bareme:         function(){ if(typeof renderBaremeView==='function') renderBaremeView(); },
-  textes:         function(){ if(typeof renderTextes==='function') renderTextes(); }
+  dashboard: function(){ renderDashboard(); },
+  eleves:    function(){ renderEleves(); },
+  analytics: function(){ renderAnalyticsHub(); },
+  partenaires: function(){ renderPartenairesHub(); },
+  parametres:  function(){ renderParametresHub(); },
+  // Sous-vues Paramètres (legacy)
+  bareme:    function(){ if(typeof renderBaremeView==='function') renderBaremeView(); },
+  cours:     function(){ if(typeof renderCoursHub==='function') renderCoursHub(); },
+  textes:    function(){ if(typeof renderTextes==='function') renderTextes(); },
+  appcom:    function(){ if(typeof renderAppCom==='function') renderAppCom(); }
 };
 
 function navTo(id) {
   currentView = id;
   // Sidebar actif — pour les sous-vues paramètres, marquer Paramètres
   document.querySelectorAll('.sb-item').forEach(function(el){ el.classList.remove('active'); });
-  var paramSubs = ['bareme','textes','appcom','cours'];
+  var paramSubs = ['bareme','textes','appcom'];
   var sbTarget = paramSubs.indexOf(id) >= 0 ? 'nav-parametres' : 'nav-' + id;
   var ni = document.getElementById(sbTarget);
   if(ni) ni.classList.add('active');
@@ -2155,23 +2060,13 @@ function exportKPI() { showAdminToast('Export PDF — disponible prochainement')
 var DB_PARTENAIRES = [];
 
 function renderPartenairesHub() {
+  // Reset tous les tabs
   document.querySelectorAll('#partenaires-tabs .tb2').forEach(function(b){ b.classList.remove('on'); });
   var firstTab = document.querySelector('#partenaires-tabs .tb2');
   if(firstTab) firstTab.classList.add('on');
+  // Vider et recharger CRM
   var el = document.getElementById('partenaires-content');
   if(el) el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3)">Chargement…</div>';
-  if(SB_ENABLED) {
-    var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
-    Promise.all([
-      fetch(SB_URL+'/rest/v1/partenaires?select=id,actif',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
-      fetch(SB_URL+'/rest/v1/lots_stock?select=statut',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];}),
-      fetch(SB_URL+'/rest/v1/gains?select=id&limit=500',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];})
-    ]).then(function(res){
-      var parts=res[0]||[], stock=res[1]||[], gains=res[2]||[];
-      var sub=document.getElementById('partenaires-sub');
-      if(sub) sub.textContent=parts.length+' partenaires · '+parts.filter(function(p){return p.actif;}).length+' actifs · '+stock.filter(function(s){return s.statut==='disponible';}).length+' codes dispo · '+gains.length+' distribués';
-    }).catch(function(){});
-  }
   setTimeout(function(){ renderPartenaireCRM(document.getElementById('partenaires-content')); }, 50);
 }
 
@@ -2189,7 +2084,7 @@ function partenairesTab(tab, btn) {
 function loadPartenaires(cb) {
   if(!SB_ENABLED) { cb([]); return; }
   var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
-  fetch(SB_URL+'/rest/v1/partenaires?order=created_at.desc', {headers:hdrs})
+  fetch(SB_URL+'/rest/v1/partenaires?order=ts.desc', {headers:hdrs})
     .then(function(r){ return r.ok?r.json():[]; })
     .then(function(rows){ DB_PARTENAIRES = rows||[]; cb(DB_PARTENAIRES); })
     .catch(function(){ cb([]); });
@@ -2199,12 +2094,7 @@ function renderPartenaireCRM(el) {
   el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3)">Chargement…</div>';
   loadPartenaires(function(parts) {
     if(!parts.length) {
-      el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3)">'
-        + '<div style="font-size:48px;margin-bottom:12px">🎁</div>'
-        + '<div style="font-size:16px;font-weight:700;color:var(--t2);margin-bottom:6px">Aucun partenaire</div>'
-        + '<div style="font-size:12px;margin-bottom:20px">Créez votre premier partenaire ou vérifiez que les données Supabase sont bien chargées.</div>'
-        + '<button onclick="openNouveauPartenaire()" style="background:var(--ac);color:#fff;border:none;border-radius:9px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">+ Nouveau partenaire</button>'
-        + '</div>';
+      el.innerHTML = '<div class="empty"><div class="empty-icon">🎁</div><div class="empty-text">Aucun partenaire — cliquez "+ Nouveau partenaire"</div></div>';
       return;
     }
     // KPIs
@@ -2303,181 +2193,73 @@ function openFichePartenaire(id) {
   loadPartenaires(function(parts) {
     var p = parts.find(function(x){ return x.id===id; });
     if(!p) return;
-    var panel   = document.getElementById('fiche-partenaire-panel');
+    var panel = document.getElementById('fiche-partenaire-panel');
     var overlay = document.getElementById('fiche-partenaire-overlay');
-    var hdrs    = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
-
-    fetch(SB_URL+'/rest/v1/gains?partenaire_id=eq.'+encodeURIComponent(id)+'&order=ts.desc&limit=20',{headers:hdrs})
-      .then(function(r){return r.ok?r.json():[];})
-      .then(function(gains){
+    // Charger les gains de ce partenaire
+    var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
+    fetch(SB_URL+'/rest/v1/gains?partenaire_id=eq.'+encodeURIComponent(id)+'&order=ts.desc&limit=20', {headers:hdrs})
+      .then(function(r){ return r.ok?r.json():[]; })
+      .then(function(gains) {
         var distribues = gains.length;
-        var utilises   = gains.filter(function(g){return g.utilise;}).length;
-
-        // ── HTML statique (pas de onchange ni onclick inline) ──
+        var utilises = gains.filter(function(g){ return g.utilise; }).length;
         var html = '<div style="padding:20px 20px 0">'
-
           // Header
           + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--b)">'
           + '<div style="width:50px;height:50px;border-radius:14px;background:var(--acBg);display:flex;align-items:center;justify-content:center;font-size:26px">'+(p.emoji||'🎁')+'</div>'
           + '<div style="flex:1"><div style="font-size:18px;font-weight:800;color:var(--t)">'+(p.nom||'—')+'</div>'
           + '<div style="font-size:11px;color:var(--t3);margin-top:2px">'+(p.description||'')+'</div></div>'
-          + '<button id="fp-close-btn" style="width:30px;height:30px;border-radius:50%;background:var(--surf2);border:1px solid var(--b);cursor:pointer;font-size:14px">✕</button>'
+          + '<button class="modal-close" onclick="closeFichePartenaire()">✕</button>'
           + '</div>'
-
-          // KPIs
+          // KPIs stock
           + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">'
-          + '<div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--t)">'+distribues+'</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-top:3px">Distribués</div></div>'
-          + '<div style="background:var(--grBg);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--gr)">'+utilises+'</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-top:3px">Utilisés</div></div>'
-          + '<div style="background:var(--amBg);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--am)">'+(distribues-utilises)+'</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-top:3px">En attente</div></div>'
+          + '<div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--t)">'+distribues+'</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">Distribués</div></div>'
+          + '<div style="background:var(--grBg);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--gr)">'+utilises+'</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">Utilisés</div></div>'
+          + '<div style="background:var(--amBg);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--am)">'+(distribues-utilises)+'</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">En attente</div></div>'
           + '</div>'
-
           // Coordonnées
           + '<div style="background:var(--surf2);border-radius:10px;padding:14px;margin-bottom:14px">'
           + '<div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Coordonnées</div>'
-          + infoRow('Email',  p.contact_email||'—')
-          + infoRow('Tél',    p.contact_tel||'—')
-          + infoRow('Site',   p.site_web||'—')
+          + infoRow('Contact', p.contact_nom||'—')
+          + infoRow('Email', p.contact_email||'—')
+          + infoRow('Tél', p.contact_tel||'—')
+          + infoRow('Site', p.site_web||'—')
+          + infoRow('Statut', p.actif?'Actif':'Inactif')
           + '</div>'
-
-          // Encart éditorial
-          + '<div style="background:var(--surf2);border-radius:12px;padding:14px;margin-bottom:14px">'
-          + '<div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">📱 Encart app élèves</div>'
-
-          // Image
-          + '<div style="margin-bottom:10px">'
-          + '<div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:5px">📸 Image (URL)</div>'
-          + (p.image_url
-            ? '<div style="border-radius:8px;overflow:hidden;margin-bottom:6px;height:80px"><img src="'+p.image_url+'" style="width:100%;height:100%;object-fit:cover"></div>'
-            : '')
-          + '<input id="fp-img-url" placeholder="https://images.unsplash.com/..." value=' + JSON.stringify(p.image_url||'') + ' style="width:100%;border:1px solid var(--b);border-radius:7px;padding:7px 10px;font-size:11px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box">'
+          // Toggle en avant
+          + '<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--amBg);border-radius:10px;margin-bottom:14px">'
+          + '<div><div style="font-size:13px;font-weight:700;color:var(--t)">⭐ Mettre en avant dans l\'app</div>'
+          + '<div style="font-size:11px;color:var(--t3)">Visible sur l\'ecran recompenses eleve</div></div>'
+          + '<label style="position:relative;display:inline-block;width:44px;height:24px"><input type="checkbox" id="toggle-en-avant-'+p.id+'" '+(p.en_avant?'checked':'')+'style="opacity:0;width:0;height:0" onchange="toggleEnAvant(\'' + p.id + '\',this.checked)"><span style="position:absolute;cursor:pointer;inset:0;background:'+(p.en_avant?'var(--ac)':'#ccc')+';border-radius:24px;transition:.3s" id="toggle-track-'+p.id+'"><span style="position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:'+(p.en_avant?'23px':'3px')+';transition:.3s" id="toggle-knob-'+p.id+'"></span></span></label>'
           + '</div>'
-
-          // Message promo
-          + '<div style="margin-bottom:12px">'
-          + '<div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:5px">📝 Message promo</div>'
-          + '<textarea id="fp-promo" rows="2" placeholder="Ex: -20% ce mois !" style="width:100%;border:1px solid var(--b);border-radius:7px;padding:7px 10px;font-size:11px;font-family:inherit;background:var(--surf);color:var(--t);resize:none;box-sizing:border-box">'
-          + (p.promo_text||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-          + '</textarea></div>'
-
-          // Switches (sans onchange — bindés via addEventListener après)
-          + '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">'
-
-          // Switch Visible
-          + '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surf);border-radius:8px">'
-          + '<div><div style="font-size:12px;font-weight:700;color:var(--t)">Visible dans l\'app</div><div style="font-size:10px;color:var(--t3)">Encart affiché aux élèves</div></div>'
-          + '<div id="fp-switch-actif" style="position:relative;width:44px;height:24px;border-radius:24px;background:'+(p.actif?'var(--ac)':'#D1D5DB')+';cursor:pointer;transition:background .3s;flex-shrink:0">'
-          + '<div id="fp-knob-actif" style="position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:'+(p.actif?'23px':'3px')+';transition:left .3s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>'
-          + '</div></div>'
-
-          // Switch En avant
-          + '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surf);border-radius:8px">'
-          + '<div><div style="font-size:12px;font-weight:700;color:var(--t)">⭐ Mettre en avant</div><div style="font-size:10px;color:var(--t3)">Affiché en premier</div></div>'
-          + '<div id="fp-switch-enavant" style="position:relative;width:44px;height:24px;border-radius:24px;background:'+(p.en_avant?'var(--ac)':'#D1D5DB')+';cursor:pointer;transition:background .3s;flex-shrink:0">'
-          + '<div id="fp-knob-enavant" style="position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:'+(p.en_avant?'23px':'3px')+';transition:left .3s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>'
-          + '</div></div>'
-
-          + '</div>'
-
-          // Bouton sauvegarder
-          + '<button id="fp-save-btn" style="width:100%;background:var(--ac);color:#fff;border:none;border-radius:8px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">💾 Sauvegarder l\'encart</button>'
-          + '</div>'
-
           // Historique gains
           + '<div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Derniers codes distribués</div>'
           + '<div style="max-height:280px;overflow-y:auto">';
-
         if(!gains.length) {
           html += '<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">Aucun code distribué</div>';
         } else {
-          gains.forEach(function(g){
+          gains.forEach(function(g) {
             var date = g.ts ? new Date(g.ts).toLocaleDateString('fr-FR') : '—';
-            var sC = g.utilise ? 'var(--gr)' : 'var(--am)';
-            var sL = g.utilise ? '✅ Utilisé' : '⏳ Distribué';
+            var statutColor = g.utilise ? 'var(--gr)' : 'var(--am)';
+            var statutLabel = g.utilise ? '✅ Utilisé' : '⏳ Distribué';
             html += '<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--b)">'
               + '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--t)">'+(g.pseudo||'—')+'</div>'
               + '<div style="font-size:10px;color:var(--t3)">'+(g.lot_nom||'Lot')+' · '+date+'</div></div>'
               + '<code style="background:var(--surf2);padding:3px 8px;border-radius:5px;font-size:11px;letter-spacing:.08em">'+(g.code||'—')+'</code>'
-              + '<span style="font-size:10px;font-weight:700;color:'+sC+'">'+sL+'</span>'
+              + '<span style="font-size:10px;font-weight:700;color:'+statutColor+'">'+statutLabel+'</span>'
               + '</div>';
           });
         }
-
         html += '</div></div>';
-
         document.getElementById('fiche-partenaire-content').innerHTML = html;
-
-        // ── Binder les événements via addEventListener (R5) ──
-        var _actif   = !!p.actif;
-        var _enavant = !!p.en_avant;
-
-        // Helper toggle switch visuel
-        function applySwitch(trackId, knobId, val) {
-          var track = document.getElementById(trackId);
-          var knob  = document.getElementById(knobId);
-          if(track) track.style.background = val ? 'var(--ac)' : '#D1D5DB';
-          if(knob)  knob.style.left        = val ? '23px' : '3px';
-        }
-
-        // Close
-        var closeBtn = document.getElementById('fp-close-btn');
-        if(closeBtn) closeBtn.addEventListener('click', closeFichePartenaire);
-
-        // Switch Visible
-        var swActif = document.getElementById('fp-switch-actif');
-        if(swActif) {
-          swActif.addEventListener('click', function() {
-            _actif = !_actif;
-            applySwitch('fp-switch-actif', 'fp-knob-actif', _actif);
-            var hh = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
-            fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+p.id, {method:'PATCH',headers:hh,body:JSON.stringify({actif:_actif})})
-              .then(function(r){ showAdminToast(r.ok?(_actif?'✅ Visible dans l\'app':'⏸ Masqué de l\'app'):'Erreur', r.ok?'':'error'); })
-              .catch(function(){ showAdminToast('Erreur réseau','error'); });
-          });
-        }
-
-        // Switch En avant
-        var swEnavant = document.getElementById('fp-switch-enavant');
-        if(swEnavant) {
-          swEnavant.addEventListener('click', function() {
-            _enavant = !_enavant;
-            applySwitch('fp-switch-enavant', 'fp-knob-enavant', _enavant);
-            var hh = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
-            fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+p.id, {method:'PATCH',headers:hh,body:JSON.stringify({en_avant:_enavant})})
-              .then(function(r){ showAdminToast(r.ok?(_enavant?'⭐ Mis en avant':'Retiré de l\'avant'):'Erreur', r.ok?'':'error'); })
-              .catch(function(){ showAdminToast('Erreur réseau','error'); });
-          });
-        }
-
-        // Bouton sauvegarder
-        var saveBtn = document.getElementById('fp-save-btn');
-        if(saveBtn) {
-          saveBtn.addEventListener('click', function() {
-            var imgEl   = document.getElementById('fp-img-url');
-            var promoEl = document.getElementById('fp-promo');
-            if(!imgEl || !promoEl) return;
-            var data = { image_url: imgEl.value.trim(), promo_text: promoEl.value.trim() };
-            var hh = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
-            saveBtn.textContent = '⏳ Sauvegarde…'; saveBtn.disabled = true;
-            fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+p.id, {method:'PATCH',headers:hh,body:JSON.stringify(data)})
-              .then(function(r){
-                saveBtn.textContent = '💾 Sauvegarder l\'encart'; saveBtn.disabled = false;
-                showAdminToast(r.ok?'Encart sauvegardé ✅':'Erreur sauvegarde', r.ok?'':'error');
-              })
-              .catch(function(){ saveBtn.textContent = '💾 Sauvegarder l\'encart'; saveBtn.disabled = false; showAdminToast('Erreur réseau','error'); });
-          });
-        }
-
         panel.style.right = '0';
         overlay.style.display = 'block';
-      })
-      .catch(function(){
+      }).catch(function() {
         document.getElementById('fiche-partenaire-content').innerHTML = '<div style="padding:20px;color:var(--re)">Erreur chargement</div>';
         panel.style.right = '0';
         overlay.style.display = 'block';
       });
   });
 }
-
 
 function infoRow(k, v) {
   return '<div class="info-row"><span class="info-key">'+k+'</span><span class="info-val">'+v+'</span></div>';
@@ -2488,225 +2270,91 @@ function closeFichePartenaire() {
   document.getElementById('fiche-partenaire-overlay').style.display = 'none';
 }
 
-function saveEncartPartenaire(id) {
-  var imgEl   = document.getElementById('edit-img-'+id);
-  var promoEl = document.getElementById('edit-promo-'+id);
-  if(!imgEl || !promoEl) { showAdminToast('Champs introuvables', 'error'); return; }
-  var data = { image_url: imgEl.value.trim(), promo_text: promoEl.value.trim() };
-  if(!SB_ENABLED) { showAdminToast('Sauvegardé localement (Supabase désactivé)'); return; }
-  var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
-  fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+id, {method:'PATCH', headers:hdrs, body:JSON.stringify(data)})
-    .then(function(r){
-      if(r.ok) { showAdminToast('Encart sauvegardé ✅'); if(typeof loadPartenaires==='function') loadPartenaires(function(){}); }
-      else { showAdminToast('Erreur sauvegarde', 'error'); }
-    }).catch(function(){ showAdminToast('Erreur réseau', 'error'); });
-}
-
 function toggleEnAvant(id, val) {
   var track = document.getElementById('toggle-track-'+id);
-  var knob  = document.getElementById('toggle-knob-'+id);
-  if(track) track.style.background = val ? 'var(--ac)' : '#D1D5DB';
-  if(knob)  knob.style.left = val ? '23px' : '3px';
-  if(!SB_ENABLED) { showAdminToast(val ? 'Mis en avant ⭐' : 'Retiré'); return; }
+  var knob = document.getElementById('toggle-knob-'+id);
+  if(track) track.style.background = val ? 'var(--ac)' : '#ccc';
+  if(knob) knob.style.left = val ? '23px' : '3px';
   var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
-  fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+id, {method:'PATCH', headers:hdrs, body:JSON.stringify({en_avant:val})})
-    .then(function(r){ if(r.ok) showAdminToast(val ? 'Mis en avant ⭐' : 'Retiré de la vitrine'); })
+  fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+id, {method:'PATCH',headers:hdrs,body:JSON.stringify({en_avant:val})})
+    .then(function(r){ if(r.ok) showAdminToast(val?'Mis en avant !':'Retiré de la vitrine'); })
     .catch(function(){});
 }
 
 // ── STOCK & CODES ──
 function renderPartenairesStock(el) {
-  el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3)">Chargement...</div>';
+  el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3)">Chargement…</div>';
   var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
   Promise.all([
-    fetch(SB_URL+'/rest/v1/partenaires?order=nom.asc&select=id,nom,emoji,actif,contact_email',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
-    fetch(SB_URL+'/rest/v1/lots_stock?order=created_at.desc&limit=2000',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];}),
-    fetch(SB_URL+'/rest/v1/gains?order=created_at.desc&limit=500',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];})
+    fetch(SB_URL+'/rest/v1/gains?order=lot_nom.asc', {headers:hdrs}).then(function(r){ return r.ok?r.json():[]; }),
+    fetch(SB_URL+'/rest/v1/lots_stock?order=partenaire.asc', {headers:hdrs}).then(function(r){ return r.ok?r.json():[]; }).catch(function(){ return []; })
   ]).then(function(results) {
-    var parts  = results[0]||[];
-    var stock  = results[1]||[];
-    var gains  = results[2]||[];
-    var totalStock = stock.length;
-    var totalDispo = stock.filter(function(s){return s.statut==='disponible';}).length;
-    var totalDist  = gains.length;
-    var totalUtil  = gains.filter(function(g){return g.utilise;}).length;
-
-    var html = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">';
-    [['📦','Codes stock',totalStock,'var(--ac)','var(--acBg)'],
-     ['✅','Disponibles',totalDispo,'var(--gr)','var(--grBg)'],
-     ['🎁','Distribués',totalDist,'var(--am)','var(--amBg)'],
-     ['📊','Taux util.',(totalDist?Math.round(totalUtil/totalDist*100):0)+'%','var(--bl)','var(--blBg)']
-    ].forEach(function(k){
-      html += '<div style="background:'+k[4]+';border-radius:10px;padding:12px;text-align:center">'
-        +'<div style="font-size:18px;margin-bottom:4px">'+k[0]+'</div>'
-        +'<div style="font-size:20px;font-weight:800;color:'+k[3]+';font-family:Syne,sans-serif">'+k[2]+'</div>'
-        +'<div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-top:2px">'+k[1]+'</div></div>';
+    var gains = results[0] || [];
+    var stock = results[1] || [];
+    // Inclure aussi les lots de la config (LOTS_DB)
+    var configLots = (typeof LOTS_DB !== 'undefined') ? LOTS_DB : [];
+    // Grouper par lot_nom
+    var byLot = {};
+    gains.forEach(function(g) {
+      var k = g.lot_nom || g.lot_id || 'Sans nom';
+      if(!byLot[k]) byLot[k] = {nom:k, emoji:g.lot_emoji||'🎁', distribues:0, utilises:0, codes:[]};
+      byLot[k].distribues++;
+      if(g.utilise) byLot[k].utilises++;
+      byLot[k].codes.push(g);
     });
-    html += '</div>';
-
-    if(!parts.length){
-      html += '<div style="text-align:center;padding:40px;color:var(--t3)"><div style="font-size:40px;margin-bottom:12px">📦</div><div>Aucun partenaire — créez-en un d\'abord</div></div>';
-      el.innerHTML = html; return;
+    var html = '';
+    // KPIs globaux
+    var totalDist = gains.length;
+    var totalUtil = gains.filter(function(g){ return g.utilise; }).length;
+    html += '<div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">'
+      + kpiCard('📦','Total distribués', totalDist, 'tous lots', '#7C5CFC')
+      + kpiCard('✅','Utilisés', totalUtil, Math.round(totalUtil/Math.max(totalDist,1)*100)+'% taux utilisation', '#0E9E6E')
+      + kpiCard('⏳','En attente', totalDist-totalUtil, 'non encore utilisés', '#C27C0A')
+      + '</div>';
+    // Lots config + lots depuis gains
+    var allLots = {};
+    configLots.forEach(function(l){
+      allLots[l.id||l.titre] = {nom:l.titre||l.nom||'Lot', emoji:l.emoji||'🎁', distribues:0, utilises:0, actif:l.actif!==false, id:l.id};
+    });
+    Object.entries(byLot).forEach(function(kv){
+      if(!allLots[kv[0]]) allLots[kv[0]] = kv[1];
+      else { allLots[kv[0]].distribues = kv[1].distribues; allLots[kv[0]].utilises = kv[1].utilises; }
+    });
+    var lotsArr = Object.values(allLots);
+    if(lotsArr.length) {
+      html += '<div class="panel"><div class="panel-header"><span>📊 Stock par lot</span><button class="act-btn" onclick="refreshStock()">↻</button></div>'
+        + '<table><thead><tr><th>Lot</th><th>Distribués</th><th>Utilisés</th><th>En attente</th><th>Taux</th><th>Visible élèves</th></tr></thead><tbody>';
+      lotsArr.forEach(function(l) {
+        var taux = l.distribues ? Math.round(l.utilises/l.distribues*100) : 0;
+        var color = taux >= 80 ? 'var(--gr)' : taux >= 40 ? 'var(--am)' : 'var(--t3)';
+        var switchHtml = l.id ? '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px">'
+          + '<input type="checkbox"'+(l.actif?' checked':'')
+          + ' onchange="toggleLotActif(" + JSON.stringify(l.id) + ",this.checked)"> Actif</label>' : '—';
+        html += '<tr>'
+          + '<td><span style="font-size:16px">'+(l.emoji||'🎁')+'</span> <strong>'+l.nom+'</strong></td>'
+          + '<td>'+l.distribues+'</td>'
+          + '<td style="color:var(--gr);font-weight:700">'+l.utilises+'</td>'
+          + '<td style="color:var(--am);font-weight:700">'+(l.distribues-l.utilises)+'</td>'
+          + '<td><span style="font-weight:800;color:'+color+'">'+taux+'%</span></td>'
+          + '<td>'+switchHtml+'</td>'
+          + '</tr>';
+      });
+      html += '</tbody></table></div>';
+    } else {
+      html += '<div class="empty"><div class="empty-icon">📦</div>'
+        + '<div class="empty-text">Aucun lot configuré — allez dans Paramètres → Lots</div></div>';
     }
-
-    html += '<div class="panel"><div class="panel-header"><span>📊 Stock par partenaire</span>';
-    html += '<button class="act-btn" id="refresh-stock-btn">↻</button></div>';
-    html += '<table><thead><tr>';
-    ['Partenaire','Dispo','Distribués','Utilisés','Taux','App'].forEach(function(h){
-      html += '<th style="text-align:left;padding:10px 12px;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;border-bottom:1px solid var(--b)">'+h+'</th>';
-    });
-    html += '</tr></thead><tbody>';
-
-    parts.forEach(function(p){
-      var pStock = stock.filter(function(s){return s.lot_id===p.id;});
-      var pDispo = pStock.filter(function(s){return s.statut==='disponible';}).length;
-      var pGains = gains.filter(function(g){return g.lot_id===p.id||g.partenaire_id===p.id;});
-      var pUtil  = pGains.filter(function(g){return g.utilise;}).length;
-      var pDist  = pGains.length;
-      var taux   = pDist ? Math.round(pUtil/pDist*100) : 0;
-      var dispoC = pDispo===0?'var(--re)':pDispo<5?'var(--am)':'var(--gr)';
-      var tauxC  = taux>=70?'var(--gr)':taux>=40?'var(--am)':'var(--t3)';
-
-      html += '<tr style="border-bottom:1px solid var(--b);cursor:pointer" id="row-'+p.id+'">';
-      html += '<td style="padding:12px"><div style="display:flex;align-items:center;gap:8px">';
-      html += '<span style="font-size:20px">'+(p.emoji||'🎁')+'</span>';
-      html += '<div><div style="font-size:13px;font-weight:700;color:var(--t)">'+p.nom+'</div>';
-      html += '<div style="font-size:10px;color:var(--t3)">'+(p.contact_email||'—')+'</div></div></div></td>';
-      html += '<td style="padding:12px;font-weight:800;color:'+dispoC+'">'+pDispo+'</td>';
-      html += '<td style="padding:12px;color:var(--am);font-weight:700">'+pDist+'</td>';
-      html += '<td style="padding:12px;color:var(--gr);font-weight:700">'+pUtil+'</td>';
-      html += '<td style="padding:12px;font-weight:800;color:'+tauxC+'">'+(pDist?taux+'%':'—')+'</td>';
-      html += '<td style="padding:12px"><div id="sw-'+p.id+'" style="position:relative;width:36px;height:20px;border-radius:20px;background:'+(p.actif?'var(--ac)':'#D1D5DB')+';cursor:pointer;transition:background .3s">';
-      html += '<div id="swk-'+p.id+'" style="position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:'+(p.actif?'19px':'3px')+';transition:left .3s;box-shadow:0 1px 2px rgba(0,0,0,.2)"></div></div></td>';
-      html += '</tr>';
-      // Ligne détail
-      html += '<tr id="det-'+p.id+'" style="display:none;background:var(--surf2)">';
-      html += '<td colspan="6" style="padding:14px 16px">';
-      html += '<div style="font-size:11px;font-weight:700;color:var(--t2);margin-bottom:8px">📦 '+pDispo+' codes disponibles / '+pStock.length+' total</div>';
-      html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">';
-      if(!pStock.length){
-        html += '<span style="font-size:12px;color:var(--t3);font-style:italic">Aucun code en stock — ajoutez des codes via le bouton ci-dessous</span>';
-      } else {
-        pStock.slice(0,24).forEach(function(s){
-          var bg=s.statut==='disponible'?'var(--grBg)':'var(--surf3)';
-          var co=s.statut==='disponible'?'var(--gr)':'var(--t3)';
-          html += '<span style="font-family:monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;background:'+bg+';color:'+co+'">'+s.code+'</span>';
-        });
-        if(pStock.length>24) html += '<span style="font-size:11px;color:var(--t3)">+'+(pStock.length-24)+' autres</span>';
-      }
-      html += '</div>';
-      html += '<div style="display:flex;gap:8px">';
-      html += '<button id="btn-add-'+p.id+'" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">+ Ajouter codes</button>';
-      html += '<button id="btn-email-'+p.id+'" style="background:var(--surf);border:1px solid var(--b);border-radius:7px;padding:7px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--t2)">✉️ Email partenaire</button>';
-      html += '</div></td></tr>';
-    });
-
-    html += '</tbody></table></div>';
     el.innerHTML = html;
-
-    // Binder
-    var rb = document.getElementById('refresh-stock-btn');
-    if(rb) rb.addEventListener('click', function(){ renderPartenairesStock(el); });
-
-    parts.forEach(function(p){
-      var row = document.getElementById('row-'+p.id);
-      if(row) row.addEventListener('click', function(e){
-        if(e.target.closest('[id^="sw-"]')) return;
-        var det = document.getElementById('det-'+p.id);
-        if(det) det.style.display = det.style.display==='none'?'':'none';
-      });
-
-      var sw = document.getElementById('sw-'+p.id);
-      if(sw) sw.addEventListener('click', function(e){
-        e.stopPropagation();
-        var isOn = sw.style.background.includes('var(--ac)');
-        var val  = !isOn;
-        sw.style.background = val?'var(--ac)':'#D1D5DB';
-        var knob = document.getElementById('swk-'+p.id);
-        if(knob) knob.style.left = val?'19px':'3px';
-        var hh = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
-        fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+p.id,{method:'PATCH',headers:hh,body:JSON.stringify({actif:val})})
-          .then(function(r){ showAdminToast(r.ok?(val?'Visible dans l\'app':'Masqué'):'Erreur',r.ok?'':'error'); });
-      });
-
-      var addBtn = document.getElementById('btn-add-'+p.id);
-      if(addBtn) addBtn.addEventListener('click', function(e){
-        e.stopPropagation();
-        if(typeof openAddCodes==='function') openAddCodes(p.id);
-      });
-
-      var emailBtn = document.getElementById('btn-email-'+p.id);
-      if(emailBtn) emailBtn.addEventListener('click', function(e){
-        e.stopPropagation();
-        openEmailPartenaireModal(p);
-      });
-    });
-
-  }).catch(function(){
-    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--re)">⚠️ Erreur chargement stock</div>';
+  }).catch(function(e) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Erreur chargement stock</div></div>';
   });
 }
 
-function openEmailPartenaireModal(p) {
-  if(!p.contact_email){ showAdminToast('Pas d\'adresse email pour ce partenaire','error'); return; }
-  var ov = document.createElement('div');
-  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
-  var tpls = [
-    ['Demande codes','Bonjour,\n\nNous avons besoin de nouveaux codes promo pour nos élèves Flowin.\n\nPouvez-vous nous en envoyer une nouvelle série ?\n\nCordialement,\nL\'équipe Flowin'],
-    ['Rapport mensuel','Bonjour,\n\nVoici le bilan de ce mois pour votre partenariat Flowin.\nVos codes ont été distribués avec succès.\n\nMerci pour votre confiance.\n\nCordialement,\nL\'équipe Flowin'],
-    ['Renouvellement','Bonjour,\n\nNous souhaitons renouveler notre partenariat.\nSouhaitez-vous continuer ?\n\nCordialement,\nL\'équipe Flowin']
-  ];
-
-  var div = document.createElement('div');
-  div.style.cssText = 'background:var(--surf);border-radius:14px;width:100%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,.25)';
-  div.innerHTML = '<div style="padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between">'
-    +'<div><div style="font-size:15px;font-weight:800;color:var(--t)">✉️ Email à '+p.nom+'</div>'
-    +'<div style="font-size:11px;color:var(--t3);margin-top:2px">'+p.contact_email+'</div></div>'
-    +'<button id="em-x" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>'
-    +'</div><div style="padding:16px;display:flex;flex-direction:column;gap:12px">'
-    +'<div><div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;margin-bottom:6px">Templates rapides</div>'
-    +'<div style="display:flex;gap:6px;flex-wrap:wrap" id="em-tpls"></div></div>'
-    +'<div><label style="font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px">Objet</label>'
-    +'<input id="em-subj" value="Partenariat Flowin - '+p.nom+'" style="width:100%;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;font-family:inherit;background:var(--surf2);color:var(--t);box-sizing:border-box"></div>'
-    +'<div><label style="font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px">Message</label>'
-    +'<textarea id="em-body" rows="6" style="width:100%;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;font-family:inherit;background:var(--surf2);color:var(--t);resize:vertical;box-sizing:border-box;line-height:1.5"></textarea></div>'
-    +'<div style="display:flex;gap:8px;justify-content:flex-end">'
-    +'<button id="em-cancel" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:8px 14px;font-size:12px;cursor:pointer;font-family:inherit">Annuler</button>'
-    +'<button id="em-open" style="background:var(--bl);color:#fff;border:none;border-radius:7px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">📧 Ouvrir dans Mail</button>'
-    +'<button id="em-copy" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">📋 Copier</button>'
-    +'</div></div>';
-  ov.appendChild(div);
-  document.body.appendChild(ov);
-
-  // Templates
-  var tplCont = document.getElementById('em-tpls');
-  var bodyEl  = document.getElementById('em-body');
-  bodyEl.value = tpls[0][1];
-  tpls.forEach(function(t,i){
-    var btn = document.createElement('button');
-    btn.textContent = t[0];
-    btn.style.cssText = 'background:var(--surf2);border:1px solid var(--b);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:inherit';
-    btn.addEventListener('click', function(){ bodyEl.value = t[1]; });
-    tplCont.appendChild(btn);
-  });
-
-  document.getElementById('em-x').addEventListener('click', function(){ov.remove();});
-  document.getElementById('em-cancel').addEventListener('click', function(){ov.remove();});
-  document.getElementById('em-open').addEventListener('click', function(){
-    var s = document.getElementById('em-subj').value;
-    var b = bodyEl.value;
-    window.open('mailto:'+p.contact_email+'?subject='+encodeURIComponent(s)+'&body='+encodeURIComponent(b),'_blank');
-  });
-  document.getElementById('em-copy').addEventListener('click', function(){
-    if(navigator.clipboard) navigator.clipboard.writeText(bodyEl.value).then(function(){showAdminToast('Copié ✅');});
-    else { var ta=document.createElement('textarea');ta.value=bodyEl.value;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();showAdminToast('Copié ✅'); }
-  });
-}
-
+// ── DISTRIBUTION ──
 function renderPartenairesDistrib(el) {
   el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3)">Chargement…</div>';
   var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
-  fetch(SB_URL+'/rest/v1/gains?order=created_at.desc&limit=200', {headers:hdrs})
+  fetch(SB_URL+'/rest/v1/gains?order=ts.desc&limit=200', {headers:hdrs})
     .then(function(r){ return r.ok?r.json():[]; })
     .then(function(gains) {
       var html = '<div class="panel"><div class="panel-header">'
@@ -2774,7 +2422,7 @@ function loadRecentValidations() {
   var el = document.getElementById('qr-recent-list');
   if(!el) return;
   var hdrs = { apikey: SB_KEY, 'Authorization': 'Bearer ' + SB_KEY };
-  fetch(SB_URL + '/rest/v1/gains?utilise=eq.true&order=created_at.desc&limit=20&select=*', { headers: hdrs })
+  fetch(SB_URL + '/rest/v1/gains?utilise=eq.true&order=utilise_ts.desc&limit=20&select=*', { headers: hdrs })
     .then(function(r){ return r.ok ? r.json() : []; })
     .then(function(rows) {
       if(!rows || !rows.length) {
@@ -3137,7 +2785,7 @@ function buildEtabBtns() {
   const etabs = [...new Set(DB.joueurs.map(j=>j.ecole).filter(Boolean))].sort();
   const sel = document.getElementById('stats-etab-select');
   if(!sel || etabs.length===0) return;
-  sel.innerHTML = '<option value="all">Tous</option>'
+  sel.innerHTML = `<option value="all">Tous</option>`
     + etabs.map(e=>`<option value="${e}"${statsEtab===e?' selected':''}>${e}</option>`).join('');
 }
 
@@ -3319,7 +2967,7 @@ async function renderStats() {
   const secHalf = dailyVals.slice(midPoint).reduce((a,v)=>a+v,0);
   const trendPct = firstHalf>0?Math.round((secHalf-firstHalf)/firstHalf*100):0;
   const trendEl = document.getElementById('stats-trend-7j');
-  if(trendEl) trendEl.innerHTML = '<span style="color:' + (trendPct>=0?'var(--gr)':'var(--re)') + '">' + (trendPct>=0?'↑':'↓') + ' ' + Math.abs(trendPct) + '% tendance</span>';
+  if(trendEl) trendEl.innerHTML = `<span style="color:${trendPct>=0?'var(--gr)':'var(--re)'}">${trendPct>=0?'↑':'↓'} ${Math.abs(trendPct)}% tendance</span>`;
 
   // ── KPIs cliquables ──
   const kpiDefs = [
@@ -3627,7 +3275,7 @@ async function renderStats() {
     const dp = document.createElement('div');
     dp.id = 'stats-drill-panel';
     dp.style.cssText = 'display:none;margin-top:14px';
-    dp.innerHTML = '<div class="panel"><div class="panel-header" style="display:flex;align-items:center;justify-content:space-between"><span id="stats-drill-title" style="font-weight:700"></span><div style="display:flex;gap:8px"><button onclick="exportDrill()" style="background:var(--gr);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:600;cursor:pointer">⬇ Export</button><button onclick="closeDrill()" style="background:var(--surf2);border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--t2)">✕ Fermer</button></div></div><div id="stats-drill-body" style="padding:16px;max-height:400px;overflow-y:auto"></div></div>';
+    dp.innerHTML = `<div class="panel"><div class="panel-header" style="display:flex;align-items:center;justify-content:space-between"><span id="stats-drill-title" style="font-weight:700"></span><div style="display:flex;gap:8px"><button onclick="exportDrill()" style="background:var(--gr);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:600;cursor:pointer">⬇ Export</button><button onclick="closeDrill()" style="background:var(--surf2);border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--t2)">✕ Fermer</button></div></div><div id="stats-drill-body" style="padding:16px;max-height:400px;overflow-y:auto"></div></div>`;
     var vsParent = document.getElementById('v-stats') || document.getElementById('analytics-tab-trafic') || document.body; vsParent.appendChild(dp);
   }
 }
@@ -3900,13 +3548,6 @@ function setCoursFilter(btn, filterType, val) {
 // ── COURS HUB ──
 var coursCurrentTheme = null;
 
-// Variables Supabase pédagogiques (chargées dans loadData)
-var SB_THEMES    = [];
-var SB_FICHES    = [];
-var SB_VISUELS   = [];
-var SB_QUESTIONS = [];
-var SB_QUIZ_CFG  = [];
-
 var COURS_MAT_COULEURS = { Histoire:'var(--ac)', Geographie:'var(--gr)', EMC:'#E040A0', PSE:'#E84855' };
 var COURS_MAT_EMOJI    = { Histoire:'📜', Geographie:'🌍', EMC:'⚖️', PSE:'🩺' };
 var COURS_MAT_ORDER    = ['Histoire','Geographie','EMC','PSE'];
@@ -3916,18 +3557,19 @@ function getMatEmoji(mat)   { return COURS_MAT_EMOJI[mat]    || COURS_MAT_EMOJI[
 
 function buildCoursThemes() {
   var themes = {};
-  // Initialiser depuis SB_THEMES
-  SB_THEMES.forEach(function(t) {
-    themes[t.id] = {
-      id: t.id, theme: t.title, matiere: t.mat||t.matiere||'', niveau: 'Bac Pro',
-      emoji: t.emoji||'📄', couleur: t.color||getMatCouleur(t.mat||t.matiere||''),
-      ordre: t.num||t.ordre||0, fiches: [], visuels: [], questions: [], quizCfg: null
-    };
+  COURS_DB.forEach(function(c) {
+    var t = c.theme || 'Général';
+    if(!themes[t]) themes[t] = { theme:t, matiere:c.matiere||'', niveau:c.niveau||'', fiches:[], visuels:[], questions:[], emoji:c.emoji||'📄', couleur:c.couleur||'var(--ac)' };
+    if(c.type === 'visuel') themes[t].visuels.push(c); else themes[t].fiches.push(c);
+    if(!themes[t].matiere && c.matiere) themes[t].matiere = c.matiere;
   });
-  SB_FICHES.forEach(function(f)    { if(themes[f.theme_id]) themes[f.theme_id].fiches.push(f); });
-  SB_VISUELS.forEach(function(v)   { if(themes[v.theme_id]) themes[v.theme_id].visuels.push(v); });
-  SB_QUESTIONS.forEach(function(q) { if(themes[q.theme_id]) themes[q.theme_id].questions.push(q); });
-  SB_QUIZ_CFG.forEach(function(cfg){ if(themes[cfg.theme_id]) themes[cfg.theme_id].quizCfg = cfg; });
+  QUESTIONS_DB.forEach(function(q) {
+    var t = q.theme || 'Général';
+    if(!themes[t]) themes[t] = { theme:t, matiere:q.matiere||'', niveau:q.niveau||'', fiches:[], visuels:[], questions:[], emoji:'❓', couleur:'var(--am)' };
+    themes[t].questions.push(q);
+    if(!themes[t].matiere && q.matiere) themes[t].matiere = q.matiere;
+    if(!themes[t].niveau  && q.niveau)  themes[t].niveau  = q.niveau;
+  });
   return themes;
 }
 
@@ -3936,12 +3578,12 @@ function renderCoursHub() {
   var el = document.getElementById('cours-hub-content');
   if(!el) return;
 
-  var themes    = buildCoursThemes();
-  var themeList = Object.values(themes).sort(function(a,b){return (a.ordre||0)-(b.ordre||0);});
-  var totalF    = SB_FICHES.length;
-  var totalV    = SB_VISUELS.length;
-  var totalQ    = SB_QUESTIONS.length;
-  var totalQVal = SB_QUESTIONS.filter(function(q){ return q.actif !== false; }).length;
+  var themes     = buildCoursThemes();
+  var themeList  = Object.values(themes);
+  var totalF     = COURS_DB.filter(function(c){ return c.type !== 'visuel'; }).length;
+  var totalV     = COURS_DB.filter(function(c){ return c.type === 'visuel'; }).length;
+  var totalQ     = QUESTIONS_DB.length;
+  var totalQVal  = QUESTIONS_DB.filter(function(q){ return q.statut==='validé'||q.statut==='valide'; }).length;
 
   var subEl = document.getElementById('cours-hub-sub');
   if(subEl) subEl.textContent = themeList.length + ' thèmes · ' + totalF + ' fiches · ' + totalQ + ' questions · ' + totalV + ' visuels';
@@ -4057,13 +3699,13 @@ function coursBackToHub()       { coursCurrentTheme = null;  renderCoursHub(); }
 
 function renderCoursThemeDetail(themeObj, el) {
   var mat     = themeObj.matiere || '';
+  var niveau  = themeObj.niveau  || '';
   var couleur = getMatCouleur(mat) || 'var(--ac)';
-  var fiche   = themeObj.fiches && themeObj.fiches[0] || null;
-  var qList   = themeObj.questions || [];
-  var vList   = themeObj.visuels   || [];
-  var cfg     = themeObj.quizCfg   || null;
+  var qDeTheme = themeObj.questions || [];
+  var qVal     = qDeTheme.filter(function(q){ return q.statut==='validé'||q.statut==='valide'; });
 
   var html = '';
+
   // Breadcrumb
   html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">';
   html += '<button onclick="coursBackToHub()" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:6px 12px;font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit">← Retour</button>';
@@ -4072,106 +3714,152 @@ function renderCoursThemeDetail(themeObj, el) {
   html += '</div>';
 
   // Header thème
-  html += '<div class="panel" style="margin-bottom:14px;border-left:3px solid '+couleur+'">';
+  html += '<div class="panel" style="margin-bottom:16px;border-left:3px solid ' + couleur + '">';
   html += '<div style="padding:16px;display:flex;align-items:center;gap:12px">';
-  html += '<div style="width:48px;height:48px;border-radius:12px;background:'+couleur+'20;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">'+(themeObj.emoji||'📄')+'</div>';
-  html += '<div style="flex:1"><div style="font-size:16px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">'+themeObj.theme+'</div>';
-  html += '<div style="font-size:11px;color:var(--t3);margin-top:3px">'+mat+' · Bac Pro</div></div>';
+  html += '<div style="width:48px;height:48px;border-radius:12px;background:' + couleur + '18;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">' + (themeObj.emoji||'📄') + '</div>';
+  html += '<div style="flex:1">';
+  html += '<div style="font-size:16px;font-weight:800;color:var(--t);font-family:\'Syne\',sans-serif">' + themeObj.theme + '</div>';
+  html += '<div style="font-size:11px;color:var(--t3);margin-top:3px">' + mat + (niveau?' · '+niveau:'') + '</div>';
+  html += '</div>';
   html += '<div style="display:flex;gap:8px">';
-  html += '<div style="background:var(--acBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--ac)">'+(fiche?'✅':'—')+'</div><div style="font-size:9px;color:var(--t3)">Fiche</div></div>';
-  html += '<div style="background:var(--amBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--am)">'+qList.length+'</div><div style="font-size:9px;color:var(--t3)">Questions</div></div>';
-  html += '<div style="background:var(--blBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--bl)">'+vList.length+'</div><div style="font-size:9px;color:var(--t3)">Visuels</div></div>';
+  html += '<div style="background:var(--acBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--ac)">' + themeObj.fiches.length + '</div><div style="font-size:9px;color:var(--t3)">Fiches</div></div>';
+  html += '<div style="background:var(--amBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--am)">' + qDeTheme.length + '</div><div style="font-size:9px;color:var(--t3)">Questions</div></div>';
+  html += '<div style="background:var(--blBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--bl)">' + themeObj.visuels.length + '</div><div style="font-size:9px;color:var(--t3)">Visuels</div></div>';
   html += '</div></div></div>';
 
-  // ── 1. ESSENTIEL ──
-  html += '<div class="panel" style="margin-bottom:12px">';
-  html += '<div class="panel-header"><span>💡 L\'Essentiel</span>';
-  html += '<button onclick="showAdminToast(\'Édition disponible dans une prochaine version\')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">'+(fiche?'✏️ Modifier':'+ Créer')+'</button>';
-  html += '</div>';
-  if(!fiche) {
-    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">';
-    html += 'Aucune fiche — exécute <code>flowin_contenu_sync.sql</code> dans Supabase';
-    html += '</div>';
-  } else {
-    html += '<div style="padding:14px 16px">';
-    if(fiche.essentiel) {
-      html += '<div style="font-size:13px;color:var(--t2);line-height:1.7;border-left:3px solid '+couleur+';padding-left:12px">' + fiche.essentiel + '</div>';
-    }
-    html += '</div>';
-  }
-  html += '</div>';
-
-  // ── 2. CHRONOLOGIE ──
-  if(fiche && fiche.chrono && fiche.chrono.length) {
-    html += '<div class="panel" style="margin-bottom:12px">';
-    html += '<div class="panel-header"><span>🗓 Chronologie ('+fiche.chrono.length+' entrées)</span></div>';
-    html += '<div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px">';
-    fiche.chrono.forEach(function(ch) {
-      html += '<div style="display:flex;gap:14px;align-items:flex-start">';
-      html += '<div style="background:'+couleur+'20;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:800;color:'+couleur+';flex-shrink:0;white-space:nowrap">'+ch[0]+'</div>';
-      html += '<div style="font-size:12px;color:var(--t2);line-height:1.5;flex:1">'+ch[1]+'</div>';
-      html += '</div>';
-    });
-    html += '</div></div>';
-  }
-
-  // ── 3. DATES CLÉS ──
-  if(fiche && fiche.dates && fiche.dates.length) {
-    html += '<div class="panel" style="margin-bottom:12px">';
-    html += '<div class="panel-header"><span>📅 Dates clés</span></div>';
-    html += '<div style="padding:10px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">';
-    fiche.dates.forEach(function(d) {
-      html += '<div style="background:var(--surf2);border-radius:8px;padding:8px 10px;display:flex;gap:8px;align-items:center">';
-      html += '<span style="font-size:11px;font-weight:800;color:'+couleur+';flex-shrink:0">'+d[0]+'</span>';
-      html += '<span style="font-size:11px;color:var(--t2)">'+d[1]+'</span>';
-      html += '</div>';
-    });
-    html += '</div></div>';
-  }
-
-  // ── 4. VOCABULAIRE ──
-  if(fiche && fiche.vocab && fiche.vocab.length) {
-    html += '<div class="panel" style="margin-bottom:12px">';
-    html += '<div class="panel-header"><span>📖 Vocabulaire ('+fiche.vocab.length+' mots)</span></div>';
-    html += '<div style="padding:10px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px">';
-    fiche.vocab.forEach(function(v) {
-      html += '<div style="background:var(--surf2);border-radius:8px;padding:10px 12px">';
-      html += '<div style="font-size:12px;font-weight:800;color:'+couleur+';margin-bottom:4px">'+v[0]+'</div>';
-      html += '<div style="font-size:11px;color:var(--t2);line-height:1.4">'+v[1]+'</div>';
-      html += '</div>';
-    });
-    html += '</div></div>';
-  }
-
-  // ── 5. QUESTIONS ──
-  html += '<div class="panel" style="margin-bottom:12px">';
-  html += '<div class="panel-header"><span>❓ Questions ('+qList.length+')</span>';
-  html += '<button onclick="showAdminToast(\'Ajout de question disponible prochainement\')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
-  html += '</div>';
-  if(!qList.length) {
-    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucune question — exécute flowin_contenu_sync.sql</div>';
-  } else {
-    var diff = {facile:'😊',moyen:'🤔',difficile:'🔥'};
-    html += '<div style="padding:8px 0">';
-    qList.forEach(function(q, i) {
-      html += '<div style="padding:10px 16px;'+(i<qList.length-1?'border-bottom:1px solid var(--b)':'')+'">'; 
-      html += '<div style="display:flex;align-items:flex-start;gap:10px">';
-      html += '<span style="font-size:14px;flex-shrink:0">'+(diff[q.difficulte]||'🤔')+'</span>';
-      html += '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--t);line-height:1.4;margin-bottom:6px">'+q.q+'</div>';
-      html += '<div style="display:flex;gap:5px;flex-wrap:wrap">';
-      if(q.opts && Array.isArray(q.opts)) {
-        q.opts.forEach(function(r, ri) {
-          var ok = ri === q.bon;
-          html += '<span style="font-size:10px;padding:3px 8px;border-radius:20px;'+(ok?'background:var(--grBg);color:var(--gr);font-weight:700;border:1px solid var(--grBorder)':'background:var(--surf2);color:var(--t3);border:1px solid var(--b)')+'">'+(ok?'✓ ':'')+r+'</span>';
+  // ── 1. CONTENU
+  if(themeObj.fiches.length) {
+    html += '<div class="panel" style="margin-bottom:14px">';
+    html += '<div class="panel-header"><span>📋 Contenu du cours</span></div>';
+    html += '<div style="padding:16px;display:flex;flex-direction:column;gap:14px">';
+    themeObj.fiches.forEach(function(f) {
+      html += '<div>';
+      html += '<div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:6px">' + f.titre + '</div>';
+      if(f.resume) html += '<div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:8px">' + f.resume + '</div>';
+      if(f.points_cles && f.points_cles.length) {
+        html += '<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px">';
+        f.points_cles.forEach(function(pt) {
+          html += '<div style="display:flex;align-items:flex-start;gap:8px;font-size:11px;color:var(--t)">';
+          html += '<span style="color:' + couleur + ';flex-shrink:0;font-weight:800;margin-top:1px">▸</span><span>' + pt + '</span></div>';
         });
+        html += '</div>';
       }
+      html += '<button onclick="openFicheCours(\'' + f.id + '\')" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:5px 12px;font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit">✏️ Modifier</button>';
       html += '</div>';
-      if(q.expl) html += '<div style="font-size:10px;color:var(--t3);font-style:italic;margin-top:4px">'+q.expl+'</div>';
-      html += '</div></div></div>';
+    });
+    html += '</div></div>';
+  }
+
+  // ── 2. FICHE MÉMO
+  if(themeObj.fiches.length) {
+    html += '<div class="panel" style="margin-bottom:14px">';
+    html += '<div class="panel-header"><span>📄 Fiche mémo — Points clés</span></div>';
+    html += '<div style="padding:16px">';
+    themeObj.fiches.forEach(function(f) {
+      if(!f.points_cles || !f.points_cles.length) return;
+      var colors = ['var(--ac)','var(--gr)','var(--am)','#E040A0','var(--bl)',couleur];
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-bottom:12px">';
+      f.points_cles.forEach(function(pt, i) {
+        var c = colors[i % colors.length];
+        html += '<div style="background:' + c + '12;border-left:3px solid ' + c + ';border-radius:0 8px 8px 0;padding:8px 10px">';
+        html += '<div style="font-size:11px;font-weight:700;color:' + c + '">' + pt + '</div></div>';
+      });
+      html += '</div>';
+      if(f.tags && f.tags.length) {
+        html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
+        f.tags.forEach(function(tag){ html += '<span style="background:var(--surf2);border:1px solid var(--b);border-radius:20px;padding:3px 10px;font-size:10px;color:var(--t3)">#' + tag + '</span>'; });
+        html += '</div>';
+      }
+    });
+    html += '</div></div>';
+  }
+
+  // ── 3. VISUELS
+  html += '<div class="panel" style="margin-bottom:14px">';
+  html += '<div class="panel-header"><span>🖼 Visuels & Ressources</span>';
+  if(!themeObj.visuels.length) html += '<button onclick="openAddCours()" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
+  html += '</div>';
+  if(!themeObj.visuels.length) {
+    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucun visuel — <button onclick="openAddCours()" style="background:none;border:none;color:var(--ac);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Ajouter</button></div>';
+  } else {
+    html += '<div style="padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">';
+    themeObj.visuels.forEach(function(v) {
+      html += '<div style="background:var(--surf2);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px;text-align:center">';
+      html += '<div style="font-size:24px">' + (v.emoji||'🖼') + '</div>';
+      html += '<div style="font-size:11px;font-weight:700;color:var(--t)">' + v.titre + '</div>';
+      html += '<div style="font-size:10px;color:var(--t3)">' + (v.auteur||'') + '</div>';
+      if(v.eleve_auteur) html += '<span style="background:var(--grBg);color:var(--gr);border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700">Créé par élève</span>';
+      html += '<button onclick="openFicheCours(\'' + v.id + '\')" style="background:var(--surf3);border:none;border-radius:7px;padding:5px;font-size:10px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit">✏️ Modifier</button>';
+      html += '</div>';
     });
     html += '</div>';
   }
   html += '</div>';
+
+  // ── 4. QUESTIONS QUIZ
+  html += '<div class="panel" style="margin-bottom:14px">';
+  html += '<div class="panel-header"><span>❓ Questions Quiz</span>';
+  html += '<div style="display:flex;gap:8px;align-items:center">';
+  html += '<span style="font-size:10px;color:var(--t3)">' + qVal.length + '/' + qDeTheme.length + ' validées</span>';
+  html += '<button onclick="openAddQuestion(\'' + themeObj.theme.replace(/'/g,"\\'") + '\')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
+  html += '</div></div>';
+  if(!qDeTheme.length) {
+    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucune question — <button onclick="openAddQuestion(\'' + themeObj.theme.replace(/'/g,"\\'") + '\')" style="background:none;border:none;color:var(--ac);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Créer la première</button></div>';
+  } else {
+    html += '<div style="padding:8px 0">';
+    var difficColors = { facile:'var(--gr)', moyen:'var(--am)', difficile:'var(--re)' };
+    qDeTheme.forEach(function(q, i) {
+      var isVal = q.statut==='validé'||q.statut==='valide';
+      html += '<div style="padding:10px 16px;' + (i<qDeTheme.length-1?'border-bottom:1px solid var(--b)':'') + '">';
+      html += '<div style="display:flex;align-items:flex-start;gap:10px">';
+      html += '<span style="font-size:16px;flex-shrink:0">' + (isVal?'✅':'🔄') + '</span>';
+      html += '<div style="flex:1;min-width:0">';
+      html += '<div style="font-size:12px;font-weight:600;color:var(--t);line-height:1.4;margin-bottom:6px">' + q.question + '</div>';
+      html += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px">';
+      q.reponses.forEach(function(r, ri) {
+        var isBonne = ri === q.bonne;
+        html += '<span style="font-size:10px;padding:3px 8px;border-radius:20px;' + (isBonne?'background:var(--grBg);color:var(--gr);font-weight:700;border:1px solid var(--grBorder)':'background:var(--surf2);color:var(--t3);border:1px solid var(--b)') + '">' + (isBonne?'✓ ':'') + r + '</span>';
+      });
+      html += '</div>';
+      html += '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
+      if(q.difficulte) html += '<span style="font-size:9px;font-weight:700;color:' + (difficColors[q.difficulte]||'var(--t3)') + ';text-transform:uppercase">' + q.difficulte + '</span>';
+      if(q.nb_fois) html += '<span style="font-size:9px;color:var(--t3)">' + q.nb_fois + '× · ' + q.taux_reussite + '%</span>';
+      if(!isVal) {
+        var qid = q.id.replace(/'/g,"\\'");
+        html += '<button onclick="var qq=QUESTIONS_DB.find(function(x){return x.id===\'' + qid + '\';});if(qq){qq.statut=\'validé\';renderCoursHub();}" style="background:var(--grBg);border:none;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;color:var(--gr);cursor:pointer;font-family:inherit">Valider</button>';
+      }
+      html += '</div></div></div></div>';
+    });
+    html += '</div>';
+  }
+  html += '</div>';
+
+  // ── 5. QUIZ COMPLET
+  html += '<div class="panel" style="margin-bottom:14px">';
+  html += '<div class="panel-header"><span>🎯 Quiz Complet — ' + themeObj.theme + '</span></div>';
+  html += '<div style="padding:16px">';
+  if(!qVal.length) {
+    html += '<div style="text-align:center;color:var(--t3);font-size:11px;padding:10px">Aucune question validée — ajoutez des questions pour activer ce quiz</div>';
+  } else {
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px">';
+    html += '<div><div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:4px">' + qVal.length + ' questions validées</div>';
+    html += '<div style="font-size:11px;color:var(--t3)">' + mat + (niveau?' · '+niveau:'') + '</div></div>';
+    var diff = {facile:0,moyen:0,difficile:0};
+    qVal.forEach(function(q){ if(diff[q.difficulte]!==undefined) diff[q.difficulte]++; });
+    html += '<div style="display:flex;gap:6px">';
+    if(diff.facile)    html += '<span style="background:var(--grBg);color:var(--gr);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700">😊 ' + diff.facile + ' facile' + (diff.facile>1?'s':'') + '</span>';
+    if(diff.moyen)     html += '<span style="background:var(--amBg);color:var(--am);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700">🤔 ' + diff.moyen + ' moyen' + (diff.moyen>1?'s':'') + '</span>';
+    if(diff.difficile) html += '<span style="background:var(--reBg);color:var(--re);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700">🔥 ' + diff.difficile + '</span>';
+    html += '</div></div>';
+    var avgR = qVal.length ? Math.round(qVal.reduce(function(s,q){ return s+(q.taux_reussite||0); },0)/qVal.length) : 0;
+    if(avgR>0) {
+      var scC = avgR>=70?'var(--gr)':avgR>=50?'var(--am)':'var(--re)';
+      html += '<div style="background:var(--surf2);border-radius:9px;padding:10px 14px">';
+      html += '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-bottom:6px"><span>Taux de réussite moyen</span><span style="font-weight:700;color:' + scC + '">' + avgR + '%</span></div>';
+      html += '<div style="height:6px;background:var(--surf3);border-radius:3px;overflow:hidden"><div style="height:100%;width:' + avgR + '%;background:' + scC + ';border-radius:3px"></div></div></div>';
+    }
+  }
+  html += '</div></div>';
 
   el.innerHTML = html;
 }
@@ -4718,7 +4406,7 @@ Réponds UNIQUEMENT avec un JSON valide, sans markdown ni backticks, dans ce for
       const vw = document.getElementById('ai-visuel-wrap');
       const vc = document.getElementById('ai-visuel-content');
       if(vw) vw.style.display = 'block';
-      if(vc) vc.innerHTML = '<div style="padding:16px;font-size:11px;line-height:1.6">' + parsed.visuel_html + '</div>';
+      if(vc) vc.innerHTML = `<div style="padding:16px;font-size:11px;line-height:1.6">${parsed.visuel_html}</div>`;
     }
 
     // Hide spinner
@@ -5402,23 +5090,34 @@ function confirmAttrib(lotId, pseudo, nom, overlay) {
 }
 
 function renderGainsPanel() {
-  var el = document.getElementById('gains-panel');
+  const el = document.getElementById('gains-panel');
   if(!el) return;
-  if(!GAINS_DB.length) { el.innerHTML = '<div style="padding:16px;color:var(--t3);font-size:11px;text-align:center">Aucun gain.</div>'; return; }
-  var th = 'text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase';
-  var html = '<table style="width:100%;border-collapse:collapse"><thead><tr>';
-  ['El\u00e8ve','Lot','Code','Condition','Date'].forEach(function(h){ html += '<th style="'+th+'">'+h+'</th>'; });
-  html += '</tr></thead><tbody>';
-  GAINS_DB.slice(0,50).forEach(function(g,i){
-    html += '<tr style="background:'+(i%2?'var(--surf2)':'')+'"><td style="padding:9px 12px;font-size:12px;font-weight:600;color:var(--t)">'+(g.pseudo||'--')+'</td>';
-    html += '<td style="padding:9px 12px;font-size:12px;color:var(--t)">'+(g.lot_nom||'--')+'</td>';
-    html += '<td style="padding:9px 12px;font-family:monospace;font-size:12px;font-weight:800;color:var(--ac)">'+(g.code||'--')+'</td>';
-    html += '<td style="padding:9px 12px;font-size:10px;color:var(--t3)">'+(g.condition||'--')+'</td>';
-    html += '<td style="padding:9px 12px;font-size:10px;color:var(--t3)">'+(g.created_at?new Date(g.created_at).toLocaleDateString('fr-FR'):'')+' </td></tr>';
-  });
-  html += '</tbody></table>';
-  el.innerHTML = html;
+  if(!GAINS_DB.length) {
+    el.innerHTML = '<div style="padding:16px;color:var(--t3);font-size:11px;text-align:center">Aucun gain attribué pour le moment.</div>';
+    return;
+  }
+  el.innerHTML = `
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr>
+        <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase">Élève</th>
+        <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase">Lot</th>
+        <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase">Code</th>
+        <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase">Condition</th>
+        <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase">Date</th>
+      </tr></thead>
+      <tbody>
+        ${GAINS_DB.slice(0,50).map((g,i) => `
+          <tr style="background:${i%2===0?'':'var(--surf2)'}">
+            <td style="padding:9px 12px;font-size:12px;font-weight:600;color:var(--t)">${g.pseudo}</td>
+            <td style="padding:9px 12px;font-size:12px;color:var(--t)">${g.lot_emoji} ${g.lot_nom}</td>
+            <td style="padding:9px 12px;font-family:monospace;font-size:12px;font-weight:800;color:var(--ac)">${g.code}</td>
+            <td style="padding:9px 12px;font-size:10px;color:var(--t3)">${g.condition||'—'}</td>
+            <td style="padding:9px 12px;font-size:10px;color:var(--t3)">${g.created_at?new Date(g.created_at).toLocaleDateString('fr-FR'):''}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
 }
+
 
 
 function openBareme() {
@@ -5603,308 +5302,6 @@ async function attribuerLot(pseudo, lotId) {
     showAdminToast('✅ Code "' + dispo.code + '" attribué à ' + pseudo + ' !');
     if(currentView==='bareme') renderBaremeView();
   } catch(e) { showAdminToast('⚠️ Erreur attribution : ' + e.message, 'error'); }
-}
-
-// === FONCTIONS MANQUANTES (audit 2026-05-12) ===
-
-function saveNewPartner(overlay) { if(typeof createPartner==='function') createPartner(overlay); }
-
-function switchDTab(tab,btn){
-  document.querySelectorAll('#dt-pools,#dt-histo,#dt-rank').forEach(function(b){b.classList.remove('on');});
-  if(btn)btn.classList.add('on');
-  ['pools','histo','rank'].forEach(function(t){
-    var el=document.getElementById('defis-'+(t==='pools'?'pools-wrap':t));
-    if(el)el.style.display=t===tab?'':'none';
-  });
-}
-function switchTL(mode,btn){
-  window._tlMode=mode;
-  document.querySelectorAll('.tl-pill').forEach(function(b){b.classList.remove('on');});
-  if(btn)btn.classList.add('on');
-  if(typeof renderTL==='function')renderTL(mode,(typeof DB!=='undefined'?DB.sessions:[]));
-}
-function openPoolPanel(pi){
-  var pdata=window._poolsData;if(!pdata||pi>=pdata.length)return;
-  var p=pdata[pi];
-  var overlay=document.getElementById('pool-panel-overlay');
-  var panel=document.getElementById('pool-panel');
-  if(!overlay||!panel)return;
-  var elevs=(typeof buildElevs==='function')?buildElevs():[];
-  var html='<div style="padding:20px"><div style="font-size:16px;font-weight:800;color:var(--t);margin-bottom:4px">'+p.theme+'</div>';
-  html+='<div style="font-size:12px;color:var(--t3);margin-bottom:16px">'+p.sorted.length+' joueurs</div><div>';
-  p.sorted.slice(0,20).forEach(function(s,i){
-    var d=elevs.find(function(e){return e.pseudo===s.pseudo;});
-    var name=d?(d.j.prenom+' '+d.j.nom):(s.pseudo||'--');
-    var medal=['\ud83e\udd47','\ud83e\udd48','\ud83e\udd49'][i]||('#'+(i+1));
-    html+='<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b)">';
-    html+='<span style="font-size:13px;width:24px">'+medal+'</span>';
-    html+='<span style="font-size:12px;font-weight:600;color:var(--t);flex:1">'+name+'</span>';
-    html+='<span style="font-size:12px;font-weight:700;color:var(--am)">'+(s.score_pct||0)+'%</span></div>';
-  });
-  html+='</div></div>';
-  panel.innerHTML=html;
-  overlay.style.display='block';
-}
-function closePoolPanel(){
-  var o=document.getElementById('pool-panel-overlay');if(o)o.style.display='none';
-}
-var _parrSF='name',_parrSD=1;
-function parrSort(field){
-  if(_parrSF===field)_parrSD*=-1;else{_parrSF=field;_parrSD=1;}
-  ['name','filleuls','pts','recent'].forEach(function(f){
-    var el=document.getElementById('pa-'+f);if(el)el.textContent=f===field?(_parrSD>0?'\u2191':'\u2193'):'\u2195';
-  });
-  if(typeof renderParrainage==='function')renderParrainage();
-}
-function parrFlt(field){
-  var el=document.getElementById('parr-flt-'+field);
-  if(el)el.style.display=el.style.display==='none'?'':'none';
-}
-function switchAppComTab(tab,btn){
-  document.querySelectorAll('.defis-tab').forEach(function(b){b.classList.remove('active');});
-  if(btn)btn.classList.add('active');
-  ['vignette','messagerie','push'].forEach(function(t){
-    var el=document.getElementById('appcom-'+t);if(el)el.style.display=t===tab?'':'none';
-  });
-}
-function downloadQR(){
-  var cv=document.querySelector('canvas');
-  if(!cv){showAdminToast('Aucun QR','error');return;}
-  var a=document.createElement('a');a.href=cv.toDataURL('image/png');a.download='flowin-qr.png';a.click();
-  showAdminToast('QR Code \u2b07 ');
-}
-function setIconMode(mode){
-  ['image','emoji'].forEach(function(m){
-    var btn=document.getElementById('icon-mode-'+m);
-    var zone=document.getElementById('icon-'+m+'-zone');
-    if(btn){btn.style.background=m===mode?'var(--ac)':'var(--surf2)';btn.style.color=m===mode?'#fff':'var(--t2)';}
-    if(zone)zone.style.display=m===mode?'':'none';
-  });
-}
-function clearIconImage(){
-  var inp=document.getElementById('icon-img-url');if(inp){inp.value='';inp.dispatchEvent(new Event('input'));}
-}
-function cancelEdit(){if(typeof renderTextesUI==='function')renderTextesUI();}
-function selectConv(id){
-  document.querySelectorAll('.conv-item').forEach(function(el){el.classList.remove('active');});
-  var el=document.querySelector('[data-conv="'+id+'"]');if(el)el.classList.add('active');
-  var area=document.getElementById('msg-area');
-  if(area)area.innerHTML='<div style="text-align:center;padding:20px;color:var(--t3)">'+(id==='__global__'?'Broadcast tous les joueurs':'Conversation : '+id)+'</div>';
-}
-function sendMsg(){
-  var inp=document.getElementById('msg-input');if(!inp||!inp.value.trim()){showAdminToast('Message vide','error');return;}
-  showAdminToast('Message envoy\u00e9 \u2705');inp.value='';
-}
-function sendMsgAll(){
-  var inp=document.getElementById('msg-input');var msg=inp?inp.value.trim():'';
-  if(!msg){showAdminToast('Message vide','error');return;}
-  showAdminToast('Envoy\u00e9 \u00e0 tous \u2705');if(inp)inp.value='';
-}
-function savePushTemplate(){
-  var t=document.getElementById('push-title-inp');var b=document.getElementById('push-body-inp');
-  if(!SB_ENABLED){showAdminToast('Template sauvegardr \u2705 (local)');return;}
-  var hdrs={apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'};
-  fetch(SB_URL+'/rest/v1/config',{method:'POST',headers:hdrs,body:JSON.stringify({key:'push_template',value:{titre:t?t.value:'',body:b?b.value:''},updated_at:new Date().toISOString()})})
-    .then(function(r){showAdminToast(r.ok?'Template push \u2705':'Erreur',r.ok?'':'error');}).catch(function(){showAdminToast('Erreur r\u00e9seau','error');});
-}
-function openEtab(key){
-  var modal=document.getElementById('modal-etab');if(!modal)return;
-  var body=document.getElementById('modal-etab-body');
-  if(body){var n=DB.joueurs.filter(function(j){return(j.ecole||'').toLowerCase().includes((key||'').toLowerCase());}).length;body.innerHTML='<div style="padding:16px"><b>\ud83c\udfe2 '+key+'</b><div style="color:var(--t3);font-size:12px;margin-top:4px">'+n+' \u00e9l\u00e8ve(s)</div></div>';}
-  modal.classList.add('open');
-}
-function closeEtab(){var m=document.getElementById('modal-etab');if(m)m.classList.remove('open');}
-function toggleLigue(id){var el=document.getElementById(id);if(el)el.style.display=el.style.display==='none'?'':'none';}
-
-// === FIN FONCTIONS MANQUANTES ===
-
-// ═══════════════════════════════════════════════
-// ENVOIS & PUSH
-// ═══════════════════════════════════════════════
-
-function renderEnvois() {
-  updateBadges();
-  var joueurs = DB.joueurs || [];
-  var avecEmail   = joueurs.filter(function(j){ return j.email && j.email.trim(); });
-  var sansEmail   = joueurs.filter(function(j){ return !j.email || !j.email.trim(); });
-  // On considère "activé" = a un email (proxy — on ne sait pas si Auth Supabase)
-  var kpiTotal    = joueurs.length;
-  var kpiActive   = avecEmail.length;
-  var kpiPending  = avecEmail.length; // tous avec email peuvent être activés
-  var kpiNoEmail  = sansEmail.length;
-
-  var set = function(id, v) { var el = document.getElementById(id); if(el) el.textContent = v; };
-  set('kpi-total-joueurs',   kpiTotal);
-  set('kpi-joueurs-actives', kpiActive);
-  set('kpi-joueurs-pending', kpiPending);
-  set('kpi-joueurs-noemail', kpiNoEmail);
-
-  // Binder boutons
-  var btnBillet  = document.getElementById('btn-send-billet');
-  var btnLibre   = document.getElementById('btn-send-libre');
-  var btnRefresh = document.getElementById('envois-refresh-btn');
-  var filterSel  = document.getElementById('envois-filter');
-
-  if(btnBillet  && !btnBillet._bound)  { btnBillet._bound  = true; btnBillet.addEventListener('click',  openEnvoiBillet); }
-  if(btnLibre   && !btnLibre._bound)   { btnLibre._bound   = true; btnLibre.addEventListener('click',   openEnvoiLibre); }
-  if(btnRefresh && !btnRefresh._bound) { btnRefresh._bound = true; btnRefresh.addEventListener('click', function(){ renderEnvoisList(); }); }
-  if(filterSel  && !filterSel._bound)  { filterSel._bound  = true; filterSel.addEventListener('change', function(){ renderEnvoisList(); }); }
-
-  renderEnvoisList();
-}
-
-function renderEnvoisList() {
-  var listEl = document.getElementById('envois-list');
-  if(!listEl) return;
-  var joueurs = DB.joueurs || [];
-  var filter = document.getElementById('envois-filter');
-  var fVal = filter ? filter.value : 'all';
-
-  var filtered = joueurs.filter(function(j) {
-    if(fVal === 'noemail')  return !j.email || !j.email.trim();
-    if(fVal === 'pending')  return j.email && j.email.trim();
-    return true;
-  });
-
-  if(!filtered.length) {
-    listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">Aucun joueur dans ce filtre</div>';
-    return;
-  }
-
-  var html = '';
-  filtered.forEach(function(j) {
-    var hasEmail = j.email && j.email.trim();
-    var initials = ((j.prenom||'?').charAt(0) + (j.nom||'?').charAt(0)).toUpperCase();
-    var color = ['#7C5CFC','#22C9A0','#F4A83A','#E84855','#3B82F6'][(j.pseudo||'').charCodeAt(0)%5];
-    html += '<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--b)">';
-    html += '<div style="width:32px;height:32px;border-radius:50%;background:' + color + ';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">' + initials + '</div>';
-    html += '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:var(--t)">' + (j.pseudo||'—') + '</div>';
-    html += '<div style="font-size:10px;color:var(--t3)">' + (j.prenom||'') + ' ' + (j.nom||'') + ' · ' + (j.ecole||'—') + '</div></div>';
-    if(hasEmail) {
-      html += '<span style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;background:var(--grBg);color:var(--gr)">✉️ ' + j.email + '</span>';
-    } else {
-      html += '<span style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;background:var(--reBg,#FFF0F0);color:var(--re,#E84855)">❌ sans email</span>';
-    }
-    html += '</div>';
-  });
-
-  listEl.innerHTML = html;
-}
-
-// ── Modal envoi billet ──
-var _envoiSelected = new Set();
-
-function openEnvoiBillet() {
-  var modal = document.getElementById('modal-envoi-billet');
-  if(!modal) return;
-  modal.style.display = 'flex';
-  renderEnvoiJoueursList();
-
-  // Binder boutons
-  function bind(id, fn) {
-    var el = document.getElementById(id);
-    if(el && !el._envBound) { el._envBound = true; el.addEventListener('click', fn); }
-  }
-  bind('modal-envoi-close',  function(){ document.getElementById('modal-envoi-billet').style.display='none'; });
-  bind('modal-envoi-close2', function(){ document.getElementById('modal-envoi-billet').style.display='none'; });
-  bind('envoi-sel-tous',    function(){ selectEnvoiJoueurs('all'); });
-  bind('envoi-sel-pending', function(){ selectEnvoiJoueurs('pending'); });
-  bind('envoi-sel-none',    function(){ selectEnvoiJoueurs('none'); });
-  bind('btn-envoyer-billets', envoyerBillets);
-}
-
-function openEnvoiLibre() {
-  showAdminToast('Message libre — utilise le billet d\'activation et modifie le texte', '');
-  openEnvoiBillet();
-}
-
-function renderEnvoiJoueursList() {
-  var listEl = document.getElementById('envoi-joueurs-list');
-  if(!listEl) return;
-  _envoiSelected = new Set();
-  var joueurs = (DB.joueurs||[]).filter(function(j){ return j.email && j.email.trim(); });
-
-  if(!joueurs.length) {
-    listEl.innerHTML = '<div style="text-align:center;padding:16px;color:var(--t3);font-size:12px">Aucun joueur avec email enregistré</div>';
-    return;
-  }
-
-  var html = '';
-  joueurs.forEach(function(j, i) {
-    var initials = ((j.prenom||'?').charAt(0)+(j.nom||'?').charAt(0)).toUpperCase();
-    html += '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;background:var(--surf2);border:1px solid var(--b)" id="envoi-row-' + i + '">';
-    html += '<input type="checkbox" data-email="' + (j.email||'') + '" data-prenom="' + (j.prenom||j.pseudo||'') + '" data-pseudo="' + (j.pseudo||'') + '" class="envoi-chk" style="cursor:pointer">';
-    html += '<div style="width:28px;height:28px;border-radius:50%;background:var(--ac);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">' + initials + '</div>';
-    html += '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--t)">' + (j.pseudo||j.prenom||'—') + '</div>';
-    html += '<div style="font-size:10px;color:var(--t3)">' + (j.email||'') + '</div></div>';
-    html += '</label>';
-  });
-  listEl.innerHTML = html;
-
-  // Binder checkboxes
-  listEl.querySelectorAll('.envoi-chk').forEach(function(chk) {
-    chk.addEventListener('change', function() {
-      if(chk.checked) _envoiSelected.add(chk.dataset.email);
-      else _envoiSelected.delete(chk.dataset.email);
-      var countEl = document.getElementById('envoi-count');
-      if(countEl) countEl.textContent = _envoiSelected.size;
-    });
-  });
-}
-
-function selectEnvoiJoueurs(mode) {
-  var chks = document.querySelectorAll('.envoi-chk');
-  _envoiSelected = new Set();
-  chks.forEach(function(chk) {
-    chk.checked = mode !== 'none';
-    if(chk.checked) _envoiSelected.add(chk.dataset.email);
-  });
-  var countEl = document.getElementById('envoi-count');
-  if(countEl) countEl.textContent = _envoiSelected.size;
-}
-
-async function envoyerBillets() {
-  if(!_envoiSelected.size) { showAdminToast('Sélectionne au moins un joueur', 'error'); return; }
-  var btn = document.getElementById('btn-envoyer-billets');
-  var resultEl = document.getElementById('envoi-result');
-  if(btn) { btn.disabled = true; btn.textContent = '⏳ Envoi en cours…'; }
-
-  var corps = document.getElementById('envoi-corps') ? document.getElementById('envoi-corps').value : '';
-  var sent = 0, errors = 0;
-
-  // Envoyer un reset password pour chaque email sélectionné
-  for(var email of _envoiSelected) {
-    var joueur = (DB.joueurs||[]).find(function(j){ return j.email === email; });
-    var prenom = joueur ? (joueur.prenom || joueur.pseudo || '') : '';
-    var pseudo = joueur ? (joueur.pseudo || '') : '';
-
-    try {
-      if(sbClient) {
-        var res = await sbClient.auth.resetPasswordForEmail(email, {
-          redirectTo: 'https://flowrevis.vercel.app/?mode=activation'
-        });
-        if(res.error) { errors++; console.error('Erreur', email, res.error); }
-        else { sent++; }
-      } else {
-        // Sans sbClient — simulation
-        sent++;
-      }
-    } catch(e) { errors++; }
-  }
-
-  if(btn) { btn.disabled = false; btn.textContent = '✉️ Envoyer les billets'; }
-  if(resultEl) {
-    resultEl.style.display = '';
-    if(errors === 0) {
-      resultEl.style.background = 'var(--grBg)'; resultEl.style.color = 'var(--gr)';
-      resultEl.textContent = '✅ ' + sent + ' billet(s) envoyé(s) avec succès !';
-    } else {
-      resultEl.style.background = 'var(--amBg)'; resultEl.style.color = 'var(--am)';
-      resultEl.textContent = sent + ' envoyé(s), ' + errors + ' erreur(s)';
-    }
-  }
-  showAdminToast(sent + ' billet(s) envoyé(s) ✅');
-  setTimeout(function(){ if(resultEl) resultEl.style.display = 'none'; }, 5000);
 }
 
 function showAdminToast(msg, type) {
@@ -6979,6 +6376,76 @@ function sortEleves(col) {
   renderEleves();
 }
 
+function renderEleves() {
+  const elevs = buildElevs();
+  document.getElementById('eleves-sub').textContent = `${elevs.filter(d=>d.isActif).length} actifs · ${elevs.filter(d=>!d.isActif).length} inactifs · ${elevs.length} total`;
+
+  const search = document.getElementById('eleves-search').value.toLowerCase();
+
+  let data = elevs.filter(d => !isFakeAccount(d.j));
+  if(search) data = data.filter(d =>
+    `${d.j.prenom} ${d.j.nom}`.toLowerCase().includes(search) ||
+    (d.j.ecole||'').toLowerCase().includes(search) ||
+    (d.j.email||'').toLowerCase().includes(search) ||
+    (d.j.classe||'').toLowerCase().includes(search)
+  );
+
+  // Tri
+  data.sort((a,b) => {
+    let va, vb;
+    switch(elevesSort) {
+      case 'name':    va=`${a.j.prenom} ${a.j.nom}`; vb=`${b.j.prenom} ${b.j.nom}`; return elevesSortDir*(va.localeCompare(vb));
+      case 'etab':    va=a.j.ecole||''; vb=b.j.ecole||''; return elevesSortDir*(va.localeCompare(vb));
+      case 'classe':  va=a.j.classe||''; vb=b.j.classe||''; return elevesSortDir*(va.localeCompare(vb));
+      case 'score':   return elevesSortDir*(b.avg-a.avg)*-1;
+      case 'streak':  return elevesSortDir*(b.maxStreak-a.maxStreak)*-1;
+      case 'pts':     return elevesSortDir*(b.totalPts-a.totalPts)*-1;
+      case 'ligue':   return elevesSortDir*(b.totalPts-a.totalPts)*-1;
+      case 'activite':return elevesSortDir*(new Date(b.last||0)-new Date(a.last||0))*-1;
+      case 'cnx':     return elevesSortDir*(new Date(b.lastCnx||0)-new Date(a.lastCnx||0));
+      case 'statut':  va=a.isActif?'Actif':'Inactif'; vb=b.isActif?'Actif':'Inactif'; return elevesSortDir*(va.localeCompare(vb));
+      default:        return new Date(b.j.ts||0)-new Date(a.j.ts||0);
+    }
+  });
+
+  document.getElementById('eleves-count').textContent = `${data.length} élève${data.length>1?'s':''}`;
+  crmSelections['eleves'] = crmSelections['eleves'] || new Set();
+
+  document.getElementById('eleves-tbody').innerHTML = data.map(d => {
+    const pwaBadge = d.j.pwa_installed ? `<span class="pwa-badge">📱 App</span>` : '<span style="color:var(--t3);font-size:10px">—</span>';
+    const sel = crmSelections['eleves'].has(d.pseudo);
+    return `
+    <tr class="eleve-row" data-id="${d.pseudo}" style="${sel?'background:rgba(176,108,228,.07)':''}" >
+      <td class="crm-td" onclick="event.stopPropagation()"><input type="checkbox" class="crm-check" ${sel?'checked':''} onchange="crmToggle('eleves','${d.pseudo}',this.checked)"></td>
+      <td><div style="display:flex;align-items:center;gap:9px">${ava(d.j.prenom,d.j.nom,d.idx,30)}<div><div style="font-size:12px;font-weight:600;color:var(--t)">${d.j.prenom} ${d.j.nom}</div><div style="font-size:9px;color:var(--t3)">${d.j.email||'—'}</div></div></div></td>
+      <td style="font-size:11px">${d.j.ecole||'—'}</td>
+      <td style="font-size:11px">${d.j.classe||'—'}</td>
+      <td>${scorePill(d.avg)}</td>
+      <td>${d.maxStreak>0?`🔥 ${d.maxStreak}j`:'<span style="color:var(--t3)">—</span>'}</td>
+      <td style="font-weight:700;color:var(--am)">${d.totalPts.toLocaleString('fr')}</td>
+      <td>${lguePill(d.totalPts)}</td>
+      <td>${pwaBadge}</td>
+      <td style="font-size:10px;color:var(--t3)">${d.last?ago(d.last):'—'}</td>
+      <td style="font-size:10px;color:${d.lastCnx?'var(--t)':'var(--t3)'};font-weight:${d.lastCnx?600:400}">
+        ${d.lastCnx
+          ? '<span style="font-weight:700">'+ago(d.lastCnx)+'</span><div style="font-size:9px;color:var(--t3);font-weight:400;margin-top:1px">'+new Date(d.lastCnx).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'})+' · '+new Date(d.lastCnx).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+(d.connexions[0]&&d.connexions[0].duree_min>0?' · '+d.connexions[0].duree_min+'min':'')+'</div>'
+          : '<span style="color:var(--t3)">—</span>'}
+      </td>
+      <td>${bdg(d.isActif?'green':'amber',d.isActif?'Actif':'Inactif')}</td>
+    </tr>`;
+  }).join('') || `<tr><td colspan="12"><div class="empty"><div class="empty-icon">👤</div><div class="empty-text">Aucun élève trouvé</div></div></td></tr>`;
+
+  document.getElementById('eleves-tbody').querySelectorAll('.eleve-row').forEach(tr => {
+    tr.style.cursor = 'pointer';
+    tr.addEventListener('click', function(e) {
+      if(e.target.closest('.crm-td') || e.target.tagName === 'INPUT') return;
+      openEleve(this.dataset.id);
+    });
+  });
+}
+
+
+
 // ── CRM ENGINE ──
 const crmSelections = {}; // { 'eleves': Set, 'parr': Set, ... }
 
@@ -7067,6 +6534,18 @@ function crmMessageGroupe(ns) {
     window.open(`https://wa.me/?text=${waText}`);
   }
 }
+
+function isFakeAccount(j) {
+  const email = (j.email||'').toLowerCase();
+  const ecole = (j.ecole||'').toLowerCase();
+  const fakeEmails = ['example','fake@','demo@','admin@','trial@'];
+  const fakeEcoles = ['demo','exemple'];
+  return fakeEmails.some(f=>email.includes(f))
+    || fakeEcoles.some(f=>ecole===f);
+}
+
+
+
 
 function openEleve(pseudo) {
   console.log('[openEleve] pseudo:', pseudo);
@@ -7488,31 +6967,11 @@ function closeEleve() { document.getElementById('modal-eleve').classList.remove(
 
 // ── INIT ──
 buildNav();
-
-// Vérifier session admin
-(function() {
-  var auth = sessionStorage.getItem('flowin_auth');
-  var ts   = parseInt(sessionStorage.getItem('flowin_auth_ts') || '0');
-  var wall = document.getElementById('login-wall');
-  // Session valide si < 8h
-  if(auth === '1' && (Date.now() - ts) < 8 * 3600 * 1000) {
-    if(wall) wall.style.display = 'none';
-    navTo('dashboard');
-    loadData();
-    Promise.all([loadLotsFromSupabase(), loadStockAndGains()]).then(function() {
-      try { renderBareme(); renderStockPanel(); renderGainsPanel(); } catch(e){}
-    });
-  } else {
-    // Pas de session → montrer le login wall
-    if(wall) wall.style.display = 'flex';
-    sessionStorage.removeItem('flowin_auth');
-    // Focus sur le champ password
-    setTimeout(function(){
-      var pwd = document.getElementById('login-pwd');
-      if(pwd) pwd.focus();
-    }, 100);
-  }
-})();
+renderCurrentView();
+loadData();
+Promise.all([loadLotsFromSupabase(), loadStockAndGains()]).then(function() {
+  try { renderBareme(); renderStockPanel(); renderGainsPanel(); } catch(e){}
+});
 
 // ── MENU MOBILE ──
 function toggleMobileMenu(force) {
