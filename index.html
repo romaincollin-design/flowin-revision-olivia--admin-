@@ -4069,14 +4069,46 @@ function coursBackToHub()       { coursCurrentTheme = null;  renderCoursHub(); }
 
 
 function renderCoursThemeDetail(themeObj, el) {
-  var mat     = themeObj.matiere || '';
-  var couleur = getMatCouleur(mat) || 'var(--ac)';
-  var fiche   = themeObj.fiches && themeObj.fiches[0] || null;
-  var qList   = themeObj.questions || [];
-  var vList   = themeObj.visuels   || [];
-  var cfg     = themeObj.quizCfg   || null;
+  var mat       = themeObj.matiere || '';
+  var couleur   = themeObj.couleur || getMatCouleur(mat) || '#7B4FBF';
+  var fiche     = themeObj.fiches && themeObj.fiches[0] || null;
+  var qList     = themeObj.questions || [];
+  var vList     = themeObj.visuels   || [];
 
-  var html = '';
+  // CSS scopé inline pour reproduire l'UX app élève
+  var html = '<style>'
+    + '.fc-wrap{--tc:'+couleur+';--tc-light:'+couleur+'15;--ink:#1E1048;--muted:#6B6494;--line:#E8E4F4;font-family:\'Calibri\',\'Trebuchet MS\',Arial,sans-serif}'
+    + '.fc-essentiel-block{background:var(--tc-light);border:2px solid var(--tc);border-radius:14px;padding:14px 16px;margin-bottom:18px}'
+    + '.fc-essentiel-label{font-size:12px;font-weight:800;margin-bottom:6px;color:var(--tc);text-transform:uppercase;letter-spacing:.5px}'
+    + '.fc-essentiel-text{font-size:14px;line-height:1.7;color:var(--ink)}'
+    + '.fc-section-label{display:inline-flex;align-items:center;gap:5px;background:var(--tc);color:#fff;padding:6px 16px;border-radius:30px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;margin:16px 0 10px;box-shadow:0 2px 10px rgba(0,0,0,.15)}'
+    + '.fc-chrono{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:18px;position:relative}'
+    + '.fc-chrono::before{content:"";position:absolute;left:84px;top:18px;bottom:18px;width:2.5px;background:linear-gradient(to bottom,var(--tc)40%,var(--tc)80%,transparent);border-radius:2px}'
+    + '.fc-chrono-item{display:flex;align-items:flex-start;gap:10px;position:relative;padding-left:4px;margin-bottom:14px}'
+    + '.fc-chrono-item:last-child{margin-bottom:0}'
+    + '.fc-chrono-date{font-weight:800;font-size:12px;min-width:68px;padding-top:8px;flex-shrink:0;color:var(--tc)}'
+    + '.fc-chrono-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;margin-top:7px;border:2.5px solid #fff;box-shadow:0 0 0 2.5px var(--tc),0 2px 8px rgba(0,0,0,.1);background:var(--tc);position:relative;z-index:1}'
+    + '.fc-chrono-text{flex:1;font-size:13px;line-height:1.65;color:var(--ink);padding-top:2px}'
+    + '.fc-dates-box{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;margin:10px 0 16px}'
+    + '.fc-dates-label{font-size:12px;font-weight:800;margin-bottom:9px;color:var(--tc);text-transform:uppercase;letter-spacing:.4px}'
+    + '.fc-dates-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:7px}'
+    + '.fc-date-badge{display:flex;align-items:center;gap:7px;background:#fff;border:1.5px solid var(--line);border-radius:9px;padding:6px 10px;font-size:12px}'
+    + '.fc-yr{font-weight:800;color:var(--tc);flex-shrink:0;font-size:12px}'
+    + '.fc-ev{font-weight:500;color:var(--muted);line-height:1.3;font-size:11px}'
+    + '.fc-vocab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:9px;margin-bottom:12px}'
+    + '.fc-vocab-card{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:11px 13px;transition:all .15s}'
+    + '.fc-vocab-card:hover{border-color:var(--tc);transform:translateY(-1px)}'
+    + '.fc-vocab-mot{font-weight:800;font-size:13px;margin-bottom:4px;color:var(--tc)}'
+    + '.fc-vocab-def{font-size:12px;line-height:1.5;color:var(--muted);font-weight:400}'
+    + '.fc-visual-wrap{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:14px;margin:10px 0 18px;overflow-x:auto}'
+    + '.fc-q-card{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px}'
+    + '.fc-q-text{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:10px;line-height:1.4}'
+    + '.fc-q-opts{display:flex;flex-direction:column;gap:6px}'
+    + '.fc-q-opt{padding:8px 12px;border-radius:8px;font-size:13px;background:#F6F7FB;color:#6B6494}'
+    + '.fc-q-opt.ok{background:#E1F5EE;color:#0F6E56;font-weight:700;border:1.5px solid #22C9A0}'
+    + '.fc-q-expl{margin-top:8px;padding:8px 12px;background:var(--tc-light);border-radius:8px;font-size:12px;color:var(--ink);font-style:italic}'
+    + '</style>';
+
   // Breadcrumb
   html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">';
   html += '<button onclick="coursBackToHub()" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:6px 12px;font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit">← Retour</button>';
@@ -4085,102 +4117,112 @@ function renderCoursThemeDetail(themeObj, el) {
   html += '</div>';
 
   // Header thème
-  html += '<div class="panel" style="margin-bottom:14px;border-left:3px solid '+couleur+'">';
-  html += '<div style="padding:16px;display:flex;align-items:center;gap:12px">';
-  html += '<div style="width:48px;height:48px;border-radius:12px;background:'+couleur+'20;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">'+(themeObj.emoji||'📄')+'</div>';
-  html += '<div style="flex:1"><div style="font-size:16px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">'+themeObj.theme+'</div>';
-  html += '<div style="font-size:11px;color:var(--t3);margin-top:3px">'+mat+' · Bac Pro</div></div>';
+  html += '<div class="panel" style="margin-bottom:14px;border-left:4px solid '+couleur+'">';
+  html += '<div style="padding:18px;display:flex;align-items:center;gap:14px">';
+  html += '<div style="width:56px;height:56px;border-radius:14px;background:'+couleur+'20;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">'+(themeObj.emoji||'📄')+'</div>';
+  html += '<div style="flex:1"><div style="font-size:18px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">'+themeObj.theme+'</div>';
+  html += '<div style="font-size:12px;color:var(--t3);margin-top:4px">'+mat+' · Bac Pro</div></div>';
   html += '<div style="display:flex;gap:8px">';
-  html += '<div style="background:var(--acBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--ac)">'+(fiche?'✅':'—')+'</div><div style="font-size:9px;color:var(--t3)">Fiche</div></div>';
-  html += '<div style="background:var(--amBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--am)">'+qList.length+'</div><div style="font-size:9px;color:var(--t3)">Questions</div></div>';
-  html += '<div style="background:var(--blBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--bl)">'+vList.length+'</div><div style="font-size:9px;color:var(--t3)">Visuels</div></div>';
+  html += '<div style="background:'+couleur+'15;border-radius:10px;padding:10px 14px;text-align:center;border:1px solid '+couleur+'30"><div style="font-size:20px;font-weight:800;color:'+couleur+'">'+(fiche?'✅':'—')+'</div><div style="font-size:10px;color:var(--t3);margin-top:2px">Fiche</div></div>';
+  html += '<div style="background:var(--amBg);border-radius:10px;padding:10px 14px;text-align:center;border:1px solid var(--amBorder)"><div style="font-size:20px;font-weight:800;color:var(--am)">'+qList.length+'</div><div style="font-size:10px;color:var(--t3);margin-top:2px">Questions</div></div>';
+  html += '<div style="background:var(--blBg);border-radius:10px;padding:10px 14px;text-align:center;border:1px solid var(--blBorder)"><div style="font-size:20px;font-weight:800;color:var(--bl)">'+vList.length+'</div><div style="font-size:10px;color:var(--t3);margin-top:2px">Visuels</div></div>';
   html += '</div></div></div>';
 
-  // ── 1. ESSENTIEL ──
-  html += '<div class="panel" style="margin-bottom:12px">';
-  html += '<div class="panel-header"><span>💡 L\'Essentiel</span>';
-  html += '<button onclick="showAdminToast(\'Édition disponible dans une prochaine version\')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">'+(fiche?'✏️ Modifier':'+ Créer')+'</button>';
+  // ── Onglets identiques à l'app élève (Révision / Visuel / Cours / Quiz) ──
+  html += '<div class="panel" style="margin-bottom:14px">';
+  html += '<div class="panel-header"><span>📖 Aperçu — exactement comme dans l\'app élève</span>';
+  html += '<button onclick="showAdminToast(\'Édition disponible prochainement\')" style="background:none;border:none;font-size:11px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">✏️ Modifier</button>';
   html += '</div>';
+  html += '<div class="fc-wrap" style="padding:18px 20px">';
+
   if(!fiche) {
-    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">';
-    html += 'Aucune fiche — exécute <code>flowin_contenu_sync.sql</code> dans Supabase';
-    html += '</div>';
+    html += '<div style="text-align:center;padding:30px;color:var(--t3);font-size:12px">Aucune fiche enregistrée pour ce thème.</div>';
   } else {
-    html += '<div style="padding:14px 16px">';
+    // 1. ESSENTIEL
     if(fiche.essentiel) {
-      html += '<div style="font-size:13px;color:var(--t2);line-height:1.7;border-left:3px solid '+couleur+';padding-left:12px">' + fiche.essentiel + '</div>';
+      html += '<div class="fc-essentiel-block">';
+      html += '<div class="fc-essentiel-label">💡 L\'essentiel</div>';
+      html += '<div class="fc-essentiel-text">' + fiche.essentiel + '</div>';
+      html += '</div>';
     }
-    html += '</div>';
-  }
-  html += '</div>';
 
-  // ── 2. CHRONOLOGIE ──
-  if(fiche && fiche.chrono && fiche.chrono.length) {
-    html += '<div class="panel" style="margin-bottom:12px">';
-    html += '<div class="panel-header"><span>🗓 Chronologie ('+fiche.chrono.length+' entrées)</span></div>';
-    html += '<div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px">';
-    fiche.chrono.forEach(function(ch) {
-      html += '<div style="display:flex;gap:14px;align-items:flex-start">';
-      html += '<div style="background:'+couleur+'20;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:800;color:'+couleur+';flex-shrink:0;white-space:nowrap">'+ch[0]+'</div>';
-      html += '<div style="font-size:12px;color:var(--t2);line-height:1.5;flex:1">'+ch[1]+'</div>';
+    // 2. CHRONOLOGIE
+    if(fiche.chrono && fiche.chrono.length) {
+      html += '<div class="fc-section-label">📅 Chronologie</div>';
+      html += '<div class="fc-chrono">';
+      fiche.chrono.forEach(function(ch) {
+        html += '<div class="fc-chrono-item">';
+        html += '<div class="fc-chrono-date">' + (ch[0]||'') + '</div>';
+        html += '<div class="fc-chrono-dot"></div>';
+        html += '<div class="fc-chrono-text">' + (ch[1]||'') + '</div>';
+        html += '</div>';
+      });
       html += '</div>';
-    });
+    }
+
+    // 3. DATES CLÉS
+    if(fiche.dates && fiche.dates.length) {
+      html += '<div class="fc-dates-box">';
+      html += '<div class="fc-dates-label">📌 Dates à retenir</div>';
+      html += '<div class="fc-dates-grid">';
+      fiche.dates.forEach(function(d) {
+        html += '<div class="fc-date-badge">';
+        html += '<span class="fc-yr">' + (d[0]||'') + '</span>';
+        html += '<span class="fc-ev">' + (d[1]||'') + '</span>';
+        html += '</div>';
+      });
+      html += '</div></div>';
+    }
+
+    // 4. VOCABULAIRE
+    if(fiche.vocab && fiche.vocab.length) {
+      html += '<div class="fc-section-label">📖 Vocabulaire</div>';
+      html += '<div class="fc-vocab-grid">';
+      fiche.vocab.forEach(function(v) {
+        html += '<div class="fc-vocab-card">';
+        html += '<div class="fc-vocab-mot">' + (v[0]||'') + '</div>';
+        html += '<div class="fc-vocab-def">' + (v[1]||'') + '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+  }
+  html += '</div></div>';
+
+  // ── VISUEL ──
+  if(vList.length) {
+    html += '<div class="panel" style="margin-bottom:14px">';
+    html += '<div class="panel-header"><span>🎨 Visuel original</span></div>';
+    html += '<div class="fc-wrap" style="padding:14px 18px">';
+    html += '<div class="fc-visual-wrap">' + (vList[0].contenu || '') + '</div>';
     html += '</div></div>';
   }
 
-  // ── 3. DATES CLÉS ──
-  if(fiche && fiche.dates && fiche.dates.length) {
-    html += '<div class="panel" style="margin-bottom:12px">';
-    html += '<div class="panel-header"><span>📅 Dates clés</span></div>';
-    html += '<div style="padding:10px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">';
-    fiche.dates.forEach(function(d) {
-      html += '<div style="background:var(--surf2);border-radius:8px;padding:8px 10px;display:flex;gap:8px;align-items:center">';
-      html += '<span style="font-size:11px;font-weight:800;color:'+couleur+';flex-shrink:0">'+d[0]+'</span>';
-      html += '<span style="font-size:11px;color:var(--t2)">'+d[1]+'</span>';
-      html += '</div>';
-    });
-    html += '</div></div>';
-  }
-
-  // ── 4. VOCABULAIRE ──
-  if(fiche && fiche.vocab && fiche.vocab.length) {
-    html += '<div class="panel" style="margin-bottom:12px">';
-    html += '<div class="panel-header"><span>📖 Vocabulaire ('+fiche.vocab.length+' mots)</span></div>';
-    html += '<div style="padding:10px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px">';
-    fiche.vocab.forEach(function(v) {
-      html += '<div style="background:var(--surf2);border-radius:8px;padding:10px 12px">';
-      html += '<div style="font-size:12px;font-weight:800;color:'+couleur+';margin-bottom:4px">'+v[0]+'</div>';
-      html += '<div style="font-size:11px;color:var(--t2);line-height:1.4">'+v[1]+'</div>';
-      html += '</div>';
-    });
-    html += '</div></div>';
-  }
-
-  // ── 5. QUESTIONS ──
-  html += '<div class="panel" style="margin-bottom:12px">';
-  html += '<div class="panel-header"><span>❓ Questions ('+qList.length+')</span>';
-  html += '<button onclick="showAdminToast(\'Ajout de question disponible prochainement\')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
+  // ── QUESTIONS ──
+  html += '<div class="panel" style="margin-bottom:14px">';
+  html += '<div class="panel-header"><span>❓ Banque de questions ('+qList.length+')</span>';
+  html += '<button onclick="showAdminToast(\'Ajout de question disponible prochainement\')" style="background:none;border:none;font-size:11px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
   html += '</div>';
   if(!qList.length) {
-    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucune question — exécute flowin_contenu_sync.sql</div>';
+    html += '<div style="padding:30px;text-align:center;color:var(--t3);font-size:12px">Aucune question.</div>';
   } else {
     var diff = {facile:'😊',moyen:'🤔',difficile:'🔥'};
-    html += '<div style="padding:8px 0">';
+    html += '<div class="fc-wrap" style="padding:14px 18px">';
     qList.forEach(function(q, i) {
-      html += '<div style="padding:10px 16px;'+(i<qList.length-1?'border-bottom:1px solid var(--b)':'')+'">'; 
-      html += '<div style="display:flex;align-items:flex-start;gap:10px">';
-      html += '<span style="font-size:14px;flex-shrink:0">'+(diff[q.difficulte]||'🤔')+'</span>';
-      html += '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--t);line-height:1.4;margin-bottom:6px">'+q.q+'</div>';
-      html += '<div style="display:flex;gap:5px;flex-wrap:wrap">';
+      html += '<div class="fc-q-card">';
+      html += '<div class="fc-q-text">';
+      html += '<span style="display:inline-block;background:'+couleur+'20;color:'+couleur+';font-size:10px;font-weight:800;padding:2px 7px;border-radius:20px;margin-right:8px">'+(diff[q.difficulte]||'🤔')+' '+(q.difficulte||'moyen')+'</span>';
+      html += q.q + '</div>';
+      html += '<div class="fc-q-opts">';
       if(q.opts && Array.isArray(q.opts)) {
         q.opts.forEach(function(r, ri) {
           var ok = ri === q.bon;
-          html += '<span style="font-size:10px;padding:3px 8px;border-radius:20px;'+(ok?'background:var(--grBg);color:var(--gr);font-weight:700;border:1px solid var(--grBorder)':'background:var(--surf2);color:var(--t3);border:1px solid var(--b)')+'">'+(ok?'✓ ':'')+r+'</span>';
+          html += '<div class="fc-q-opt' + (ok?' ok':'') + '">' + (ok?'✓ ':'')+r+'</div>';
         });
       }
       html += '</div>';
-      if(q.expl) html += '<div style="font-size:10px;color:var(--t3);font-style:italic;margin-top:4px">'+q.expl+'</div>';
-      html += '</div></div></div>';
+      if(q.expl) html += '<div class="fc-q-expl">💡 ' + q.expl + '</div>';
+      html += '</div>';
     });
     html += '</div>';
   }
