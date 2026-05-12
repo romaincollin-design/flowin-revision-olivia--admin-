@@ -7221,11 +7221,31 @@ function closeEleve() { document.getElementById('modal-eleve').classList.remove(
 
 // ── INIT ──
 buildNav();
-renderCurrentView();
-loadData();
-Promise.all([loadLotsFromSupabase(), loadStockAndGains()]).then(function() {
-  try { renderBareme(); renderStockPanel(); renderGainsPanel(); } catch(e){}
-});
+
+// Vérifier session admin
+(function() {
+  var auth = sessionStorage.getItem('flowin_auth');
+  var ts   = parseInt(sessionStorage.getItem('flowin_auth_ts') || '0');
+  var wall = document.getElementById('login-wall');
+  // Session valide si < 8h
+  if(auth === '1' && (Date.now() - ts) < 8 * 3600 * 1000) {
+    if(wall) wall.style.display = 'none';
+    navTo('dashboard');
+    loadData();
+    Promise.all([loadLotsFromSupabase(), loadStockAndGains()]).then(function() {
+      try { renderBareme(); renderStockPanel(); renderGainsPanel(); } catch(e){}
+    });
+  } else {
+    // Pas de session → montrer le login wall
+    if(wall) wall.style.display = 'flex';
+    sessionStorage.removeItem('flowin_auth');
+    // Focus sur le champ password
+    setTimeout(function(){
+      var pwd = document.getElementById('login-pwd');
+      if(pwd) pwd.focus();
+    }, 100);
+  }
+})();
 
 // ── MENU MOBILE ──
 function toggleMobileMenu(force) {
