@@ -2193,89 +2193,181 @@ function openFichePartenaire(id) {
   loadPartenaires(function(parts) {
     var p = parts.find(function(x){ return x.id===id; });
     if(!p) return;
-    var panel = document.getElementById('fiche-partenaire-panel');
+    var panel   = document.getElementById('fiche-partenaire-panel');
     var overlay = document.getElementById('fiche-partenaire-overlay');
-    // Charger les gains de ce partenaire
-    var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
-    fetch(SB_URL+'/rest/v1/gains?partenaire_id=eq.'+encodeURIComponent(id)+'&order=ts.desc&limit=20', {headers:hdrs})
-      .then(function(r){ return r.ok?r.json():[]; })
-      .then(function(gains) {
+    var hdrs    = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
+
+    fetch(SB_URL+'/rest/v1/gains?partenaire_id=eq.'+encodeURIComponent(id)+'&order=ts.desc&limit=20',{headers:hdrs})
+      .then(function(r){return r.ok?r.json():[];})
+      .then(function(gains){
         var distribues = gains.length;
-        var utilises = gains.filter(function(g){ return g.utilise; }).length;
+        var utilises   = gains.filter(function(g){return g.utilise;}).length;
+
+        // ── HTML statique (pas de onchange ni onclick inline) ──
         var html = '<div style="padding:20px 20px 0">'
+
           // Header
           + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--b)">'
           + '<div style="width:50px;height:50px;border-radius:14px;background:var(--acBg);display:flex;align-items:center;justify-content:center;font-size:26px">'+(p.emoji||'🎁')+'</div>'
           + '<div style="flex:1"><div style="font-size:18px;font-weight:800;color:var(--t)">'+(p.nom||'—')+'</div>'
           + '<div style="font-size:11px;color:var(--t3);margin-top:2px">'+(p.description||'')+'</div></div>'
-          + '<button class="modal-close" onclick="closeFichePartenaire()">✕</button>'
+          + '<button id="fp-close-btn" style="width:30px;height:30px;border-radius:50%;background:var(--surf2);border:1px solid var(--b);cursor:pointer;font-size:14px">✕</button>'
           + '</div>'
-          // KPIs stock
+
+          // KPIs
           + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">'
-          + '<div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--t)">'+distribues+'</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">Distribués</div></div>'
-          + '<div style="background:var(--grBg);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--gr)">'+utilises+'</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">Utilisés</div></div>'
-          + '<div style="background:var(--amBg);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--am)">'+(distribues-utilises)+'</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">En attente</div></div>'
+          + '<div style="background:var(--surf2);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--t)">'+distribues+'</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-top:3px">Distribués</div></div>'
+          + '<div style="background:var(--grBg);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--gr)">'+utilises+'</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-top:3px">Utilisés</div></div>'
+          + '<div style="background:var(--amBg);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--am)">'+(distribues-utilises)+'</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-top:3px">En attente</div></div>'
           + '</div>'
+
           // Coordonnées
           + '<div style="background:var(--surf2);border-radius:10px;padding:14px;margin-bottom:14px">'
           + '<div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Coordonnées</div>'
-          + infoRow('Contact', p.contact_nom||'—')
-          + infoRow('Email', p.contact_email||'—')
-          + infoRow('Tél', p.contact_tel||'—')
-          + infoRow('Site', p.site_web||'—')
-          + infoRow('Statut', p.actif?'Actif':'Inactif')
+          + infoRow('Email',  p.contact_email||'—')
+          + infoRow('Tél',    p.contact_tel||'—')
+          + infoRow('Site',   p.site_web||'—')
           + '</div>'
-          // Encart editorial
+
+          // Encart éditorial
           + '<div style="background:var(--surf2);border-radius:12px;padding:14px;margin-bottom:14px">'
           + '<div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">📱 Encart app élèves</div>'
-          + '<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:5px">📸 Image (URL)</div>'
-          + (p.image_url?'<div style="border-radius:8px;overflow:hidden;margin-bottom:6px;height:80px;background:#f0f0f0"><img src="'+p.image_url+'" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display=\'none\'"></div>':'')
-          + '<input id="edit-img-'+p.id+'" placeholder="https://images.unsplash.com/..." value=' + JSON.stringify(p.image_url||'') + ' style="width:100%;border:1px solid var(--b);border-radius:7px;padding:7px 10px;font-size:11px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box">'
+
+          // Image
+          + '<div style="margin-bottom:10px">'
+          + '<div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:5px">📸 Image (URL)</div>'
+          + (p.image_url
+            ? '<div style="border-radius:8px;overflow:hidden;margin-bottom:6px;height:80px"><img src="'+p.image_url+'" style="width:100%;height:100%;object-fit:cover"></div>'
+            : '')
+          + '<input id="fp-img-url" placeholder="https://images.unsplash.com/..." value=' + JSON.stringify(p.image_url||'') + ' style="width:100%;border:1px solid var(--b);border-radius:7px;padding:7px 10px;font-size:11px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box">'
           + '</div>'
-          + '<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:5px">📝 Message promo</div>'
-          + '<textarea id="edit-promo-'+p.id+'" rows="2" placeholder="Ex: -20% sur toutes les séances ce mois !" style="width:100%;border:1px solid var(--b);border-radius:7px;padding:7px 10px;font-size:11px;font-family:inherit;background:var(--surf);color:var(--t);resize:none;box-sizing:border-box">'
+
+          // Message promo
+          + '<div style="margin-bottom:12px">'
+          + '<div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:5px">📝 Message promo</div>'
+          + '<textarea id="fp-promo" rows="2" placeholder="Ex: -20% ce mois !" style="width:100%;border:1px solid var(--b);border-radius:7px;padding:7px 10px;font-size:11px;font-family:inherit;background:var(--surf);color:var(--t);resize:none;box-sizing:border-box">'
           + (p.promo_text||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')
           + '</textarea></div>'
-          + '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">'
+
+          // Switches (sans onchange — bindés via addEventListener après)
+          + '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">'
+
+          // Switch Visible
           + '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surf);border-radius:8px">'
           + '<div><div style="font-size:12px;font-weight:700;color:var(--t)">Visible dans l\'app</div><div style="font-size:10px;color:var(--t3)">Encart affiché aux élèves</div></div>'
-          + '<label style="position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0"><input type="checkbox" '+(p.actif?'checked':'')+' style="opacity:0;width:0;height:0" onchange="togglePartenaire(\'' + p.id + '\',this.checked)"><span style="position:absolute;cursor:pointer;inset:0;background:'+(p.actif?'var(--ac)':'#D1D5DB')+';border-radius:24px;transition:.3s"><span style="position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:'+(p.actif?'23px':'3px')+';transition:.3s"></span></span></label>'
-          + '</div>'
+          + '<div id="fp-switch-actif" style="position:relative;width:44px;height:24px;border-radius:24px;background:'+(p.actif?'var(--ac)':'#D1D5DB')+';cursor:pointer;transition:background .3s;flex-shrink:0">'
+          + '<div id="fp-knob-actif" style="position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:'+(p.actif?'23px':'3px')+';transition:left .3s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>'
+          + '</div></div>'
+
+          // Switch En avant
           + '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surf);border-radius:8px">'
           + '<div><div style="font-size:12px;font-weight:700;color:var(--t)">⭐ Mettre en avant</div><div style="font-size:10px;color:var(--t3)">Affiché en premier</div></div>'
-          + '<label style="position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0"><input type="checkbox" id="toggle-en-avant-'+p.id+'" '+(p.en_avant?'checked':'')+' style="opacity:0;width:0;height:0" onchange="toggleEnAvant(\'' + p.id + '\',this.checked)"><span style="position:absolute;cursor:pointer;inset:0;background:'+(p.en_avant?'var(--ac)':'#D1D5DB')+';border-radius:24px;transition:.3s" id="toggle-track-'+p.id+'"><span style="position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:'+(p.en_avant?'23px':'3px')+';transition:.3s" id="toggle-knob-'+p.id+'"></span></span></label>'
+          + '<div id="fp-switch-enavant" style="position:relative;width:44px;height:24px;border-radius:24px;background:'+(p.en_avant?'var(--ac)':'#D1D5DB')+';cursor:pointer;transition:background .3s;flex-shrink:0">'
+          + '<div id="fp-knob-enavant" style="position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:'+(p.en_avant?'23px':'3px')+';transition:left .3s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div>'
           + '</div></div>'
-          + '<button onclick="saveEncartPartenaire(\'' + p.id + '\')" style="width:100%;background:var(--ac);color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">💾 Sauvegarder l\'encart</button>'
+
           + '</div>'
+
+          // Bouton sauvegarder
+          + '<button id="fp-save-btn" style="width:100%;background:var(--ac);color:#fff;border:none;border-radius:8px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">💾 Sauvegarder l\'encart</button>'
+          + '</div>'
+
           // Historique gains
           + '<div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Derniers codes distribués</div>'
           + '<div style="max-height:280px;overflow-y:auto">';
+
         if(!gains.length) {
           html += '<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">Aucun code distribué</div>';
         } else {
-          gains.forEach(function(g) {
+          gains.forEach(function(g){
             var date = g.ts ? new Date(g.ts).toLocaleDateString('fr-FR') : '—';
-            var statutColor = g.utilise ? 'var(--gr)' : 'var(--am)';
-            var statutLabel = g.utilise ? '✅ Utilisé' : '⏳ Distribué';
+            var sC = g.utilise ? 'var(--gr)' : 'var(--am)';
+            var sL = g.utilise ? '✅ Utilisé' : '⏳ Distribué';
             html += '<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--b)">'
               + '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--t)">'+(g.pseudo||'—')+'</div>'
               + '<div style="font-size:10px;color:var(--t3)">'+(g.lot_nom||'Lot')+' · '+date+'</div></div>'
               + '<code style="background:var(--surf2);padding:3px 8px;border-radius:5px;font-size:11px;letter-spacing:.08em">'+(g.code||'—')+'</code>'
-              + '<span style="font-size:10px;font-weight:700;color:'+statutColor+'">'+statutLabel+'</span>'
+              + '<span style="font-size:10px;font-weight:700;color:'+sC+'">'+sL+'</span>'
               + '</div>';
           });
         }
+
         html += '</div></div>';
+
         document.getElementById('fiche-partenaire-content').innerHTML = html;
+
+        // ── Binder les événements via addEventListener (R5) ──
+        var _actif   = !!p.actif;
+        var _enavant = !!p.en_avant;
+
+        // Helper toggle switch visuel
+        function applySwitch(trackId, knobId, val) {
+          var track = document.getElementById(trackId);
+          var knob  = document.getElementById(knobId);
+          if(track) track.style.background = val ? 'var(--ac)' : '#D1D5DB';
+          if(knob)  knob.style.left        = val ? '23px' : '3px';
+        }
+
+        // Close
+        var closeBtn = document.getElementById('fp-close-btn');
+        if(closeBtn) closeBtn.addEventListener('click', closeFichePartenaire);
+
+        // Switch Visible
+        var swActif = document.getElementById('fp-switch-actif');
+        if(swActif) {
+          swActif.addEventListener('click', function() {
+            _actif = !_actif;
+            applySwitch('fp-switch-actif', 'fp-knob-actif', _actif);
+            var hh = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+            fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+p.id, {method:'PATCH',headers:hh,body:JSON.stringify({actif:_actif})})
+              .then(function(r){ showAdminToast(r.ok?(_actif?'✅ Visible dans l\'app':'⏸ Masqué de l\'app'):'Erreur', r.ok?'':'error'); })
+              .catch(function(){ showAdminToast('Erreur réseau','error'); });
+          });
+        }
+
+        // Switch En avant
+        var swEnavant = document.getElementById('fp-switch-enavant');
+        if(swEnavant) {
+          swEnavant.addEventListener('click', function() {
+            _enavant = !_enavant;
+            applySwitch('fp-switch-enavant', 'fp-knob-enavant', _enavant);
+            var hh = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+            fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+p.id, {method:'PATCH',headers:hh,body:JSON.stringify({en_avant:_enavant})})
+              .then(function(r){ showAdminToast(r.ok?(_enavant?'⭐ Mis en avant':'Retiré de l\'avant'):'Erreur', r.ok?'':'error'); })
+              .catch(function(){ showAdminToast('Erreur réseau','error'); });
+          });
+        }
+
+        // Bouton sauvegarder
+        var saveBtn = document.getElementById('fp-save-btn');
+        if(saveBtn) {
+          saveBtn.addEventListener('click', function() {
+            var imgEl   = document.getElementById('fp-img-url');
+            var promoEl = document.getElementById('fp-promo');
+            if(!imgEl || !promoEl) return;
+            var data = { image_url: imgEl.value.trim(), promo_text: promoEl.value.trim() };
+            var hh = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+            saveBtn.textContent = '⏳ Sauvegarde…'; saveBtn.disabled = true;
+            fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+p.id, {method:'PATCH',headers:hh,body:JSON.stringify(data)})
+              .then(function(r){
+                saveBtn.textContent = '💾 Sauvegarder l\'encart'; saveBtn.disabled = false;
+                showAdminToast(r.ok?'Encart sauvegardé ✅':'Erreur sauvegarde', r.ok?'':'error');
+              })
+              .catch(function(){ saveBtn.textContent = '💾 Sauvegarder l\'encart'; saveBtn.disabled = false; showAdminToast('Erreur réseau','error'); });
+          });
+        }
+
         panel.style.right = '0';
         overlay.style.display = 'block';
-      }).catch(function() {
+      })
+      .catch(function(){
         document.getElementById('fiche-partenaire-content').innerHTML = '<div style="padding:20px;color:var(--re)">Erreur chargement</div>';
         panel.style.right = '0';
         overlay.style.display = 'block';
       });
   });
 }
+
 
 function infoRow(k, v) {
   return '<div class="info-row"><span class="info-key">'+k+'</span><span class="info-val">'+v+'</span></div>';
