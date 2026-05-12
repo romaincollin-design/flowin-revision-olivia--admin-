@@ -1704,6 +1704,31 @@ async function loadData() {
       dot.className = 'live-dot on';
       lbl.className = 'live-label on';
       lbl.textContent = `Live Supabase (${j.length} élèves)`;
+      // Charger fiches et questions depuis Supabase (silencieux si tables absentes)
+      Promise.all([
+        fetch(`${SB_URL}/rest/v1/fiches?order=ordre.asc,created_at.asc&limit=500`,{headers:hdrs}).then(r=>r.ok?r.json():null),
+        fetch(`${SB_URL}/rest/v1/questions?order=created_at.asc&limit=2000`,{headers:hdrs}).then(r=>r.ok?r.json():null)
+      ]).then(function(results) {
+        var sbFiches = results[0];
+        var sbQuestions = results[1];
+        if(sbFiches && Array.isArray(sbFiches) && sbFiches.length > 0) {
+          COURS_DB = sbFiches;
+          console.log('✅ Fiches Supabase:', sbFiches.length);
+        } else {
+          console.log('ℹ️ Fiches: fallback local (' + COURS_DB.length + ')');
+        }
+        if(sbQuestions && Array.isArray(sbQuestions) && sbQuestions.length > 0) {
+          QUESTIONS_DB = sbQuestions;
+          console.log('✅ Questions Supabase:', sbQuestions.length);
+        } else {
+          console.log('ℹ️ Questions: fallback local (' + QUESTIONS_DB.length + ')');
+        }
+        // Mettre à jour le badge et re-render si on est sur la vue cours
+        updateBadges();
+        if(typeof currentView !== 'undefined' && currentView === 'cours') {
+          try { renderCoursHub(); } catch(e) {}
+        }
+      }).catch(function(e){ console.log('ℹ️ Fiches/questions non chargées:', e.message); });
       console.log(`✅ Supabase OK — ${j.length} joueurs, ${DB.sessions.length} sessions, ${DB.parrainage.length} parrainages, ${DB.connexions.length} connexions`);
     } else {
       throw new Error('Réponse Supabase invalide');
@@ -3316,8 +3341,8 @@ function exportStatsReport() {
 
 // ── COURS & CONTENUS ──
 
-// Base de données locale (en prod: table Supabase 'cours' et 'questions')
-const COURS_DB = [
+// Données cours — fallback local (remplacé par Supabase au chargement)
+let COURS_DB = [
   {
     id:'c1', type:'fiche', matiere:'Histoire', theme:'La guerre froide',
     titre:'La guerre froide — Fiche complète', niveau:'Terminale Bac Pro',
@@ -3374,8 +3399,8 @@ const COURS_DB = [
   {id:'pse-c2',type:'fiche',matiere:'PSE',theme:'C2 - Prévention risques professionnels',titre:'Les notions de base en prévention des risques professionnels',niveau:'2de Bac Pro',auteur:'Prof. PSE',date:'2026-05-03',resume:'Distinction danger/risque. Processus d\'apparition du dommage. Hierarchie des mesures de prevention.',points_cles:['Danger = source de dommage. Risque = probabilité','Processus : Danger → Situation dangereuse → Déclencheur → Dommage','Hiérarchie : 1) Suppression 2) Réduction 3) Protection collective 4) EPI'],couleur:'#6B5CE7',emoji:'🦺',tags:['prévention','risques professionnels','danger','EPI'],nb_questions:5,nb_eleves_vus:0,score_moy:0},
 ];
 
-// Banque de questions (en prod: table Supabase 'questions')
-const QUESTIONS_DB = [
+// Questions — fallback local (remplacé par Supabase au chargement)
+let QUESTIONS_DB = [
   // Guerre froide
   {id:'q1', theme:'La guerre froide', matiere:'Histoire', niveau:'Terminale Bac Pro', question:'En quelle année est construite le Mur de Berlin ?', reponses:['1958','1961','1963','1965'], bonne:1, difficulte:'facile', statut:'validé', auteur:'Prof. Fabre', nb_fois:28, taux_reussite:82},
   {id:'q2', theme:'La guerre froide', matiere:'Histoire', niveau:'Terminale Bac Pro', question:'Quelle est la doctrine américaine de soutien aux pays menacés par le communisme ?', reponses:['Doctrine Monroe','Plan Marshall','Doctrine Truman','Doctrine Eisenhower'], bonne:2, difficulte:'moyen', statut:'validé', auteur:'Prof. Fabre', nb_fois:24, taux_reussite:71},
