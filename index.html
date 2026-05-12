@@ -1541,10 +1541,10 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
           <div class="view-sub">Barème, contenus, textes, configuration</div>
         </div>
         <div style="display:flex;gap:4px" id="parametres-tabs">
-          <button class="defis-tab active" onclick="parametresTab('bareme',this)">Barème & Ligues</button>
-          <button class="defis-tab" onclick="parametresTab('contenus',this)">Contenus</button>
-          <button class="defis-tab" onclick="parametresTab('textes',this)">Textes app</button>
-          <button class="defis-tab" onclick="parametresTab('appcom',this)">App & Com</button>
+          <button class="defis-tab active" onclick="navTo('bareme')">Barème & Ligues</button>
+          <button class="defis-tab" onclick="navTo('cours')">Contenus</button>
+          <button class="defis-tab" onclick="navTo('textes')">Textes app</button>
+          <button class="defis-tab" onclick="navTo('appcom')">App & Com</button>
         </div>
       </div>
       <div id="parametres-content"></div>
@@ -1912,14 +1912,21 @@ var RUBRIQUE_MAP = {
   eleves:    function(){ renderEleves(); },
   analytics: function(){ renderAnalyticsHub(); },
   partenaires: function(){ renderPartenairesHub(); },
-  parametres:  function(){ renderParametresHub(); }
+  parametres:  function(){ renderParametresHub(); },
+  // Sous-vues Paramètres (legacy)
+  bareme:    function(){ if(typeof renderBaremeView==='function') renderBaremeView(); },
+  cours:     function(){ if(typeof renderCours==='function') renderCours(); },
+  textes:    function(){ if(typeof renderTextes==='function') renderTextes(); },
+  appcom:    function(){ if(typeof renderAppCom==='function') renderAppCom(); }
 };
 
 function navTo(id) {
   currentView = id;
-  // Sidebar actif
+  // Sidebar actif — pour les sous-vues paramètres, marquer Paramètres
   document.querySelectorAll('.sb-item').forEach(function(el){ el.classList.remove('active'); });
-  var ni = document.getElementById('nav-' + id);
+  var paramSubs = ['bareme','cours','textes','appcom'];
+  var sbTarget = paramSubs.indexOf(id) >= 0 ? 'nav-parametres' : 'nav-' + id;
+  var ni = document.getElementById(sbTarget);
   if(ni) ni.classList.add('active');
   // Vues
   document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
@@ -2437,27 +2444,33 @@ function renderParametresHub() {
   parametresTab('bareme', document.querySelector('#parametres-tabs .defis-tab'));
 }
 function parametresTab(tab, btn) {
-  if(btn) { document.querySelectorAll('#parametres-tabs .defis-tab').forEach(function(b){ b.classList.remove('active'); }); btn.classList.add('active'); }
-  var el = document.getElementById('parametres-content');
-  if(!el) return;
-  // Helper pour déplacer une vue dans parametres-content
-  function moveView(id, renderFn) {
-    var v = document.getElementById(id);
-    // Remettre toutes les vues paramètres dans content
-    ['v-bareme','v-cours','v-textes','v-appcom'].forEach(function(vid){
-      var vv = document.getElementById(vid);
-      if(vv && vv.parentNode === el){ document.getElementById('content').appendChild(vv); vv.classList.remove('active'); }
-    });
-    if(v){ v.classList.add('active'); el.innerHTML=''; el.appendChild(v); if(renderFn) requestAnimationFrame(function(){ try{ renderFn(); }catch(e){} }); }
+  if(btn) {
+    document.querySelectorAll('#parametres-tabs .defis-tab').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
   }
-  if(tab === 'bareme') {
-    moveView('v-bareme', renderBaremeView);
-  } else if(tab === 'contenus') {
-    moveView('v-cours', renderCours);
-  } else if(tab === 'textes') {
-    moveView('v-textes', renderTextes);
-  } else if(tab === 'appcom') {
-    moveView('v-appcom', renderAppCom);
+  // Naviguer directement vers la vue legacy correspondante
+  var viewMap = { bareme:'v-bareme', contenus:'v-cours', textes:'v-textes', appcom:'v-appcom' };
+  var renderMap = {
+    bareme: function(){ if(typeof renderBaremeView==='function') renderBaremeView(); },
+    contenus: function(){ if(typeof renderCours==='function') renderCours(); },
+    textes: function(){ if(typeof renderTextes==='function') renderTextes(); },
+    appcom: function(){ if(typeof renderAppCom==='function') renderAppCom(); }
+  };
+  var targetId = viewMap[tab];
+  if(!targetId) return;
+  // Cacher v-parametres et toutes les vues, afficher la cible
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+  var target = document.getElementById(targetId);
+  if(target) {
+    target.classList.add('active');
+    // Marquer la sidebar Paramètres comme active (puisqu'on est dans Paramètres)
+    document.querySelectorAll('.sb-item').forEach(function(el){ el.classList.remove('active'); });
+    var sbItem = document.getElementById('nav-parametres');
+    if(sbItem) sbItem.classList.add('active');
+    // Lancer le render
+    requestAnimationFrame(function(){
+      try { renderMap[tab](); } catch(e) { console.error('parametresTab render error:', e); }
+    });
   }
 }
 
