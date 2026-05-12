@@ -4346,6 +4346,32 @@ function editSingleQuestion(qId, themeId, callback) {
   });
 }
 
+function sendActivationLink(email, prenom) {
+  if(!email) { showAdminToast('Email manquant', 'error'); return; }
+  if(!confirm('Envoyer un billet d\'activation à ' + email + ' ?')) return;
+
+  // Utiliser l'endpoint Supabase Auth recover
+  fetch(SB_URL + '/auth/v1/recover', {
+    method: 'POST',
+    headers: {
+      'apikey': SB_KEY,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      email: email,
+      options: { redirectTo: 'https://flowrevis.vercel.app/?mode=activation' }
+    })
+  }).then(function(r) {
+    if(r.ok) {
+      showAdminToast('✅ Billet envoyé à ' + email, 'success');
+    } else {
+      showAdminToast('Erreur envoi (' + r.status + ')', 'error');
+    }
+  }).catch(function() {
+    showAdminToast('Erreur réseau', 'error');
+  });
+}
+
 function coursOpenTheme(theme) { coursCurrentTheme = theme; renderCoursHub(); }
 function coursBackToHub()       { coursCurrentTheme = null;  renderCoursHub(); }
 
@@ -7537,7 +7563,13 @@ function openEleve(pseudo) {
         ${parr.length===0
           ? '<div style="font-size:11px;color:var(--t3);text-align:center;padding:16px 0">Aucun parrainage</div>'
           : parr.slice(0,6).map((p,i)=>{
-              const filleul = (buildElevs()||[]).find(e=>e.pseudo===p.destinataire||(e.j.prenom||'').toLowerCase()===p.destinataire.toLowerCase());
+              const dest = (p.destinataire||'').trim().toLowerCase();
+              const filleul = (buildElevs()||[]).find(e=>
+                (e.pseudo||'').toLowerCase()===dest
+                || (e.j.prenom||'').toLowerCase()===dest
+                || ((e.j.prenom||'') + ' ' + (e.j.nom||'')).trim().toLowerCase()===dest
+                || (e.j.email||'').toLowerCase()===dest
+              );
               return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;${i<Math.min(parr.length,6)-1?'border-bottom:1px solid var(--b)':''};${filleul?'cursor:pointer':''}" ${filleul?`onclick="openEleve('${filleul.pseudo}')"`:''}>\
                 <span style="font-size:13px">${chIc[p.channel]||'↗️'}</span>\
                 <span style="flex:1;font-size:11px;font-weight:600;color:${filleul?'var(--ac)':'var(--t)'}\">${p.destinataire}${filleul?' →':''}</span>\
@@ -7603,26 +7635,45 @@ function openEleve(pseudo) {
     </div>
 
     <!-- GAINS & LOTS REMPORTÉS -->
-    \${(() => {
-      const eleveGains = GAINS_DB.filter(g => g.pseudo === d.pseudo);
-      return \`<div class="fiche-block" style="margin-bottom:12px">
-        <div class="fiche-block-title">🏅 Lots remportés (\${eleveGains.length})</div>
-        \${eleveGains.length === 0
-          ? '<div style="text-align:center;padding:16px;color:var(--t3);font-size:11px">Aucun lot remporté pour le moment</div>'
-          : eleveGains.map((g,i) => \`
-            <div style="display:flex;align-items:center;gap:10px;padding:9px 0;\${i<eleveGains.length-1?'border-bottom:1px solid var(--b)':''}">
-              <span style="font-size:22px;flex-shrink:0">\${g.lot_emoji}</span>
-              <div style="flex:1;min-width:0">
-                <div style="font-size:12px;font-weight:700;color:var(--t)">\${g.lot_nom}</div>
-                <div style="font-size:10px;color:var(--t3);margin-top:2px">\${g.condition||'—'} · \${g.created_at?new Date(g.created_at).toLocaleDateString('fr-FR'):''}</div>
-              </div>
-              <div style="background:#EEECFC;border-radius:7px;padding:6px 12px;text-align:center">
-                <div style="font-family:monospace;font-size:13px;font-weight:800;color:var(--ac);letter-spacing:.06em">\${g.code}</div>
-                <div style="font-size:9px;color:var(--t3);margin-top:2px">Code promo</div>
-              </div>
-            </div>\`).join('')}
-      </div>\`;
+    ${(() => {
+      const eleveGains = (typeof GAINS_DB !== 'undefined' ? GAINS_DB : []).filter(g => g.pseudo === d.pseudo);
+      if(eleveGains.length === 0) {
+        return '<div class="fiche-block" style="margin-bottom:12px"><div class="fiche-block-title">🏅 Lots remportés (0)</div><div style="text-align:center;padding:16px;color:var(--t3);font-size:11px">Aucun lot remporté pour le moment</div></div>';
+      }
+      let lotsHtml = '<div class="fiche-block" style="margin-bottom:12px"><div class="fiche-block-title">🏅 Lots remportés (' + eleveGains.length + ')</div>';
+      eleveGains.forEach((g, i) => {
+        const dateStr = g.created_at ? new Date(g.created_at).toLocaleDateString('fr-FR') : '';
+        const border = i < eleveGains.length - 1 ? 'border-bottom:1px solid var(--b)' : '';
+        lotsHtml += '<div style="display:flex;align-items:center;gap:10px;padding:9px 0;' + border + '">'
+          + '<span style="font-size:22px;flex-shrink:0">' + (g.lot_emoji || '🎁') + '</span>'
+          + '<div style="flex:1;min-width:0">'
+          + '<div style="font-size:12px;font-weight:700;color:var(--t)">' + (g.lot_nom || '—') + '</div>'
+          + '<div style="font-size:10px;color:var(--t3);margin-top:2px">' + (g.condition || '—') + ' · ' + dateStr + '</div>'
+          + '</div>'
+          + '<div style="background:#EEECFC;border-radius:7px;padding:6px 12px;text-align:center">'
+          + '<div style="font-family:monospace;font-size:13px;font-weight:800;color:var(--ac);letter-spacing:.06em">' + (g.code || '') + '</div>'
+          + '<div style="font-size:9px;color:var(--t3);margin-top:2px">Code promo</div>'
+          + '</div></div>';
+      });
+      lotsHtml += '</div>';
+      return lotsHtml;
     })()}
+
+    <!-- SÉCURITÉ & COMPTE -->
+    <div class="fiche-block" style="margin-bottom:12px">
+      <div class="fiche-block-title">🔐 Sécurité &amp; Compte</div>
+      ${(() => {
+        const hasEmail = !!(d.j.email && d.j.email.trim());
+        const lastCnx  = d.connexions && d.connexions.length ? d.connexions[0] : null;
+        const lastDate = lastCnx ? new Date(lastCnx.ts).toLocaleDateString('fr-FR') : '—';
+        return '<div style="display:flex;flex-direction:column;gap:6px">'
+          + '<div style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="width:8px;height:8px;border-radius:50%;background:' + (hasEmail?'#22C9A0':'#D4D2C8') + '"></span><span style="color:var(--t2);flex:1">Email enregistré</span><span style="color:var(--t);font-weight:600">' + (hasEmail ? d.j.email : '—') + '</span></div>'
+          + '<div style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="width:8px;height:8px;border-radius:50%;background:' + (hasEmail?'#22C9A0':'#D4D2C8') + '"></span><span style="color:var(--t2);flex:1">Mot de passe / compte Auth</span><span style="color:var(--t);font-weight:600">' + (hasEmail ? 'Activable via billet' : 'Email requis') + '</span></div>'
+          + '<div style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="width:8px;height:8px;border-radius:50%;background:' + (lastCnx?'#22C9A0':'#D4D2C8') + '"></span><span style="color:var(--t2);flex:1">Dernière connexion</span><span style="color:var(--t);font-weight:600">' + lastDate + '</span></div>'
+          + (hasEmail ? '<button onclick="sendActivationLink(\'' + d.j.email + '\',\'' + (d.j.prenom||d.pseudo) + '\')" style="margin-top:6px;background:#7C5CFC;color:#fff;border:none;border-radius:7px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✉️ Envoyer billet d\'activation</button>' : '')
+          + '</div>';
+      })()}
+    </div>
 
     <div class="fiche-block">
       <div class="fiche-block-title">🔐 Connexions <span style="font-size:10px;color:var(--t3);font-weight:400">(${d.connexions.length})</span></div>
