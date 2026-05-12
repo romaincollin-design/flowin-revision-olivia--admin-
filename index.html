@@ -597,6 +597,16 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       <span>Partenaires</span>
       <span class="sb-badge green" id="sb-badge-lots">—</span>
     </div>
+    <div class="sb-item" id="nav-parrainage" onclick="navTo('parrainage')">
+      <span class="sb-item-icon">🔗</span>
+      <span>Parrainage</span>
+      <span class="sb-badge" id="sb-badge-parrainage">—</span>
+    </div>
+    <div class="sb-item" id="nav-defis" onclick="navTo('defis')">
+      <span class="sb-item-icon">⚔️</span>
+      <span>Défis</span>
+      <span class="sb-badge" id="sb-badge-defis">—</span>
+    </div>
     <div class="sb-item" id="nav-envois" onclick="navTo('envois')">
       <span class="sb-item-icon">✉️</span>
       <span>Envois &amp; Push</span>
@@ -1969,9 +1979,9 @@ const NAV_ITEMS = [
 const VIEW_LABELS = {
   dashboard:'Dashboard', eleves:'Joueurs', analytics:'Analytics',
   cours:'Cours & Contenus', partenaires:'Partenaires & Lots', parametres:'Paramètres',
-  // anciennes vues (accès legacy)
-  ligues:'Ligues', parrainage:'Parrainage', etablissements:'Établissements',
-  defis:'Défis', stats:'Stats', cours:'Contenus', bareme:'Barème', appcom:'App & Com', textes:'Textes'
+  envois:'Envois & Push',
+  parrainage:'Parrainage', ligues:'Ligues', etablissements:'Établissements',
+  defis:'Défis', bareme:'Barème', appcom:'App & Com', textes:'Textes'
 };
 let currentView = 'dashboard';
 
@@ -1998,24 +2008,27 @@ function updateBadges() {
 
 // MAP : rubrique → quelle ancienne vue ou fonction render appeler
 var RUBRIQUE_MAP = {
-  dashboard: function(){ renderDashboard(); },
-  eleves:    function(){ renderEleves(); },
-  analytics: function(){ renderAnalyticsHub(); },
-  partenaires: function(){ renderPartenairesHub(); },
-  envois:      function(){ renderEnvois(); },
-  parametres:  function(){ renderParametresHub(); },
-  // Sous-vues Paramètres (legacy)
-  bareme:    function(){ if(typeof renderBaremeView==='function') renderBaremeView(); },
-  cours:     function(){ if(typeof renderCoursHub==='function') renderCoursHub(); },
-  textes:    function(){ if(typeof renderTextes==='function') renderTextes(); },
-  appcom:    function(){ if(typeof renderAppCom==='function') renderAppCom(); }
+  dashboard:      function(){ renderDashboard(); },
+  eleves:         function(){ renderEleves(); },
+  analytics:      function(){ renderAnalyticsHub(); },
+  partenaires:    function(){ renderPartenairesHub(); },
+  envois:         function(){ renderEnvois(); },
+  parametres:     function(){ renderParametresHub(); },
+  parrainage:     function(){ renderParrainage(); },
+  defis:          function(){ renderDefis(); },
+  ligues:         function(){ renderLigues(); },
+  etablissements: function(){ renderEtabs(); },
+  appcom:         function(){ renderAppCom(); },
+  cours:          function(){ if(typeof renderCoursHub==='function') renderCoursHub(); },
+  bareme:         function(){ if(typeof renderBaremeView==='function') renderBaremeView(); },
+  textes:         function(){ if(typeof renderTextes==='function') renderTextes(); }
 };
 
 function navTo(id) {
   currentView = id;
   // Sidebar actif — pour les sous-vues paramètres, marquer Paramètres
   document.querySelectorAll('.sb-item').forEach(function(el){ el.classList.remove('active'); });
-  var paramSubs = ['bareme','textes','appcom'];
+  var paramSubs = ['bareme','textes','appcom','cours'];
   var sbTarget = paramSubs.indexOf(id) >= 0 ? 'nav-parametres' : 'nav-' + id;
   var ni = document.getElementById(sbTarget);
   if(ni) ni.classList.add('active');
@@ -2140,13 +2153,23 @@ function exportKPI() { showAdminToast('Export PDF — disponible prochainement')
 var DB_PARTENAIRES = [];
 
 function renderPartenairesHub() {
-  // Reset tous les tabs
   document.querySelectorAll('#partenaires-tabs .tb2').forEach(function(b){ b.classList.remove('on'); });
   var firstTab = document.querySelector('#partenaires-tabs .tb2');
   if(firstTab) firstTab.classList.add('on');
-  // Vider et recharger CRM
   var el = document.getElementById('partenaires-content');
   if(el) el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3)">Chargement…</div>';
+  if(SB_ENABLED) {
+    var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
+    Promise.all([
+      fetch(SB_URL+'/rest/v1/partenaires?select=id,actif',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
+      fetch(SB_URL+'/rest/v1/lots_stock?select=statut',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];}),
+      fetch(SB_URL+'/rest/v1/gains?select=id&limit=500',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];})
+    ]).then(function(res){
+      var parts=res[0]||[], stock=res[1]||[], gains=res[2]||[];
+      var sub=document.getElementById('partenaires-sub');
+      if(sub) sub.textContent=parts.length+' partenaires · '+parts.filter(function(p){return p.actif;}).length+' actifs · '+stock.filter(function(s){return s.statut==='disponible';}).length+' codes dispo · '+gains.length+' distribués';
+    }).catch(function(){});
+  }
   setTimeout(function(){ renderPartenaireCRM(document.getElementById('partenaires-content')); }, 50);
 }
 
@@ -2174,7 +2197,12 @@ function renderPartenaireCRM(el) {
   el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3)">Chargement…</div>';
   loadPartenaires(function(parts) {
     if(!parts.length) {
-      el.innerHTML = '<div class="empty"><div class="empty-icon">🎁</div><div class="empty-text">Aucun partenaire — cliquez "+ Nouveau partenaire"</div></div>';
+      el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3)">'
+        + '<div style="font-size:48px;margin-bottom:12px">🎁</div>'
+        + '<div style="font-size:16px;font-weight:700;color:var(--t2);margin-bottom:6px">Aucun partenaire</div>'
+        + '<div style="font-size:12px;margin-bottom:20px">Créez votre premier partenaire ou vérifiez que les données Supabase sont bien chargées.</div>'
+        + '<button onclick="openNouveauPartenaire()" style="background:var(--ac);color:#fff;border:none;border-radius:9px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">+ Nouveau partenaire</button>'
+        + '</div>';
       return;
     }
     // KPIs
@@ -3870,6 +3898,13 @@ function setCoursFilter(btn, filterType, val) {
 // ── COURS HUB ──
 var coursCurrentTheme = null;
 
+// Variables Supabase pédagogiques (chargées dans loadData)
+var SB_THEMES    = [];
+var SB_FICHES    = [];
+var SB_VISUELS   = [];
+var SB_QUESTIONS = [];
+var SB_QUIZ_CFG  = [];
+
 var COURS_MAT_COULEURS = { Histoire:'var(--ac)', Geographie:'var(--gr)', EMC:'#E040A0', PSE:'#E84855' };
 var COURS_MAT_EMOJI    = { Histoire:'📜', Geographie:'🌍', EMC:'⚖️', PSE:'🩺' };
 var COURS_MAT_ORDER    = ['Histoire','Geographie','EMC','PSE'];
@@ -4020,13 +4055,13 @@ function coursBackToHub()       { coursCurrentTheme = null;  renderCoursHub(); }
 
 function renderCoursThemeDetail(themeObj, el) {
   var mat     = themeObj.matiere || '';
-  var niveau  = themeObj.niveau  || '';
   var couleur = getMatCouleur(mat) || 'var(--ac)';
-  var qDeTheme = themeObj.questions || [];
-  var qVal     = qDeTheme.filter(function(q){ return q.statut==='validé'||q.statut==='valide'; });
+  var fiche   = themeObj.fiches && themeObj.fiches[0] || null;
+  var qList   = themeObj.questions || [];
+  var vList   = themeObj.visuels   || [];
+  var cfg     = themeObj.quizCfg   || null;
 
   var html = '';
-
   // Breadcrumb
   html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">';
   html += '<button onclick="coursBackToHub()" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:6px 12px;font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit">← Retour</button>';
@@ -4035,152 +4070,106 @@ function renderCoursThemeDetail(themeObj, el) {
   html += '</div>';
 
   // Header thème
-  html += '<div class="panel" style="margin-bottom:16px;border-left:3px solid ' + couleur + '">';
+  html += '<div class="panel" style="margin-bottom:14px;border-left:3px solid '+couleur+'">';
   html += '<div style="padding:16px;display:flex;align-items:center;gap:12px">';
-  html += '<div style="width:48px;height:48px;border-radius:12px;background:' + couleur + '18;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">' + (themeObj.emoji||'📄') + '</div>';
-  html += '<div style="flex:1">';
-  html += '<div style="font-size:16px;font-weight:800;color:var(--t);font-family:\'Syne\',sans-serif">' + themeObj.theme + '</div>';
-  html += '<div style="font-size:11px;color:var(--t3);margin-top:3px">' + mat + (niveau?' · '+niveau:'') + '</div>';
-  html += '</div>';
+  html += '<div style="width:48px;height:48px;border-radius:12px;background:'+couleur+'20;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">'+(themeObj.emoji||'📄')+'</div>';
+  html += '<div style="flex:1"><div style="font-size:16px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">'+themeObj.theme+'</div>';
+  html += '<div style="font-size:11px;color:var(--t3);margin-top:3px">'+mat+' · Bac Pro</div></div>';
   html += '<div style="display:flex;gap:8px">';
-  html += '<div style="background:var(--acBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--ac)">' + themeObj.fiches.length + '</div><div style="font-size:9px;color:var(--t3)">Fiches</div></div>';
-  html += '<div style="background:var(--amBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--am)">' + qDeTheme.length + '</div><div style="font-size:9px;color:var(--t3)">Questions</div></div>';
-  html += '<div style="background:var(--blBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--bl)">' + themeObj.visuels.length + '</div><div style="font-size:9px;color:var(--t3)">Visuels</div></div>';
+  html += '<div style="background:var(--acBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--ac)">'+(fiche?'✅':'—')+'</div><div style="font-size:9px;color:var(--t3)">Fiche</div></div>';
+  html += '<div style="background:var(--amBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--am)">'+qList.length+'</div><div style="font-size:9px;color:var(--t3)">Questions</div></div>';
+  html += '<div style="background:var(--blBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--bl)">'+vList.length+'</div><div style="font-size:9px;color:var(--t3)">Visuels</div></div>';
   html += '</div></div></div>';
 
-  // ── 1. CONTENU
-  if(themeObj.fiches.length) {
-    html += '<div class="panel" style="margin-bottom:14px">';
-    html += '<div class="panel-header"><span>📋 Contenu du cours</span></div>';
-    html += '<div style="padding:16px;display:flex;flex-direction:column;gap:14px">';
-    themeObj.fiches.forEach(function(f) {
-      html += '<div>';
-      html += '<div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:6px">' + f.titre + '</div>';
-      if(f.resume) html += '<div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:8px">' + f.resume + '</div>';
-      if(f.points_cles && f.points_cles.length) {
-        html += '<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px">';
-        f.points_cles.forEach(function(pt) {
-          html += '<div style="display:flex;align-items:flex-start;gap:8px;font-size:11px;color:var(--t)">';
-          html += '<span style="color:' + couleur + ';flex-shrink:0;font-weight:800;margin-top:1px">▸</span><span>' + pt + '</span></div>';
-        });
-        html += '</div>';
-      }
-      html += '<button onclick="openFicheCours(\'' + f.id + '\')" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:5px 12px;font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit">✏️ Modifier</button>';
-      html += '</div>';
-    });
-    html += '</div></div>';
-  }
-
-  // ── 2. FICHE MÉMO
-  if(themeObj.fiches.length) {
-    html += '<div class="panel" style="margin-bottom:14px">';
-    html += '<div class="panel-header"><span>📄 Fiche mémo — Points clés</span></div>';
-    html += '<div style="padding:16px">';
-    themeObj.fiches.forEach(function(f) {
-      if(!f.points_cles || !f.points_cles.length) return;
-      var colors = ['var(--ac)','var(--gr)','var(--am)','#E040A0','var(--bl)',couleur];
-      html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-bottom:12px">';
-      f.points_cles.forEach(function(pt, i) {
-        var c = colors[i % colors.length];
-        html += '<div style="background:' + c + '12;border-left:3px solid ' + c + ';border-radius:0 8px 8px 0;padding:8px 10px">';
-        html += '<div style="font-size:11px;font-weight:700;color:' + c + '">' + pt + '</div></div>';
-      });
-      html += '</div>';
-      if(f.tags && f.tags.length) {
-        html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
-        f.tags.forEach(function(tag){ html += '<span style="background:var(--surf2);border:1px solid var(--b);border-radius:20px;padding:3px 10px;font-size:10px;color:var(--t3)">#' + tag + '</span>'; });
-        html += '</div>';
-      }
-    });
-    html += '</div></div>';
-  }
-
-  // ── 3. VISUELS
-  html += '<div class="panel" style="margin-bottom:14px">';
-  html += '<div class="panel-header"><span>🖼 Visuels & Ressources</span>';
-  if(!themeObj.visuels.length) html += '<button onclick="openAddCours()" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
+  // ── 1. ESSENTIEL ──
+  html += '<div class="panel" style="margin-bottom:12px">';
+  html += '<div class="panel-header"><span>💡 L\'Essentiel</span>';
+  html += '<button onclick="showAdminToast(\'Édition disponible dans une prochaine version\')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">'+(fiche?'✏️ Modifier':'+ Créer')+'</button>';
   html += '</div>';
-  if(!themeObj.visuels.length) {
-    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucun visuel — <button onclick="openAddCours()" style="background:none;border:none;color:var(--ac);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Ajouter</button></div>';
-  } else {
-    html += '<div style="padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">';
-    themeObj.visuels.forEach(function(v) {
-      html += '<div style="background:var(--surf2);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px;text-align:center">';
-      html += '<div style="font-size:24px">' + (v.emoji||'🖼') + '</div>';
-      html += '<div style="font-size:11px;font-weight:700;color:var(--t)">' + v.titre + '</div>';
-      html += '<div style="font-size:10px;color:var(--t3)">' + (v.auteur||'') + '</div>';
-      if(v.eleve_auteur) html += '<span style="background:var(--grBg);color:var(--gr);border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700">Créé par élève</span>';
-      html += '<button onclick="openFicheCours(\'' + v.id + '\')" style="background:var(--surf3);border:none;border-radius:7px;padding:5px;font-size:10px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit">✏️ Modifier</button>';
-      html += '</div>';
-    });
+  if(!fiche) {
+    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">';
+    html += 'Aucune fiche — exécute <code>flowin_contenu_sync.sql</code> dans Supabase';
     html += '</div>';
-  }
-  html += '</div>';
-
-  // ── 4. QUESTIONS QUIZ
-  html += '<div class="panel" style="margin-bottom:14px">';
-  html += '<div class="panel-header"><span>❓ Questions Quiz</span>';
-  html += '<div style="display:flex;gap:8px;align-items:center">';
-  html += '<span style="font-size:10px;color:var(--t3)">' + qVal.length + '/' + qDeTheme.length + ' validées</span>';
-  html += '<button onclick="openAddQuestion(\'' + themeObj.theme.replace(/'/g,"\\'") + '\')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
-  html += '</div></div>';
-  if(!qDeTheme.length) {
-    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucune question — <button onclick="openAddQuestion(\'' + themeObj.theme.replace(/'/g,"\\'") + '\')" style="background:none;border:none;color:var(--ac);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Créer la première</button></div>';
   } else {
-    html += '<div style="padding:8px 0">';
-    var difficColors = { facile:'var(--gr)', moyen:'var(--am)', difficile:'var(--re)' };
-    qDeTheme.forEach(function(q, i) {
-      var isVal = q.statut==='validé'||q.statut==='valide';
-      html += '<div style="padding:10px 16px;' + (i<qDeTheme.length-1?'border-bottom:1px solid var(--b)':'') + '">';
-      html += '<div style="display:flex;align-items:flex-start;gap:10px">';
-      html += '<span style="font-size:16px;flex-shrink:0">' + (isVal?'✅':'🔄') + '</span>';
-      html += '<div style="flex:1;min-width:0">';
-      html += '<div style="font-size:12px;font-weight:600;color:var(--t);line-height:1.4;margin-bottom:6px">' + q.question + '</div>';
-      html += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px">';
-      q.reponses.forEach(function(r, ri) {
-        var isBonne = ri === q.bonne;
-        html += '<span style="font-size:10px;padding:3px 8px;border-radius:20px;' + (isBonne?'background:var(--grBg);color:var(--gr);font-weight:700;border:1px solid var(--grBorder)':'background:var(--surf2);color:var(--t3);border:1px solid var(--b)') + '">' + (isBonne?'✓ ':'') + r + '</span>';
-      });
-      html += '</div>';
-      html += '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
-      if(q.difficulte) html += '<span style="font-size:9px;font-weight:700;color:' + (difficColors[q.difficulte]||'var(--t3)') + ';text-transform:uppercase">' + q.difficulte + '</span>';
-      if(q.nb_fois) html += '<span style="font-size:9px;color:var(--t3)">' + q.nb_fois + '× · ' + q.taux_reussite + '%</span>';
-      if(!isVal) {
-        var qid = q.id.replace(/'/g,"\\'");
-        html += '<button onclick="var qq=QUESTIONS_DB.find(function(x){return x.id===\'' + qid + '\';});if(qq){qq.statut=\'validé\';renderCoursHub();}" style="background:var(--grBg);border:none;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;color:var(--gr);cursor:pointer;font-family:inherit">Valider</button>';
-      }
-      html += '</div></div></div></div>';
-    });
-    html += '</div>';
-  }
-  html += '</div>';
-
-  // ── 5. QUIZ COMPLET
-  html += '<div class="panel" style="margin-bottom:14px">';
-  html += '<div class="panel-header"><span>🎯 Quiz Complet — ' + themeObj.theme + '</span></div>';
-  html += '<div style="padding:16px">';
-  if(!qVal.length) {
-    html += '<div style="text-align:center;color:var(--t3);font-size:11px;padding:10px">Aucune question validée — ajoutez des questions pour activer ce quiz</div>';
-  } else {
-    html += '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px">';
-    html += '<div><div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:4px">' + qVal.length + ' questions validées</div>';
-    html += '<div style="font-size:11px;color:var(--t3)">' + mat + (niveau?' · '+niveau:'') + '</div></div>';
-    var diff = {facile:0,moyen:0,difficile:0};
-    qVal.forEach(function(q){ if(diff[q.difficulte]!==undefined) diff[q.difficulte]++; });
-    html += '<div style="display:flex;gap:6px">';
-    if(diff.facile)    html += '<span style="background:var(--grBg);color:var(--gr);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700">😊 ' + diff.facile + ' facile' + (diff.facile>1?'s':'') + '</span>';
-    if(diff.moyen)     html += '<span style="background:var(--amBg);color:var(--am);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700">🤔 ' + diff.moyen + ' moyen' + (diff.moyen>1?'s':'') + '</span>';
-    if(diff.difficile) html += '<span style="background:var(--reBg);color:var(--re);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700">🔥 ' + diff.difficile + '</span>';
-    html += '</div></div>';
-    var avgR = qVal.length ? Math.round(qVal.reduce(function(s,q){ return s+(q.taux_reussite||0); },0)/qVal.length) : 0;
-    if(avgR>0) {
-      var scC = avgR>=70?'var(--gr)':avgR>=50?'var(--am)':'var(--re)';
-      html += '<div style="background:var(--surf2);border-radius:9px;padding:10px 14px">';
-      html += '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-bottom:6px"><span>Taux de réussite moyen</span><span style="font-weight:700;color:' + scC + '">' + avgR + '%</span></div>';
-      html += '<div style="height:6px;background:var(--surf3);border-radius:3px;overflow:hidden"><div style="height:100%;width:' + avgR + '%;background:' + scC + ';border-radius:3px"></div></div></div>';
+    html += '<div style="padding:14px 16px">';
+    if(fiche.essentiel) {
+      html += '<div style="font-size:13px;color:var(--t2);line-height:1.7;border-left:3px solid '+couleur+';padding-left:12px">' + fiche.essentiel + '</div>';
     }
+    html += '</div>';
   }
-  html += '</div></div>';
+  html += '</div>';
+
+  // ── 2. CHRONOLOGIE ──
+  if(fiche && fiche.chrono && fiche.chrono.length) {
+    html += '<div class="panel" style="margin-bottom:12px">';
+    html += '<div class="panel-header"><span>🗓 Chronologie ('+fiche.chrono.length+' entrées)</span></div>';
+    html += '<div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px">';
+    fiche.chrono.forEach(function(ch) {
+      html += '<div style="display:flex;gap:14px;align-items:flex-start">';
+      html += '<div style="background:'+couleur+'20;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:800;color:'+couleur+';flex-shrink:0;white-space:nowrap">'+ch[0]+'</div>';
+      html += '<div style="font-size:12px;color:var(--t2);line-height:1.5;flex:1">'+ch[1]+'</div>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  // ── 3. DATES CLÉS ──
+  if(fiche && fiche.dates && fiche.dates.length) {
+    html += '<div class="panel" style="margin-bottom:12px">';
+    html += '<div class="panel-header"><span>📅 Dates clés</span></div>';
+    html += '<div style="padding:10px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">';
+    fiche.dates.forEach(function(d) {
+      html += '<div style="background:var(--surf2);border-radius:8px;padding:8px 10px;display:flex;gap:8px;align-items:center">';
+      html += '<span style="font-size:11px;font-weight:800;color:'+couleur+';flex-shrink:0">'+d[0]+'</span>';
+      html += '<span style="font-size:11px;color:var(--t2)">'+d[1]+'</span>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  // ── 4. VOCABULAIRE ──
+  if(fiche && fiche.vocab && fiche.vocab.length) {
+    html += '<div class="panel" style="margin-bottom:12px">';
+    html += '<div class="panel-header"><span>📖 Vocabulaire ('+fiche.vocab.length+' mots)</span></div>';
+    html += '<div style="padding:10px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px">';
+    fiche.vocab.forEach(function(v) {
+      html += '<div style="background:var(--surf2);border-radius:8px;padding:10px 12px">';
+      html += '<div style="font-size:12px;font-weight:800;color:'+couleur+';margin-bottom:4px">'+v[0]+'</div>';
+      html += '<div style="font-size:11px;color:var(--t2);line-height:1.4">'+v[1]+'</div>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  // ── 5. QUESTIONS ──
+  html += '<div class="panel" style="margin-bottom:12px">';
+  html += '<div class="panel-header"><span>❓ Questions ('+qList.length+')</span>';
+  html += '<button onclick="showAdminToast(\'Ajout de question disponible prochainement\')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
+  html += '</div>';
+  if(!qList.length) {
+    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucune question — exécute flowin_contenu_sync.sql</div>';
+  } else {
+    var diff = {facile:'😊',moyen:'🤔',difficile:'🔥'};
+    html += '<div style="padding:8px 0">';
+    qList.forEach(function(q, i) {
+      html += '<div style="padding:10px 16px;'+(i<qList.length-1?'border-bottom:1px solid var(--b)':'')+'">'; 
+      html += '<div style="display:flex;align-items:flex-start;gap:10px">';
+      html += '<span style="font-size:14px;flex-shrink:0">'+(diff[q.difficulte]||'🤔')+'</span>';
+      html += '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--t);line-height:1.4;margin-bottom:6px">'+q.q+'</div>';
+      html += '<div style="display:flex;gap:5px;flex-wrap:wrap">';
+      if(q.opts && Array.isArray(q.opts)) {
+        q.opts.forEach(function(r, ri) {
+          var ok = ri === q.bon;
+          html += '<span style="font-size:10px;padding:3px 8px;border-radius:20px;'+(ok?'background:var(--grBg);color:var(--gr);font-weight:700;border:1px solid var(--grBorder)':'background:var(--surf2);color:var(--t3);border:1px solid var(--b)')+'">'+(ok?'✓ ':'')+r+'</span>';
+        });
+      }
+      html += '</div>';
+      if(q.expl) html += '<div style="font-size:10px;color:var(--t3);font-style:italic;margin-top:4px">'+q.expl+'</div>';
+      html += '</div></div></div>';
+    });
+    html += '</div>';
+  }
+  html += '</div>';
 
   el.innerHTML = html;
 }
