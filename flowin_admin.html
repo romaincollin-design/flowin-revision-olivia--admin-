@@ -7496,35 +7496,28 @@ function openEleve(pseudo) {
       <button onclick="${nextOnclick}" style="padding:5px 11px;border-radius:7px;border:1px solid var(--b);background:${nextElev?'var(--surf2)':'var(--surf3)'};color:${nextElev?'var(--t2)':'var(--t3)'};font-size:11px;cursor:${nextElev?'pointer':'default'};font-family:inherit">${nextPrenom} →</button>
     </div>
 
-    <!-- Header identité -->
-    <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:16px">
-      ${ava(d.j.prenom,d.j.nom,d.idx,52)}
-      <div style="flex:1">
-        <div style="font-size:18px;font-weight:800;color:var(--t);font-family:'Syne',sans-serif">${d.j.prenom} ${d.j.nom}</div>
-        <div style="font-size:11px;color:var(--t3);margin-top:2px">${d.j.ecole||'—'} ${d.j.classe?'· '+d.j.classe:''}</div>
-        <div style="font-size:11px;color:var(--ac);margin-top:1px">${d.j.email||'—'}</div>
-        <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
-          <span class="bdg" style="background:${lg.bg};color:${lg.color}">${lg.icon} Ligue ${lg.name}</span>
-          ${d.j.genre==='F'?'<span class="bdg purple">♀ Féminin</span>':d.j.genre==='M'?'<span class="bdg blue">♂ Masculin</span>':''}
+    <!-- Header identité COMPACT — identité + KPIs sur même ligne -->
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;padding-bottom:12px;border-bottom:1px solid var(--b)">
+      ${ava(d.j.prenom,d.j.nom,d.idx,46)}
+      <div style="flex:1;min-width:0">
+        <div style="font-size:17px;font-weight:800;color:var(--t);font-family:'Syne',sans-serif;line-height:1.1">${d.j.prenom} ${d.j.nom}</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span>${d.j.ecole||'—'}${d.j.classe?' · '+d.j.classe:''}</span>
+          <span class="bdg" style="background:${lg.bg};color:${lg.color};font-size:9px;padding:1px 7px">${lg.icon} ${lg.name}</span>
           ${bdg(d.isActif?'green':'amber',d.isActif?'Actif':'Inactif')}
-          ${d.j.pwa_installed?'<span class="bdg green">📱 App</span>':'<span class="bdg gray">🌐 Web</span>'}
+          ${d.j.pwa_installed?'<span class="bdg green" style="font-size:9px;padding:1px 7px">📱 App</span>':'<span class="bdg gray" style="font-size:9px;padding:1px 7px">🌐 Web</span>'}
         </div>
       </div>
-      <div style="text-align:right;font-size:10px;color:var(--t3)">
-        Inscrit le ${fmtDate(d.j.ts)}<br>
-        <span style="font-size:9px">Dernière session : ${d.last?ago(d.last):'—'}</span>
+      <!-- KPIs en strip horizontal compact -->
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        ${[
+          [d.avg+'%','Score','var(--gr)'],
+          [d.us.length,'Quiz','var(--ac)'],
+          ['🔥'+d.maxStreak,'Streak','var(--am)'],
+          [d.totalPts.toLocaleString('fr'),'Points','var(--am)'],
+          [parr.length,'Filleuls','#E040A0'],
+        ].map(([v,l,c])=>`<div style="background:var(--surf2);border-radius:8px;padding:7px 11px;text-align:center;min-width:54px"><div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:${c};line-height:1">${v}</div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">${l}</div></div>`).join('')}
       </div>
-    </div>
-
-    <!-- KPIs -->
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px">
-      ${[
-        [d.avg+'%','Score moy.','var(--gr)','#E8F5E9'],
-        [d.us.length,'Quiz joués','var(--ac)','#EEECFC'],
-        ['🔥 '+d.maxStreak+'j','Streak max','var(--am)','#FEF3DC'],
-        [d.totalPts.toLocaleString('fr'),'Points total','var(--am)','#FEF9E7'],
-        [parr.length,'Parrainages','#E040A0','#FCE4EC'],
-      ].map(([v,l,c,bg])=>`<div style="background:${bg};border-radius:10px;padding:12px 10px;text-align:center"><div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:${c}">${v}</div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">${l}</div></div>`).join('')}
     </div>
 
     <!-- Progression ligue -->
@@ -7547,14 +7540,15 @@ function openEleve(pseudo) {
 
       <!-- Informations -->
       <div class="fiche-block">
-        <div class="fiche-block-title">📋 Informations</div>
+        <div class="fiche-block-title">📋 Identité &amp; Compte</div>
         ${[
+          ['Email', d.j.email||'<span style="color:var(--re)">— Aucun email</span>'],
           ['Genre', d.j.genre==='F'?'♀ Féminin':d.j.genre==='M'?'♂ Masculin':d.j.genre||'—'],
-          ['Email', d.j.email||'—'],
-          ['Établissement', d.j.ecole||'—'],
-          ['Classe', d.j.classe||'—'],
           ['Inscription', fmtDate(d.j.ts)],
+          ['Dernière session', d.last?ago(d.last):'—'],
+          ['Mot de passe', d.j.email ? '<span style="color:var(--gr);font-weight:700">✓ Activable</span>' : '<span style="color:var(--t3)">— Email requis</span>'],
         ].map(([k,v])=>`<div class="info-row"><span class="info-key">${k}</span><span class="info-val">${v}</span></div>`).join('')}
+        ${d.j.email ? `<button onclick="sendActivationLink('${d.j.email}','${(d.j.prenom||d.pseudo).replace(/'/g,"\\'")}')" style="margin-top:8px;width:100%;background:#7C5CFC;color:#fff;border:none;border-radius:7px;padding:8px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✉️ Envoyer billet d'activation</button>` : ''}
       </div>
 
       <!-- Parrainages cliquables -->
@@ -7658,22 +7652,6 @@ function openEleve(pseudo) {
       lotsHtml += '</div>';
       return lotsHtml;
     })()}
-
-    <!-- SÉCURITÉ & COMPTE -->
-    <div class="fiche-block" style="margin-bottom:12px">
-      <div class="fiche-block-title">🔐 Sécurité &amp; Compte</div>
-      ${(() => {
-        const hasEmail = !!(d.j.email && d.j.email.trim());
-        const lastCnx  = d.connexions && d.connexions.length ? d.connexions[0] : null;
-        const lastDate = lastCnx ? new Date(lastCnx.ts).toLocaleDateString('fr-FR') : '—';
-        return '<div style="display:flex;flex-direction:column;gap:6px">'
-          + '<div style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="width:8px;height:8px;border-radius:50%;background:' + (hasEmail?'#22C9A0':'#D4D2C8') + '"></span><span style="color:var(--t2);flex:1">Email enregistré</span><span style="color:var(--t);font-weight:600">' + (hasEmail ? d.j.email : '—') + '</span></div>'
-          + '<div style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="width:8px;height:8px;border-radius:50%;background:' + (hasEmail?'#22C9A0':'#D4D2C8') + '"></span><span style="color:var(--t2);flex:1">Mot de passe / compte Auth</span><span style="color:var(--t);font-weight:600">' + (hasEmail ? 'Activable via billet' : 'Email requis') + '</span></div>'
-          + '<div style="display:flex;align-items:center;gap:6px;font-size:12px"><span style="width:8px;height:8px;border-radius:50%;background:' + (lastCnx?'#22C9A0':'#D4D2C8') + '"></span><span style="color:var(--t2);flex:1">Dernière connexion</span><span style="color:var(--t);font-weight:600">' + lastDate + '</span></div>'
-          + (hasEmail ? '<button onclick="sendActivationLink(\'' + d.j.email + '\',\'' + (d.j.prenom||d.pseudo) + '\')" style="margin-top:6px;background:#7C5CFC;color:#fff;border:none;border-radius:7px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✉️ Envoyer billet d\'activation</button>' : '')
-          + '</div>';
-      })()}
-    </div>
 
     <div class="fiche-block">
       <div class="fiche-block-title">🔐 Connexions <span style="font-size:10px;color:var(--t3);font-weight:400">(${d.connexions.length})</span></div>
