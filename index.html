@@ -2378,31 +2378,66 @@ function renderPartenairesDistrib(el) {
 function refreshDistrib() { var el = document.getElementById('partenaires-content'); if(el) renderPartenairesDistrib(el); }
 
 function renderPartenairesQR(el) {
-  el.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'
-    + '<div class="panel" style="margin:0"><div class="panel-header"><span>📱 Scanner un code</span></div>'
+  el.innerHTML = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">'
+    + '<div class="panel" style="margin:0"><div class="panel-header"><span>📱 Validation code lot</span></div>'
     + '<div style="padding:24px;text-align:center">'
-    + '<div style="font-size:56px;margin-bottom:14px">📱</div>'
-    + '<div style="font-size:15px;font-weight:800;color:var(--t);margin-bottom:6px">Validation lot partenaire</div>'
-    + '<div style="font-size:12px;color:var(--t3);margin-bottom:20px;line-height:1.5">Saisissez le code presente par l\'eleve pour valider et décompter son lot</div>'
-    + '<input id="qr-code-input" placeholder="CODE-LOT…" style="width:100%;max-width:260px;background:var(--surf2);border:2px solid var(--b);border-radius:10px;padding:14px 16px;font-size:18px;text-align:center;outline:none;font-family:inherit;letter-spacing:.12em;font-weight:700;display:block;margin:0 auto 14px">'
-    + '<button class="act-btn primary" onclick="validateLotQR()" style="font-size:13px;padding:10px 24px">✅ Valider ce code</button>'
-    + '<div id="qr-result" style="margin-top:18px;font-size:13px;font-weight:700;min-height:20px"></div>'
+    + '<input id="qr-code-input" placeholder="Saisir le code…" style="width:100%;background:var(--surf2);border:2px solid var(--b);border-radius:10px;padding:14px 16px;font-size:20px;text-align:center;outline:none;font-family:inherit;letter-spacing:.12em;font-weight:700;display:block;margin:0 auto 14px;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.keyCode===13)validateLotQR()">'
+    + '<button onclick="validateLotQR()" style="width:100%;padding:13px 24px;background:var(--ac);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit">✅ Valider ce code</button>'
+    + '<div id="qr-result" style="margin-top:16px;font-size:13px;font-weight:700;min-height:24px"></div>'
     + '</div></div>'
     + '<div class="panel" style="margin:0"><div class="panel-header"><span>📋 Comment ça marche</span></div>'
     + '<div style="padding:16px;display:flex;flex-direction:column;gap:12px">'
-    + stepQR('1','L\'eleve gagne un lot','Il recoit un code dans son profil Flowin')
-    + stepQR('2','Il se rend chez le partenaire','Il presente son code ou le QR de son profil')
-    + stepQR('3','Le partenaire scanne ou saisit','Ici, dans cet ecran')
-    + stepQR('4','Validation automatique','Le code passe à "Utilisé", le stock se met à jour')
+    + stepQR('1','L\'élève gagne un lot','Il reçoit un code unique dans son profil Flowin')
+    + stepQR('2','Il se rend chez le partenaire','Il présente son code (texte ou QR) au partenaire')
+    + stepQR('3','Le partenaire saisit le code','Dans ce champ — ou scan via caméra')
+    + stepQR('4','Validation automatique','Code marqué utilisé, stock mis à jour en temps réel')
     + '</div></div>'
+    + '</div>'
+    + '<div class="panel" style="margin:0"><div class="panel-header"><span>📋 Dernières validations</span><button onclick="loadRecentValidations()" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">Actualiser ↻</button></div>'
+    + '<div id="qr-recent-list" style="padding:8px 0;min-height:60px"><div style="text-align:center;color:var(--t3);font-size:11px;padding:16px">Chargement…</div></div>'
     + '</div>';
+  // Charger l'historique au rendu
+  setTimeout(loadRecentValidations, 100);
 }
 
 function stepQR(n, titre, desc) {
   return '<div style="display:flex;align-items:flex-start;gap:10px">'
-    + '<div style="width:26px;height:26px;border-radius:50%;background:var(--acBg);color:var(--ac);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+n+'</div>'
-    + '<div><div style="font-size:12px;font-weight:700;color:var(--t)">'+titre+'</div>'
-    + '<div style="font-size:11px;color:var(--t3);margin-top:2px">'+desc+'</div></div></div>';
+    + '<div style="width:26px;height:26px;border-radius:50%;background:var(--acBg);color:var(--ac);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">' + n + '</div>'
+    + '<div><div style="font-size:12px;font-weight:700;color:var(--t)">' + titre + '</div>'
+    + '<div style="font-size:11px;color:var(--t3);margin-top:2px">' + desc + '</div></div></div>';
+}
+
+function loadRecentValidations() {
+  var el = document.getElementById('qr-recent-list');
+  if(!el) return;
+  var hdrs = { apikey: SB_KEY, 'Authorization': 'Bearer ' + SB_KEY };
+  fetch(SB_URL + '/rest/v1/gains?utilise=eq.true&order=utilise_ts.desc&limit=20&select=*', { headers: hdrs })
+    .then(function(r){ return r.ok ? r.json() : []; })
+    .then(function(rows) {
+      if(!rows || !rows.length) {
+        el.innerHTML = '<div style="text-align:center;color:var(--t3);font-size:11px;padding:16px">Aucune validation encore</div>';
+        return;
+      }
+      el.innerHTML = '<table style="width:100%;border-collapse:collapse">'
+        + '<thead><tr>'
+        + '<th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 12px;text-transform:uppercase;border-bottom:1px solid var(--b)">Élève</th>'
+        + '<th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 12px;text-transform:uppercase;border-bottom:1px solid var(--b)">Lot</th>'
+        + '<th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 12px;text-transform:uppercase;border-bottom:1px solid var(--b)">Code</th>'
+        + '<th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 12px;text-transform:uppercase;border-bottom:1px solid var(--b)">Validé le</th>'
+        + '</tr></thead><tbody>'
+        + rows.map(function(g, i) {
+            var dateStr = g.utilise_ts ? new Date(g.utilise_ts).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '—';
+            return '<tr style="background:' + (i%2===0?'transparent':'var(--surf2)') + '">'
+              + '<td style="padding:8px 12px;font-size:12px;font-weight:600;color:var(--t)">' + (g.pseudo||'—') + '</td>'
+              + '<td style="padding:8px 12px;font-size:11px;color:var(--t2)">' + (g.lot_emoji||'') + ' ' + (g.lot_nom||'—') + '</td>'
+              + '<td style="padding:8px 12px;font-family:monospace;font-size:11px;font-weight:700;color:var(--ac)">' + (g.code||'—') + '</td>'
+              + '<td style="padding:8px 12px;font-size:10px;color:var(--t3)">' + dateStr + '</td>'
+              + '</tr>';
+          }).join('')
+        + '</tbody></table>';
+    }).catch(function() {
+      if(el) el.innerHTML = '<div style="text-align:center;color:var(--re);font-size:11px;padding:16px">Erreur de chargement</div>';
+    });
 }
 
 function validateLotQR() {
@@ -2410,33 +2445,57 @@ function validateLotQR() {
   var res = document.getElementById('qr-result');
   if(!code){ res.innerHTML='<span style="color:var(--am)">⚠️ Saisis un code d\'abord</span>'; return; }
   res.innerHTML = '<span style="color:var(--t3)">Vérification…</span>';
-  var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
-  fetch(SB_URL+'/rest/v1/gains?code=eq.'+encodeURIComponent(code)+'&select=*', {headers:hdrs})
-    .then(function(r){ return r.ok?r.json():[]; })
+  var hdrs = { apikey: SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
+  fetch(SB_URL + '/rest/v1/gains?code=eq.' + encodeURIComponent(code) + '&select=*', { headers: hdrs })
+    .then(function(r){ return r.ok ? r.json() : []; })
     .then(function(rows) {
-      if(!rows.length){ res.innerHTML='<span style="color:var(--re)">❌ Code introuvable</span>'; return; }
+      if(!rows.length) { res.innerHTML = '<span style="color:var(--re)">❌ Code introuvable</span>'; return; }
       var g = rows[0];
       if(g.utilise) {
-        var d = g.utilise_ts||g.ts;
-        res.innerHTML='<span style="color:var(--am)">⚠️ Déjà utilisé le '+new Date(d).toLocaleDateString('fr-FR')+'</span>';
+        var d = g.utilise_ts || g.ts;
+        res.innerHTML = '<div style="background:var(--amBg);border:1px solid var(--amBorder);border-radius:10px;padding:14px">'
+          + '<div style="font-size:14px;font-weight:800;color:var(--am);margin-bottom:4px">⚠️ Déjà utilisé</div>'
+          + '<div style="font-size:12px;color:var(--t2)">Le ' + new Date(d).toLocaleDateString('fr-FR') + ' par ' + (g.pseudo||'?') + '</div>'
+          + '</div>';
         return;
       }
-      fetch(SB_URL+'/rest/v1/gains?code=eq.'+encodeURIComponent(code), {
-        method:'PATCH', headers:hdrs,
-        body:JSON.stringify({utilise:true, utilise_ts:new Date().toISOString()})
+      // Afficher les infos du gain avant confirmation
+      res.innerHTML = '<div style="background:var(--blBg);border:1px solid var(--blBorder);border-radius:10px;padding:14px;text-align:left">'
+        + '<div style="font-size:12px;font-weight:700;color:var(--bl);margin-bottom:8px">🔍 Code trouvé</div>'
+        + '<div style="font-size:12px;color:var(--t2);margin-bottom:4px"><strong>' + (g.pseudo||'?') + '</strong> · ' + (g.lot_emoji||'') + ' ' + (g.lot_nom||code) + '</div>'
+        + '<button onclick="confirmValidateLotQR(&quot;' + code + '&quot;)" style="margin-top:10px;width:100%;padding:10px;background:var(--ac);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit">✅ Confirmer la validation</button>'
+        + '</div>';
+    }).catch(function(){ res.innerHTML = '<span style="color:var(--re)">❌ Erreur réseau</span>'; });
+}
+
+function confirmValidateLotQR(code) {
+  var res = document.getElementById('qr-result');
+  res.innerHTML = '<span style="color:var(--t3)">Validation en cours…</span>';
+  var hdrs = { apikey: SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
+  // Relire pour s'assurer du pseudo et du lot_nom
+  fetch(SB_URL + '/rest/v1/gains?code=eq.' + encodeURIComponent(code) + '&select=*', { headers: hdrs })
+    .then(function(r){ return r.ok ? r.json() : []; })
+    .then(function(rows) {
+      if(!rows.length || rows[0].utilise) { res.innerHTML = '<span style="color:var(--re)">❌ Code déjà utilisé ou introuvable</span>'; return; }
+      var g = rows[0];
+      return fetch(SB_URL + '/rest/v1/gains?code=eq.' + encodeURIComponent(code), {
+        method: 'PATCH', headers: hdrs,
+        body: JSON.stringify({ utilise: true, utilise_ts: new Date().toISOString() })
       }).then(function(r2) {
         if(r2.ok) {
           document.getElementById('qr-code-input').value = '';
-          res.innerHTML='<div style="background:var(--grBg);border:1px solid var(--grBorder);border-radius:10px;padding:14px;margin-top:8px">'
-            +'<div style="font-size:15px;font-weight:800;color:var(--gr);margin-bottom:4px">✅ Code validé !</div>'
-            +'<div style="font-size:12px;color:var(--t2)"><strong>'+(g.pseudo||'?')+'</strong> · '+(g.lot_nom||code)+'</div>'
-            +'</div>';
-          showAdminToast('Code validé — lot décompté');
+          res.innerHTML = '<div style="background:var(--grBg);border:1px solid var(--grBorder);border-radius:10px;padding:14px">'
+            + '<div style="font-size:16px;font-weight:800;color:var(--gr);margin-bottom:4px">✅ Code validé !</div>'
+            + '<div style="font-size:12px;color:var(--t2)"><strong>' + (g.pseudo||'?') + '</strong> · ' + (g.lot_emoji||'') + ' ' + (g.lot_nom||code) + '</div>'
+            + '</div>';
+          showAdminToast('Code validé — lot décompté pour ' + (g.pseudo||code));
+          // Rafraîchir l'historique
+          setTimeout(loadRecentValidations, 500);
         } else {
-          res.innerHTML='<span style="color:var(--re)">❌ Erreur lors de la validation</span>';
+          res.innerHTML = '<span style="color:var(--re)">❌ Erreur lors de la validation</span>';
         }
       });
-    }).catch(function(){ res.innerHTML='<span style="color:var(--re)">❌ Erreur réseau</span>'; });
+    }).catch(function(){ res.innerHTML = '<span style="color:var(--re)">❌ Erreur réseau</span>'; });
 }
 
 // ── HUB PARAMÈTRES ──
@@ -4380,30 +4439,34 @@ function handleMapClick(event) {
 function renderTopEtabs() {
   const tbody = document.getElementById('dash-top-etabs');
   if(!tbody) return;
-  const plans = {vence:'Pro',cezanne:'Starter',grasse:'Starter',massena:'Pro'};
-  const planColors = {Pro:'green',Starter:'blue','Plan Essai':'red'};
 
-  const rows = ETAB_GEO.map(e=>{
-    const users = DB.joueurs.filter(j=>j.ecole&&j.ecole.toLowerCase().includes(e.short.toLowerCase())).length;
-    const sess  = DB.sessions.filter(s=>s.ecole&&s.ecole.toLowerCase().includes(e.short.toLowerCase()));
-    const avg   = sess.length ? Math.round(sess.reduce((a,s)=>a+(s.score_pct||0),0)/sess.length) : 0;
-    const sessToday = sess.filter(s=>s.ts&&localDateStr(s.ts)===localDateStr()).length;
-    const plan = plans[e.key]||'Starter';
-    return { e, users, avg, sessToday, plan };
-  }).sort((a,b)=>b.avg-a.avg);
+  const rows = ETAB_GEO.map(function(e) {
+    var users = DB.joueurs.filter(function(j){ return j.ecole && j.ecole.toLowerCase().includes(e.short.toLowerCase()); }).length;
+    var sess  = DB.sessions.filter(function(s){ return s.ecole && s.ecole.toLowerCase().includes(e.short.toLowerCase()); });
+    var avg   = sess.length ? Math.round(sess.reduce(function(a,s){ return a+(s.score_pct||0); },0)/sess.length) : 0;
+    var sessToday = sess.filter(function(s){ return s.ts && localDateStr(s.ts)===localDateStr(); }).length;
+    return { e: e, users: users, avg: avg, sessToday: sessToday };
+  }).sort(function(a,b){ return b.avg - a.avg; });
 
-  tbody.innerHTML = rows.map(r=>`
-    <tr onclick="navTo('etablissements')" style="cursor:pointer">
-      <td><div style="display:flex;align-items:center;gap:8px">
-        <div style="width:8px;height:8px;border-radius:50%;background:${r.e.color};flex-shrink:0"></div>
-        <div><div style="font-size:12px;font-weight:600;color:var(--t)">${r.e.nom}</div>
-        <div style="font-size:9px;color:var(--t3)">${r.e.ville}</div></div>
-      </div></td>
-      <td style="font-weight:700;color:var(--ac)">${r.users}</td>
-      <td style="color:var(--t2)">${r.sessToday||'—'}</td>
-      <td>${bdg(planColors[r.plan]||'blue', r.plan)}</td>
-      <td>${r.avg?`<span style="font-weight:700;color:${r.avg>=70?'var(--gr)':r.avg>=50?'var(--am)':'var(--re)'}">${r.avg}%</span>`:'<span style="color:var(--t3)">—</span>'}</td>
-    </tr>`).join('');
+  var scoreColor = function(avg) {
+    return avg >= 70 ? 'var(--gr)' : avg >= 50 ? 'var(--am)' : 'var(--re)';
+  };
+
+  tbody.innerHTML = rows.map(function(r) {
+    var scoreCell = r.avg
+      ? '<span style="font-weight:700;color:' + scoreColor(r.avg) + '">' + r.avg + '%</span>'
+      : '<span style="color:var(--t3)">—</span>';
+    return '<tr onclick="navTo(\'etablissements\')" style="cursor:pointer">'
+      + '<td><div style="display:flex;align-items:center;gap:8px">'
+      + '<div style="width:8px;height:8px;border-radius:50%;background:' + r.e.color + ';flex-shrink:0"></div>'
+      + '<div><div style="font-size:12px;font-weight:600;color:var(--t)">' + r.e.nom + '</div>'
+      + '<div style="font-size:9px;color:var(--t3)">' + r.e.ville + '</div></div>'
+      + '</div></td>'
+      + '<td style="font-weight:700;color:var(--ac)">' + r.users + '</td>'
+      + '<td style="color:var(--t2)">' + (r.sessToday || '—') + '</td>'
+      + '<td>' + scoreCell + '</td>'
+      + '</tr>';
+  }).join('');
 }
 
 // ── BARÈME ──
@@ -6401,6 +6464,172 @@ function openEleve(pseudo) {
   document.getElementById('modal-eleve').classList.add('open');
   // Charger onglet défis par défaut
   setTimeout(function(){ renderDefisFiche(pseudo, 'crees'); }, 100);
+}
+
+
+// ── FICHE ÉLÈVE : onglets défis ──
+function renderDefisFiche(pseudo, tab) {
+  var container = document.getElementById('defisFicheContent' + pseudo);
+  if(!container) return;
+
+  // Mettre à jour les boutons onglets
+  var tabs = ['crees','participes','termines'];
+  tabs.forEach(function(t) {
+    var btn = document.getElementById('defiTab' + t.charAt(0).toUpperCase() + t.slice(1) + pseudo);
+    if(!btn) return;
+    if(t === tab) {
+      btn.style.background = 'var(--ac)';
+      btn.style.color = '#fff';
+      btn.style.border = 'none';
+    } else {
+      btn.style.background = 'var(--surf2)';
+      btn.style.color = 'var(--t3)';
+      btn.style.border = '1px solid var(--b)';
+    }
+  });
+
+  var j = DB.joueurs.find(function(jj){ return jj.pseudo === pseudo; });
+  if(!j) { container.innerHTML = '<div style="text-align:center;color:var(--t3);font-size:11px;padding:12px">Données non disponibles</div>'; return; }
+
+  var allSess = DB.sessions || [];
+  var rows = [];
+
+  if(tab === 'crees') {
+    // Sessions où l'élève a joué (triées par date desc)
+    rows = allSess.filter(function(s){ return s.pseudo === pseudo; })
+      .sort(function(a,b){ return new Date(b.ts||0) - new Date(a.ts||0); })
+      .slice(0, 15);
+    if(!rows.length) {
+      container.innerHTML = '<div style="text-align:center;color:var(--t3);font-size:11px;padding:16px">Aucune session jouée</div>';
+      return;
+    }
+    container.innerHTML = '<table style="width:100%;border-collapse:collapse">'
+      + '<thead><tr>'
+      + '<th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Thème</th>'
+      + '<th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Score</th>'
+      + '<th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Pts</th>'
+      + '<th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Date</th>'
+      + '</tr></thead><tbody>'
+      + rows.map(function(s, i) {
+          var sc = s.score_pct || 0;
+          var scC = sc >= 70 ? 'var(--gr)' : sc >= 50 ? 'var(--am)' : 'var(--re)';
+          var mat = s.theme || s.matiere || '—';
+          return '<tr style="background:' + (i%2===0?'transparent':'var(--surf2)') + '">'
+            + '<td style="padding:7px 8px;font-size:11px;font-weight:600;color:var(--t);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + mat + '</td>'
+            + '<td style="padding:7px 8px"><span style="font-weight:700;color:' + scC + '">' + sc + '%</span></td>'
+            + '<td style="padding:7px 8px;font-size:11px;font-weight:700;color:var(--am)">+' + (s.pts_round||0) + '</td>'
+            + '<td style="padding:7px 8px;font-size:10px;color:var(--t3)">' + (s.ts ? ago(s.ts) : '—') + '</td>'
+            + '</tr>';
+        }).join('')
+      + '</tbody></table>';
+
+  } else if(tab === 'participes') {
+    // Stats par matière
+    var byMat = {};
+    allSess.filter(function(s){ return s.pseudo === pseudo; }).forEach(function(s) {
+      var m = s.matiere || s.theme || 'Général';
+      if(!byMat[m]) byMat[m] = { n: 0, totalScore: 0 };
+      byMat[m].n++;
+      byMat[m].totalScore += (s.score_pct || 0);
+    });
+    var entries = Object.entries(byMat).sort(function(a,b){ return b[1].n - a[1].n; });
+    if(!entries.length) {
+      container.innerHTML = '<div style="text-align:center;color:var(--t3);font-size:11px;padding:16px">Aucune participation</div>';
+      return;
+    }
+    var emj = {Histoire:'📜',Géographie:'🌍',EMC:'⚖️',PSE:'🩺',Roulette:'🎰'};
+    container.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px">'
+      + entries.map(function(e) {
+          var avg = Math.round(e[1].totalScore / e[1].n);
+          var scC = avg >= 70 ? 'var(--gr)' : avg >= 50 ? 'var(--am)' : 'var(--re)';
+          var pct = Math.min(100, avg);
+          return '<div style="background:var(--surf2);border-radius:8px;padding:10px 12px">'
+            + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
+            + '<span style="font-size:12px;font-weight:700;color:var(--t)">' + (emj[e[0]]||'🎯') + ' ' + e[0] + '</span>'
+            + '<span style="font-size:10px;color:var(--t3)">' + e[1].n + ' session' + (e[1].n>1?'s':'') + ' · <strong style="color:' + scC + '">' + avg + '%</strong></span>'
+            + '</div>'
+            + '<div style="height:5px;background:var(--surf3);border-radius:3px;overflow:hidden">'
+            + '<div style="height:100%;width:' + pct + '%;background:' + scC + ';border-radius:3px"></div>'
+            + '</div></div>';
+        }).join('')
+      + '</div>';
+
+  } else if(tab === 'termines') {
+    // Sessions parfaites (100%) ou score élevé
+    rows = allSess.filter(function(s){ return s.pseudo === pseudo && (s.score_pct||0) >= 80; })
+      .sort(function(a,b){ return (b.score_pct||0) - (a.score_pct||0); })
+      .slice(0, 15);
+    if(!rows.length) {
+      container.innerHTML = '<div style="text-align:center;color:var(--t3);font-size:11px;padding:16px">Aucun résultat ≥ 80% pour le moment</div>';
+      return;
+    }
+    container.innerHTML = '<div style="display:flex;flex-direction:column;gap:6px">'
+      + rows.map(function(s) {
+          var sc = s.score_pct || 0;
+          var medal = sc === 100 ? '🥇' : sc >= 90 ? '🥈' : '🥉';
+          return '<div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--surf2);border-radius:8px">'
+            + '<span style="font-size:18px">' + medal + '</span>'
+            + '<div style="flex:1;min-width:0">'
+            + '<div style="font-size:12px;font-weight:700;color:var(--t);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (s.theme||s.matiere||'—') + '</div>'
+            + '<div style="font-size:10px;color:var(--t3);margin-top:1px">' + (s.ts ? ago(s.ts) : '—') + '</div>'
+            + '</div>'
+            + '<span style="font-size:14px;font-weight:800;color:var(--gr)">' + sc + '%</span>'
+            + '</div>';
+        }).join('')
+      + '</div>';
+  }
+}
+
+// ── FICHE ÉLÈVE : gestion des points ──
+async function adminUpdatePoints(pseudo, action) {
+  var input = document.getElementById('fichePointsInput' + pseudo);
+  var valEl = document.getElementById('fichePointsVal' + pseudo);
+  if(!input) return;
+  var valStr = (input.value || '').trim();
+  var val = parseInt(valStr, 10);
+  if(isNaN(val) || val < 0) { showAdminToast('Entrez une valeur valide', 'error'); return; }
+
+  var j = DB.joueurs.find(function(jj){ return jj.pseudo === pseudo; });
+  if(!j) { showAdminToast('Élève introuvable', 'error'); return; }
+
+  var currentPts = getTotalPts(pseudo);
+  var newPts;
+  if(action === 'add')     newPts = currentPts + val;
+  else if(action === 'sub') newPts = Math.max(0, currentPts - val);
+  else if(action === 'set') newPts = val;
+  else return;
+
+  var diff = newPts - currentPts;
+  var hdrs = { apikey: SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
+
+  try {
+    // Utiliser RPC add_points si disponible, sinon PATCH direct
+    var rpcRes = await fetch(SB_URL + '/rest/v1/rpc/add_points', {
+      method: 'POST',
+      headers: hdrs,
+      body: JSON.stringify({ p_pseudo: pseudo, p_delta: diff })
+    });
+
+    if(!rpcRes.ok) {
+      // Fallback PATCH direct
+      var patchRes = await fetch(SB_URL + '/rest/v1/joueurs?pseudo=eq.' + encodeURIComponent(pseudo), {
+        method: 'PATCH',
+        headers: hdrs,
+        body: JSON.stringify({ pts_total: newPts })
+      });
+      if(!patchRes.ok) throw new Error('PATCH failed ' + patchRes.status);
+    }
+
+    // Mettre à jour DB local
+    j.pts_total = newPts;
+    if(valEl) valEl.textContent = newPts.toLocaleString('fr');
+    input.value = '';
+    var actionLabel = action === 'add' ? '+' + val + ' pts ajoutés' : action === 'sub' ? '-' + val + ' pts retirés' : val + ' pts définis';
+    showAdminToast(actionLabel + ' pour ' + (j.prenom || pseudo), 'success');
+
+  } catch(e) {
+    showAdminToast('Erreur : ' + e.message, 'error');
+  }
 }
 
 function closeEleve() { document.getElementById('modal-eleve').classList.remove('open'); }
