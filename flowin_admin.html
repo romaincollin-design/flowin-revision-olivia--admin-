@@ -1698,31 +1698,24 @@ async function loadData() {
       dot.className = 'live-dot on';
       lbl.className = 'live-label on';
       lbl.textContent = `Live Supabase (${j.length} élèves)`;
-      // Charger fiches et questions depuis Supabase (silencieux si tables absentes)
+      // Charger contenu pédagogique — 5 tables (sans colonne inexistante)
       Promise.all([
-        fetch(`${SB_URL}/rest/v1/fiches?order=ordre.asc,created_at.asc&limit=500`,{headers:hdrs}).then(r=>r.ok?r.json():null),
-        fetch(`${SB_URL}/rest/v1/questions?order=created_at.asc&limit=2000`,{headers:hdrs}).then(r=>r.ok?r.json():null)
+        fetch(SB_URL+'/rest/v1/themes?order=num.asc&limit=200',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
+        fetch(SB_URL+'/rest/v1/fiches?order=created_at.asc&limit=500',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
+        fetch(SB_URL+'/rest/v1/visuels?order=created_at.asc&limit=200',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];}),
+        fetch(SB_URL+'/rest/v1/questions?order=created_at.asc&limit=5000',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
+        fetch(SB_URL+'/rest/v1/quiz_config?order=created_at.asc&limit=200',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];})
       ]).then(function(results) {
-        var sbFiches = results[0];
-        var sbQuestions = results[1];
-        if(sbFiches && Array.isArray(sbFiches) && sbFiches.length > 0) {
-          COURS_DB = sbFiches;
-          console.log('✅ Fiches Supabase:', sbFiches.length);
-        } else {
-          console.log('ℹ️ Fiches: fallback local (' + COURS_DB.length + ')');
-        }
-        if(sbQuestions && Array.isArray(sbQuestions) && sbQuestions.length > 0) {
-          QUESTIONS_DB = sbQuestions;
-          console.log('✅ Questions Supabase:', sbQuestions.length);
-        } else {
-          console.log('ℹ️ Questions: fallback local (' + QUESTIONS_DB.length + ')');
-        }
-        // Mettre à jour le badge et re-render si on est sur la vue cours
+        if(Array.isArray(results[0])&&results[0].length) SB_THEMES    = results[0];
+        if(Array.isArray(results[1])&&results[1].length) SB_FICHES    = results[1];
+        if(Array.isArray(results[2])&&results[2].length) SB_VISUELS   = results[2];
+        if(Array.isArray(results[3])&&results[3].length) SB_QUESTIONS = results[3];
+        if(Array.isArray(results[4])&&results[4].length) SB_QUIZ_CFG  = results[4];
         updateBadges();
         if(typeof currentView !== 'undefined' && currentView === 'cours') {
           try { renderCoursHub(); } catch(e) {}
         }
-      }).catch(function(e){ console.log('ℹ️ Fiches/questions non chargées:', e.message); });
+      }).catch(function(e){ console.log('Contenu pédagogique non chargé:', e.message); });
       console.log(`✅ Supabase OK — ${j.length} joueurs, ${DB.sessions.length} sessions, ${DB.parrainage.length} parrainages, ${DB.connexions.length} connexions`);
     } else {
       throw new Error('Réponse Supabase invalide');
@@ -2084,7 +2077,7 @@ function partenairesTab(tab, btn) {
 function loadPartenaires(cb) {
   if(!SB_ENABLED) { cb([]); return; }
   var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
-  fetch(SB_URL+'/rest/v1/partenaires?order=ts.desc', {headers:hdrs})
+  fetch(SB_URL+'/rest/v1/partenaires?order=created_at.desc', {headers:hdrs})
     .then(function(r){ return r.ok?r.json():[]; })
     .then(function(rows){ DB_PARTENAIRES = rows||[]; cb(DB_PARTENAIRES); })
     .catch(function(){ cb([]); });
@@ -2596,7 +2589,7 @@ function openEmailPartenaireModal(p) {
 function renderPartenairesDistrib(el) {
   el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3)">Chargement…</div>';
   var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
-  fetch(SB_URL+'/rest/v1/gains?order=ts.desc&limit=200', {headers:hdrs})
+  fetch(SB_URL+'/rest/v1/gains?order=created_at.desc&limit=200', {headers:hdrs})
     .then(function(r){ return r.ok?r.json():[]; })
     .then(function(gains) {
       var html = '<div class="panel"><div class="panel-header">'
@@ -2664,7 +2657,7 @@ function loadRecentValidations() {
   var el = document.getElementById('qr-recent-list');
   if(!el) return;
   var hdrs = { apikey: SB_KEY, 'Authorization': 'Bearer ' + SB_KEY };
-  fetch(SB_URL + '/rest/v1/gains?utilise=eq.true&order=utilise_ts.desc&limit=20&select=*', { headers: hdrs })
+  fetch(SB_URL + '/rest/v1/gains?utilise=eq.true&order=created_at.desc&limit=20&select=*', { headers: hdrs })
     .then(function(r){ return r.ok ? r.json() : []; })
     .then(function(rows) {
       if(!rows || !rows.length) {
@@ -3799,19 +3792,18 @@ function getMatEmoji(mat)   { return COURS_MAT_EMOJI[mat]    || COURS_MAT_EMOJI[
 
 function buildCoursThemes() {
   var themes = {};
-  COURS_DB.forEach(function(c) {
-    var t = c.theme || 'Général';
-    if(!themes[t]) themes[t] = { theme:t, matiere:c.matiere||'', niveau:c.niveau||'', fiches:[], visuels:[], questions:[], emoji:c.emoji||'📄', couleur:c.couleur||'var(--ac)' };
-    if(c.type === 'visuel') themes[t].visuels.push(c); else themes[t].fiches.push(c);
-    if(!themes[t].matiere && c.matiere) themes[t].matiere = c.matiere;
+  // Initialiser depuis SB_THEMES
+  SB_THEMES.forEach(function(t) {
+    themes[t.id] = {
+      id: t.id, theme: t.title, matiere: t.mat||t.matiere||'', niveau: 'Bac Pro',
+      emoji: t.emoji||'📄', couleur: t.color||getMatCouleur(t.mat||t.matiere||''),
+      ordre: t.num||t.ordre||0, fiches: [], visuels: [], questions: [], quizCfg: null
+    };
   });
-  QUESTIONS_DB.forEach(function(q) {
-    var t = q.theme || 'Général';
-    if(!themes[t]) themes[t] = { theme:t, matiere:q.matiere||'', niveau:q.niveau||'', fiches:[], visuels:[], questions:[], emoji:'❓', couleur:'var(--am)' };
-    themes[t].questions.push(q);
-    if(!themes[t].matiere && q.matiere) themes[t].matiere = q.matiere;
-    if(!themes[t].niveau  && q.niveau)  themes[t].niveau  = q.niveau;
-  });
+  SB_FICHES.forEach(function(f)    { if(themes[f.theme_id]) themes[f.theme_id].fiches.push(f); });
+  SB_VISUELS.forEach(function(v)   { if(themes[v.theme_id]) themes[v.theme_id].visuels.push(v); });
+  SB_QUESTIONS.forEach(function(q) { if(themes[q.theme_id]) themes[q.theme_id].questions.push(q); });
+  SB_QUIZ_CFG.forEach(function(cfg){ if(themes[cfg.theme_id]) themes[cfg.theme_id].quizCfg = cfg; });
   return themes;
 }
 
@@ -3820,12 +3812,12 @@ function renderCoursHub() {
   var el = document.getElementById('cours-hub-content');
   if(!el) return;
 
-  var themes     = buildCoursThemes();
-  var themeList  = Object.values(themes);
-  var totalF     = COURS_DB.filter(function(c){ return c.type !== 'visuel'; }).length;
-  var totalV     = COURS_DB.filter(function(c){ return c.type === 'visuel'; }).length;
-  var totalQ     = QUESTIONS_DB.length;
-  var totalQVal  = QUESTIONS_DB.filter(function(q){ return q.statut==='validé'||q.statut==='valide'; }).length;
+  var themes    = buildCoursThemes();
+  var themeList = Object.values(themes).sort(function(a,b){return (a.ordre||0)-(b.ordre||0);});
+  var totalF    = SB_FICHES.length;
+  var totalV    = SB_VISUELS.length;
+  var totalQ    = SB_QUESTIONS.length;
+  var totalQVal = SB_QUESTIONS.filter(function(q){ return q.actif !== false; }).length;
 
   var subEl = document.getElementById('cours-hub-sub');
   if(subEl) subEl.textContent = themeList.length + ' thèmes · ' + totalF + ' fiches · ' + totalQ + ' questions · ' + totalV + ' visuels';
