@@ -741,7 +741,69 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
 
     <!-- DÉFIS -->
     <div class="view" id="v-defis">
-      <div class="view-title">Défis & Pools</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+        <div class="view-title" style="margin-bottom:0">⚔️ Défis & Pools</div>
+        <button onclick="openDefiConfig()" style="background:var(--ac);color:#fff;border:none;border-radius:9px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">⚙️ Configurer les défis</button>
+      </div>
+
+      <!-- APERÇU BILLET + CARTE INVITÉ -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px" id="defis-preview-grid">
+
+        <!-- Billet créateur -->
+        <div class="panel" style="margin:0">
+          <div class="panel-header"><span>🎟️ Billet envoyé (créateur)</span></div>
+          <div style="padding:14px;background:linear-gradient(135deg,#1a0a30,#2D1B6B);border-radius:0 0 12px 12px">
+            <div style="font-size:9px;font-weight:800;color:rgba(176,108,228,.7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">🎟️ Billet de défi · <span id="dp-theme-emoji">🎯</span></div>
+            <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:10px" id="dp-nom">Défi de [Joueur]</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px">
+              <div style="background:rgba(255,255,255,.07);border-radius:8px;padding:8px;text-align:center">
+                <div style="font-size:14px;font-weight:800;color:#F4A83A" id="dp-mise">50 pts</div>
+                <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:2px">Mise</div>
+              </div>
+              <div style="background:rgba(255,255,255,.07);border-radius:8px;padding:8px;text-align:center">
+                <div style="font-size:14px;font-weight:800;color:#22C9A0" id="dp-cagnotte">100 pts</div>
+                <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:2px">Cagnotte</div>
+              </div>
+              <div style="background:rgba(255,255,255,.07);border-radius:8px;padding:8px;text-align:center">
+                <div style="font-size:12px;font-weight:800;color:#B06CE4" id="dp-theme">Roulette</div>
+                <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:2px">Thème</div>
+              </div>
+            </div>
+            <div style="background:#25D366;border-radius:8px;padding:8px 10px;font-size:10px;font-weight:700;color:#fff;text-align:center" id="dp-wa-preview">
+              💬 ⚔️ [Joueur] te lance un défi Flowin !<br>🎯 Thème · Mise · Cagnotte · Lien
+            </div>
+          </div>
+        </div>
+
+        <!-- Carte reçue (invité) -->
+        <div class="panel" style="margin:0">
+          <div class="panel-header"><span>🎟️ Carte reçue (invité)</span></div>
+          <div style="padding:14px;background:linear-gradient(135deg,#1a0a30,#2D1B6B);border-radius:0 0 12px 12px">
+            <div style="text-align:center;margin-bottom:10px">
+              <div style="font-size:28px;margin-bottom:4px">⚔️</div>
+              <div style="font-size:9px;font-weight:800;color:rgba(244,168,58,.8);text-transform:uppercase;letter-spacing:.06em">🎟️ Tu as reçu un défi !</div>
+              <div style="font-size:14px;font-weight:800;color:#fff;margin-top:4px" id="dp-nom2">Défi de [Joueur]</div>
+              <div style="font-size:12px;color:#9A8FBF;margin-top:3px">lancé par <span style="color:#F4A83A;font-weight:800">[Joueur]</span></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px">
+              <div style="text-align:center">
+                <div style="font-size:14px;font-weight:800;color:#F4A83A" id="dp-mise2">50 pts</div>
+                <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:2px">Mise</div>
+              </div>
+              <div style="text-align:center">
+                <div style="font-size:12px;font-weight:800;color:#B06CE4" id="dp-theme2">Roulette</div>
+                <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:2px">Thème</div>
+              </div>
+              <div style="text-align:center">
+                <div style="font-size:14px;font-weight:800;color:#22C9A0" id="dp-cagnotte2">100 pts</div>
+                <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:2px">Cagnotte</div>
+              </div>
+            </div>
+            <div style="background:linear-gradient(135deg,#F4A83A,#e8850a);border-radius:8px;padding:10px;font-size:11px;font-weight:800;color:#fff;text-align:center">⚔️ Relever le défi !</div>
+          </div>
+        </div>
+      </div>
+
       <div class="kpi-grid" id="defis-kpis" style="margin-bottom:16px"></div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
         <input class="filter-input" id="defis-search" type="text" placeholder="🔍 Joueur, thème…" oninput="renderDefis()" style="flex:1;min-width:140px">
@@ -786,6 +848,85 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       </div>
       <div id="defis-histo" style="display:none"></div>
       <div id="defis-rank" style="display:none"></div>
+
+      <!-- MODAL CONFIG DÉFIS -->
+      <div id="modal-defi-config" class="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:none;align-items:center;justify-content:center;padding:16px">
+        <div style="background:var(--surf);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 0">
+            <div style="font-size:16px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">⚙️ Configuration des défis</div>
+            <button onclick="closeDefiConfig()" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px;color:var(--t2)">✕</button>
+          </div>
+          <div style="padding:20px;display:flex;flex-direction:column;gap:16px">
+
+            <!-- Mise min/max -->
+            <div style="background:var(--surf2);border-radius:12px;padding:14px">
+              <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">💰 Mise des défis</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div>
+                  <label style="font-size:11px;font-weight:600;color:var(--t2);display:block;margin-bottom:5px">Mise minimum (pts)</label>
+                  <input id="dc-mise-min" type="number" min="5" max="500" value="10"
+                    style="width:100%;border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:13px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box">
+                </div>
+                <div>
+                  <label style="font-size:11px;font-weight:600;color:var(--t2);display:block;margin-bottom:5px">Mise maximum (pts)</label>
+                  <input id="dc-mise-max" type="number" min="10" max="5000" value="500"
+                    style="width:100%;border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:13px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box">
+                </div>
+              </div>
+            </div>
+
+            <!-- Thèmes autorisés -->
+            <div style="background:var(--surf2);border-radius:12px;padding:14px">
+              <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">📚 Thèmes autorisés</div>
+              <div style="display:flex;flex-direction:column;gap:8px" id="dc-themes-list">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="dc-th-roulette" checked> <span style="font-size:13px">🎡 Roulette (tous thèmes)</span></label>
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="dc-th-hist" checked> <span style="font-size:13px">📘 Histoire</span></label>
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="dc-th-geo" checked> <span style="font-size:13px">🌍 Géographie</span></label>
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="dc-th-emc" checked> <span style="font-size:13px">⚖️ EMC</span></label>
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="dc-th-pse" checked> <span style="font-size:13px">🩺 PSE</span></label>
+              </div>
+            </div>
+
+            <!-- Message WhatsApp par défaut -->
+            <div style="background:var(--surf2);border-radius:12px;padding:14px">
+              <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">💬 Message WhatsApp (modèle)</div>
+              <div style="font-size:10px;color:var(--t3);margin-bottom:8px">Variables disponibles : {joueur} {theme} {mise} {cagnotte} {lien}</div>
+              <textarea id="dc-wa-msg" rows="5"
+                style="width:100%;border:1px solid var(--b);border-radius:8px;padding:10px;font-size:12px;font-family:monospace;background:var(--surf);color:var(--t);resize:vertical;box-sizing:border-box;line-height:1.5">⚔️ {joueur} te lance un défi Flowin !
+
+{theme}
+Mise : {mise} pts
+Cagnotte : {cagnotte} pts
+
+Rejoins : {lien}
+
+Tu as 24h pour jouer — le meilleur score remporte tout !</textarea>
+              <div style="margin-top:8px;padding:10px;background:var(--surf);border-radius:8px;border:1px solid var(--b)">
+                <div style="font-size:10px;font-weight:700;color:var(--t3);margin-bottom:6px">👁 Aperçu rendu</div>
+                <div style="font-size:11px;color:var(--t2);line-height:1.6;white-space:pre-wrap" id="dc-wa-preview"></div>
+              </div>
+            </div>
+
+            <!-- Durée validité défi -->
+            <div style="background:var(--surf2);border-radius:12px;padding:14px">
+              <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">⏱ Durée de validité</div>
+              <select id="dc-duree" style="width:100%;border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:13px;font-family:inherit;background:var(--surf);color:var(--t)">
+                <option value="24">24 heures</option>
+                <option value="48" selected>48 heures</option>
+                <option value="72">72 heures</option>
+                <option value="168">7 jours</option>
+              </select>
+            </div>
+
+            <!-- Boutons -->
+            <div style="display:flex;gap:8px;justify-content:flex-end">
+              <button onclick="closeDefiConfig()" style="background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:10px 18px;font-size:13px;cursor:pointer;font-family:inherit">Annuler</button>
+              <button onclick="saveDefiConfig()" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">💾 Sauvegarder dans Supabase</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
     <!-- PARRAINAGE -->
     <div class="view" id="v-parrainage">
@@ -5369,6 +5510,118 @@ async function attribuerLot(pseudo, lotId) {
     showAdminToast('✅ Code "' + dispo.code + '" attribué à ' + pseudo + ' !');
     if(currentView==='bareme') renderBaremeView();
   } catch(e) { showAdminToast('⚠️ Erreur attribution : ' + e.message, 'error'); }
+}
+
+// ── CONFIG DÉFIS ──────────────────────────────────────────────
+var DEFI_CONFIG = {
+  mise_min: 10,
+  mise_max: 500,
+  themes: ['roulette','hist','geo','emc','pse'],
+  wa_msg: '⚔️ {joueur} te lance un défi Flowin !\n\n{theme}\nMise : {mise} pts\nCagnotte : {cagnotte} pts\n\nRejoins : {lien}\n\nTu as 24h pour jouer — le meilleur score remporte tout !',
+  duree_h: 48
+};
+
+var DEFI_THEME_LABELS = {roulette:'🎡 Roulette', hist:'📘 Histoire', geo:'🌍 Géographie', emc:'⚖️ EMC', pse:'🩺 PSE'};
+
+function updateDefiPreview() {
+  var mMin = parseInt((document.getElementById('dc-mise-min')||{value:'10'}).value||10);
+  var mMax = parseInt((document.getElementById('dc-mise-max')||{value:'500'}).value||500);
+  var waMsg = (document.getElementById('dc-wa-msg')||{value:''}).value || DEFI_CONFIG.wa_msg;
+  var preview = waMsg
+    .replace(/{joueur}/g, 'Emma L.')
+    .replace(/{theme}/g, '📘 Histoire')
+    .replace(/{mise}/g, '50')
+    .replace(/{cagnotte}/g, '100')
+    .replace(/{lien}/g, 'https://flowrevis.vercel.app/?room=abc123');
+  var previewEl = document.getElementById('dc-wa-preview');
+  if(previewEl) previewEl.textContent = preview;
+  // Mettre à jour les aperçus du billet
+  updateDefiCardPreview();
+}
+
+function updateDefiCardPreview() {
+  var set = function(id, val) { var el = document.getElementById(id); if(el) el.textContent = val; };
+  var waMsg = (document.getElementById('dc-wa-msg')||{value:''}).value || DEFI_CONFIG.wa_msg;
+  var previewLine = waMsg.split('\n')[0]
+    .replace(/{joueur}/g,'[Joueur]').replace(/{theme}/g,'📘 Histoire').replace(/{mise}/g,'50').replace(/{cagnotte}/g,'100').replace(/{lien}/g,'[lien]');
+  set('dp-nom',  '[Joueur] vs [Invité]');
+  set('dp-nom2', '[Joueur] vs [Invité]');
+  set('dp-mise', '50 pts');   set('dp-mise2', '50 pts');
+  set('dp-cagnotte', '100 pts'); set('dp-cagnotte2', '100 pts');
+  set('dp-theme', '📘 Histoire'); set('dp-theme2', '📘 Histoire');
+  set('dp-theme-emoji', '📘');
+  var waEl = document.getElementById('dp-wa-preview');
+  if(waEl) waEl.textContent = '💬 ' + previewLine;
+}
+
+function openDefiConfig() {
+  // Charger config Supabase si dispo
+  if(SB_ENABLED) {
+    var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
+    fetch(SB_URL+'/rest/v1/config?key=eq.defi_config&select=value',{headers:hdrs})
+      .then(function(r){return r.ok?r.json():[];})
+      .then(function(rows){
+        if(rows && rows.length && rows[0].value) {
+          var cfg = rows[0].value;
+          DEFI_CONFIG = Object.assign(DEFI_CONFIG, cfg);
+          populateDefiConfigForm();
+        }
+      }).catch(function(){});
+  }
+  populateDefiConfigForm();
+  var modal = document.getElementById('modal-defi-config');
+  if(modal) modal.style.display = 'flex';
+}
+
+function populateDefiConfigForm() {
+  var setVal = function(id, val) { var el = document.getElementById(id); if(el) el.value = val; };
+  var setChk = function(id, val) { var el = document.getElementById(id); if(el) el.checked = val; };
+  setVal('dc-mise-min', DEFI_CONFIG.mise_min || 10);
+  setVal('dc-mise-max', DEFI_CONFIG.mise_max || 500);
+  setVal('dc-wa-msg', DEFI_CONFIG.wa_msg || '');
+  setVal('dc-duree', DEFI_CONFIG.duree_h || 48);
+  var themes = DEFI_CONFIG.themes || ['roulette','hist','geo','emc','pse'];
+  setChk('dc-th-roulette', themes.indexOf('roulette') >= 0);
+  setChk('dc-th-hist',     themes.indexOf('hist') >= 0);
+  setChk('dc-th-geo',      themes.indexOf('geo') >= 0);
+  setChk('dc-th-emc',      themes.indexOf('emc') >= 0);
+  setChk('dc-th-pse',      themes.indexOf('pse') >= 0);
+  // Bind preview en temps réel
+  var waInput = document.getElementById('dc-wa-msg');
+  if(waInput) { waInput.removeEventListener('input', updateDefiPreview); waInput.addEventListener('input', updateDefiPreview); }
+  updateDefiPreview();
+}
+
+function closeDefiConfig() {
+  var modal = document.getElementById('modal-defi-config');
+  if(modal) modal.style.display = 'none';
+}
+
+function saveDefiConfig() {
+  var themes = [];
+  if((document.getElementById('dc-th-roulette')||{}).checked) themes.push('roulette');
+  if((document.getElementById('dc-th-hist')||{}).checked)     themes.push('hist');
+  if((document.getElementById('dc-th-geo')||{}).checked)      themes.push('geo');
+  if((document.getElementById('dc-th-emc')||{}).checked)      themes.push('emc');
+  if((document.getElementById('dc-th-pse')||{}).checked)      themes.push('pse');
+
+  DEFI_CONFIG = {
+    mise_min:  parseInt((document.getElementById('dc-mise-min')||{value:'10'}).value||10),
+    mise_max:  parseInt((document.getElementById('dc-mise-max')||{value:'500'}).value||500),
+    themes:    themes,
+    wa_msg:    (document.getElementById('dc-wa-msg')||{value:''}).value || '',
+    duree_h:   parseInt((document.getElementById('dc-duree')||{value:'48'}).value||48)
+  };
+
+  if(!SB_ENABLED) { showAdminToast('Config sauvegardée localement (Supabase désactivé)'); closeDefiConfig(); return; }
+  var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'};
+  fetch(SB_URL+'/rest/v1/config', {
+    method:'POST', headers:hdrs,
+    body: JSON.stringify({key:'defi_config', value:DEFI_CONFIG, updated_at:new Date().toISOString()})
+  }).then(function(r){
+    if(r.ok) { showAdminToast('Config défis sauvegardée ✅'); closeDefiConfig(); }
+    else { showAdminToast('Erreur sauvegarde', 'error'); }
+  }).catch(function(){ showAdminToast('Erreur réseau', 'error'); });
 }
 
 function showAdminToast(msg, type) {
