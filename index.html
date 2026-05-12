@@ -7500,7 +7500,7 @@ function openEleve(pseudo) {
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;padding-bottom:12px;border-bottom:1px solid var(--b)">
       ${ava(d.j.prenom,d.j.nom,d.idx,46)}
       <div style="flex:1;min-width:0">
-        <div style="font-size:17px;font-weight:800;color:var(--t);font-family:'Syne',sans-serif;line-height:1.1">${d.j.prenom} ${d.j.nom}</div>
+        <div style="font-size:15px;font-weight:800;color:var(--t);font-family:'Syne',sans-serif;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.j.prenom} ${d.j.nom}</div>
         <div style="font-size:11px;color:var(--t3);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
           <span>${d.j.ecole||'—'}${d.j.classe?' · '+d.j.classe:''}</span>
           <span class="bdg" style="background:${lg.bg};color:${lg.color};font-size:9px;padding:1px 7px">${lg.icon} ${lg.name}</span>
@@ -7509,14 +7509,14 @@ function openEleve(pseudo) {
         </div>
       </div>
       <!-- KPIs en strip horizontal compact -->
-      <div style="display:flex;gap:6px;flex-shrink:0">
+      <div style="display:flex;gap:5px;flex-shrink:0">
         ${[
           [d.avg+'%','Score','var(--gr)'],
           [d.us.length,'Quiz','var(--ac)'],
-          ['🔥'+d.maxStreak,'Streak','var(--am)'],
-          [d.totalPts.toLocaleString('fr'),'Points','var(--am)'],
+          ['🔥'+d.maxStreak+'j','Streak','var(--am)'],
+          [d.totalPts.toLocaleString('fr'),'Pts','var(--am)'],
           [parr.length,'Filleuls','#E040A0'],
-        ].map(([v,l,c])=>`<div style="background:var(--surf2);border-radius:8px;padding:7px 11px;text-align:center;min-width:54px"><div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:${c};line-height:1">${v}</div><div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px">${l}</div></div>`).join('')}
+        ].map(([v,l,col])=>`<div style="background:var(--surf2);border-radius:7px;padding:6px 8px;text-align:center;min-width:46px"><div style="font-size:13px;font-weight:800;color:${col};line-height:1">${v}</div><div style="font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:.03em;margin-top:2px">${l}</div></div>`).join('')}
       </div>
     </div>
 
@@ -7529,11 +7529,11 @@ function openEleve(pseudo) {
       <div style="height:6px;background:var(--surf3);border-radius:3px;overflow:hidden"><div style="height:100%;width:${lgPct}%;background:${lg.color};border-radius:3px;transition:width .4s"></div></div>
     </div>
 
-    <!-- Actions rapides -->
-    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
-      <a href="mailto:${d.j.email||''}" style="padding:7px 14px;border-radius:7px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:11px;font-weight:600;text-decoration:none">✉️ Email</a>
-      <a href="https://wa.me/?text=${encodeURIComponent('Bonjour '+d.j.prenom+', un message de Flowin !')}" target="_blank" style="padding:7px 14px;border-radius:7px;background:#E8F5E9;color:#1B5E20;font-size:11px;font-weight:600;text-decoration:none;border:1px solid #C8E6C9">💬 WhatsApp</a>
-    </div>
+    <!-- Actions rapides — seulement si email présent -->
+    ${d.j.email ? `<div style="display:flex;gap:6px;margin-bottom:10px">
+      <a href="mailto:${d.j.email}" style="padding:5px 11px;border-radius:7px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:11px;font-weight:600;text-decoration:none">✉️ Email</a>
+      <a href="https://wa.me/?text=${encodeURIComponent('Bonjour '+d.j.prenom+', un message de Flowin !')}" target="_blank" style="padding:5px 11px;border-radius:7px;background:#E8F5E9;color:#1B5E20;font-size:11px;font-weight:600;text-decoration:none;border:1px solid #C8E6C9">💬 WA</a>
+    </div>` : ''}
 
     <!-- Contenu 2 colonnes -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
@@ -7558,12 +7558,17 @@ function openEleve(pseudo) {
           ? '<div style="font-size:11px;color:var(--t3);text-align:center;padding:16px 0">Aucun parrainage</div>'
           : parr.slice(0,6).map((p,i)=>{
               const dest = (p.destinataire||'').trim().toLowerCase();
-              const filleul = (buildElevs()||[]).find(e=>
-                (e.pseudo||'').toLowerCase()===dest
-                || (e.j.prenom||'').toLowerCase()===dest
-                || ((e.j.prenom||'') + ' ' + (e.j.nom||'')).trim().toLowerCase()===dest
-                || (e.j.email||'').toLowerCase()===dest
-              );
+              const allE = buildElevs()||[];
+              const filleul = allE.find(e=> {
+                const ep = (e.pseudo||'').toLowerCase();
+                const efn = (e.j.prenom||'').toLowerCase();
+                const efull = ((e.j.prenom||'')+' '+(e.j.nom||'')).trim().toLowerCase();
+                const eem = (e.j.email||'').toLowerCase();
+                // Match si contient ou est contenu
+                return ep===dest || efn===dest || efull===dest || eem===dest
+                  || ep.includes(dest) || dest.includes(ep)
+                  || efn.includes(dest) || dest.includes(efn);
+              });
               return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;${i<Math.min(parr.length,6)-1?'border-bottom:1px solid var(--b)':''};${filleul?'cursor:pointer':''}" ${filleul?`onclick="openEleve('${filleul.pseudo}')"`:''}>\
                 <span style="font-size:13px">${chIc[p.channel]||'↗️'}</span>\
                 <span style="flex:1;font-size:11px;font-weight:600;color:${filleul?'var(--ac)':'var(--t)'}\">${p.destinataire}${filleul?' →':''}</span>\
