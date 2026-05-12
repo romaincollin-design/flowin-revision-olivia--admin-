@@ -2276,7 +2276,7 @@ function renderPartenairesStock(el) {
   var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
   Promise.all([
     fetch(SB_URL+'/rest/v1/gains?order=lot_nom.asc', {headers:hdrs}).then(function(r){ return r.ok?r.json():[]; }),
-    fetch(SB_URL+'/rest/v1/lots_stock?order=partenaire.asc', {headers:hdrs}).then(function(r){ return r.ok?r.json():[]; })
+    fetch(SB_URL+'/rest/v1/lots_stock?order=partenaire.asc', {headers:hdrs}).then(function(r){ return r.ok?r.json():[]; }).catch(function(){ return []; })
   ]).then(function(results) {
     var gains = results[0] || [];
     var stock = results[1] || [];
@@ -4873,7 +4873,7 @@ async function loadStockAndGains() {
   const hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY};
   try {
     const [rs, rg] = await Promise.all([
-      fetch(SB_URL+'/rest/v1/lots_stock?order=created_at.desc', {headers:hdrs}),
+      fetch(SB_URL+'/rest/v1/lots_stock?order=created_at.desc', {headers:hdrs}).catch(function(){ return {ok:false,json:function(){return [];}}; }),
       fetch(SB_URL+'/rest/v1/gains?order=created_at.desc', {headers:hdrs}),
     ]);
     if(rs.ok) STOCK_DB = await rs.json();
