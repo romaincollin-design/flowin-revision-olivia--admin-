@@ -587,6 +587,11 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       <span class="sb-item-icon">📊</span>
       <span>Analytics</span>
     </div>
+    <div class="sb-item" id="nav-cours" onclick="navTo('cours')">
+      <span class="sb-item-icon">📚</span>
+      <span>Cours</span>
+      <span class="sb-badge" id="sb-badge-cours">—</span>
+    </div>
     <div class="sb-item" id="nav-partenaires" onclick="navTo('partenaires')">
       <span class="sb-item-icon">🎁</span>
       <span>Partenaires</span>
@@ -917,46 +922,28 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
 
     <!-- COURS & CONTENUS -->
     <div class="view" id="v-cours">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px">
+      <!-- HEADER -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
         <div>
-          <div class="view-title" style="margin-bottom:0">Cours & Contenus</div>
-          <div class="view-sub">Fiches de révision · Banque de questions · Visuels · Ressources par thème</div>
+          <div class="view-title" style="margin-bottom:2px">Cours &amp; Contenus</div>
+          <div class="view-sub" id="cours-hub-sub">Fiches · Questions · Visuels · Quiz par thème</div>
         </div>
-        <div style="display:flex;gap:8px">
-          <button onclick="openAddCours()" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:6px 13px;font-size:11px;font-weight:600;cursor:pointer">+ Ajouter un cours</button>
-          <button onclick="openAddQuestion()" style="background:var(--gr);color:#fff;border:none;border-radius:7px;padding:6px 13px;font-size:11px;font-weight:600;cursor:pointer">+ Question quiz</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="openAddCours()" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">+ Fiche</button>
+          <button onclick="openAddQuestion()" style="background:var(--gr);color:#fff;border:none;border-radius:7px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">+ Question</button>
         </div>
       </div>
 
-      <!-- Filtres cours -->
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;padding:8px 12px;background:var(--surf);border:1px solid var(--b);border-radius:9px">
-        <input id="cours-search" type="text" placeholder="🔍 Rechercher un cours…" oninput="renderCours()" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:5px 10px;font-size:11px;color:var(--t);outline:none;width:200px">
-        <div style="width:1px;height:18px;background:var(--b)"></div>
-        <span style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase">Matière</span>
-        <div style="display:flex;gap:4px" id="cours-mat-btns">
-          <button onclick="setCoursFilter(this,'mat','all')"   class="cours-mat" style="padding:4px 10px;border-radius:20px;border:2px solid var(--ac);background:#EEECFC;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600">Toutes</button>
-          <button onclick="setCoursFilter(this,'mat','Histoire')"   class="cours-mat" style="padding:4px 10px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:10px;color:var(--t2);cursor:pointer">📜 Histoire</button>
-          <button onclick="setCoursFilter(this,'mat','Géographie')" class="cours-mat" style="padding:4px 10px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:10px;color:var(--t2);cursor:pointer">🌍 Géo</button>
-          <button onclick="setCoursFilter(this,'mat','EMC')"        class="cours-mat" style="padding:4px 10px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:10px;color:var(--t2);cursor:pointer">⚖️ EMC</button>
-          <button onclick="setCoursFilter(this,'mat','PSE')"        class="cours-mat" style="padding:4px 10px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:10px;color:var(--t2);cursor:pointer">🩺 PSE</button>
-        </div>
-        <div style="width:1px;height:18px;background:var(--b)"></div>
-        <span style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase">Type</span>
-        <div style="display:flex;gap:4px">
-          <button onclick="setCoursFilter(this,'type','all')"      class="cours-type" style="padding:4px 10px;border-radius:20px;border:2px solid var(--ac);background:#EEECFC;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600">Tout</button>
-          <button onclick="setCoursFilter(this,'type','fiche')"    class="cours-type" style="padding:4px 10px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:10px;color:var(--t2);cursor:pointer">📄 Fiches</button>
-          <button onclick="setCoursFilter(this,'type','question')" class="cours-type" style="padding:4px 10px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:10px;color:var(--t2);cursor:pointer">❓ Questions</button>
-          <button onclick="setCoursFilter(this,'type','visuel')"   class="cours-type" style="padding:4px 10px;border-radius:20px;border:1px solid var(--b);background:transparent;font-size:10px;color:var(--t2);cursor:pointer">🖼 Visuels</button>
-        </div>
-        <span id="cours-count" style="margin-left:auto;font-size:10px;color:var(--t3)"></span>
+      <!-- ONGLETS BAC -->
+      <div class="defis-tabs" id="cours-bac-tabs" style="margin-bottom:16px">
+        <button class="defis-tab active" id="cours-bac-term" onclick="coursSelectBac('terminale',this)">📘 Terminale Bac Pro</button>
+        <button class="defis-tab" id="cours-bac-2de"  onclick="coursSelectBac('2de',this)">📗 2de Bac Pro</button>
       </div>
 
-      <!-- Grille contenus -->
-      <div id="cours-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:14px"></div>
+      <!-- CONTENU HUB -->
+      <div id="cours-hub-content"></div>
 
-      <!-- Banque de questions par thème -->
-      <div style="font-size:12px;font-weight:700;color:var(--t);margin-bottom:10px;margin-top:8px">❓ Banque de questions — par thème</div>
-      <div id="cours-questions-panel"></div>
+      <!-- Modals hérités (cachés ici, inchangés) -->
     </div>
 
     <!-- MODAL AJOUT COURS -->
@@ -1883,7 +1870,7 @@ const NAV_ITEMS = [
 // Mapping rubriques → label topbar
 const VIEW_LABELS = {
   dashboard:'Dashboard', eleves:'Joueurs', analytics:'Analytics',
-  partenaires:'Partenaires & Lots', parametres:'Paramètres',
+  cours:'Cours & Contenus', partenaires:'Partenaires & Lots', parametres:'Paramètres',
   // anciennes vues (accès legacy)
   ligues:'Ligues', parrainage:'Parrainage', etablissements:'Établissements',
   defis:'Défis', stats:'Stats', cours:'Contenus', bareme:'Barème', appcom:'App & Com', textes:'Textes'
@@ -1899,6 +1886,11 @@ function buildNav() {
 function updateBadges() {
   var nbJ = document.getElementById('sb-badge-joueurs');
   if(nbJ) nbJ.textContent = DB.joueurs.length || '—';
+  var nbC = document.getElementById('sb-badge-cours');
+  if(nbC) {
+    var coursCount = typeof COURS_DB !== 'undefined' ? COURS_DB.length : 0;
+    nbC.textContent = coursCount || '—';
+  }
   var nbL = document.getElementById('sb-badge-lots');
   if(nbL) {
     var lotsCount = (typeof window.LOTS_DB_CACHE !== 'undefined') ? window.LOTS_DB_CACHE.filter(function(l){ return l.actif !== false; }).length : 0;
@@ -1915,7 +1907,7 @@ var RUBRIQUE_MAP = {
   parametres:  function(){ renderParametresHub(); },
   // Sous-vues Paramètres (legacy)
   bareme:    function(){ if(typeof renderBaremeView==='function') renderBaremeView(); },
-  cours:     function(){ if(typeof renderCours==='function') renderCours(); },
+  cours:     function(){ if(typeof renderCoursHub==='function') renderCoursHub(); },
   textes:    function(){ if(typeof renderTextes==='function') renderTextes(); },
   appcom:    function(){ if(typeof renderAppCom==='function') renderAppCom(); }
 };
@@ -1924,7 +1916,7 @@ function navTo(id) {
   currentView = id;
   // Sidebar actif — pour les sous-vues paramètres, marquer Paramètres
   document.querySelectorAll('.sb-item').forEach(function(el){ el.classList.remove('active'); });
-  var paramSubs = ['bareme','cours','textes','appcom'];
+  var paramSubs = ['bareme','textes','appcom'];
   var sbTarget = paramSubs.indexOf(id) >= 0 ? 'nav-parametres' : 'nav-' + id;
   var ni = document.getElementById(sbTarget);
   if(ni) ni.classList.add('active');
@@ -3533,6 +3525,389 @@ function setCoursFilter(btn, filterType, val) {
   btn.style.background='#EEECFC'; btn.style.border='2px solid var(--ac)'; btn.style.color='var(--ac)'; btn.style.fontWeight='600';
   renderCours();
 }
+
+// ── COURS HUB ──
+var coursCurrentBac = 'terminale'; // 'terminale' | '2de'
+var coursCurrentTheme = null;      // null = vue liste des thèmes
+
+function renderCoursHub() {
+  updateBadges();
+  var el = document.getElementById('cours-hub-content');
+  if(!el) return;
+
+  // Données par bac
+  var isTerminale = coursCurrentBac === 'terminale';
+  var niveau = isTerminale ? 'Terminale Bac Pro' : '2de Bac Pro';
+
+  // Fiches de ce bac
+  var fiches = COURS_DB.filter(function(c){ return c.niveau === niveau; });
+  // Questions de ce bac
+  var questions = QUESTIONS_DB.filter(function(q){ return q.niveau === niveau; });
+
+  // Regrouper par thème (depuis fiches)
+  var themes = {};
+  fiches.forEach(function(c) {
+    var t = c.theme || 'Général';
+    if(!themes[t]) themes[t] = { theme: t, fiches: [], visuels: [], emoji: c.emoji || '📄', couleur: c.couleur || 'var(--ac)' };
+    if(c.type === 'visuel') themes[t].visuels.push(c);
+    else themes[t].fiches.push(c);
+  });
+  // Ajouter les questions aux thèmes
+  questions.forEach(function(q) {
+    var t = q.theme || 'Général';
+    if(!themes[t]) themes[t] = { theme: t, fiches: [], visuels: [], emoji: '❓', couleur: 'var(--am)' };
+    if(!themes[t].questions) themes[t].questions = [];
+    themes[t].questions.push(q);
+  });
+
+  var themeList = Object.values(themes);
+
+  // Stats globales
+  var totalFiches = fiches.filter(function(c){ return c.type !== 'visuel'; }).length;
+  var totalVisuels = fiches.filter(function(c){ return c.type === 'visuel'; }).length;
+  var totalQ = questions.length;
+  var totalQVal = questions.filter(function(q){ return q.statut === 'valide' || q.statut === 'validé'; }).length;
+
+  // Breadcrumb/sous-titre
+  var subEl = document.getElementById('cours-hub-sub');
+  if(subEl) subEl.textContent = themeList.length + ' thèmes · ' + totalFiches + ' fiches · ' + totalQ + ' questions · ' + totalVisuels + ' visuels';
+
+  // Si on est sur un thème spécifique
+  if(coursCurrentTheme && themes[coursCurrentTheme]) {
+    renderCoursThemeDetail(themes[coursCurrentTheme], questions, el);
+    return;
+  }
+
+  // Vue liste des thèmes
+  var html = '';
+
+  // KPIs rapides
+  html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">';
+  html += coursKpi('📄', totalFiches, 'Fiches', 'var(--ac)', '#EEECFC');
+  html += coursKpi('❓', totalQ, 'Questions', 'var(--am)', 'var(--amBg)');
+  html += coursKpi('✅', totalQVal, 'Validées', 'var(--gr)', 'var(--grBg)');
+  html += coursKpi('🖼', totalVisuels, 'Visuels', 'var(--bl)', 'var(--blBg)');
+  html += '</div>';
+
+  // Section Quiz Complet (toutes les questions du Bac)
+  html += '<div class="panel" style="margin-bottom:20px">';
+  html += '<div class="panel-header"><span>🎯 Quiz Complet — ' + niveau + '</span>';
+  html += '<span style="font-size:10px;color:var(--t3);font-weight:400">' + totalQ + ' questions · ' + themeList.length + ' thèmes</span></div>';
+  html += '<div style="padding:14px 16px">';
+  html += '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">';
+  html += '<div>';
+  html += '<div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:4px">Révision globale ' + niveau + '</div>';
+  html += '<div style="font-size:11px;color:var(--t3)">Toutes les matières · Tous les thèmes</div>';
+  html += '</div>';
+  html += '<div style="display:flex;gap:8px">';
+  html += '<div style="background:var(--surf2);border-radius:7px;padding:6px 12px;text-align:center">';
+  html += '<div style="font-size:16px;font-weight:800;color:var(--am)">' + totalQ + '</div>';
+  html += '<div style="font-size:9px;color:var(--t3);text-transform:uppercase">Questions</div>';
+  html += '</div>';
+  html += '<div style="background:var(--surf2);border-radius:7px;padding:6px 12px;text-align:center">';
+  html += '<div style="font-size:16px;font-weight:800;color:var(--ac)">' + themeList.length + '</div>';
+  html += '<div style="font-size:9px;color:var(--t3);text-transform:uppercase">Thèmes</div>';
+  html += '</div>';
+  html += '</div></div>';
+
+  // Barres de progression par matière
+  var matieres = {};
+  questions.forEach(function(q){ var m = q.matiere || '?'; if(!matieres[m]) matieres[m] = 0; matieres[m]++; });
+  html += '<div style="margin-top:12px;display:flex;flex-direction:column;gap:6px">';
+  var matEmj = { Histoire: '📜', Géographie: '🌍', EMC: '⚖️', PSE: '🩺' };
+  Object.entries(matieres).forEach(function(e) {
+    var pct = Math.round(e[1] / totalQ * 100);
+    html += '<div style="display:flex;align-items:center;gap:10px">';
+    html += '<span style="font-size:11px;color:var(--t);width:90px;flex-shrink:0">' + (matEmj[e[0]] || '📚') + ' ' + e[0] + '</span>';
+    html += '<div style="flex:1;height:6px;background:var(--surf3);border-radius:3px;overflow:hidden">';
+    html += '<div style="height:100%;width:' + pct + '%;background:var(--ac);border-radius:3px"></div></div>';
+    html += '<span style="font-size:10px;color:var(--t3);width:30px;text-align:right">' + e[1] + '</span></div>';
+  });
+  html += '</div></div></div>';
+
+  // THÈMES PAR SECTION (groupés par matière)
+  var matiereOrder = isTerminale ? ['Histoire', 'Géographie', 'EMC'] : ['PSE'];
+  var matCouleurs = { Histoire: 'var(--ac)', Géographie: 'var(--gr)', EMC: '#E040A0', PSE: '#E84855' };
+  var matEmjG = { Histoire: '📜', Géographie: '🌍', EMC: '⚖️', PSE: '🩺' };
+
+  matiereOrder.forEach(function(mat) {
+    var themesDeMatiere = themeList.filter(function(t) {
+      return t.fiches.concat(t.visuels).concat(t.questions || []).some(function(x){ return x.matiere === mat; });
+    });
+    if(!themesDeMatiere.length) return;
+
+    html += '<div style="margin-bottom:20px">';
+    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid ' + (matCouleurs[mat] || 'var(--b)') + '">';
+    html += '<span style="font-size:18px">' + (matEmjG[mat] || '📚') + '</span>';
+    html += '<span style="font-size:14px;font-weight:800;color:var(--t);font-family:\'Syne\',sans-serif">' + mat + '</span>';
+    html += '<span style="font-size:10px;color:var(--t3);margin-left:auto">' + themesDeMatiere.length + ' thèmes · ' + (themesDeMatiere.reduce(function(s,t){ return s + (t.questions ? t.questions.length : 0); }, 0)) + ' questions</span>';
+    html += '</div>';
+
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px">';
+    themesDeMatiere.forEach(function(t) {
+      var qCount = t.questions ? t.questions.length : 0;
+      var fCount = t.fiches.length;
+      var vCount = t.visuels.length;
+      var qVal = t.questions ? t.questions.filter(function(q){ return q.statut === 'validé' || q.statut === 'valide'; }).length : 0;
+      var avgScore = 0;
+      if(t.fiches.length) {
+        var fiTotal = t.fiches.reduce(function(s,f){ return s + (f.score_moy || 0); }, 0);
+        avgScore = Math.round(fiTotal / t.fiches.length);
+      }
+      var scC = avgScore >= 70 ? 'var(--gr)' : avgScore >= 50 ? 'var(--am)' : avgScore > 0 ? 'var(--re)' : 'var(--t3)';
+
+      html += '<div class="panel" style="margin:0;cursor:pointer;transition:box-shadow .15s;border-left:3px solid ' + (matCouleurs[mat] || 'var(--ac)') + '" onclick="coursOpenTheme(' + "'" + t.theme.replace(/'/g, "\\'") + "'" + ')" onmouseenter="this.style.boxShadow=\'0 4px 16px rgba(0,0,0,.08)\'" onmouseleave="this.style.boxShadow=\'none\'">';
+      html += '<div style="padding:14px 16px">';
+
+      // Header carte
+      html += '<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">';
+      html += '<div style="width:36px;height:36px;border-radius:9px;background:' + (t.couleur || 'var(--acBg)') + '22;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">' + (t.emoji || '📄') + '</div>';
+      html += '<div style="flex:1;min-width:0">';
+      html += '<div style="font-size:12px;font-weight:800;color:var(--t);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + t.theme + '</div>';
+      html += '<div style="font-size:10px;color:var(--t3);margin-top:2px">' + mat + ' · ' + niveau + '</div>';
+      html += '</div>';
+      if(avgScore > 0) {
+        html += '<div style="text-align:right;flex-shrink:0"><span style="font-size:13px;font-weight:800;color:' + scC + '">' + avgScore + '%</span><div style="font-size:8px;color:var(--t3)">score moy.</div></div>';
+      }
+      html += '</div>';
+
+      // Badges contenus
+      html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">';
+      if(fCount) html += '<span style="font-size:10px;background:var(--acBg);color:var(--ac);border-radius:20px;padding:3px 8px;font-weight:600">📄 ' + fCount + ' fiche' + (fCount > 1 ? 's' : '') + '</span>';
+      if(qCount) html += '<span style="font-size:10px;background:var(--amBg);color:var(--am);border-radius:20px;padding:3px 8px;font-weight:600">❓ ' + qCount + ' question' + (qCount > 1 ? 's' : '') + '</span>';
+      if(vCount) html += '<span style="font-size:10px;background:var(--blBg);color:var(--bl);border-radius:20px;padding:3px 8px;font-weight:600">🖼 ' + vCount + ' visuel' + (vCount > 1 ? 's' : '') + '</span>';
+      if(qVal && qCount) html += '<span style="font-size:10px;background:var(--grBg);color:var(--gr);border-radius:20px;padding:3px 8px;font-weight:600">✅ ' + qVal + '/' + qCount + ' validées</span>';
+      html += '</div>';
+
+      // Footer
+      html += '<div style="border-top:1px solid var(--b);padding-top:8px;display:flex;align-items:center;justify-content:space-between">';
+      html += '<span style="font-size:10px;color:var(--t3)">' + (t.fiches[0] ? t.fiches[0].auteur || '' : '') + '</span>';
+      html += '<span style="font-size:10px;color:var(--ac);font-weight:700">Ouvrir →</span>';
+      html += '</div>';
+      html += '</div></div>';
+    });
+    html += '</div></div>';
+  });
+
+  el.innerHTML = html;
+}
+
+function coursKpi(icon, val, label, color, bg) {
+  return '<div style="background:' + bg + ';border-radius:10px;padding:14px;text-align:center">'
+    + '<div style="font-size:20px;margin-bottom:4px">' + icon + '</div>'
+    + '<div style="font-size:22px;font-weight:800;color:' + color + ';font-family:\'Syne\',sans-serif">' + val + '</div>'
+    + '<div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:2px">' + label + '</div>'
+    + '</div>';
+}
+
+function coursSelectBac(bac, btn) {
+  coursCurrentBac = bac;
+  coursCurrentTheme = null;
+  document.querySelectorAll('#cours-bac-tabs .defis-tab').forEach(function(b){
+    b.classList.remove('active');
+  });
+  btn.classList.add('active');
+  renderCoursHub();
+}
+
+function coursOpenTheme(theme) {
+  coursCurrentTheme = theme;
+  renderCoursHub();
+}
+
+function coursBackToHub() {
+  coursCurrentTheme = null;
+  renderCoursHub();
+}
+
+function renderCoursThemeDetail(themeObj, allQuestions, el) {
+  var isTerminale = coursCurrentBac === 'terminale';
+  var niveau = isTerminale ? 'Terminale Bac Pro' : '2de Bac Pro';
+  var mat = themeObj.fiches.length ? themeObj.fiches[0].matiere : (themeObj.questions && themeObj.questions.length ? themeObj.questions[0].matiere : '');
+  var qDeTheme = themeObj.questions || [];
+  var qVal = qDeTheme.filter(function(q){ return q.statut === 'validé' || q.statut === 'valide'; });
+  var matCouleurs = { Histoire: 'var(--ac)', Géographie: 'var(--gr)', EMC: '#E040A0', PSE: '#E84855' };
+  var couleur = matCouleurs[mat] || 'var(--ac)';
+
+  var html = '';
+
+  // Breadcrumb retour
+  html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">';
+  html += '<button onclick="coursBackToHub()" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:6px 12px;font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit">← Retour</button>';
+  html += '<span style="font-size:12px;color:var(--t3)">Cours /</span>';
+  html += '<span style="font-size:12px;font-weight:700;color:var(--t)">' + themeObj.theme + '</span>';
+  html += '</div>';
+
+  // Header thème
+  html += '<div class="panel" style="margin-bottom:16px;border-left:3px solid ' + couleur + '">';
+  html += '<div style="padding:16px">';
+  html += '<div style="display:flex;align-items:center;gap:12px">';
+  html += '<div style="width:48px;height:48px;border-radius:12px;background:' + couleur + '18;display:flex;align-items:center;justify-content:center;font-size:24px">' + (themeObj.emoji || '📄') + '</div>';
+  html += '<div style="flex:1">';
+  html += '<div style="font-size:16px;font-weight:800;color:var(--t);font-family:\'Syne\',sans-serif">' + themeObj.theme + '</div>';
+  html += '<div style="font-size:11px;color:var(--t3);margin-top:3px">' + mat + ' · ' + niveau + '</div>';
+  html += '</div>';
+  html += '<div style="display:flex;gap:8px">';
+  html += '<div style="background:var(--acBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--ac)">' + themeObj.fiches.length + '</div><div style="font-size:9px;color:var(--t3)">Fiches</div></div>';
+  html += '<div style="background:var(--amBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--am)">' + qDeTheme.length + '</div><div style="font-size:9px;color:var(--t3)">Questions</div></div>';
+  html += '<div style="background:var(--blBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--bl)">' + themeObj.visuels.length + '</div><div style="font-size:9px;color:var(--t3)">Visuels</div></div>';
+  html += '</div></div></div></div>';
+
+  // 5 SOUS-SECTIONS
+  // ── 1. CONTENU (résumé de la fiche principale)
+  if(themeObj.fiches.length) {
+    html += '<div class="panel" style="margin-bottom:14px">';
+    html += '<div class="panel-header"><span>📋 Contenu du cours</span></div>';
+    html += '<div style="padding:16px;display:flex;flex-direction:column;gap:14px">';
+    themeObj.fiches.forEach(function(f) {
+      html += '<div>';
+      html += '<div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:6px">' + f.titre + '</div>';
+      html += '<div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:8px">' + (f.resume || '') + '</div>';
+      if(f.points_cles && f.points_cles.length) {
+        html += '<div style="display:flex;flex-direction:column;gap:4px">';
+        f.points_cles.forEach(function(pt) {
+          html += '<div style="display:flex;align-items:flex-start;gap:8px;font-size:11px;color:var(--t)">';
+          html += '<span style="color:' + couleur + ';flex-shrink:0;font-weight:800;margin-top:1px">▸</span>';
+          html += '<span>' + pt + '</span></div>';
+        });
+        html += '</div>';
+      }
+      html += '<div style="margin-top:8px"><button onclick="openFicheCours(\'' + f.id + '\')" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:5px 12px;font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit">✏️ Modifier</button></div>';
+      html += '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  // ── 2. FICHE (points clés condensés + tags)
+  if(themeObj.fiches.length) {
+    html += '<div class="panel" style="margin-bottom:14px">';
+    html += '<div class="panel-header"><span>📄 Fiche mémo — Points clés</span></div>';
+    html += '<div style="padding:16px">';
+    themeObj.fiches.forEach(function(f) {
+      if(!f.points_cles || !f.points_cles.length) return;
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-bottom:12px">';
+      f.points_cles.forEach(function(pt, i) {
+        var colors = ['var(--ac)', 'var(--gr)', 'var(--am)', '#E040A0', 'var(--bl)', couleur];
+        var c = colors[i % colors.length];
+        html += '<div style="background:' + c + '12;border-left:3px solid ' + c + ';border-radius:0 8px 8px 0;padding:8px 10px">';
+        html += '<div style="font-size:11px;font-weight:700;color:' + c + '">' + pt + '</div></div>';
+      });
+      html += '</div>';
+      if(f.tags && f.tags.length) {
+        html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
+        f.tags.forEach(function(tag) {
+          html += '<span style="background:var(--surf2);border:1px solid var(--b);border-radius:20px;padding:3px 10px;font-size:10px;color:var(--t3)">#' + tag + '</span>';
+        });
+        html += '</div>';
+      }
+    });
+    html += '</div></div>';
+  }
+
+  // ── 3. VISUEL
+  html += '<div class="panel" style="margin-bottom:14px">';
+  html += '<div class="panel-header"><span>🖼 Visuels & Ressources</span>';
+  if(themeObj.visuels.length === 0) {
+    html += '<button onclick="openAddCours()" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
+  }
+  html += '</div>';
+  if(themeObj.visuels.length === 0) {
+    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucun visuel pour ce thème — <button onclick="openAddCours()" style="background:none;border:none;color:var(--ac);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Ajouter un visuel</button></div>';
+  } else {
+    html += '<div style="padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">';
+    themeObj.visuels.forEach(function(v) {
+      html += '<div style="background:var(--surf2);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px">';
+      html += '<div style="font-size:24px;text-align:center">' + (v.emoji || '🖼') + '</div>';
+      html += '<div style="font-size:11px;font-weight:700;color:var(--t);text-align:center">' + v.titre + '</div>';
+      html += '<div style="font-size:10px;color:var(--t3);text-align:center">' + (v.auteur || '') + '</div>';
+      if(v.eleve_auteur) html += '<span style="background:var(--grBg);color:var(--gr);border-radius:20px;padding:2px 8px;font-size:9px;text-align:center;font-weight:700">Créé par élève</span>';
+      html += '<button onclick="openFicheCours(\'' + v.id + '\')" style="background:var(--surf3);border:none;border-radius:7px;padding:5px;font-size:10px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit;margin-top:4px">✏️ Modifier</button>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+  html += '</div>';
+
+  // ── 4. QUESTIONS QUIZ
+  html += '<div class="panel" style="margin-bottom:14px">';
+  html += '<div class="panel-header"><span>❓ Questions Quiz — ' + themeObj.theme + '</span>';
+  html += '<div style="display:flex;gap:8px;align-items:center">';
+  html += '<span style="font-size:10px;color:var(--t3)">' + qVal.length + '/' + qDeTheme.length + ' validées</span>';
+  html += '<button onclick="openAddQuestion(\'' + themeObj.theme + '\')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
+  html += '</div></div>';
+  if(!qDeTheme.length) {
+    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucune question — <button onclick="openAddQuestion(\'' + themeObj.theme + '\')" style="background:none;border:none;color:var(--ac);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Créer la première</button></div>';
+  } else {
+    html += '<div style="padding:8px 0">';
+    var difficColors = { facile: 'var(--gr)', moyen: 'var(--am)', difficile: 'var(--re)' };
+    qDeTheme.forEach(function(q, i) {
+      var isValide = q.statut === 'validé' || q.statut === 'valide';
+      html += '<div style="padding:10px 16px;border-bottom:1px solid var(--b);' + (i === qDeTheme.length - 1 ? 'border-bottom:none' : '') + '">';
+      html += '<div style="display:flex;align-items:flex-start;gap:10px">';
+      html += '<span style="font-size:16px;flex-shrink:0;margin-top:1px">' + (isValide ? '✅' : '🔄') + '</span>';
+      html += '<div style="flex:1;min-width:0">';
+      html += '<div style="font-size:12px;font-weight:600;color:var(--t);line-height:1.4;margin-bottom:6px">' + q.question + '</div>';
+      html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">';
+      q.reponses.forEach(function(r, ri) {
+        var isBonne = ri === q.bonne;
+        html += '<span style="font-size:10px;padding:3px 8px;border-radius:20px;' + (isBonne ? 'background:var(--grBg);color:var(--gr);font-weight:700;border:1px solid var(--grBorder)' : 'background:var(--surf2);color:var(--t3);border:1px solid var(--b)') + '">';
+        html += (isBonne ? '✓ ' : '') + r + '</span>';
+      });
+      html += '</div>';
+      html += '<div style="display:flex;gap:8px;align-items:center">';
+      if(q.difficulte) html += '<span style="font-size:9px;font-weight:700;color:' + (difficColors[q.difficulte] || 'var(--t3)') + ';text-transform:uppercase">' + q.difficulte + '</span>';
+      if(q.nb_fois) html += '<span style="font-size:9px;color:var(--t3)">Joué ' + q.nb_fois + '× · ' + q.taux_reussite + '% réussite</span>';
+      html += '<span style="font-size:9px;color:var(--t3)">par ' + (q.auteur || '?') + '</span>';
+      if(!isValide) {
+        html += '<button onclick="if(QUESTIONS_DB.find(function(qq){return qq.id===\'' + q.id + '\';})){QUESTIONS_DB.find(function(qq){return qq.id===\'' + q.id + '\';}).statut=\'validé\';renderCoursHub();}" style="background:var(--grBg);border:none;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;color:var(--gr);cursor:pointer;font-family:inherit">Valider</button>';
+      }
+      html += '</div></div>';
+      html += '<button onclick="openFicheCours(\'' + q.id + '\')" style="background:none;border:none;font-size:10px;color:var(--t3);cursor:pointer;flex-shrink:0;padding:2px 6px">✏️</button>';
+      html += '</div></div>';
+    });
+    html += '</div>';
+  }
+  html += '</div>';
+
+  // ── 5. QUIZ COMPLET ASSOCIÉ
+  html += '<div class="panel" style="margin-bottom:14px">';
+  html += '<div class="panel-header"><span>🎯 Quiz Complet — ' + themeObj.theme + '</span></div>';
+  html += '<div style="padding:16px">';
+  if(!qVal.length) {
+    html += '<div style="text-align:center;color:var(--t3);font-size:11px;padding:10px">Aucune question validée — ajoutez des questions pour activer ce quiz</div>';
+  } else {
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">';
+    html += '<div>';
+    html += '<div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:4px">Quiz — ' + themeObj.theme + '</div>';
+    html += '<div style="font-size:11px;color:var(--t3)">' + qVal.length + ' questions validées · ' + mat + '</div>';
+    html += '</div>';
+    // Répartition par difficulté
+    var diff = { facile: 0, moyen: 0, difficile: 0 };
+    qVal.forEach(function(q){ if(diff[q.difficulte] !== undefined) diff[q.difficulte]++; });
+    html += '<div style="display:flex;gap:6px">';
+    if(diff.facile) html += '<span style="background:var(--grBg);color:var(--gr);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700">😊 ' + diff.facile + ' facile' + (diff.facile > 1 ? 's' : '') + '</span>';
+    if(diff.moyen) html += '<span style="background:var(--amBg);color:var(--am);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700">🤔 ' + diff.moyen + ' moyen' + (diff.moyen > 1 ? 's' : '') + '</span>';
+    if(diff.difficile) html += '<span style="background:var(--reBg);color:var(--re);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700">🔥 ' + diff.difficile + ' difficile' + (diff.difficile > 1 ? 's' : '') + '</span>';
+    html += '</div>';
+    html += '</div>';
+
+    // Taux de réussite global
+    var avgReussite = qVal.reduce(function(s,q){ return s + (q.taux_reussite || 0); }, 0);
+    var avgR = qVal.length ? Math.round(avgReussite / qVal.length) : 0;
+    if(avgR > 0) {
+      var scC = avgR >= 70 ? 'var(--gr)' : avgR >= 50 ? 'var(--am)' : 'var(--re)';
+      html += '<div style="margin-top:12px;background:var(--surf2);border-radius:9px;padding:10px 14px">';
+      html += '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-bottom:6px">';
+      html += '<span>Taux de réussite moyen (toutes sessions)</span><span style="font-weight:700;color:' + scC + '">' + avgR + '%</span></div>';
+      html += '<div style="height:6px;background:var(--surf3);border-radius:3px;overflow:hidden">';
+      html += '<div style="height:100%;width:' + avgR + '%;background:' + scC + ';border-radius:3px"></div></div></div>';
+    }
+  }
+  html += '</div></div>';
+
+  el.innerHTML = html;
+}
+
 
 function renderCours() {
   const search = document.getElementById('cours-search')?.value.toLowerCase()||'';
