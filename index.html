@@ -4346,6 +4346,31 @@ function editSingleQuestion(qId, themeId, callback) {
   });
 }
 
+function switchFicheTab(btn, pseudo, tab) {
+  // Désactiver tous les onglets
+  var tabBtns = btn.parentNode.querySelectorAll('button');
+  tabBtns.forEach(function(b) {
+    b.style.borderBottomColor = 'transparent';
+    b.style.color = 'var(--t3)';
+    b.style.fontWeight = '500';
+  });
+  btn.style.borderBottomColor = 'var(--ac)';
+  btn.style.color = 'var(--ac)';
+  btn.style.fontWeight = '700';
+
+  // Masquer tous les panels
+  var content = document.getElementById('fiche-tab-content-' + pseudo);
+  if(!content) return;
+  content.querySelectorAll('[id^="fiche-tab-"]').forEach(function(el){ el.style.display = 'none'; });
+
+  // Afficher le panel actif
+  var panel = document.getElementById('fiche-tab-' + tab + '-' + pseudo);
+  if(panel) panel.style.display = tab === 'overview' ? 'grid' : 'block';
+
+  // Charger défis si nécessaire
+  if(tab === 'defis') setTimeout(function(){ renderDefisFiche(pseudo, 'crees'); }, 50);
+}
+
 function sendActivationLink(email, prenom) {
   if(!email) { showAdminToast('Email manquant', 'error'); return; }
   if(!confirm('Envoyer un billet d\'activation à ' + email + ' ?')) return;
@@ -7489,200 +7514,239 @@ function openEleve(pseudo) {
   const nextPrenom = nextElev ? nextElev.j.prenom : '—';
 
   document.getElementById('modal-eleve-body').innerHTML = `
-    <!-- Navigation élèves -->
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--b)">
+    <!-- Navigation -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
       <button onclick="${prevOnclick}" style="padding:5px 11px;border-radius:7px;border:1px solid var(--b);background:${prevElev?'var(--surf2)':'var(--surf3)'};color:${prevElev?'var(--t2)':'var(--t3)'};font-size:11px;cursor:${prevElev?'pointer':'default'};font-family:inherit">← ${prevPrenom}</button>
       <span style="font-size:10px;color:var(--t3);flex:1;text-align:center">${currentIdx+1} / ${allElevs.length}</span>
       <button onclick="${nextOnclick}" style="padding:5px 11px;border-radius:7px;border:1px solid var(--b);background:${nextElev?'var(--surf2)':'var(--surf3)'};color:${nextElev?'var(--t2)':'var(--t3)'};font-size:11px;cursor:${nextElev?'pointer':'default'};font-family:inherit">${nextPrenom} →</button>
     </div>
 
-    <!-- Header identité COMPACT — identité + KPIs sur même ligne -->
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;padding-bottom:12px;border-bottom:1px solid var(--b)">
-      ${ava(d.j.prenom,d.j.nom,d.idx,46)}
+    <!-- Header identité compact — 1 ligne -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;padding-bottom:10px;border-bottom:1px solid var(--b)">
+      ${ava(d.j.prenom,d.j.nom,d.idx,44)}
       <div style="flex:1;min-width:0">
-        <div style="font-size:15px;font-weight:800;color:var(--t);font-family:'Syne',sans-serif;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.j.prenom} ${d.j.nom}</div>
-        <div style="font-size:11px;color:var(--t3);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <div style="font-size:16px;font-weight:800;color:var(--t);font-family:'Syne',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.j.prenom} ${d.j.nom}</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:2px;display:flex;gap:5px;align-items:center;flex-wrap:wrap">
           <span>${d.j.ecole||'—'}${d.j.classe?' · '+d.j.classe:''}</span>
-          <span class="bdg" style="background:${lg.bg};color:${lg.color};font-size:9px;padding:1px 7px">${lg.icon} ${lg.name}</span>
+          <span class="bdg" style="background:${lg.bg};color:${lg.color};font-size:9px;padding:1px 6px">${lg.icon} ${lg.name}</span>
           ${bdg(d.isActif?'green':'amber',d.isActif?'Actif':'Inactif')}
-          ${d.j.pwa_installed?'<span class="bdg green" style="font-size:9px;padding:1px 7px">📱 App</span>':'<span class="bdg gray" style="font-size:9px;padding:1px 7px">🌐 Web</span>'}
+          ${d.j.pwa_installed?'<span class="bdg green" style="font-size:9px;padding:1px 6px">📱 App</span>':'<span class="bdg gray" style="font-size:9px;padding:1px 6px">🌐 Web</span>'}
         </div>
       </div>
-      <!-- KPIs en strip horizontal compact -->
-      <div style="display:flex;gap:5px;flex-shrink:0">
-        ${[
-          [d.avg+'%','Score','var(--gr)'],
-          [d.us.length,'Quiz','var(--ac)'],
-          ['🔥'+d.maxStreak+'j','Streak','var(--am)'],
-          [d.totalPts.toLocaleString('fr'),'Pts','var(--am)'],
-          [parr.length,'Filleuls','#E040A0'],
-        ].map(([v,l,col])=>`<div style="background:var(--surf2);border-radius:7px;padding:6px 8px;text-align:center;min-width:46px"><div style="font-size:13px;font-weight:800;color:${col};line-height:1">${v}</div><div style="font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:.03em;margin-top:2px">${l}</div></div>`).join('')}
+      <!-- KPIs strip compact -->
+      <div style="display:flex;gap:4px;flex-shrink:0">
+        ${[[d.avg+'%','Score','var(--gr)'],[d.us.length,'Quiz','var(--ac)'],['🔥'+d.maxStreak+'j','Streak','var(--am)'],[d.totalPts.toLocaleString('fr'),'Pts','var(--am)'],[parr.length,'Filleuls','#E040A0']].map(([v,l,col])=>`<div style="background:var(--surf2);border-radius:7px;padding:5px 8px;text-align:center;min-width:44px"><div style="font-size:13px;font-weight:800;color:${col};line-height:1">${v}</div><div style="font-size:8px;color:var(--t3);text-transform:uppercase;margin-top:2px">${l}</div></div>`).join('')}
       </div>
     </div>
 
-    <!-- Progression ligue -->
-    <div style="background:var(--surf2);border-radius:9px;padding:10px 14px;margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-bottom:6px">
-        <span>${lg.icon} ${lg.name}</span>
-        <span>${d.totalPts.toLocaleString('fr')} / ${lg.max===99999?'∞':lg.max.toLocaleString('fr')} pts → ${lgNext?.name||'MAX 👑'}</span>
-      </div>
-      <div style="height:6px;background:var(--surf3);border-radius:3px;overflow:hidden"><div style="height:100%;width:${lgPct}%;background:${lg.color};border-radius:3px;transition:width .4s"></div></div>
+    <!-- Barre ligue compacte -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <span style="font-size:11px;color:var(--t2);min-width:90px">${lg.icon} ${lg.name}</span>
+      <div style="flex:1;height:5px;background:var(--surf3);border-radius:5px;overflow:hidden"><div style="height:100%;width:${Math.min(100,Math.round(d.totalPts/lg.next*100))}%;background:${lg.color};border-radius:5px"></div></div>
+      <span style="font-size:10px;color:var(--t3)">${d.totalPts} / ${lg.next} pts</span>
+      ${d.j.email ? `<a href="mailto:${d.j.email}" style="padding:3px 9px;border-radius:6px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:10px;font-weight:600;text-decoration:none">✉️</a>` : ''}
+      ${d.j.email ? `<a href="https://wa.me/?text=${encodeURIComponent('Bonjour '+d.j.prenom+' !')}" target="_blank" style="padding:3px 9px;border-radius:6px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:10px;font-weight:600;text-decoration:none">💬</a>` : ''}
     </div>
 
-    <!-- Actions rapides — seulement si email présent -->
-    ${d.j.email ? `<div style="display:flex;gap:6px;margin-bottom:10px">
-      <a href="mailto:${d.j.email}" style="padding:5px 11px;border-radius:7px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:11px;font-weight:600;text-decoration:none">✉️ Email</a>
-      <a href="https://wa.me/?text=${encodeURIComponent('Bonjour '+d.j.prenom+', un message de Flowin !')}" target="_blank" style="padding:5px 11px;border-radius:7px;background:#E8F5E9;color:#1B5E20;font-size:11px;font-weight:600;text-decoration:none;border:1px solid #C8E6C9">💬 WA</a>
-    </div>` : ''}
-
-    <!-- Contenu 2 colonnes -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-
-      <!-- Informations -->
-      <div class="fiche-block">
-        <div class="fiche-block-title">📋 Identité &amp; Compte</div>
-        ${[
-          ['Email', d.j.email||'<span style="color:var(--re)">— Aucun email</span>'],
-          ['Genre', d.j.genre==='F'?'♀ Féminin':d.j.genre==='M'?'♂ Masculin':d.j.genre||'—'],
-          ['Inscription', fmtDate(d.j.ts)],
-          ['Dernière session', d.last?ago(d.last):'—'],
-          ['Mot de passe', d.j.email ? '<span style="color:var(--gr);font-weight:700">✓ Activable</span>' : '<span style="color:var(--t3)">— Email requis</span>'],
-        ].map(([k,v])=>`<div class="info-row"><span class="info-key">${k}</span><span class="info-val">${v}</span></div>`).join('')}
-        ${d.j.email ? `<button onclick="sendActivationLink('${d.j.email}','${(d.j.prenom||d.pseudo).replace(/'/g,"\\'")}')" style="margin-top:8px;width:100%;background:#7C5CFC;color:#fff;border:none;border-radius:7px;padding:8px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✉️ Envoyer billet d'activation</button>` : ''}
-      </div>
-
-      <!-- Parrainages cliquables -->
-      <div class="fiche-block">
-        <div class="fiche-block-title">🎁 Filleuls (${parr.length})</div>
-        ${parr.length===0
-          ? '<div style="font-size:11px;color:var(--t3);text-align:center;padding:16px 0">Aucun parrainage</div>'
-          : parr.slice(0,6).map((p,i)=>{
-              const dest = (p.destinataire||'').trim().toLowerCase();
-              const allE = buildElevs()||[];
-              const filleul = allE.find(e=> {
-                const ep = (e.pseudo||'').toLowerCase();
-                const efn = (e.j.prenom||'').toLowerCase();
-                const efull = ((e.j.prenom||'')+' '+(e.j.nom||'')).trim().toLowerCase();
-                const eem = (e.j.email||'').toLowerCase();
-                // Match si contient ou est contenu
-                return ep===dest || efn===dest || efull===dest || eem===dest
-                  || ep.includes(dest) || dest.includes(ep)
-                  || efn.includes(dest) || dest.includes(efn);
-              });
-              return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;${i<Math.min(parr.length,6)-1?'border-bottom:1px solid var(--b)':''};${filleul?'cursor:pointer':''}" ${filleul?`onclick="openEleve('${filleul.pseudo}')"`:''}>\
-                <span style="font-size:13px">${chIc[p.channel]||'↗️'}</span>\
-                <span style="flex:1;font-size:11px;font-weight:600;color:${filleul?'var(--ac)':'var(--t)'}\">${p.destinataire}${filleul?' →':''}</span>\
-                <span style="font-size:10px;background:#E8F5E9;color:var(--gr);border-radius:20px;padding:2px 8px;font-weight:700">+${p.pts||100} pts</span>\
-              </div>`;
-            }).join('')
-        }
-        ${parr.length>0?`<div style="font-size:10px;color:var(--gr);font-weight:700;margin-top:8px;padding-top:8px;border-top:1px solid var(--b)">Total : +${parr.reduce((s,p)=>s+(p.pts||100),0)} pts</div>`:''}
-      </div>
+    <!-- Onglets -->
+    <div style="display:flex;border-bottom:1px solid var(--b);margin-bottom:12px;gap:0">
+      ${['overview','filleuls','lots','connexions','sessions'].map((tab,i)=>{
+        const labels=['Vue d\'ensemble','Filleuls','Lots','Connexions','Sessions'];
+        const counts=['',' ('+parr.length+')',' ('+(typeof GAINS_DB!=='undefined'?GAINS_DB.filter(g=>g.pseudo===d.pseudo).length:0)+')',' ('+d.connexions.length+')',' ('+d.us.length+')'];
+        const isActive = i===0;
+        return `<button onclick="switchFicheTab(this,'${pseudo}','${tab}')" data-tab="${tab}" style="padding:8px 12px;border:none;border-bottom:2px solid ${isActive?'var(--ac)':'transparent'};background:transparent;color:${isActive?'var(--ac)':'var(--t3)'};font-size:11px;font-weight:${isActive?'700':'500'};cursor:pointer;font-family:inherit;white-space:nowrap">${labels[i]}<span style="font-size:9px;margin-left:3px;opacity:.7">${counts[i]}</span></button>`;
+      }).join('')}
     </div>
 
-    <!-- Thèmes favoris -->
-    ${topT.length>0?`<div class="fiche-block" style="margin-bottom:12px">
-      <div class="fiche-block-title">🎯 Thèmes favoris</div>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px">
-        ${topT.slice(0,4).map(([t,n])=>`<div style="background:var(--surf2);border-radius:7px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;color:var(--t);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px">${t}</span><span style="font-size:10px;color:var(--t3);flex-shrink:0;margin-left:4px">${n}×</span></div>`).join('')}
-      </div>
-    </div>`:''}
+    <!-- Contenu onglets -->
+    <div id="fiche-tab-content-${pseudo}">
 
-    <!-- QR Code parrainage -->
-    <div class="fiche-block" style="margin-bottom:12px">
-      <div class="fiche-block-title">⬛ QR Code — Lien de parrainage</div>
-      <div style="display:flex;align-items:center;gap:16px;padding:8px 0">
-        <img id="fiche-qr-${d.pseudo}" src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent('https://romaincollin-design.github.io/flowin-revision-bac-olivia-2026?ref='+d.pseudo)}&color=3B3A8F&bgcolor=FFFFFF&qzone=1" style="border-radius:8px;border:1px solid var(--b);flex-shrink:0" width="110" height="110" alt="QR ${d.pseudo}">
-        <div style="flex:1;min-width:0">
-          <div style="font-size:11px;font-weight:700;color:var(--t);margin-bottom:6px">Lien personnel de ${d.j.prenom}</div>
-          <div style="font-size:10px;color:var(--t3);word-break:break-all;background:var(--surf2);border-radius:6px;padding:6px 8px;font-family:monospace;margin-bottom:10px">https://romaincollin-design.github.io/flowin-revision-bac-olivia-2026?ref=${d.pseudo}</div>
-          <div style="display:flex;gap:6px">
-            <a href="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent('https://romaincollin-design.github.io/flowin-revision-bac-olivia-2026?ref='+d.pseudo)}&color=3B3A8F&bgcolor=FFFFFF&qzone=2" download="flowin-qr-${d.pseudo}.png" target="_blank" style="padding:6px 12px;border-radius:7px;background:var(--ac);color:#fff;font-size:11px;font-weight:600;text-decoration:none">⬇ Télécharger</a>
-            <button onclick="navigator.clipboard.writeText('https://romaincollin-design.github.io/flowin-revision-bac-olivia-2026?ref=${d.pseudo}').then(()=>{this.textContent='✓ Copié !';setTimeout(()=>this.textContent='📋 Copier lien',1500)})" style="padding:6px 12px;border-radius:7px;background:var(--surf2);border:1px solid var(--b);color:var(--t2);font-size:11px;font-weight:600;cursor:pointer">📋 Copier lien</button>
+      <!-- VUE D'ENSEMBLE — grid 2 col -->
+      <div id="fiche-tab-overview-${pseudo}" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+
+        <!-- Identité & Compte -->
+        <div class="fiche-block">
+          <div class="fiche-block-title">📋 Identité &amp; Compte</div>
+          ${[
+            ['Email', d.j.email||'<span style="color:var(--re);font-size:10px">— Aucun email</span>'],
+            ['Genre', d.j.genre==='F'?'♀ Féminin':d.j.genre==='M'?'♂ Masculin':d.j.genre||'—'],
+            ['Inscription', fmtDate(d.j.ts)],
+            ['Dernière session', d.last?ago(d.last):'—'],
+            ['Mot de passe', d.j.email?'<span style="color:var(--gr);font-weight:700">✓ Activable</span>':'<span style="color:var(--t3)">— Email requis</span>'],
+          ].map(([k,v])=>`<div class="info-row"><span class="info-key">${k}</span><span class="info-val">${v}</span></div>`).join('')}
+          ${d.j.email ? `<button onclick="sendActivationLink('${d.j.email}','${(d.j.prenom||d.pseudo).replace(/'/g,"\\'")}\")" style="margin-top:8px;width:100%;background:var(--ac);color:#fff;border:none;border-radius:7px;padding:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✉️ Billet d'activation</button>` : ''}
+        </div>
+
+        <!-- Filleuls -->
+        <div class="fiche-block">
+          <div class="fiche-block-title">🎁 Filleuls (${parr.length})</div>
+          ${parr.length===0
+            ? '<div style="font-size:11px;color:var(--t3);text-align:center;padding:12px 0">Aucun parrainage</div>'
+            : parr.slice(0,5).map((p,i)=>{
+                const dest = (p.destinataire||'').trim().toLowerCase();
+                const filleul = (buildElevs()||[]).find(e=> {
+                  const ep=(e.pseudo||'').toLowerCase();
+                  const efn=(e.j.prenom||'').toLowerCase();
+                  return ep===dest||efn===dest||ep.includes(dest)||dest.includes(ep)||efn.includes(dest)||dest.includes(efn);
+                });
+                return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;${i<Math.min(parr.length,5)-1?'border-bottom:1px solid var(--b)':''};${filleul?'cursor:pointer':''}" ${filleul?`onclick="openEleve('${filleul.pseudo}')"`:''}><span style="font-size:12px">${chIc[p.channel]||'↗️'}</span><span style="flex:1;font-size:12px;font-weight:600;color:${filleul?'var(--ac)':'var(--t)'}">${p.destinataire}${filleul?' →':''}</span><span style="font-size:10px;background:#E8F5E9;color:var(--gr);border-radius:20px;padding:2px 7px;font-weight:700">+${p.pts||100} pts</span></div>`;
+              }).join('')
+          }
+          ${parr.length>0?`<div style="font-size:10px;color:var(--gr);font-weight:700;margin-top:6px;padding-top:6px;border-top:1px solid var(--b)">Total : +${parr.reduce((s,p)=>s+(p.pts||100),0)} pts</div>`:''}
+        </div>
+
+        <!-- QR Code -->
+        <div class="fiche-block">
+          <div class="fiche-block-title">🔗 QR Code parrainage</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            ${d.qrSvg ? `<div style="width:70px;height:70px;flex-shrink:0">${d.qrSvg}</div>` : `<img src="https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=${encodeURIComponent(refLink)}" width="70" height="70" style="border-radius:7px;flex-shrink:0">`}
+            <div style="flex:1;min-width:0">
+              <div style="font-size:11px;font-weight:700;margin-bottom:3px">Lien de ${d.j.prenom||d.pseudo}</div>
+              <div style="font-size:10px;color:var(--t3);word-break:break-all;margin-bottom:6px">${refLink}</div>
+              <div style="display:flex;gap:5px">
+                <a href="${refLink}" target="_blank" style="padding:4px 9px;background:var(--ac);color:#fff;border-radius:6px;font-size:10px;font-weight:700;text-decoration:none">↓ PNG</a>
+                <button onclick="navigator.clipboard.writeText('${refLink}').then(()=>showAdminToast('Lien copié'))" style="padding:4px 9px;background:var(--surf2);border:1px solid var(--b);border-radius:6px;font-size:10px;cursor:pointer;font-family:inherit">📋 Copier</button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- GESTION DES POINTS — V11 -->
-    <div class="fiche-block" style="margin-bottom:12px">
-      <div class="fiche-block-title">💰 Gestion des points</div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <div style="background:var(--amBg);border-radius:8px;padding:8px 12px;text-align:center;flex-shrink:0">
-          <div style="font-size:22px;font-weight:800;color:var(--am)" id="fichePointsVal${pseudo}">${d.totalPts.toLocaleString('fr')}</div>
-          <div style="font-size:9px;color:var(--t3);text-transform:uppercase">pts actuels</div>
+        <!-- Lots remportés -->
+        <div class="fiche-block">
+          <div class="fiche-block-title">🏅 Lots remportés</div>
+          ${(() => {
+            const eleveGains = (typeof GAINS_DB !== 'undefined' ? GAINS_DB : []).filter(g => g.pseudo === d.pseudo);
+            if(!eleveGains.length) return '<div style="font-size:11px;color:var(--t3);text-align:center;padding:12px 0">Aucun lot remporté</div>';
+            let h = '';
+            eleveGains.forEach((g,i) => {
+              const dateStr = g.created_at ? new Date(g.created_at).toLocaleDateString('fr-FR') : '';
+              h += `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;${i<eleveGains.length-1?'border-bottom:1px solid var(--b)':''}"><span style="font-size:18px;flex-shrink:0">${g.lot_emoji||'🎁'}</span><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700">${g.lot_nom||'—'}</div><div style="font-size:10px;color:var(--t3)">${g.condition||'—'} · ${dateStr}</div></div><span style="background:#EEECFC;color:var(--ac);font-family:monospace;font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px">${g.code||''}</span></div>`;
+            });
+            return h;
+          })()}
         </div>
-        <input type="number" id="fichePointsInput${pseudo}" min="0" placeholder="Valeur" style="flex:1;padding:9px 12px;border:1px solid var(--b);border-radius:8px;font-family:inherit;font-size:14px;background:var(--surf2);color:var(--t)">
-      </div>
-      <div style="display:flex;gap:6px">
-        <button onclick="adminUpdatePoints('${pseudo}','add')" style="flex:1;padding:8px;background:#E8F5E9;color:#1B5E20;border:1px solid #C8E6C9;border-radius:8px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer">+ Ajouter</button>
-        <button onclick="adminUpdatePoints('${pseudo}','sub')" style="flex:1;padding:8px;background:#FFEBEE;color:#C62828;border:1px solid #FFCDD2;border-radius:8px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer">− Retirer</button>
-        <button onclick="adminUpdatePoints('${pseudo}','set')" style="flex:1;padding:8px;background:var(--surf2);color:var(--t2);border:1px solid var(--b);border-radius:8px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer">= Définir</button>
-      </div>
-    </div>
 
-    <!-- DÉFIS ÉLÈVE — V11 -->
-    <div class="fiche-block" style="margin-bottom:12px">
-      <div class="fiche-block-title">⚔️ Défis de l\'eleve</div>
-      <!-- Onglets -->
-      <div style="display:flex;gap:6px;margin-bottom:10px">
-        <button id="defiTabCrees${pseudo}" onclick="renderDefisFiche('${pseudo}','crees')" style="flex:1;padding:6px 4px;background:var(--ac);color:#fff;border:none;border-radius:7px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">Créés</button>
-        <button id="defiTabParticipes${pseudo}" onclick="renderDefisFiche('${pseudo}','participes')" style="flex:1;padding:6px 4px;background:var(--surf2);color:var(--t3);border:1px solid var(--b);border-radius:7px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">Participés</button>
-        <button id="defiTabTermines${pseudo}" onclick="renderDefisFiche('${pseudo}','termines')" style="flex:1;padding:6px 4px;background:var(--surf2);color:var(--t3);border:1px solid var(--b);border-radius:7px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">Terminés</button>
+        <!-- Gestion points -->
+        <div class="fiche-block">
+          <div class="fiche-block-title">💰 Gestion des points</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <div style="background:var(--amBg);border-radius:8px;padding:8px 14px;text-align:center">
+              <div style="font-size:20px;font-weight:800;color:var(--am)">${d.totalPts.toLocaleString('fr')}</div>
+              <div style="font-size:9px;color:var(--t3);text-transform:uppercase">Pts actuels</div>
+            </div>
+            <input type="number" id="pts-delta-${pseudo}" placeholder="Valeur" min="0" style="flex:1;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:13px;font-family:inherit;background:var(--surf2);color:var(--t)">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+            <button onclick="editPoints('${pseudo}','add')" style="background:#E8F5E9;color:var(--gr);border:1px solid #C8E6C9;border-radius:7px;padding:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">+ Ajouter</button>
+            <button onclick="editPoints('${pseudo}','sub')" style="background:#FFF3E0;color:var(--am);border:1px solid #FFE0B2;border-radius:7px;padding:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">− Retirer</button>
+            <button onclick="editPoints('${pseudo}','set')" style="background:var(--acBg);color:var(--ac);border:1px solid var(--acBorder);border-radius:7px;padding:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">= Définir</button>
+          </div>
+        </div>
+
+        <!-- Thèmes favoris -->
+        ${topT.length>0?`<div class="fiche-block">
+          <div class="fiche-block-title">🎯 Thèmes favoris</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
+            ${topT.slice(0,4).map(([t,n])=>`<div style="background:var(--surf2);border-radius:7px;padding:7px 9px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;color:var(--t);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:120px">${t}</span><span style="font-size:10px;color:var(--t3);flex-shrink:0;margin-left:4px">${n}×</span></div>`).join('')}
+          </div>
+        </div>`:''}
+
       </div>
-      <div id="defisFicheContent${pseudo}"><div style="text-align:center;color:var(--t3);font-size:11px;padding:12px">Chargement…</div></div>
-    </div>
 
-    <!-- GAINS & LOTS REMPORTÉS -->
-    ${(() => {
-      const eleveGains = (typeof GAINS_DB !== 'undefined' ? GAINS_DB : []).filter(g => g.pseudo === d.pseudo);
-      if(eleveGains.length === 0) {
-        return '<div class="fiche-block" style="margin-bottom:12px"><div class="fiche-block-title">🏅 Lots remportés (0)</div><div style="text-align:center;padding:16px;color:var(--t3);font-size:11px">Aucun lot remporté pour le moment</div></div>';
-      }
-      let lotsHtml = '<div class="fiche-block" style="margin-bottom:12px"><div class="fiche-block-title">🏅 Lots remportés (' + eleveGains.length + ')</div>';
-      eleveGains.forEach((g, i) => {
-        const dateStr = g.created_at ? new Date(g.created_at).toLocaleDateString('fr-FR') : '';
-        const border = i < eleveGains.length - 1 ? 'border-bottom:1px solid var(--b)' : '';
-        lotsHtml += '<div style="display:flex;align-items:center;gap:10px;padding:9px 0;' + border + '">'
-          + '<span style="font-size:22px;flex-shrink:0">' + (g.lot_emoji || '🎁') + '</span>'
-          + '<div style="flex:1;min-width:0">'
-          + '<div style="font-size:12px;font-weight:700;color:var(--t)">' + (g.lot_nom || '—') + '</div>'
-          + '<div style="font-size:10px;color:var(--t3);margin-top:2px">' + (g.condition || '—') + ' · ' + dateStr + '</div>'
-          + '</div>'
-          + '<div style="background:#EEECFC;border-radius:7px;padding:6px 12px;text-align:center">'
-          + '<div style="font-family:monospace;font-size:13px;font-weight:800;color:var(--ac);letter-spacing:.06em">' + (g.code || '') + '</div>'
-          + '<div style="font-size:9px;color:var(--t3);margin-top:2px">Code promo</div>'
-          + '</div></div>';
-      });
-      lotsHtml += '</div>';
-      return lotsHtml;
-    })()}
+      <!-- FILLEULS (onglet) -->
+      <div id="fiche-tab-filleuls-${pseudo}" style="display:none">
+        <div class="fiche-block">
+          <div class="fiche-block-title">🎁 Filleuls (${parr.length})</div>
+          ${parr.length===0
+            ? '<div style="text-align:center;padding:20px;color:var(--t3);font-size:11px">Aucun parrainage</div>'
+            : parr.map((p,i)=>{
+                const dest=(p.destinataire||'').trim().toLowerCase();
+                const filleul=(buildElevs()||[]).find(e=>{const ep=(e.pseudo||'').toLowerCase();const efn=(e.j.prenom||'').toLowerCase();return ep===dest||efn===dest||ep.includes(dest)||dest.includes(ep)||efn.includes(dest)||dest.includes(efn);});
+                return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;${i<parr.length-1?'border-bottom:1px solid var(--b)':''};${filleul?'cursor:pointer':''}" ${filleul?`onclick="openEleve('${filleul.pseudo}')"`:''}>${ava(p.destinataire,'',i,30)}<div style="flex:1"><div style="font-size:12px;font-weight:700;color:${filleul?'var(--ac)':'var(--t)'}">${p.destinataire}${filleul?' →':''}</div><div style="font-size:10px;color:var(--t3)">${chIc[p.channel]||'↗️'} ${p.channel||'—'} · ${fmtDate(p.ts)}</div></div><span style="font-size:11px;background:#E8F5E9;color:var(--gr);border-radius:20px;padding:3px 9px;font-weight:700">+${p.pts||100} pts</span></div>`;
+              }).join('')}
+          ${parr.length>0?`<div style="padding-top:10px;border-top:1px solid var(--b);font-size:11px;color:var(--gr);font-weight:700">Total : +${parr.reduce((s,p)=>s+(p.pts||100),0)} pts</div>`:''}
+        </div>
+      </div>
 
-    <div class="fiche-block">
-      <div class="fiche-block-title">🔐 Connexions <span style="font-size:10px;color:var(--t3);font-weight:400">(${d.connexions.length})</span></div>
-      ${d.connexions.length ? `
-        <table style="width:100%;border-collapse:collapse">
-          <thead><tr>
-            <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Date</th>
-            <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Heure</th>
-            <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Durée</th>
-            <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Appareil</th>
-          </tr></thead>
-          <tbody>
-            ${d.connexions.slice(0,20).map((c,i)=>{
-              const dt = new Date(c.ts);
-              const icon = c.device==='PWA'?'📱':c.device==='Mobile Web'?'📲':'💻';
-              return `<tr style="background:${i%2===0?'transparent':'var(--surf2)'}">
-                <td style="padding:7px 8px;font-size:11px;color:var(--t)">${dt.toLocaleDateString('fr-FR',{weekday:'short',day:'2-digit',month:'short'})}</td>
-                <td style="padding:7px 8px;font-size:11px;color:var(--t);font-weight:600">${dt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</td>
-                <td style="padding:7px 8px;font-size:11px;color:${c.duree_min>0?'var(--ac)':'var(--t3)'};font-weight:${c.duree_min>0?'700':'400'}">${c.duree_min>0?c.duree_min+' min':'—'}</td>
-                <td style="padding:7px 8px;font-size:11px;color:var(--t3)">${icon} ${c.device||'—'}</td>
-              </tr>`;
-            }).join('')}
-          </tbody>
-        </table>
-        ${d.connexions.length>20?`<div style="text-align:center;font-size:10px;color:var(--t3);padding:8px;border-top:1px solid var(--b)">+ ${d.connexions.length-20} connexions plus anciennes</div>`:''}
-      ` : `<div style="text-align:center;padding:16px;color:var(--t3);font-size:11px">Aucune connexion enregistrée</div>`}
+      <!-- LOTS (onglet) -->
+      <div id="fiche-tab-lots-${pseudo}" style="display:none">
+        <div class="fiche-block">
+          <div class="fiche-block-title">🏅 Lots remportés</div>
+          ${(() => {
+            const eleveGains=(typeof GAINS_DB!=='undefined'?GAINS_DB:[]).filter(g=>g.pseudo===d.pseudo);
+            if(!eleveGains.length) return '<div style="text-align:center;padding:20px;color:var(--t3);font-size:11px">Aucun lot remporté</div>';
+            let h='';
+            eleveGains.forEach((g,i)=>{
+              const dateStr=g.created_at?new Date(g.created_at).toLocaleDateString('fr-FR'):'';
+              h+=`<div style="display:flex;align-items:center;gap:12px;padding:10px 0;${i<eleveGains.length-1?'border-bottom:1px solid var(--b)':''}"><span style="font-size:24px;flex-shrink:0">${g.lot_emoji||'🎁'}</span><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">${g.lot_nom||'—'}</div><div style="font-size:10px;color:var(--t3);margin-top:2px">${g.condition||'—'} · ${dateStr}</div></div><div style="background:#EEECFC;border-radius:8px;padding:6px 12px;text-align:center"><div style="font-family:monospace;font-size:13px;font-weight:800;color:var(--ac)">${g.code||''}</div><div style="font-size:9px;color:var(--t3);margin-top:2px">Code promo</div></div></div>`;
+            });
+            return h;
+          })()}
+        </div>
+      </div>
+
+      <!-- CONNEXIONS (onglet) -->
+      <div id="fiche-tab-connexions-${pseudo}" style="display:none">
+        <div class="fiche-block">
+          <div class="fiche-block-title">🔐 Connexions (${d.connexions.length})</div>
+          ${d.connexions.length ? `
+            <table style="width:100%;border-collapse:collapse">
+              <thead><tr>
+                <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Date</th>
+                <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Heure</th>
+                <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Appareil</th>
+              </tr></thead>
+              <tbody>
+                ${d.connexions.slice(0,20).map(cx=>{
+                  const dt=new Date(cx.ts);
+                  return `<tr><td style="padding:7px 8px;font-size:11px;border-bottom:1px solid var(--b)">${dt.toLocaleDateString('fr-FR')}</td><td style="padding:7px 8px;font-size:11px;border-bottom:1px solid var(--b)">${dt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}</td><td style="padding:7px 8px;font-size:11px;border-bottom:1px solid var(--b);color:var(--t3)">${cx.device||'—'}</td></tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+            ${d.connexions.length>20?`<div style="text-align:center;font-size:10px;color:var(--t3);padding:8px;border-top:1px solid var(--b)">+ ${d.connexions.length-20} connexions plus anciennes</div>`:''}
+          ` : `<div style="text-align:center;padding:20px;color:var(--t3);font-size:11px">Aucune connexion enregistrée</div>`}
+        </div>
+      </div>
+
+      <!-- SESSIONS (onglet) -->
+      <div id="fiche-tab-sessions-${pseudo}" style="display:none">
+        <div class="fiche-block">
+          <div class="fiche-block-title">📊 Sessions quiz (${d.us.length})</div>
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <div style="background:var(--surf2);border-radius:8px;padding:8px 14px;text-align:center;flex:1"><div style="font-size:16px;font-weight:800;color:var(--ac)">${d.us.length}</div><div style="font-size:9px;color:var(--t3);text-transform:uppercase">Quiz joués</div></div>
+            <div style="background:var(--surf2);border-radius:8px;padding:8px 14px;text-align:center;flex:1"><div style="font-size:16px;font-weight:800;color:var(--gr)">${d.avg}%</div><div style="font-size:9px;color:var(--t3);text-transform:uppercase">Score moy.</div></div>
+            <div style="background:var(--surf2);border-radius:8px;padding:8px 14px;text-align:center;flex:1"><div style="font-size:16px;font-weight:800;color:var(--am)">🔥${d.maxStreak}j</div><div style="font-size:9px;color:var(--t3);text-transform:uppercase">Streak max</div></div>
+          </div>
+          ${d.us.length ? `
+            <table style="width:100%;border-collapse:collapse">
+              <thead><tr>
+                <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Thème</th>
+                <th style="text-align:right;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Score</th>
+                <th style="text-align:right;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Pts</th>
+                <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Date</th>
+              </tr></thead>
+              <tbody>
+                ${d.us.slice(0,20).map(s=>`<tr><td style="padding:7px 8px;font-size:11px;border-bottom:1px solid var(--b);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${s.theme_id||'—'}</td><td style="padding:7px 8px;font-size:11px;border-bottom:1px solid var(--b);text-align:right;font-weight:700;color:${(s.score||0)>=70?'var(--gr)':(s.score||0)>=50?'var(--am)':'var(--re)'}">${s.score||0}%</td><td style="padding:7px 8px;font-size:11px;border-bottom:1px solid var(--b);text-align:right;color:var(--am);font-weight:700">+${s.pts||0}</td><td style="padding:7px 8px;font-size:11px;border-bottom:1px solid var(--b);color:var(--t3)">${s.ts?new Date(s.ts).toLocaleDateString('fr-FR'):'—'}</td></tr>`).join('')}
+              </tbody>
+            </table>
+            ${d.us.length>20?`<div style="text-align:center;font-size:10px;color:var(--t3);padding:8px;border-top:1px solid var(--b)">+ ${d.us.length-20} sessions plus anciennes</div>`:''}
+          ` : `<div style="text-align:center;padding:20px;color:var(--t3);font-size:11px">Aucune session enregistrée</div>`}
+        </div>
+      </div>
+
+      <!-- Défis -->
+      <div id="fiche-tab-defis-${pseudo}" style="display:none">
+        <div class="fiche-block">
+          <div class="fiche-block-title">⚔️ Défis</div>
+          <div style="display:flex;gap:6px;margin-bottom:10px">
+            <button id="defiTabCrees${pseudo}" onclick="renderDefisFiche('${pseudo}','crees')" style="flex:1;padding:6px 4px;background:var(--ac);color:#fff;border:none;border-radius:7px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">Créés</button>
+            <button id="defiTabParticipes${pseudo}" onclick="renderDefisFiche('${pseudo}','participes')" style="flex:1;padding:6px 4px;background:var(--surf2);color:var(--t3);border:1px solid var(--b);border-radius:7px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">Participés</button>
+            <button id="defiTabTermines${pseudo}" onclick="renderDefisFiche('${pseudo}','termines')" style="flex:1;padding:6px 4px;background:var(--surf2);color:var(--t3);border:1px solid var(--b);border-radius:7px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer">Terminés</button>
+          </div>
+          <div id="defisFicheContent${pseudo}"><div style="text-align:center;color:var(--t3);font-size:11px;padding:12px">Chargement…</div></div>
+        </div>
+      </div>
+
     </div>
   `;
   document.getElementById('modal-eleve').classList.add('open');
