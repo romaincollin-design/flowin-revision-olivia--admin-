@@ -2406,74 +2406,193 @@ function toggleEnAvant(id, val) {
 
 // ── STOCK & CODES ──
 function renderPartenairesStock(el) {
-  el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3)">Chargement…</div>';
+  el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3)">Chargement...</div>';
   var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
   Promise.all([
-    fetch(SB_URL+'/rest/v1/gains?order=lot_nom.asc', {headers:hdrs}).then(function(r){ return r.ok?r.json():[]; }),
-    fetch(SB_URL+'/rest/v1/lots_stock?order=partenaire.asc', {headers:hdrs}).then(function(r){ return r.ok?r.json():[]; }).catch(function(){ return []; })
+    fetch(SB_URL+'/rest/v1/partenaires?order=nom.asc&select=id,nom,emoji,actif,contact_email',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
+    fetch(SB_URL+'/rest/v1/lots_stock?order=created_at.desc&limit=2000',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];}),
+    fetch(SB_URL+'/rest/v1/gains?order=created_at.desc&limit=500',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];})
   ]).then(function(results) {
-    var gains = results[0] || [];
-    var stock = results[1] || [];
-    // Inclure aussi les lots de la config (LOTS_DB)
-    var configLots = (typeof LOTS_DB !== 'undefined') ? LOTS_DB : [];
-    // Grouper par lot_nom
-    var byLot = {};
-    gains.forEach(function(g) {
-      var k = g.lot_nom || g.lot_id || 'Sans nom';
-      if(!byLot[k]) byLot[k] = {nom:k, emoji:g.lot_emoji||'🎁', distribues:0, utilises:0, codes:[]};
-      byLot[k].distribues++;
-      if(g.utilise) byLot[k].utilises++;
-      byLot[k].codes.push(g);
+    var parts  = results[0]||[];
+    var stock  = results[1]||[];
+    var gains  = results[2]||[];
+    var totalStock = stock.length;
+    var totalDispo = stock.filter(function(s){return s.statut==='disponible';}).length;
+    var totalDist  = gains.length;
+    var totalUtil  = gains.filter(function(g){return g.utilise;}).length;
+
+    var html = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">';
+    [['📦','Codes stock',totalStock,'var(--ac)','var(--acBg)'],
+     ['✅','Disponibles',totalDispo,'var(--gr)','var(--grBg)'],
+     ['🎁','Distribués',totalDist,'var(--am)','var(--amBg)'],
+     ['📊','Taux util.',(totalDist?Math.round(totalUtil/totalDist*100):0)+'%','var(--bl)','var(--blBg)']
+    ].forEach(function(k){
+      html += '<div style="background:'+k[4]+';border-radius:10px;padding:12px;text-align:center">'
+        +'<div style="font-size:18px;margin-bottom:4px">'+k[0]+'</div>'
+        +'<div style="font-size:20px;font-weight:800;color:'+k[3]+';font-family:Syne,sans-serif">'+k[2]+'</div>'
+        +'<div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-top:2px">'+k[1]+'</div></div>';
     });
-    var html = '';
-    // KPIs globaux
-    var totalDist = gains.length;
-    var totalUtil = gains.filter(function(g){ return g.utilise; }).length;
-    html += '<div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">'
-      + kpiCard('📦','Total distribués', totalDist, 'tous lots', '#7C5CFC')
-      + kpiCard('✅','Utilisés', totalUtil, Math.round(totalUtil/Math.max(totalDist,1)*100)+'% taux utilisation', '#0E9E6E')
-      + kpiCard('⏳','En attente', totalDist-totalUtil, 'non encore utilisés', '#C27C0A')
-      + '</div>';
-    // Lots config + lots depuis gains
-    var allLots = {};
-    configLots.forEach(function(l){
-      allLots[l.id||l.titre] = {nom:l.titre||l.nom||'Lot', emoji:l.emoji||'🎁', distribues:0, utilises:0, actif:l.actif!==false, id:l.id};
-    });
-    Object.entries(byLot).forEach(function(kv){
-      if(!allLots[kv[0]]) allLots[kv[0]] = kv[1];
-      else { allLots[kv[0]].distribues = kv[1].distribues; allLots[kv[0]].utilises = kv[1].utilises; }
-    });
-    var lotsArr = Object.values(allLots);
-    if(lotsArr.length) {
-      html += '<div class="panel"><div class="panel-header"><span>📊 Stock par lot</span><button class="act-btn" onclick="refreshStock()">↻</button></div>'
-        + '<table><thead><tr><th>Lot</th><th>Distribués</th><th>Utilisés</th><th>En attente</th><th>Taux</th><th>Visible élèves</th></tr></thead><tbody>';
-      lotsArr.forEach(function(l) {
-        var taux = l.distribues ? Math.round(l.utilises/l.distribues*100) : 0;
-        var color = taux >= 80 ? 'var(--gr)' : taux >= 40 ? 'var(--am)' : 'var(--t3)';
-        var switchHtml = l.id ? '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px">'
-          + '<input type="checkbox"'+(l.actif?' checked':'')
-          + ' onchange="toggleLotActif(" + JSON.stringify(l.id) + ",this.checked)"> Actif</label>' : '—';
-        html += '<tr>'
-          + '<td><span style="font-size:16px">'+(l.emoji||'🎁')+'</span> <strong>'+l.nom+'</strong></td>'
-          + '<td>'+l.distribues+'</td>'
-          + '<td style="color:var(--gr);font-weight:700">'+l.utilises+'</td>'
-          + '<td style="color:var(--am);font-weight:700">'+(l.distribues-l.utilises)+'</td>'
-          + '<td><span style="font-weight:800;color:'+color+'">'+taux+'%</span></td>'
-          + '<td>'+switchHtml+'</td>'
-          + '</tr>';
-      });
-      html += '</tbody></table></div>';
-    } else {
-      html += '<div class="empty"><div class="empty-icon">📦</div>'
-        + '<div class="empty-text">Aucun lot configuré — allez dans Paramètres → Lots</div></div>';
+    html += '</div>';
+
+    if(!parts.length){
+      html += '<div style="text-align:center;padding:40px;color:var(--t3)"><div style="font-size:40px;margin-bottom:12px">📦</div><div>Aucun partenaire — créez-en un d\'abord</div></div>';
+      el.innerHTML = html; return;
     }
+
+    html += '<div class="panel"><div class="panel-header"><span>📊 Stock par partenaire</span>';
+    html += '<button class="act-btn" id="refresh-stock-btn">↻</button></div>';
+    html += '<table><thead><tr>';
+    ['Partenaire','Dispo','Distribués','Utilisés','Taux','App'].forEach(function(h){
+      html += '<th style="text-align:left;padding:10px 12px;font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;border-bottom:1px solid var(--b)">'+h+'</th>';
+    });
+    html += '</tr></thead><tbody>';
+
+    parts.forEach(function(p){
+      var pStock = stock.filter(function(s){return s.lot_id===p.id;});
+      var pDispo = pStock.filter(function(s){return s.statut==='disponible';}).length;
+      var pGains = gains.filter(function(g){return g.lot_id===p.id||g.partenaire_id===p.id;});
+      var pUtil  = pGains.filter(function(g){return g.utilise;}).length;
+      var pDist  = pGains.length;
+      var taux   = pDist ? Math.round(pUtil/pDist*100) : 0;
+      var dispoC = pDispo===0?'var(--re)':pDispo<5?'var(--am)':'var(--gr)';
+      var tauxC  = taux>=70?'var(--gr)':taux>=40?'var(--am)':'var(--t3)';
+
+      html += '<tr style="border-bottom:1px solid var(--b);cursor:pointer" id="row-'+p.id+'">';
+      html += '<td style="padding:12px"><div style="display:flex;align-items:center;gap:8px">';
+      html += '<span style="font-size:20px">'+(p.emoji||'🎁')+'</span>';
+      html += '<div><div style="font-size:13px;font-weight:700;color:var(--t)">'+p.nom+'</div>';
+      html += '<div style="font-size:10px;color:var(--t3)">'+(p.contact_email||'—')+'</div></div></div></td>';
+      html += '<td style="padding:12px;font-weight:800;color:'+dispoC+'">'+pDispo+'</td>';
+      html += '<td style="padding:12px;color:var(--am);font-weight:700">'+pDist+'</td>';
+      html += '<td style="padding:12px;color:var(--gr);font-weight:700">'+pUtil+'</td>';
+      html += '<td style="padding:12px;font-weight:800;color:'+tauxC+'">'+(pDist?taux+'%':'—')+'</td>';
+      html += '<td style="padding:12px"><div id="sw-'+p.id+'" style="position:relative;width:36px;height:20px;border-radius:20px;background:'+(p.actif?'var(--ac)':'#D1D5DB')+';cursor:pointer;transition:background .3s">';
+      html += '<div id="swk-'+p.id+'" style="position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:'+(p.actif?'19px':'3px')+';transition:left .3s;box-shadow:0 1px 2px rgba(0,0,0,.2)"></div></div></td>';
+      html += '</tr>';
+      // Ligne détail
+      html += '<tr id="det-'+p.id+'" style="display:none;background:var(--surf2)">';
+      html += '<td colspan="6" style="padding:14px 16px">';
+      html += '<div style="font-size:11px;font-weight:700;color:var(--t2);margin-bottom:8px">📦 '+pDispo+' codes disponibles / '+pStock.length+' total</div>';
+      html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">';
+      if(!pStock.length){
+        html += '<span style="font-size:12px;color:var(--t3);font-style:italic">Aucun code en stock — ajoutez des codes via le bouton ci-dessous</span>';
+      } else {
+        pStock.slice(0,24).forEach(function(s){
+          var bg=s.statut==='disponible'?'var(--grBg)':'var(--surf3)';
+          var co=s.statut==='disponible'?'var(--gr)':'var(--t3)';
+          html += '<span style="font-family:monospace;font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;background:'+bg+';color:'+co+'">'+s.code+'</span>';
+        });
+        if(pStock.length>24) html += '<span style="font-size:11px;color:var(--t3)">+'+(pStock.length-24)+' autres</span>';
+      }
+      html += '</div>';
+      html += '<div style="display:flex;gap:8px">';
+      html += '<button id="btn-add-'+p.id+'" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">+ Ajouter codes</button>';
+      html += '<button id="btn-email-'+p.id+'" style="background:var(--surf);border:1px solid var(--b);border-radius:7px;padding:7px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--t2)">✉️ Email partenaire</button>';
+      html += '</div></td></tr>';
+    });
+
+    html += '</tbody></table></div>';
     el.innerHTML = html;
-  }).catch(function(e) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-text">Erreur chargement stock</div></div>';
+
+    // Binder
+    var rb = document.getElementById('refresh-stock-btn');
+    if(rb) rb.addEventListener('click', function(){ renderPartenairesStock(el); });
+
+    parts.forEach(function(p){
+      var row = document.getElementById('row-'+p.id);
+      if(row) row.addEventListener('click', function(e){
+        if(e.target.closest('[id^="sw-"]')) return;
+        var det = document.getElementById('det-'+p.id);
+        if(det) det.style.display = det.style.display==='none'?'':'none';
+      });
+
+      var sw = document.getElementById('sw-'+p.id);
+      if(sw) sw.addEventListener('click', function(e){
+        e.stopPropagation();
+        var isOn = sw.style.background.includes('var(--ac)');
+        var val  = !isOn;
+        sw.style.background = val?'var(--ac)':'#D1D5DB';
+        var knob = document.getElementById('swk-'+p.id);
+        if(knob) knob.style.left = val?'19px':'3px';
+        var hh = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+        fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+p.id,{method:'PATCH',headers:hh,body:JSON.stringify({actif:val})})
+          .then(function(r){ showAdminToast(r.ok?(val?'Visible dans l\'app':'Masqué'):'Erreur',r.ok?'':'error'); });
+      });
+
+      var addBtn = document.getElementById('btn-add-'+p.id);
+      if(addBtn) addBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        if(typeof openAddCodes==='function') openAddCodes(p.id);
+      });
+
+      var emailBtn = document.getElementById('btn-email-'+p.id);
+      if(emailBtn) emailBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        openEmailPartenaireModal(p);
+      });
+    });
+
+  }).catch(function(){
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--re)">⚠️ Erreur chargement stock</div>';
   });
 }
 
-// ── DISTRIBUTION ──
+function openEmailPartenaireModal(p) {
+  if(!p.contact_email){ showAdminToast('Pas d\'adresse email pour ce partenaire','error'); return; }
+  var ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  var tpls = [
+    ['Demande codes','Bonjour,\n\nNous avons besoin de nouveaux codes promo pour nos élèves Flowin.\n\nPouvez-vous nous en envoyer une nouvelle série ?\n\nCordialement,\nL\'équipe Flowin'],
+    ['Rapport mensuel','Bonjour,\n\nVoici le bilan de ce mois pour votre partenariat Flowin.\nVos codes ont été distribués avec succès.\n\nMerci pour votre confiance.\n\nCordialement,\nL\'équipe Flowin'],
+    ['Renouvellement','Bonjour,\n\nNous souhaitons renouveler notre partenariat.\nSouhaitez-vous continuer ?\n\nCordialement,\nL\'équipe Flowin']
+  ];
+
+  var div = document.createElement('div');
+  div.style.cssText = 'background:var(--surf);border-radius:14px;width:100%;max-width:520px;box-shadow:0 20px 60px rgba(0,0,0,.25)';
+  div.innerHTML = '<div style="padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between">'
+    +'<div><div style="font-size:15px;font-weight:800;color:var(--t)">✉️ Email à '+p.nom+'</div>'
+    +'<div style="font-size:11px;color:var(--t3);margin-top:2px">'+p.contact_email+'</div></div>'
+    +'<button id="em-x" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">✕</button>'
+    +'</div><div style="padding:16px;display:flex;flex-direction:column;gap:12px">'
+    +'<div><div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;margin-bottom:6px">Templates rapides</div>'
+    +'<div style="display:flex;gap:6px;flex-wrap:wrap" id="em-tpls"></div></div>'
+    +'<div><label style="font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px">Objet</label>'
+    +'<input id="em-subj" value="Partenariat Flowin - '+p.nom+'" style="width:100%;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;font-family:inherit;background:var(--surf2);color:var(--t);box-sizing:border-box"></div>'
+    +'<div><label style="font-size:11px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px">Message</label>'
+    +'<textarea id="em-body" rows="6" style="width:100%;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;font-family:inherit;background:var(--surf2);color:var(--t);resize:vertical;box-sizing:border-box;line-height:1.5"></textarea></div>'
+    +'<div style="display:flex;gap:8px;justify-content:flex-end">'
+    +'<button id="em-cancel" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:8px 14px;font-size:12px;cursor:pointer;font-family:inherit">Annuler</button>'
+    +'<button id="em-open" style="background:var(--bl);color:#fff;border:none;border-radius:7px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">📧 Ouvrir dans Mail</button>'
+    +'<button id="em-copy" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">📋 Copier</button>'
+    +'</div></div>';
+  ov.appendChild(div);
+  document.body.appendChild(ov);
+
+  // Templates
+  var tplCont = document.getElementById('em-tpls');
+  var bodyEl  = document.getElementById('em-body');
+  bodyEl.value = tpls[0][1];
+  tpls.forEach(function(t,i){
+    var btn = document.createElement('button');
+    btn.textContent = t[0];
+    btn.style.cssText = 'background:var(--surf2);border:1px solid var(--b);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:inherit';
+    btn.addEventListener('click', function(){ bodyEl.value = t[1]; });
+    tplCont.appendChild(btn);
+  });
+
+  document.getElementById('em-x').addEventListener('click', function(){ov.remove();});
+  document.getElementById('em-cancel').addEventListener('click', function(){ov.remove();});
+  document.getElementById('em-open').addEventListener('click', function(){
+    var s = document.getElementById('em-subj').value;
+    var b = bodyEl.value;
+    window.open('mailto:'+p.contact_email+'?subject='+encodeURIComponent(s)+'&body='+encodeURIComponent(b),'_blank');
+  });
+  document.getElementById('em-copy').addEventListener('click', function(){
+    if(navigator.clipboard) navigator.clipboard.writeText(bodyEl.value).then(function(){showAdminToast('Copié ✅');});
+    else { var ta=document.createElement('textarea');ta.value=bodyEl.value;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();showAdminToast('Copié ✅'); }
+  });
+}
+
 function renderPartenairesDistrib(el) {
   el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3)">Chargement…</div>';
   var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
