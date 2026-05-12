@@ -4021,10 +4021,10 @@ function renderCoursHub() {
       var qVal   = t.questions.filter(function(q){ return q.statut==='validé'||q.statut==='valide'; }).length;
       var avgScore = fCount ? Math.round(t.fiches.reduce(function(s,f){ return s+(f.score_moy||0); },0)/fCount) : 0;
       var scC = avgScore>=70?'var(--gr)':avgScore>=50?'var(--am)':avgScore>0?'var(--re)':'var(--t3)';
-      var themeQ = t.theme.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      var themeIdQ = (t.id||'').replace(/'/g,"\\'");
 
       html += '<div class="panel" style="margin:0;cursor:pointer;border-left:3px solid ' + couleur + '"';
-      html += ' onclick="coursOpenTheme(\'' + themeQ + '\')"';
+      html += ' onclick="coursOpenTheme(\'' + themeIdQ + '\')"';
       html += ' onmouseenter="this.style.boxShadow=\'0 4px 14px rgba(0,0,0,.09)\'"';
       html += ' onmouseleave="this.style.boxShadow=\'none\'">';
       html += '<div style="padding:14px 16px">';
