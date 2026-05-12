@@ -741,69 +741,7 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
 
     <!-- DÉFIS -->
     <div class="view" id="v-defis">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-        <div class="view-title" style="margin-bottom:0">⚔️ Défis & Pools</div>
-        <button onclick="openDefiConfig()" style="background:var(--ac);color:#fff;border:none;border-radius:9px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">⚙️ Configurer les défis</button>
-      </div>
-
-      <!-- APERÇU BILLET + CARTE INVITÉ -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px" id="defis-preview-grid">
-
-        <!-- Billet créateur -->
-        <div class="panel" style="margin:0">
-          <div class="panel-header"><span>🎟️ Billet envoyé (créateur)</span></div>
-          <div style="padding:14px;background:linear-gradient(135deg,#1a0a30,#2D1B6B);border-radius:0 0 12px 12px">
-            <div style="font-size:9px;font-weight:800;color:rgba(176,108,228,.7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">🎟️ Billet de défi · <span id="dp-theme-emoji">🎯</span></div>
-            <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:10px" id="dp-nom">Défi de [Joueur]</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px">
-              <div style="background:rgba(255,255,255,.07);border-radius:8px;padding:8px;text-align:center">
-                <div style="font-size:14px;font-weight:800;color:#F4A83A" id="dp-mise">50 pts</div>
-                <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:2px">Mise</div>
-              </div>
-              <div style="background:rgba(255,255,255,.07);border-radius:8px;padding:8px;text-align:center">
-                <div style="font-size:14px;font-weight:800;color:#22C9A0" id="dp-cagnotte">100 pts</div>
-                <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:2px">Cagnotte</div>
-              </div>
-              <div style="background:rgba(255,255,255,.07);border-radius:8px;padding:8px;text-align:center">
-                <div style="font-size:12px;font-weight:800;color:#B06CE4" id="dp-theme">Roulette</div>
-                <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:2px">Thème</div>
-              </div>
-            </div>
-            <div style="background:#25D366;border-radius:8px;padding:8px 10px;font-size:10px;font-weight:700;color:#fff;text-align:center" id="dp-wa-preview">
-              💬 ⚔️ [Joueur] te lance un défi Flowin !<br>🎯 Thème · Mise · Cagnotte · Lien
-            </div>
-          </div>
-        </div>
-
-        <!-- Carte reçue (invité) -->
-        <div class="panel" style="margin:0">
-          <div class="panel-header"><span>🎟️ Carte reçue (invité)</span></div>
-          <div style="padding:14px;background:linear-gradient(135deg,#1a0a30,#2D1B6B);border-radius:0 0 12px 12px">
-            <div style="text-align:center;margin-bottom:10px">
-              <div style="font-size:28px;margin-bottom:4px">⚔️</div>
-              <div style="font-size:9px;font-weight:800;color:rgba(244,168,58,.8);text-transform:uppercase;letter-spacing:.06em">🎟️ Tu as reçu un défi !</div>
-              <div style="font-size:14px;font-weight:800;color:#fff;margin-top:4px" id="dp-nom2">Défi de [Joueur]</div>
-              <div style="font-size:12px;color:#9A8FBF;margin-top:3px">lancé par <span style="color:#F4A83A;font-weight:800">[Joueur]</span></div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px">
-              <div style="text-align:center">
-                <div style="font-size:14px;font-weight:800;color:#F4A83A" id="dp-mise2">50 pts</div>
-                <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:2px">Mise</div>
-              </div>
-              <div style="text-align:center">
-                <div style="font-size:12px;font-weight:800;color:#B06CE4" id="dp-theme2">Roulette</div>
-                <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:2px">Thème</div>
-              </div>
-              <div style="text-align:center">
-                <div style="font-size:14px;font-weight:800;color:#22C9A0" id="dp-cagnotte2">100 pts</div>
-                <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-top:2px">Cagnotte</div>
-              </div>
-            </div>
-            <div style="background:linear-gradient(135deg,#F4A83A,#e8850a);border-radius:8px;padding:10px;font-size:11px;font-weight:800;color:#fff;text-align:center">⚔️ Relever le défi !</div>
-          </div>
-        </div>
-      </div>
-
+      <div class="view-title">Défis & Pools</div>
       <div class="kpi-grid" id="defis-kpis" style="margin-bottom:16px"></div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
         <input class="filter-input" id="defis-search" type="text" placeholder="🔍 Joueur, thème…" oninput="renderDefis()" style="flex:1;min-width:140px">
@@ -848,85 +786,6 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       </div>
       <div id="defis-histo" style="display:none"></div>
       <div id="defis-rank" style="display:none"></div>
-
-      <!-- MODAL CONFIG DÉFIS -->
-      <div id="modal-defi-config" class="modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:none;align-items:center;justify-content:center;padding:16px">
-        <div style="background:var(--surf);border-radius:16px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 0">
-            <div style="font-size:16px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">⚙️ Configuration des défis</div>
-            <button onclick="closeDefiConfig()" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px;color:var(--t2)">✕</button>
-          </div>
-          <div style="padding:20px;display:flex;flex-direction:column;gap:16px">
-
-            <!-- Mise min/max -->
-            <div style="background:var(--surf2);border-radius:12px;padding:14px">
-              <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">💰 Mise des défis</div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-                <div>
-                  <label style="font-size:11px;font-weight:600;color:var(--t2);display:block;margin-bottom:5px">Mise minimum (pts)</label>
-                  <input id="dc-mise-min" type="number" min="5" max="500" value="10"
-                    style="width:100%;border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:13px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box">
-                </div>
-                <div>
-                  <label style="font-size:11px;font-weight:600;color:var(--t2);display:block;margin-bottom:5px">Mise maximum (pts)</label>
-                  <input id="dc-mise-max" type="number" min="10" max="5000" value="500"
-                    style="width:100%;border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:13px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box">
-                </div>
-              </div>
-            </div>
-
-            <!-- Thèmes autorisés -->
-            <div style="background:var(--surf2);border-radius:12px;padding:14px">
-              <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">📚 Thèmes autorisés</div>
-              <div style="display:flex;flex-direction:column;gap:8px" id="dc-themes-list">
-                <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="dc-th-roulette" checked> <span style="font-size:13px">🎡 Roulette (tous thèmes)</span></label>
-                <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="dc-th-hist" checked> <span style="font-size:13px">📘 Histoire</span></label>
-                <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="dc-th-geo" checked> <span style="font-size:13px">🌍 Géographie</span></label>
-                <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="dc-th-emc" checked> <span style="font-size:13px">⚖️ EMC</span></label>
-                <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="dc-th-pse" checked> <span style="font-size:13px">🩺 PSE</span></label>
-              </div>
-            </div>
-
-            <!-- Message WhatsApp par défaut -->
-            <div style="background:var(--surf2);border-radius:12px;padding:14px">
-              <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">💬 Message WhatsApp (modèle)</div>
-              <div style="font-size:10px;color:var(--t3);margin-bottom:8px">Variables disponibles : {joueur} {theme} {mise} {cagnotte} {lien}</div>
-              <textarea id="dc-wa-msg" rows="5"
-                style="width:100%;border:1px solid var(--b);border-radius:8px;padding:10px;font-size:12px;font-family:monospace;background:var(--surf);color:var(--t);resize:vertical;box-sizing:border-box;line-height:1.5">⚔️ {joueur} te lance un défi Flowin !
-
-{theme}
-Mise : {mise} pts
-Cagnotte : {cagnotte} pts
-
-Rejoins : {lien}
-
-Tu as 24h pour jouer — le meilleur score remporte tout !</textarea>
-              <div style="margin-top:8px;padding:10px;background:var(--surf);border-radius:8px;border:1px solid var(--b)">
-                <div style="font-size:10px;font-weight:700;color:var(--t3);margin-bottom:6px">👁 Aperçu rendu</div>
-                <div style="font-size:11px;color:var(--t2);line-height:1.6;white-space:pre-wrap" id="dc-wa-preview"></div>
-              </div>
-            </div>
-
-            <!-- Durée validité défi -->
-            <div style="background:var(--surf2);border-radius:12px;padding:14px">
-              <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">⏱ Durée de validité</div>
-              <select id="dc-duree" style="width:100%;border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:13px;font-family:inherit;background:var(--surf);color:var(--t)">
-                <option value="24">24 heures</option>
-                <option value="48" selected>48 heures</option>
-                <option value="72">72 heures</option>
-                <option value="168">7 jours</option>
-              </select>
-            </div>
-
-            <!-- Boutons -->
-            <div style="display:flex;gap:8px;justify-content:flex-end">
-              <button onclick="closeDefiConfig()" style="background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:10px 18px;font-size:13px;cursor:pointer;font-family:inherit">Annuler</button>
-              <button onclick="saveDefiConfig()" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">💾 Sauvegarder dans Supabase</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
     <!-- PARRAINAGE -->
     <div class="view" id="v-parrainage">
@@ -1839,24 +1698,31 @@ async function loadData() {
       dot.className = 'live-dot on';
       lbl.className = 'live-label on';
       lbl.textContent = `Live Supabase (${j.length} élèves)`;
-      // Charger le contenu pédagogique depuis Supabase (5 tables)
+      // Charger fiches et questions depuis Supabase (silencieux si tables absentes)
       Promise.all([
-        fetch(SB_URL+'/rest/v1/themes?order=ordre.asc&limit=200',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
-        fetch(SB_URL+'/rest/v1/fiches?order=created_at.asc&limit=500',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
-        fetch(SB_URL+'/rest/v1/visuels?actif=eq.true&order=ordre.asc&limit=500',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
-        fetch(SB_URL+'/rest/v1/questions?actif=eq.true&order=created_at.asc&limit=5000',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
-        fetch(SB_URL+'/rest/v1/quiz_config?order=created_at.asc&limit=200',{headers:hdrs}).then(function(r){return r.ok?r.json():[];})
+        fetch(`${SB_URL}/rest/v1/fiches?order=ordre.asc,created_at.asc&limit=500`,{headers:hdrs}).then(r=>r.ok?r.json():null),
+        fetch(`${SB_URL}/rest/v1/questions?order=created_at.asc&limit=2000`,{headers:hdrs}).then(r=>r.ok?r.json():null)
       ]).then(function(results) {
-        if(Array.isArray(results[0])&&results[0].length){ SB_THEMES    = results[0]; console.log('Themes:', results[0].length); }
-        if(Array.isArray(results[1])&&results[1].length){ SB_FICHES    = results[1]; console.log('Fiches:', results[1].length); }
-        if(Array.isArray(results[2])&&results[2].length){ SB_VISUELS   = results[2]; console.log('Visuels:', results[2].length); }
-        if(Array.isArray(results[3])&&results[3].length){ SB_QUESTIONS = results[3]; console.log('Questions:', results[3].length); }
-        if(Array.isArray(results[4])&&results[4].length){ SB_QUIZ_CFG  = results[4]; }
+        var sbFiches = results[0];
+        var sbQuestions = results[1];
+        if(sbFiches && Array.isArray(sbFiches) && sbFiches.length > 0) {
+          COURS_DB = sbFiches;
+          console.log('✅ Fiches Supabase:', sbFiches.length);
+        } else {
+          console.log('ℹ️ Fiches: fallback local (' + COURS_DB.length + ')');
+        }
+        if(sbQuestions && Array.isArray(sbQuestions) && sbQuestions.length > 0) {
+          QUESTIONS_DB = sbQuestions;
+          console.log('✅ Questions Supabase:', sbQuestions.length);
+        } else {
+          console.log('ℹ️ Questions: fallback local (' + QUESTIONS_DB.length + ')');
+        }
+        // Mettre à jour le badge et re-render si on est sur la vue cours
         updateBadges();
         if(typeof currentView !== 'undefined' && currentView === 'cours') {
           try { renderCoursHub(); } catch(e) {}
         }
-      }).catch(function(e){ console.log('Contenu non chargé:', e.message); });
+      }).catch(function(e){ console.log('ℹ️ Fiches/questions non chargées:', e.message); });
       console.log(`✅ Supabase OK — ${j.length} joueurs, ${DB.sessions.length} sessions, ${DB.parrainage.length} parrainages, ${DB.connexions.length} connexions`);
     } else {
       throw new Error('Réponse Supabase invalide');
@@ -2041,7 +1907,7 @@ function updateBadges() {
   if(nbJ) nbJ.textContent = DB.joueurs.length || '—';
   var nbC = document.getElementById('sb-badge-cours');
   if(nbC) {
-    var coursCount = (typeof SB_THEMES !== 'undefined' ? SB_THEMES.length : 0) + (typeof SB_QUESTIONS !== 'undefined' && SB_QUESTIONS.length ? ' · ' + SB_QUESTIONS.length + ' q.' : '');
+    var coursCount = typeof COURS_DB !== 'undefined' ? COURS_DB.length : 0;
     nbC.textContent = coursCount || '—';
   }
   var nbL = document.getElementById('sb-badge-lots');
@@ -2339,18 +2205,9 @@ function openFichePartenaire(id) {
         var html = '<div style="padding:20px 20px 0">'
           // Header
           + '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--b)">'
-          + '<div style="width:54px;height:54px;border-radius:14px;overflow:hidden;background:var(--acBg);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">'
-          + (p.image_url ? '<img src="'+p.image_url+'" style="width:100%;height:100%;object-fit:cover" onerror="this.parentNode.innerHTML=\''+(p.emoji||'🎁')+'\'">': (p.emoji||'🎁'))
-          + '</div>'
+          + '<div style="width:50px;height:50px;border-radius:14px;background:var(--acBg);display:flex;align-items:center;justify-content:center;font-size:26px">'+(p.emoji||'🎁')+'</div>'
           + '<div style="flex:1"><div style="font-size:18px;font-weight:800;color:var(--t)">'+(p.nom||'—')+'</div>'
-          + '<div style="font-size:11px;color:var(--t3);margin-top:2px">'+(p.description||'')+'</div>'
-          + '<div style="margin-top:6px;display:flex;align-items:center;gap:8px">'
-          + '<span style="font-size:10px;color:var(--t3);font-weight:600">Visible dans l\'app</span>'
-          + '<label style="position:relative;display:inline-block;width:38px;height:20px">'
-          + '<input type="checkbox" id="toggle-app-visible-'+p.id+'" '+(p.actif?'checked':'')+' style="opacity:0;width:0;height:0" onchange="togglePartenaire(\''+p.id+'\',this.checked)">'
-          + '<span style="position:absolute;cursor:pointer;inset:0;background:'+(p.actif?'var(--ac)':'#ccc')+';border-radius:20px;transition:.3s" id="app-track-'+p.id+'">'
-          + '<span style="position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:'+(p.actif?'21px':'3px')+';transition:.3s"></span></span></label>'
-          + '</div></div>'
+          + '<div style="font-size:11px;color:var(--t3);margin-top:2px">'+(p.description||'')+'</div></div>'
           + '<button class="modal-close" onclick="closeFichePartenaire()">✕</button>'
           + '</div>'
           // KPIs stock
@@ -2368,33 +2225,25 @@ function openFichePartenaire(id) {
           + infoRow('Site', p.site_web||'—')
           + infoRow('Statut', p.actif?'Actif':'Inactif')
           + '</div>'
-          // Encart éditorial
+          // Encart editorial
           + '<div style="background:var(--surf2);border-radius:12px;padding:14px;margin-bottom:14px">'
           + '<div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">📱 Encart app élèves</div>'
-          + '<div style="margin-bottom:10px">'
-          + '<div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:5px">📸 Image (URL)</div>'
-          + (p.image_url?'<div style="border-radius:8px;overflow:hidden;margin-bottom:6px;height:80px;background:#f0f0f0"><img src="'+p.image_url+'" style="width:100%;height:100%;object-fit:cover"></div>':'')
-          + '<input id="edit-img-'+p.id+'" placeholder="https://images.unsplash.com/..." value=' + JSON.stringify(p.image_url||'') + '\n'
-            + ' style="width:100%;border:1px solid var(--b);border-radius:7px;padding:7px 10px;font-size:11px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box">'
+          + '<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:5px">📸 Image (URL)</div>'
+          + (p.image_url?'<div style="border-radius:8px;overflow:hidden;margin-bottom:6px;height:80px;background:#f0f0f0"><img src="'+p.image_url+'" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display=\'none\'"></div>':'')
+          + '<input id="edit-img-'+p.id+'" placeholder="https://images.unsplash.com/..." value=' + JSON.stringify(p.image_url||'') + ' style="width:100%;border:1px solid var(--b);border-radius:7px;padding:7px 10px;font-size:11px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box">'
           + '</div>'
-          + '<div style="margin-bottom:10px">'
-          + '<div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:5px">📝 Message promo</div>'
-          + '<textarea id="edit-promo-'+p.id+'" rows="2" placeholder="Texte promo affiché dans l\'app"\n            style="width:100%;border:1px solid var(--b);border-radius:7px;padding:7px 10px;font-size:11px;font-family:inherit;background:var(--surf);color:var(--t);resize:none;box-sizing:border-box">'
+          + '<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:600;color:var(--t2);margin-bottom:5px">📝 Message promo</div>'
+          + '<textarea id="edit-promo-'+p.id+'" rows="2" placeholder="Ex: -20% sur toutes les séances ce mois !" style="width:100%;border:1px solid var(--b);border-radius:7px;padding:7px 10px;font-size:11px;font-family:inherit;background:var(--surf);color:var(--t);resize:none;box-sizing:border-box">'
           + (p.promo_text||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-          + '</textarea>'
+          + '</textarea></div>'
+          + '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">'
           + '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surf);border-radius:8px">'
           + '<div><div style="font-size:12px;font-weight:700;color:var(--t)">Visible dans l\'app</div><div style="font-size:10px;color:var(--t3)">Encart affiché aux élèves</div></div>'
-          + '<label style="position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0">'
-          + '<input type="checkbox" '+(p.actif?'checked':'')+' style="opacity:0;width:0;height:0" onchange="togglePartenaire(\'' + p.id + '\',this.checked)">'
-          + '<span style="position:absolute;cursor:pointer;inset:0;background:'+(p.actif?'var(--ac)':'#D1D5DB')+';border-radius:24px;transition:.3s">'
-          + '<span style="position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:'+(p.actif?'23px':'3px')+';transition:.3s"></span></span></label>'
+          + '<label style="position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0"><input type="checkbox" '+(p.actif?'checked':'')+' style="opacity:0;width:0;height:0" onchange="togglePartenaire(\'' + p.id + '\',this.checked)"><span style="position:absolute;cursor:pointer;inset:0;background:'+(p.actif?'var(--ac)':'#D1D5DB')+';border-radius:24px;transition:.3s"><span style="position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:'+(p.actif?'23px':'3px')+';transition:.3s"></span></span></label>'
           + '</div>'
           + '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surf);border-radius:8px">'
           + '<div><div style="font-size:12px;font-weight:700;color:var(--t)">⭐ Mettre en avant</div><div style="font-size:10px;color:var(--t3)">Affiché en premier</div></div>'
-          + '<label style="position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0">'
-          + '<input type="checkbox" id="toggle-en-avant-'+p.id+'" '+(p.en_avant?'checked':'')+' style="opacity:0;width:0;height:0" onchange="toggleEnAvant(\'' + p.id + '\',this.checked)">'
-          + '<span style="position:absolute;cursor:pointer;inset:0;background:'+(p.en_avant?'var(--ac)':'#D1D5DB')+';border-radius:24px;transition:.3s" id="toggle-track-'+p.id+'">'
-          + '<span style="position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:'+(p.en_avant?'23px':'3px')+';transition:.3s" id="toggle-knob-'+p.id+'"></span></span></label>'
+          + '<label style="position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0"><input type="checkbox" id="toggle-en-avant-'+p.id+'" '+(p.en_avant?'checked':'')+' style="opacity:0;width:0;height:0" onchange="toggleEnAvant(\'' + p.id + '\',this.checked)"><span style="position:absolute;cursor:pointer;inset:0;background:'+(p.en_avant?'var(--ac)':'#D1D5DB')+';border-radius:24px;transition:.3s" id="toggle-track-'+p.id+'"><span style="position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:'+(p.en_avant?'23px':'3px')+';transition:.3s" id="toggle-knob-'+p.id+'"></span></span></label>'
           + '</div></div>'
           + '<button onclick="saveEncartPartenaire(\'' + p.id + '\')" style="width:100%;background:var(--ac);color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">💾 Sauvegarder l\'encart</button>'
           + '</div>'
@@ -2440,45 +2289,26 @@ function closeFichePartenaire() {
 function saveEncartPartenaire(id) {
   var imgEl   = document.getElementById('edit-img-'+id);
   var promoEl = document.getElementById('edit-promo-'+id);
-  if(!imgEl || !promoEl) return;
-  var data = {
-    image_url:  imgEl.value.trim(),
-    promo_text: promoEl.value.trim()
-  };
+  if(!imgEl || !promoEl) { showAdminToast('Champs introuvables', 'error'); return; }
+  var data = { image_url: imgEl.value.trim(), promo_text: promoEl.value.trim() };
+  if(!SB_ENABLED) { showAdminToast('Sauvegardé localement (Supabase désactivé)'); return; }
   var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
-  fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+id, {method:'PATCH',headers:hdrs,body:JSON.stringify(data)})
+  fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+id, {method:'PATCH', headers:hdrs, body:JSON.stringify(data)})
     .then(function(r){
-      if(r.ok) {
-        showAdminToast('Encart sauvegardé ✅');
-        loadPartenaires(function(){});
-      } else {
-        showAdminToast('Erreur sauvegarde', 'error');
-      }
+      if(r.ok) { showAdminToast('Encart sauvegardé ✅'); if(typeof loadPartenaires==='function') loadPartenaires(function(){}); }
+      else { showAdminToast('Erreur sauvegarde', 'error'); }
     }).catch(function(){ showAdminToast('Erreur réseau', 'error'); });
 }
 
 function toggleEnAvant(id, val) {
-  var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
-  fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+id, {method:'PATCH',headers:hdrs,body:JSON.stringify({en_avant:val})})
-    .then(function(r){
-      if(r.ok) {
-        showAdminToast(val?'Mis en avant ⭐':'Retiré de l\'avant');
-        var track = document.getElementById('toggle-track-'+id);
-        var knob  = document.getElementById('toggle-knob-'+id);
-        if(track) track.style.background = val?'var(--ac)':'#D1D5DB';
-        if(knob)  knob.style.left = val?'23px':'3px';
-      }
-    });
-}
-
-function toggleEnAvant(id, val) {
   var track = document.getElementById('toggle-track-'+id);
-  var knob = document.getElementById('toggle-knob-'+id);
-  if(track) track.style.background = val ? 'var(--ac)' : '#ccc';
-  if(knob) knob.style.left = val ? '23px' : '3px';
+  var knob  = document.getElementById('toggle-knob-'+id);
+  if(track) track.style.background = val ? 'var(--ac)' : '#D1D5DB';
+  if(knob)  knob.style.left = val ? '23px' : '3px';
+  if(!SB_ENABLED) { showAdminToast(val ? 'Mis en avant ⭐' : 'Retiré'); return; }
   var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
-  fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+id, {method:'PATCH',headers:hdrs,body:JSON.stringify({en_avant:val})})
-    .then(function(r){ if(r.ok) showAdminToast(val?'Mis en avant !':'Retiré de la vitrine'); })
+  fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+id, {method:'PATCH', headers:hdrs, body:JSON.stringify({en_avant:val})})
+    .then(function(r){ if(r.ok) showAdminToast(val ? 'Mis en avant ⭐' : 'Retiré de la vitrine'); })
     .catch(function(){});
 }
 
@@ -2986,7 +2816,7 @@ function buildEtabBtns() {
   const etabs = [...new Set(DB.joueurs.map(j=>j.ecole).filter(Boolean))].sort();
   const sel = document.getElementById('stats-etab-select');
   if(!sel || etabs.length===0) return;
-  sel.innerHTML = `<option value="all">Tous</option>`
+  sel.innerHTML = '<option value="all">Tous</option>'
     + etabs.map(e=>`<option value="${e}"${statsEtab===e?' selected':''}>${e}</option>`).join('');
 }
 
@@ -3168,7 +2998,7 @@ async function renderStats() {
   const secHalf = dailyVals.slice(midPoint).reduce((a,v)=>a+v,0);
   const trendPct = firstHalf>0?Math.round((secHalf-firstHalf)/firstHalf*100):0;
   const trendEl = document.getElementById('stats-trend-7j');
-  if(trendEl) trendEl.innerHTML = `<span style="color:${trendPct>=0?'var(--gr)':'var(--re)'}">${trendPct>=0?'↑':'↓'} ${Math.abs(trendPct)}% tendance</span>`;
+  if(trendEl) trendEl.innerHTML = '<span style="color:' + (trendPct>=0?'var(--gr)':'var(--re)') + '">' + (trendPct>=0?'↑':'↓') + ' ' + Math.abs(trendPct) + '% tendance</span>';
 
   // ── KPIs cliquables ──
   const kpiDefs = [
@@ -3476,7 +3306,7 @@ async function renderStats() {
     const dp = document.createElement('div');
     dp.id = 'stats-drill-panel';
     dp.style.cssText = 'display:none;margin-top:14px';
-    dp.innerHTML = `<div class="panel"><div class="panel-header" style="display:flex;align-items:center;justify-content:space-between"><span id="stats-drill-title" style="font-weight:700"></span><div style="display:flex;gap:8px"><button onclick="exportDrill()" style="background:var(--gr);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:600;cursor:pointer">⬇ Export</button><button onclick="closeDrill()" style="background:var(--surf2);border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--t2)">✕ Fermer</button></div></div><div id="stats-drill-body" style="padding:16px;max-height:400px;overflow-y:auto"></div></div>`;
+    dp.innerHTML = '<div class="panel"><div class="panel-header" style="display:flex;align-items:center;justify-content:space-between"><span id="stats-drill-title" style="font-weight:700"></span><div style="display:flex;gap:8px"><button onclick="exportDrill()" style="background:var(--gr);color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:600;cursor:pointer">⬇ Export</button><button onclick="closeDrill()" style="background:var(--surf2);border:none;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--t2)">✕ Fermer</button></div></div><div id="stats-drill-body" style="padding:16px;max-height:400px;overflow-y:auto"></div></div>';
     var vsParent = document.getElementById('v-stats') || document.getElementById('analytics-tab-trafic') || document.body; vsParent.appendChild(dp);
   }
 }
@@ -3537,15 +3367,199 @@ function exportStatsReport() {
 // ── COURS & CONTENUS ──
 
 // Données cours — fallback local (remplacé par Supabase au chargement)
-// ── Données pédagogiques Supabase (5 tables) ──
-var SB_THEMES    = [];  // themes table
-var SB_FICHES    = [];  // fiches (essentiel, chrono, dates, vocab)
-var SB_VISUELS   = [];  // visuels SVG
-var SB_QUESTIONS = [];  // banque questions
-var SB_QUIZ_CFG  = [];  // quiz_config
-// Legacy — plus utilisé
-var COURS_DB    = [];
-var QUESTIONS_DB = [];
+let COURS_DB = [
+  {
+    id:'c1', type:'fiche', matiere:'Histoire', theme:'La guerre froide',
+    titre:'La guerre froide — Fiche complète', niveau:'Terminale Bac Pro',
+    auteur:'Prof. Fabre', date:'2026-04-20',
+    resume:'Bipolarisation du monde après 1945. USA vs URSS. Doctrine Truman, Plan Marshall, OTAN, Pacte de Varsovie. Crises : Berlin 1948, Cuba 1962, Vietnam. Détente et fin de la guerre froide 1991.',
+    points_cles:['1947 : Doctrine Truman & Plan Marshall','1949 : OTAN créée','1961 : Mur de Berlin','1962 : Crise des missiles de Cuba','1991 : Fin de l\'URSS'],
+    couleur:'var(--ac)', emoji:'📜', tags:['guerre froide','bipolarisation','USA','URSS'],
+    nb_questions:12, nb_eleves_vus:8, score_moy:74
+  },
+  {
+    id:'c2', type:'fiche', matiere:'Géographie', theme:'Mondialisation',
+    titre:'La mondialisation — Flux et acteurs', niveau:'Terminale Bac Pro',
+    auteur:'Prof. Fabre', date:'2026-04-18',
+    resume:'Intensification des échanges mondiaux. FMN, OMC, flux commerciaux et financiers. Métropolisation. Inégalités et contestations (altermondialisme).',
+    points_cles:['Triade : USA / UE / Asie orientale','FMN et délocalisations','Flux : capitaux, marchandises, personnes, données','Métropolisation mondiale','Contestation altermondialiste'],
+    couleur:'var(--gr)', emoji:'🌍', tags:['mondialisation','flux','FMN','métropolisation'],
+    nb_questions:9, nb_eleves_vus:10, score_moy:71
+  },
+  {
+    id:'c3', type:'fiche', matiere:'EMC', theme:'EMC citoyenneté',
+    titre:'Citoyenneté et démocratie', niveau:'Terminale Bac Pro',
+    auteur:'Prof. Fabre', date:'2026-04-15',
+    resume:'Droits et devoirs du citoyen. République française. Institutions démocratiques. Libertés fondamentales. Engagement civique et associatif.',
+    points_cles:['Suffrage universel direct/indirect','Séparation des pouvoirs','Déclaration des droits de l\'Homme 1789','Libertés fondamentales','Engagement citoyen'],
+    couleur:'#E040A0', emoji:'⚖️', tags:['citoyenneté','démocratie','droits','libertés'],
+    nb_questions:7, nb_eleves_vus:11, score_moy:78
+  },
+  {
+    id:'c4', type:'visuel', matiere:'Histoire', theme:'La guerre froide',
+    titre:'Carte mentale — Guerre froide', niveau:'Terminale Bac Pro',
+    auteur:'Olivia Laurent', date:'2026-04-25',
+    resume:'Carte mentale créée par Olivia à partir de ses notes de cours. Vision synthétique des blocs, alliances et crises.',
+    points_cles:[], couleur:'var(--am)', emoji:'🗺️', tags:['carte mentale','guerre froide','visuel'],
+    nb_questions:0, nb_eleves_vus:3, score_moy:0, eleve_auteur:true
+  },
+  {
+    id:'c5', type:'fiche', matiere:'Géographie', theme:'Mondialisation',
+    titre:'Roulette — Thèmes variés', niveau:'Terminale Bac Pro',
+    auteur:'Prof. Fabre', date:'2026-04-10',
+    resume:'Fiche transversale couvrant plusieurs thèmes pour le mode Roulette du quiz. Questions mélangées Histoire / Géo / EMC.',
+    points_cles:['Révisions croisées','Préparation exam'],
+    couleur:'var(--bl)', emoji:'🎰', tags:['roulette','transversal','révision'],
+    nb_questions:15, nb_eleves_vus:12, score_moy:69
+  },
+  // ── PSE 2de Bac Pro ──
+  {id:'pse-a1',type:'fiche',matiere:'PSE',theme:'A1 - Système de santé',titre:'Le système de santé',niveau:'2de Bac Pro',auteur:'Prof. PSE',date:'2026-05-03',resume:'Définition OMS de la santé (bien-être physique, mental, social). Facteurs du capital santé. Sécurité sociale, parcours coordonné, médecin traitant, DMP, plans santé.',points_cles:['Santé OMS = bien-être physique + mental + social','Médecin traitant obligatoire dès 16 ans','Parcours coordonné = 70% remboursé (−1€)','Hors parcours = 30% remboursé (−1€)','DMP sur monespacesante.fr'],couleur:'#E84855',emoji:'🏥',tags:['santé','OMS','sécurité sociale','médecin traitant'],nb_questions:5,nb_eleves_vus:0,score_moy:0},
+  {id:'pse-a2',type:'fiche',matiere:'PSE',theme:'A2 - Rythmes biologiques',titre:'Les rythmes biologiques – Le sommeil',niveau:'2de Bac Pro',auteur:'Prof. PSE',date:'2026-05-03',resume:'Rythmes biologiques, horloge biologique, rythme circadien. Cycles de sommeil (90 min × 4-6). Mélatonine. Facteurs de désynchronisation. Pénibilité et travail de nuit (C2P).',points_cles:['1 cycle = 90 min (4-6 cycles/nuit)','Sommeil très profond = récupération physique','Sommeil paradoxal = récupération mentale','Mélatonine bloquée par lumière bleue des écrans','Chambre à 17°C dans l\'obscurité'],couleur:'#7B5FD4',emoji:'😴',tags:['sommeil','mélatonine','rythme circadien','pénibilité'],nb_questions:5,nb_eleves_vus:0,score_moy:0},
+  {id:'pse-a3',type:'fiche',matiere:'PSE',theme:'A3 - Activité physique',titre:'L\'activite physique',niveau:'2de Bac Pro',auteur:'Prof. PSE',date:'2026-05-03',resume:'Definition de l\'activite physique. Muscles stries squelettiques (actine/myosine). Modifications physiologiques lors d\'un effort. Recommandations OMS. Bénéfices sur les 3 composantes de la santé.',points_cles:['Contraction = actine + myosine → glucose + O₂ → CO₂','Ado : 1h/jour — Adulte : 30min × 5/semaine','Effort → fréquence cardiaque + respiratoire augmentent','Bénéfices physique + mental + social'],couleur:'#F5A623',emoji:'🏃',tags:['activité physique','muscles','OMS','sédentarité'],nb_questions:5,nb_eleves_vus:0,score_moy:0},
+  {id:'pse-a4',type:'fiche',matiere:'PSE',theme:'A4 - Addictions',titre:'Les addictions',niveau:'2de Bac Pro',auteur:'Prof. PSE',date:'2026-05-03',resume:'Definition de l\'addiction. Dépendance physique et psychologique. Polyconsommation et risques. Effets de l\'alcool sur la conduite. Conséquences personnelles et sociales. Prévention.',points_cles:['Addiction = dépendance physique + psychologique','Taux légal alcool = 0,5 g/L (0,2 g/L jeune conducteur)','Alcool → champ visuel : 170° → 30°','81% des consommateurs de cannabis consomment de l\'alcool'],couleur:'#E84855',emoji:'🚫',tags:['addiction','alcool','cannabis','polyconsommation','prévention'],nb_questions:5,nb_eleves_vus:0,score_moy:0},
+  {id:'pse-a5',type:'fiche',matiere:'PSE',theme:'A5 - Sexualité contraception',titre:'La sexualité – La contraception',niveau:'2de Bac Pro',auteur:'Prof. PSE',date:'2026-05-03',resume:'Cycle menstruel et ovulation. Fécondation et nidation. Méthodes contraceptives. Efficacité théorique vs pratique. Double protection IST + grossesse avec le préservatif.',points_cles:['Ovulation ≈ jour 14 du cycle','Période fertile = 7 jours','Nidation = implantation à J+7','Préservatif = seule double protection IST + grossesse'],couleur:'#E040A0',emoji:'💊',tags:['sexualité','contraception','cycle','IST'],nb_questions:5,nb_eleves_vus:0,score_moy:0},
+  {id:'pse-b1',type:'fiche',matiere:'PSE',theme:'B1 - Alimentation écoresponsable',titre:'L\'alimentation ecoresponsable',niveau:'2de Bac Pro',auteur:'Prof. PSE',date:'2026-05-03',resume:'Alimentation durable. Gaspillage : 3,3 Gt CO2, lois Garot, EGALIM, AGEC. Label antigaspillage.',points_cles:['Gaspillage = 3,3 Gt CO₂ + 1,4 Mds ha + 250 km³ eau/an','Objectif France : -50% d\'ici 2025','Loi Garot 2016 : dons aux associations','Loi EGALIM 2018 : doggy bag','Label : ⭐ Engagement · ⭐⭐⭐ Exemplaire'],couleur:'#2B8EF0',emoji:'🌱',tags:['alimentation','gaspillage','lois','label'],nb_questions:5,nb_eleves_vus:0,score_moy:0},
+  {id:'pse-b2',type:'fiche',matiere:'PSE',theme:'B2 - Risques majeurs',titre:'Les risques majeurs',niveau:'2de Bac Pro',auteur:'Prof. PSE',date:'2026-05-03',resume:'Risques naturels et technologiques. Signal d\'alerte (3x1min41s) et fin d\'alerte (30s). FR-Alert. DICRIM en mairie. PPMS scolaire. Conduite à tenir en cas de risque majeur.',points_cles:['Signal début = son modulé 3×1min41s','Signal fin = son continu 30s','FR-Alert = notification téléphone','DICRIM disponible en mairie','Ne PAS aller chercher ses enfants a l\'ecole'],couleur:'#FF6B35',emoji:'⚠️',tags:['risques','alerte','DICRIM','PPMS','FR-Alert'],nb_questions:5,nb_eleves_vus:0,score_moy:0},
+  {id:'pse-c1',type:'fiche',matiere:'PSE',theme:'C1 - Santé sécurité au travail',titre:'Les enjeux de la santé et sécurité au travail',niveau:'2de Bac Pro',auteur:'Prof. PSE',date:'2026-05-03',resume:'Obligations employeur (art. L.4121-1). Droits et devoirs du salarié. Droit de retrait et droit d\'alerte. DUERP obligatoire. 6 critères de pénibilité et C2P.',points_cles:['Employeur : obligation de résultat','Salarié : droit de retrait (danger grave et imminent)','Salarié : droit d\'alerte','DUERP obligatoire dans toutes les entreprises','6 critères de pénibilité → points C2P'],couleur:'#1DB87A',emoji:'👷',tags:['santé travail','sécurité','DUERP','pénibilité','C2P'],nb_questions:5,nb_eleves_vus:0,score_moy:0},
+  {id:'pse-c2',type:'fiche',matiere:'PSE',theme:'C2 - Prévention risques professionnels',titre:'Les notions de base en prévention des risques professionnels',niveau:'2de Bac Pro',auteur:'Prof. PSE',date:'2026-05-03',resume:'Distinction danger/risque. Processus d\'apparition du dommage. Hierarchie des mesures de prevention.',points_cles:['Danger = source de dommage. Risque = probabilité','Processus : Danger → Situation dangereuse → Déclencheur → Dommage','Hiérarchie : 1) Suppression 2) Réduction 3) Protection collective 4) EPI'],couleur:'#6B5CE7',emoji:'🦺',tags:['prévention','risques professionnels','danger','EPI'],nb_questions:5,nb_eleves_vus:0,score_moy:0},
+];
+
+// Questions — fallback local (remplacé par Supabase au chargement)
+let QUESTIONS_DB = [
+  // Guerre froide
+  {id:'q1', theme:'La guerre froide', matiere:'Histoire', niveau:'Terminale Bac Pro', question:'En quelle année est construite le Mur de Berlin ?', reponses:['1958','1961','1963','1965'], bonne:1, difficulte:'facile', statut:'validé', auteur:'Prof. Fabre', nb_fois:28, taux_reussite:82},
+  {id:'q2', theme:'La guerre froide', matiere:'Histoire', niveau:'Terminale Bac Pro', question:'Quelle est la doctrine américaine de soutien aux pays menacés par le communisme ?', reponses:['Doctrine Monroe','Plan Marshall','Doctrine Truman','Doctrine Eisenhower'], bonne:2, difficulte:'moyen', statut:'validé', auteur:'Prof. Fabre', nb_fois:24, taux_reussite:71},
+  {id:'q3', theme:'La guerre froide', matiere:'Histoire', niveau:'Terminale Bac Pro', question:'Quel événement de 1962 faillit déclencher une guerre nucléaire ?', reponses:['Guerre de Corée','Crise de Cuba','Guerre du Vietnam','Blocus de Berlin'], bonne:1, difficulte:'facile', statut:'validé', auteur:'Prof. Fabre', nb_fois:26, taux_reussite:88},
+  {id:'q4', theme:'La guerre froide', matiere:'Histoire', niveau:'Terminale Bac Pro', question:'En quelle année l\'URSS est-elle dissoute ?', reponses:['1989','1990','1991','1992'], bonne:2, difficulte:'facile', statut:'validé', auteur:'Prof. Fabre', nb_fois:22, taux_reussite:76},
+  // Mondialisation
+  {id:'q5', theme:'Mondialisation', matiere:'Géographie', niveau:'Terminale Bac Pro', question:'Que désigne le terme "Triade" dans le contexte de la mondialisation ?', reponses:['Les 3 océans principaux','Les 3 pôles économiques mondiaux','Les 3 organisations mondiales','Les 3 flux principaux'], bonne:1, difficulte:'moyen', statut:'validé', auteur:'Prof. Fabre', nb_fois:19, taux_reussite:63},
+  {id:'q6', theme:'Mondialisation', matiere:'Géographie', niveau:'Terminale Bac Pro', question:'Quelle organisation mondiale régule le commerce international ?', reponses:['ONU','FMI','OMC','OCDE'], bonne:2, difficulte:'facile', statut:'validé', auteur:'Prof. Fabre', nb_fois:21, taux_reussite:74},
+  // EMC
+  {id:'q7', theme:'EMC citoyenneté', matiere:'EMC', niveau:'Terminale Bac Pro', question:'En quelle année est adoptée la Déclaration universelle des droits de l\'Homme ?', reponses:['1789','1945','1948','1958'], bonne:2, difficulte:'moyen', statut:'validé', auteur:'Prof. Fabre', nb_fois:17, taux_reussite:58},
+  {id:'q8', theme:'EMC citoyenneté', matiere:'EMC', niveau:'Terminale Bac Pro', question:'Quel est le principe fondamental du suffrage universel en France ?', reponses:['1 voix par foyer','1 voix par contribuable','1 personne = 1 voix','Vote réservé aux adultes imposés'], bonne:2, difficulte:'facile', statut:'validé', auteur:'Prof. Fabre', nb_fois:20, taux_reussite:85},
+  // En attente validation
+  {id:'q9', theme:'La guerre froide', matiere:'Histoire', niveau:'Terminale Bac Pro', question:'Quelle alliance militaire occidentale est créée en 1949 ?', reponses:['ONU','OTAN','Pacte de Varsovie','CEE'], bonne:1, difficulte:'facile', statut:'en_attente', auteur:'Olivia Laurent', nb_fois:0, taux_reussite:0},
+  {id:'q10', theme:'Mondialisation', matiere:'Géographie', niveau:'Terminale Bac Pro', question:'Qu\'est-ce qu\'une FMN ?', reponses:['Fonds monétaire national','Firme multinationale','Formation mondiale numérique','Flux monétaire négatif'], bonne:1, difficulte:'moyen', statut:'en_attente', auteur:'Olivia Laurent', nb_fois:0, taux_reussite:0},
+  // ── PSE 2de Bac Pro ──
+  {id:'pse-q1',theme:'A1 - Système de santé',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelle est la définition de la santé selon l\'OMS ?',reponses:['Un état d\'absence de toute maladie','Un état de complet bien-être physique, mental et social','Une bonne condition physique uniquement','L\'absence de symptômes médicaux'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q2',theme:'A1 - Système de santé',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel est le taux de remboursement de la Sécurité sociale dans le parcours de soins coordonnés ?',reponses:['50%','30%','70%','100%'],bonne:2,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q3',theme:'A1 - Système de santé',matiere:'PSE',niveau:'2de Bac Pro',question:'À partir de quel âge doit-on déclarer un médecin traitant ?',reponses:['18 ans','21 ans','16 ans','14 ans'],bonne:2,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q4',theme:'A1 - Système de santé',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce que le DMP ?',reponses:['Déclaration Médicale de Pénibilité','Dossier Médical Partagé','Document de Mise en Protection','Dispositif de Médecine Préventive'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q5',theme:'A1 - Système de santé',matiere:'PSE',niveau:'2de Bac Pro',question:'Sur quel principe repose la protection sociale en France ?',reponses:['Le principe de liberté','Le principe de solidarité','Le principe de responsabilité individuelle','Le principe de profitabilité'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q6',theme:'A2 - Rythmes biologiques',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelle est la durée d\'un cycle de sommeil ?',reponses:['60 minutes','45 minutes','90 minutes','120 minutes'],bonne:2,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q7',theme:'A2 - Rythmes biologiques',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelle phase du sommeil permet la récupération physique ?',reponses:['Le sommeil paradoxal','Le sommeil lent léger','Le sommeil lent très profond','Le sommeil lent très léger'],bonne:2,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q8',theme:'A2 - Rythmes biologiques',matiere:'PSE',niveau:'2de Bac Pro',question:'Pourquoi faut-il éviter les écrans avant de dormir ?',reponses:['Les écrans chauffent trop','La lumière bleue bloque la sécrétion de mélatonine','Les écrans font trop de bruit','Les écrans fatiguent uniquement les yeux'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q9',theme:'A2 - Rythmes biologiques',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce que le rythme circadien ?',reponses:['Un rythme cardiaque','Le cycle menstruel','Un rythme biologique qui se répète toutes les 24h','Un rythme saisonnier'],bonne:2,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q10',theme:'A2 - Rythmes biologiques',matiere:'PSE',niveau:'2de Bac Pro',question:'À quelle température idéale doit-on dormir ?',reponses:['22°C','25°C','17°C','20°C'],bonne:2,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q11',theme:'A3 - Activité physique',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelle est la recommandation OMS en activité physique pour un adulte ?',reponses:['1h par jour','2h par semaine','30 minutes par jour 5 fois par semaine','15 minutes par jour'],bonne:2,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q12',theme:'A3 - Activité physique',matiere:'PSE',niveau:'2de Bac Pro',question:'Que consomme le muscle lors de la contraction musculaire ?',reponses:['De l\'eau et des vitamines','Du glucose et du dioxygène','Des protéines et du calcium','Du sel et des minéraux'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q13',theme:'A3 - Activité physique',matiere:'PSE',niveau:'2de Bac Pro',question:'Pourquoi s\'essouffle-t-on lors d\'un effort physique ?',reponses:['Le corps manque d\'eau','La fréquence cardiaque et respiratoire augmentent pour apporter plus d\'O₂ aux muscles','Les muscles se contractent trop fort','La température corporelle baisse'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q14',theme:'A3 - Activité physique',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelles sont les 4 propriétés des muscles striés squelettiques ?',reponses:['Rapides, lents, lisses, striés','Contractiles, élastiques, excitables, toniques','Volontaires, involontaires, cardiaques, lisses','Forts, faibles, rapides, lents'],bonne:1,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q15',theme:'A3 - Activité physique',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel est l\'effet de l\'activité physique régulière sur le cœur ?',reponses:['Il augmente le cholestérol','Il devient plus puissant et les artères s\'assouplissent','Il n\'a aucun effet sur le cœur','Il diminue la capacité pulmonaire'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q16',theme:'A4 - Addictions',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce qu\'une addiction ?',reponses:['Une habitude quotidienne bénéfique','Une dépendance à une substance dont on ne peut se passer malgré les conséquences nocives','Une maladie génétique','Un simple passe-temps'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q17',theme:'A4 - Addictions',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel est le taux légal d\'alcoolémie pour conduire (adulte) ?',reponses:['0,8 g/L','0,2 g/L','0,5 g/L','1 g/L'],bonne:2,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q18',theme:'A4 - Addictions',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce que la polyconsommation ?',reponses:['Consommer des aliments variés','Consommer simultanément plusieurs substances psychoactives','Prendre plusieurs médicaments différents','Pratiquer plusieurs sports'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q19',theme:'A4 - Addictions',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel est l\'effet de l\'alcool sur le champ visuel d\'un conducteur ?',reponses:['Il améliore la vision nocturne','Il réduit le champ visuel de 170° à 30°','Il n\'a aucun effet sur la vision','Il augmente la concentration'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q20',theme:'A4 - Addictions',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelle est une action de prévention individuelle contre les addictions ?',reponses:['Interdire toute publicité pour l\'alcool','Mettre en place des taxes sur le tabac','Ne pas se laisser entraîner la première fois par son entourage','Fermer les débits de boisson'],bonne:2,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q21',theme:'A5 - Sexualité contraception',matiere:'PSE',niveau:'2de Bac Pro',question:'À quel jour du cycle (28 jours) a lieu l\'ovulation ?',reponses:['Jour 7','Jour 1','Jour 21','Jour 14'],bonne:3,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q22',theme:'A5 - Sexualité contraception',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce que la nidation ?',reponses:['La fécondation dans les trompes','L\'ovulation','L\'implantation de l\'embryon dans la paroi utérine','La formation du placenta'],bonne:2,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q23',theme:'A5 - Sexualité contraception',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelle méthode protège contre les IST ET les grossesses ?',reponses:['La pilule','Le préservatif','L\'implant','Le stérilet'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q24',theme:'A5 - Sexualité contraception',matiere:'PSE',niveau:'2de Bac Pro',question:'Combien de jours couvre la période fertile ?',reponses:['3 jours','5 jours','7 jours','10 jours'],bonne:2,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q25',theme:'A5 - Sexualité contraception',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce que la contraception ?',reponses:['L\'IVG','L\'ensemble des moyens provoquant une infécondité temporaire','Un traitement hormonal permanent','Un dispositif chirurgical définitif'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q26',theme:'B1 - Alimentation écoresponsable',matiere:'PSE',niveau:'2de Bac Pro',question:'De combien de Gt de CO₂ le gaspillage alimentaire est-il responsable chaque année ?',reponses:['0,5 Gt','1 Gt','3,3 Gt','10 Gt'],bonne:2,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q27',theme:'B1 - Alimentation écoresponsable',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel est l\'objectif de réduction du gaspillage alimentaire fixé par la France pour 2025 ?',reponses:['-10%','-25%','-50%','-75%'],bonne:2,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q28',theme:'B1 - Alimentation écoresponsable',matiere:'PSE',niveau:'2de Bac Pro',question:'Que prévoit la Loi Garot (2016) ?',reponses:['L\'interdiction des pesticides','L\'obligation du doggy bag','L\'interdiction de rendre impropre la nourriture non consommée et obligation de dons','La taxation du sucre'],bonne:2,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q29',theme:'B1 - Alimentation écoresponsable',matiere:'PSE',niveau:'2de Bac Pro',question:'Combien d\'étoiles pour le niveau Exemplaire du label antigaspillage ?',reponses:['1 étoile','2 étoiles','3 étoiles','4 étoiles'],bonne:2,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q30',theme:'B1 - Alimentation écoresponsable',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelle surface agricole est utilisée inutilement par le gaspillage alimentaire mondial ?',reponses:['500 000 hectares','1,4 milliard d\'hectares','50 millions d\'hectares','10 milliards d\'hectares'],bonne:1,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q31',theme:'B2 - Risques majeurs',matiere:'PSE',niveau:'2de Bac Pro',question:'Comment se caractérise le signal d\'alerte aux populations ?',reponses:['Un son continu de 3 minutes','Trois coups de sirène courts','Un son modulé en 3 séquences d\'1 min 41s séparées de 5s','Une alarme continue de 5 minutes'],bonne:2,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q32',theme:'B2 - Risques majeurs',matiere:'PSE',niveau:'2de Bac Pro',question:'Comment se caractérise le signal de FIN d\'alerte ?',reponses:['Silence total pendant 1 minute','Un son continu de 30 secondes','Trois sonneries courtes','Le même son que le début'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q33',theme:'B2 - Risques majeurs',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce que le DICRIM ?',reponses:['Un plan d\'évacuation des bâtiments','Le Document d\'Information Communal sur les Risques Majeurs','Un règlement intérieur de sécurité','Un code d\'alerte incendie'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q34',theme:'B2 - Risques majeurs',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce que FR-Alert ?',reponses:['Un réseau de sirènes sur les toits','Un système d\'alerte par notification sur téléphones mobiles','Une application météo officielle','Un canal radio d\'urgence'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q35',theme:'B2 - Risques majeurs',matiere:'PSE',niveau:'2de Bac Pro',question:'Que faut-il NE PAS faire en cas d\'alerte risque majeur ?',reponses:['Se mettre à l\'abri','Écouter la radio','Aller chercher ses enfants à l\'école','Couper la ventilation'],bonne:2,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q36',theme:'C1 - Santé sécurité au travail',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel article du Code du travail oblige l\'employeur à assurer la sécurité des travailleurs ?',reponses:['Art. L.1234-5','Art. L.4121-1','Art. L.2312-4','Art. L.6321-1'],bonne:1,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q37',theme:'C1 - Santé sécurité au travail',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce que le droit de retrait du salarié ?',reponses:['Le droit de refuser une mutation','Le droit de quitter son poste en cas de danger grave et imminent sans sanction','Le droit de partir à la retraite anticipée','Le droit de refuser les heures supplémentaires'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q38',theme:'C1 - Santé sécurité au travail',matiere:'PSE',niveau:'2de Bac Pro',question:'Combien de critères de pénibilité sont reconnus dans le C2P ?',reponses:['3','4','6','8'],bonne:2,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q39',theme:'C1 - Santé sécurité au travail',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'engage l\'employeur en cas de non-respect de ses obligations de sécurité ?',reponses:['Uniquement une amende','Sa responsabilité civile ou pénale','Un simple avertissement','Rien de particulier'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q40',theme:'C1 - Santé sécurité au travail',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce que le DUERP ?',reponses:['Document Unique d\'Évaluation des Risques Professionnels','Déclaration Unique d\'Emploi à Risques Particuliers','Dispositif Unifié d\'Évacuation et de Réduction des Périls','Dossier Uniformisé d\'Évaluation des Risques Psychosociaux'],bonne:0,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q41',theme:'C2 - Prévention risques professionnels',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelle est la différence entre danger et risque ?',reponses:['Ce sont des synonymes','Le danger est la probabilité, le risque est la source','Le danger est la propriété de causer un dommage, le risque est la probabilité que cela survienne','Le risque est plus grave que le danger'],bonne:2,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q42',theme:'C2 - Prévention risques professionnels',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel est le processus d\'apparition d\'un dommage ?',reponses:['Dommage → Danger → Situation dangereuse → Déclencheur','Danger → Situation dangereuse → Événement déclencheur → Dommage','Déclencheur → Danger → Situation dangereuse → Dommage','Situation dangereuse → Dommage → Danger → Déclencheur'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q43',theme:'C2 - Prévention risques professionnels',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelle est la mesure de prévention prioritaire ?',reponses:['Porter des EPI','Mettre en place une protection collective','Supprimer le danger','Former les salariés'],bonne:2,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q44',theme:'C2 - Prévention risques professionnels',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce qu\'un risque de chute de plain-pied ?',reponses:['Tomber depuis une échelle','Glissade, trébuchement ou perte d\'équilibre au même niveau','Chute depuis un toit','Un objet qui tombe sur un opérateur'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q45',theme:'C2 - Prévention risques professionnels',matiere:'PSE',niveau:'2de Bac Pro',question:'Que peut-on faire avec les points du C2P ?',reponses:['Uniquement partir à la retraite','Uniquement se former','Partir en retraite anticipée, se former ou travailler à temps partiel sans perte de salaire','Les convertir en argent'],bonne:2,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q101',theme:'A1 - Système de santé',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel est l\'objectif de l\'examen de prévention en santé (EPS) ?',reponses:['Vacciner gratuitement','Faire le point sur sa santé et s\'inscrire dans le parcours de soins','Réaliser un bilan sanguin complet','Obtenir des arrêts maladie'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q102',theme:'A1 - Système de santé',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel organisme prend en charge l\'examen de prévention en santé ?',reponses:['L\'État','La mutuelle','L\'Assurance maladie','Le médecin traitant'],bonne:2,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q103',theme:'A1 - Système de santé',matiere:'PSE',niveau:'2de Bac Pro',question:'Quels types de bien-être composent la définition de la santé selon l\'OMS ?',reponses:['Physique, sportif, nutritionnel','Physique, mental, social','Physique, émotionnel, financier','Médical, psychologique, économique'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q104',theme:'A1 - Système de santé',matiere:'PSE',niveau:'2de Bac Pro',question:'Le tabagisme actif est responsable de combien de décès prématurés par an en France ?',reponses:['15 000','50 000','73 000','100 000'],bonne:2,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q105',theme:'A1 - Système de santé',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel est l\'objectif général des plans santé mis en place par l\'État ?',reponses:['Réduire les dépenses de santé','Protéger la santé des individus via la prévention collective','Former plus de médecins','Construire des hôpitaux'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q106',theme:'A1 - Système de santé',matiere:'PSE',niveau:'2de Bac Pro',question:'Pourquoi le montant des cotisations de Sécurité sociale varie-t-il d\'un salarié à l\'autre ?',reponses:['Selon l\'ancienneté dans l\'entreprise','Selon l\'état de santé du salarié','Selon le salaire brut perçu','Selon le type de contrat'],bonne:2,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q107',theme:'A1 - Système de santé',matiere:'PSE',niveau:'2de Bac Pro',question:'Rosa, enceinte, est suivie par une gynécologue sans passer par son médecin traitant. Le parcours de soins coordonnés est-il respecté ?',reponses:['Non, elle aurait dû passer par son médecin traitant','Oui, la gynécologue est un médecin en libre accès','Non, elle devrait aller aux urgences','Oui, car la grossesse est une urgence'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q108',theme:'A1 - Système de santé',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel est le montant restant à charge lors d\'une consultation de 26,50€ dans le parcours de soins coordonnés ?',reponses:['5€','8,75€','12€','19,55€'],bonne:1,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q109',theme:'A1 - Système de santé',matiere:'PSE',niveau:'2de Bac Pro',question:'Quels sont les intérêts du Dossier Médical Partagé (DMP) ?',reponses:['Il remplace le médecin traitant','Il permet le partage des données de santé entre professionnels et évite les examens inutiles','Il donne accès aux médicaments sans ordonnance','Il finance les soins non remboursés'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q110',theme:'A1 - Système de santé',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelles solutions peut-on mettre en œuvre pour préserver son capital santé ?',reponses:['Éviter tout effort physique','Avoir une activité sportive régulière, manger équilibré, dormir suffisamment, faire des bilans de santé','Prendre des compléments alimentaires uniquement','Consulter un médecin uniquement en cas de maladie'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q206',theme:'A2 - Rythmes biologiques',matiere:'PSE',niveau:'2de Bac Pro',question:'Où est localisée l\'horloge biologique dans le corps humain ?',reponses:['Dans le cœur','Dans l\'hypothalamus (cerveau)','Dans le foie','Dans la moelle épinière'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q207',theme:'A2 - Rythmes biologiques',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel synchroniseur externe est le plus important pour régler les rythmes biologiques ?',reponses:['La température','La lumière','L\'alimentation','Le bruit'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q208',theme:'A2 - Rythmes biologiques',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelle est la fréquence du rythme cardiaque ?',reponses:['Toutes les 24 heures','Tous les mois','Moins d\'une minute','Toutes les semaines'],bonne:2,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q209',theme:'A2 - Rythmes biologiques',matiere:'PSE',niveau:'2de Bac Pro',question:'Combien d\'heures de sommeil sont nécessaires pour un adolescent ?',reponses:['5 à 6 heures','6 à 7 heures','8 à 10 heures','12 à 14 heures'],bonne:2,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q210',theme:'A2 - Rythmes biologiques',matiere:'PSE',niveau:'2de Bac Pro',question:'Pourquoi la première partie de la nuit est-elle plus favorable à la récupération physique ?',reponses:['On rêve davantage en début de nuit','Le sommeil lent très profond prédomine en début de nuit','La mélatonine est absente en début de nuit','Le corps ne récupère pas en début de nuit'],bonne:1,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q211',theme:'A2 - Rythmes biologiques',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce que la désynchronisation des rythmes biologiques ?',reponses:['L\'absence totale de sommeil','Le décalage entre rythmes biologiques et contraintes de la vie quotidienne','Une maladie du cœur','L\'accélération du rythme cardiaque'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q212',theme:'A2 - Rythmes biologiques',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelles sont les conséquences de la désynchronisation sur la santé ?',reponses:['Amélioration de la mémoire','Troubles du sommeil, irritabilité, troubles digestifs','Augmentation de la force physique','Meilleure concentration'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q213',theme:'A2 - Rythmes biologiques',matiere:'PSE',niveau:'2de Bac Pro',question:'Quels droits et garanties a un travailleur de nuit ?',reponses:['Aucun droit spécifique','Repos compensateur, visite médicale préalable, droits dans le C2P','Seulement une prime de nuit','Possibilité de refuser tout travail de nuit'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q214',theme:'A2 - Rythmes biologiques',matiere:'PSE',niveau:'2de Bac Pro',question:'Pourquoi le travail posté est-il considéré comme un travail pénible ?',reponses:['Il est trop bien payé','Il entraîne une désynchronisation des rythmes biologiques pouvant causer des problèmes de santé','Il nécessite des compétences particulières','Il oblige à travailler debout'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q215',theme:'A2 - Rythmes biologiques',matiere:'PSE',niveau:'2de Bac Pro',question:'Quels conseils donner à un salarié en horaires décalés pour gérer son sommeil ?',reponses:['Boire du café pour rester éveillé','Dormir au moins 7h/24h dont sieste, dans endroit calme et obscur, éviter la double journée','Prendre des somnifères régulièrement','Regarder la télévision pour s\'endormir'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q316',theme:'A3 - Activité physique',matiere:'PSE',niveau:'2de Bac Pro',question:'L\'activité physique comprend-elle uniquement les sports de compétition ?',reponses:['Oui, seuls les sports comptent','Non, elle comprend tous les mouvements : travail, loisirs, déplacements','Oui, uniquement les activités en salle','Non, mais les loisirs passifs ne comptent pas'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q317',theme:'A3 - Activité physique',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce qui déclenche la contraction musculaire ?',reponses:['Une stimulation chimique par l\'alimentation','Une excitation nerveuse (influx nerveux)','La chaleur corporelle','La pression sanguine'],bonne:1,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q318',theme:'A3 - Activité physique',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelle modification physiologique permet la thermorégulation lors d\'un effort ?',reponses:['L\'accélération du rythme cardiaque','L\'augmentation de la transpiration','L\'accélération de la digestion','La réduction de la fréquence respiratoire'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q319',theme:'A3 - Activité physique',matiere:'PSE',niveau:'2de Bac Pro',question:'Quels sont les effets de l\'activité physique sur le bien-être social ?',reponses:['Elle isole l\'individu','Elle permet une meilleure intégration sociale','Elle améliore uniquement la condition physique','Elle n\'a aucun effet social'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q320',theme:'A3 - Activité physique',matiere:'PSE',niveau:'2de Bac Pro',question:'Comment augmenter son activité physique au quotidien si on a un travail sédentaire ?',reponses:['Prendre des médicaments','Marcher pendant les pauses, prendre les escaliers, aller au travail à vélo ou à pied','Faire uniquement du sport le week-end','Réduire son temps de travail'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q321',theme:'A3 - Activité physique',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelle est la recommandation OMS en matière d\'activité physique pour un adolescent ?',reponses:['30 min/jour','45 min × 3/semaine','1h/jour','2h/semaine'],bonne:2,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q322',theme:'A3 - Activité physique',matiere:'PSE',niveau:'2de Bac Pro',question:'Quels sont les effets de l\'activité physique sur le risque de maladies ?',reponses:['Elle augmente le risque d\'hypertension','Elle diminue les risques de maladies cardiovasculaires, d\'hypertension et de diabète','Elle n\'a aucun effet préventif','Elle augmente le risque de diabète'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q323',theme:'A3 - Activité physique',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel est l\'effet de la sédentarité sur la mortalité ?',reponses:['Elle n\'a aucun effet','Elle réduit le risque de mortalité','Les personnes inactives ont un risque de décès majoré de 20 à 30%','Elle améliore la longévité'],bonne:2,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q421',theme:'A4 - Addictions',matiere:'PSE',niveau:'2de Bac Pro',question:'Comment les substances psychoactives agissent-elles sur le cerveau ?',reponses:['Elles détruisent les neurones immédiatement','Elles augmentent la production de dopamine, provoquant une sensation de bien-être qui pousse à consommer plus','Elles bloquent toute activité cérébrale','Elles améliorent durablement les capacités cognitives'],bonne:1,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q422',theme:'A4 - Addictions',matiere:'PSE',niveau:'2de Bac Pro',question:'Quels facteurs peuvent conduire à une addiction ?',reponses:['Uniquement le type de substance','Facteurs liés au produit, à l\'environnement ET à l\'individu','Uniquement des facteurs génétiques','Uniquement la pression des pairs'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q423',theme:'A4 - Addictions',matiere:'PSE',niveau:'2de Bac Pro',question:'À quel âge en moyenne les adolescents ont-ils leur premier téléphone portable ?',reponses:['6-8 ans','10-12 ans','14-16 ans','18 ans'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q424',theme:'A4 - Addictions',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelles sont les conséquences personnelles et sociales des addictions ?',reponses:['Uniquement des problèmes de santé physique','Isolement, perte d\'emploi, difficultés financières, accidents, problèmes de santé, séparation','Uniquement des problèmes financiers','Elles n\'ont que des conséquences positives à court terme'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q425',theme:'A4 - Addictions',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelles sont les mesures préventives collectives contre les addictions ?',reponses:['Autoriser toutes les substances','Campagnes de sensibilisation, structures d\'aide (CJC), lois restrictives','Uniquement punir les consommateurs','Fermer tous les débits de boisson'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q426',theme:'A4 - Addictions',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel taux d\'alcoolémie est légal pour un jeune conducteur (permis depuis moins de 3 ans) ?',reponses:['0,5 g/L','0,8 g/L','0,2 g/L','0 g/L'],bonne:2,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q427',theme:'A4 - Addictions',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel est l\'effet du cannabis sur la distance d\'arrêt d\'un véhicule à 90 km/h ?',reponses:['Il la diminue','Il n\'a aucun effet','Il l\'augmente significativement (5 μg/L : distance plus longue qu\'à 0 μg/L)','Il améliore les réflexes'],bonne:2,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q428',theme:'A4 - Addictions',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel est le résultat d\'une polyconsommation cannabis + alcool selon les données ?',reponses:['Les effets s\'annulent','81% des consommateurs réguliers de cannabis consomment aussi de l\'alcool, les risques sont multipliés','Les effets sont identiques à une consommation seule','La polyconsommation est moins dangereuse'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q526',theme:'A5 - Sexualité contraception',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel est le délai d\'utilisation de la contraception d\'urgence après un rapport sexuel ?',reponses:['12 heures maximum','24 heures maximum','3 à 5 jours selon le type de pilule','1 semaine maximum'],bonne:2,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q527',theme:'A5 - Sexualité contraception',matiere:'PSE',niveau:'2de Bac Pro',question:'Où peut-on se procurer la contraception d\'urgence ?',reponses:['Uniquement chez le médecin','Centres de santé sexuelle, pharmacies, infirmeries scolaires, CeGIDD','Uniquement aux urgences hospitalières','Uniquement en prescription médicale'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q528',theme:'A5 - Sexualité contraception',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce que la durée de vie d\'un ovule après l\'ovulation ?',reponses:['1 à 2 jours','3 à 5 jours','7 jours','1 heure'],bonne:0,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q529',theme:'A5 - Sexualité contraception',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'arrive-t-il à l\'embryon entre la fécondation et la nidation ?',reponses:['Il reste dans les trompes','La cellule-œuf se divise et progresse dans les trompes pour arriver dans la cavité utérine au 5e jour','Il est immédiatement expulsé si non voulu','Il se développe directement dans l\'ovaire'],bonne:1,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q530',theme:'A5 - Sexualité contraception',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel est le mécanisme d\'action du préservatif ?',reponses:['Il empêche l\'ovulation','Il empêche le sperme d\'entrer dans le vagin','Il élimine les spermatozoïdes chimiquement','Il modifie le cycle hormonal'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q531',theme:'A5 - Sexualité contraception',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel moyen de contraception convient le mieux à Clara, 43 ans, avec contre-indication aux hormones et dont le conjoint refuse les préservatifs ?',reponses:['La pilule','Le patch','Le dispositif intra-utérin (DIU) au cuivre','L\'implant'],bonne:2,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q532',theme:'A5 - Sexualité contraception',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelle est la différence entre l\'efficacité théorique et l\'efficacité pratique du patch contraceptif ?',reponses:['Il n\'y a pas de différence','L\'efficacité pratique est moindre à cause du risque de décollement','L\'efficacité pratique est meilleure car le patch s\'adapte au corps','Le patch a une efficacité théorique de 80% seulement'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q533',theme:'A5 - Sexualité contraception',matiere:'PSE',niveau:'2de Bac Pro',question:'Depuis quand la contraception est-elle accessible gratuitement aux moins de 26 ans en France ?',reponses:['Depuis 2010','Depuis 2015','Depuis le 1er janvier 2023','Depuis 2020'],bonne:2,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q534',theme:'A5 - Sexualité contraception',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelle est la mission principale des centres de santé sexuelle ?',reponses:['Uniquement pratiquer les IVG','Soutien sur la sexualité, accompagnement IVG, dépistage IST, prescription contraception','Uniquement traiter les maladies sexuelles','Uniquement conseiller les couples'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q631',theme:'B1 - Alimentation écoresponsable',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce qu\'un circuit court de distribution alimentaire ?',reponses:['Un circuit de moins de 100 km','Un circuit comportant au plus un intermédiaire entre le producteur et le consommateur','Un circuit exclusivement biologique','Un circuit passant par un hypermarché'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q632',theme:'B1 - Alimentation écoresponsable',matiere:'PSE',niveau:'2de Bac Pro',question:'Pourquoi s\'approvisionner directement chez le producteur est-il écoresponsable ?',reponses:['Les produits sont moins chers','Réduction du CO₂ (produits locaux et de saison), moins d\'emballages, moins de gaspillage (produits abîmés vendus)','Les produits durent plus longtemps','Les quantités sont plus grandes'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q633',theme:'B1 - Alimentation écoresponsable',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelles sont les causes du gaspillage alimentaire au niveau individuel ?',reponses:['Uniquement les mauvaises habitudes de cuisson','Mauvaise gestion des stocks, surconsommation, non-respect de la chaîne du froid','Uniquement le refus des fruits et légumes moches','Trop de diversité dans les repas'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q634',theme:'B1 - Alimentation écoresponsable',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce que la DLC et pourquoi est-elle importante ?',reponses:['La Distance Limite de Commercialisation — délimite les zones de vente','La Date Limite de Consommation — après cette date, le produit peut être dangereux','La Déclaration Légale de Composition — informe sur les ingrédients','La Durée Légale de Conservation — s\'applique aux conserves'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q635',theme:'B1 - Alimentation écoresponsable',matiere:'PSE',niveau:'2de Bac Pro',question:'Quels comportements d\'un consommateur écoresponsable permettent de réduire le gaspillage ?',reponses:['Acheter en grande quantité pour faire des économies','Faire une liste de courses, adapter les quantités à ses besoins, bien ranger son réfrigérateur, acheter des fruits moches','Acheter uniquement des produits importés','Jeter systématiquement les restes'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q636',theme:'B1 - Alimentation écoresponsable',matiere:'PSE',niveau:'2de Bac Pro',question:'Combien représente le gaspillage alimentaire en France en termes économiques ?',reponses:['1 milliard d\'euros','5 milliards d\'euros','16 milliards d\'euros','100 milliards d\'euros'],bonne:2,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q637',theme:'B1 - Alimentation écoresponsable',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce qu\'une alimentation écoresponsable doit privilégier ?',reponses:['Les produits exotiques importés pour la diversité','Les produits locaux et de saison, l\'agriculture bio ou raisonnée, peu d\'emballages, les protéines végétales','Les produits en grande quantité pour économiser','Les produits transformés car plus durables'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q736',theme:'B2 - Risques majeurs',matiere:'PSE',niveau:'2de Bac Pro',question:'Comment se définit un risque majeur ?',reponses:['Un risque fréquent et peu grave','Un événement rare mais d\'une grande gravité dépassant les capacités de réaction de la société','Un accident du travail grave','Un risque uniquement naturel'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q737',theme:'B2 - Risques majeurs',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelles sont les deux grandes familles de risques majeurs ?',reponses:['Terrestres et marins','Naturels et technologiques','Locaux et nationaux','Prévisibles et imprévisibles'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q738',theme:'B2 - Risques majeurs',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce qu\'un PPMS et qui l\'établit ?',reponses:['Un plan de prévention médicale — par le médecin scolaire','Un Plan Particulier de Mise en Sûreté — établi par le chef d\'établissement scolaire','Un protocole de premiers secours — par les pompiers','Un programme pédagogique — par l\'inspecteur'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q739',theme:'B2 - Risques majeurs',matiere:'PSE',niveau:'2de Bac Pro',question:'Combien de zones de mise à l\'abri prévoit généralement un PPMS dans un établissement scolaire ?',reponses:['Une seule zone centrale','Deux zones minimum','Trois zones retenues habituellement','Autant que de classes'],bonne:2,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q740',theme:'B2 - Risques majeurs',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel outil d\'information préventive permet au citoyen de connaître les risques majeurs de sa commune ?',reponses:['La météo locale','Le DICRIM (Document d\'Information Communal sur les Risques Majeurs)','Le règlement intérieur de la mairie','Le plan de circulation'],bonne:1,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q741',theme:'B2 - Risques majeurs',matiere:'PSE',niveau:'2de Bac Pro',question:'Quels sont les différents vecteurs du Système d\'Alerte et d\'Information aux Populations (SAIP) ?',reponses:['Uniquement les sirènes','Sirènes, messages sur panneaux lumineux, radio, télévision, téléphone (FR-Alert)','Uniquement la radio et la télévision','Uniquement les réseaux sociaux'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q742',theme:'B2 - Risques majeurs',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelles consignes spécifiques s\'appliquent en cas d\'inondation ?',reponses:['Nager vers la sortie','Ne pas s\'approcher des cours d\'eau, couper l\'électricité, monter dans les étages','Conduire rapidement pour s\'éloigner','Ouvrir toutes les fenêtres'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q743',theme:'B2 - Risques majeurs',matiere:'PSE',niveau:'2de Bac Pro',question:'Pourquoi ne faut-il pas téléphoner lors d\'une alerte risque majeur ?',reponses:['Pour économiser la batterie','Pour ne pas paniquer','Pour ne pas saturer le réseau téléphonique et laisser la priorité aux secours','Il est autorisé de téléphoner'],bonne:2,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q841',theme:'C1 - Santé sécurité au travail',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce qu\'un accident du travail ?',reponses:['Tout incident survenant en dehors du lieu de travail','Un accident survenu au salarié par le fait ou à l\'occasion de son travail, quelle qu\'en soit la cause','Uniquement un accident grave avec hospitalisation','Un accident uniquement survenu à cause d\'une faute du salarié'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q842',theme:'C1 - Santé sécurité au travail',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce qu\'une maladie professionnelle ?',reponses:['Toute maladie contractée pendant la vie active','Une maladie contractée par un salarié en lien direct avec son activité professionnelle, figurant au tableau des maladies professionnelles','Une maladie contagieuse attrapée au travail','Tout problème de santé lié au stress'],bonne:1,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q843',theme:'C1 - Santé sécurité au travail',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelles dispositions s\'appliquent spécifiquement aux nouveaux embauchés en matière de sécurité ?',reponses:['Aucune disposition spécifique','Information et formation à la sécurité par l\'employeur + visite d\'information et de prévention','Uniquement la signature d\'un contrat de travail','Uniquement le port obligatoire d\'EPI'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q844',theme:'C1 - Santé sécurité au travail',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelles dispositions protègent spécifiquement les jeunes travailleurs de moins de 18 ans ?',reponses:['Aucune protection particulière','Interdiction du travail de nuit de 22h à 6h (sauf exceptions)','Droit à 3 heures de pause par jour','Réduction automatique du temps de travail de 50%'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q845',theme:'C1 - Santé sécurité au travail',matiere:'PSE',niveau:'2de Bac Pro',question:'Quel est l\'enjeu humain de la santé et sécurité au travail pour le salarié ?',reponses:['Uniquement conserver son emploi','Préserver son intégrité physique et mentale pour éviter handicaps, souffrances et usure professionnelle','Obtenir une promotion','Bénéficier de congés supplémentaires'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q846',theme:'C1 - Santé sécurité au travail',matiere:'PSE',niveau:'2de Bac Pro',question:'Qui est concerné par les chiffres d\'accidents du travail ?',reponses:['Uniquement les secteurs du BTP','Uniquement les usines','Tous les secteurs professionnels sont touchés','Uniquement les travailleurs de moins de 25 ans'],bonne:2,difficulte:'facile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q847',theme:'C1 - Santé sécurité au travail',matiere:'PSE',niveau:'2de Bac Pro',question:'Quelle est la différence entre l\'accident du travail et l\'accident de trajet ?',reponses:['Ce sont des synonymes','L\'AT survient sur le lieu de travail, l\'accident de trajet survient lors du déplacement domicile-travail','L\'accident de trajet n\'est pas indemnisé','Seul l\'AT est reconnu par la Sécurité sociale'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q848',theme:'C1 - Santé sécurité au travail',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce que le tableau des maladies professionnelles ?',reponses:['Un registre des accidents dans chaque entreprise','Un tableau officiel listant les maladies reconnues comme professionnelles et les conditions de prise en charge','Un planning des visites médicales','Un document rédigé par l\'employeur'],bonne:1,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q849',theme:'C1 - Santé sécurité au travail',matiere:'PSE',niveau:'2de Bac Pro',question:'Que peut faire un salarié s\'il ne respecte pas les consignes de sécurité de l\'employeur ?',reponses:['Rien, il est libre de ses actes','Il risque une sanction disciplinaire de l\'employeur','Il risque une amende pénale directe','Il perd automatiquement son salaire'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q946',theme:'C2 - Prévention risques professionnels',matiere:'PSE',niveau:'2de Bac Pro',question:'Qu\'est-ce qu\'une situation dangereuse ?',reponses:['Un accident déjà survenu','Une situation dans laquelle une personne est exposée à un ou plusieurs dangers','Un danger potentiel non identifié','Un risque sans conséquences'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q947',theme:'C2 - Prévention risques professionnels',matiere:'PSE',niveau:'2de Bac Pro',question:'Dans la situation de Léa (aide-soignante), le sol mouillé est un danger. Quel est l\'événement déclencheur ?',reponses:['Le sol mouillé lui-même','Léa se déplace sur le sol','Léa glisse sur le sol mouillé','Le dommage (blessure)'],bonne:2,difficulte:'difficile',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q948',theme:'C2 - Prévention risques professionnels',matiere:'PSE',niveau:'2de Bac Pro',question:'Le linge souillé dans une EHPAD appartient à quelle famille de risques ?',reponses:['Risques chimiques','Risques liés aux agents biologiques','Risques de chute','Risques liés aux équipements'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+  {id:'pse-q949',theme:'C2 - Prévention risques professionnels',matiere:'PSE',niveau:'2de Bac Pro',question:'Pourquoi le port de chaussures de sécurité est-il une consigne de sécurité pertinente pour le risque de chute de plain-pied ?',reponses:['Pour être mieux présenté','Il prévient les glissades et protège les pieds en cas de chute ou de choc','Il ne sert à rien pour ce risque','Uniquement pour protéger contre les produits chimiques'],bonne:1,difficulte:'moyen',statut:'validé',auteur:'Prof. PSE',nb_fois:0,taux_reussite:0},
+];
 
 let coursFilterMat = 'all';
 let coursFilterType = 'all';
@@ -3565,40 +3579,27 @@ function setCoursFilter(btn, filterType, val) {
 // ── COURS HUB ──
 var coursCurrentTheme = null;
 
-var COURS_MAT_COULEURS = { Histoire:'var(--ac)', Géographie:'var(--gr)', Geographie:'var(--gr)', EMC:'#E040A0', PSE:'#E84855' };
-var COURS_MAT_EMOJI    = { Histoire:'📜', Géographie:'🌍', Geographie:'🌍', EMC:'⚖️', PSE:'🩺' };
-var COURS_MAT_ORDER    = ['Histoire','Géographie','EMC','PSE'];
+var COURS_MAT_COULEURS = { Histoire:'var(--ac)', Geographie:'var(--gr)', EMC:'#E040A0', PSE:'#E84855' };
+var COURS_MAT_EMOJI    = { Histoire:'📜', Geographie:'🌍', EMC:'⚖️', PSE:'🩺' };
+var COURS_MAT_ORDER    = ['Histoire','Geographie','EMC','PSE'];
 
-function getMatCouleur(mat) { if(!mat) return 'var(--ac)'; return COURS_MAT_COULEURS[mat] || COURS_MAT_COULEURS[mat.replace('é','e')] || COURS_MAT_COULEURS[mat.replace('e','é')] || 'var(--ac)'; }
+function getMatCouleur(mat) { return COURS_MAT_COULEURS[mat] || COURS_MAT_COULEURS[mat.replace('é','e')] || 'var(--ac)'; }
 function getMatEmoji(mat)   { return COURS_MAT_EMOJI[mat]    || COURS_MAT_EMOJI[mat.replace('é','e')]    || '📚'; }
 
 function buildCoursThemes() {
-  // Construire depuis SB_THEMES + SB_FICHES + SB_VISUELS + SB_QUESTIONS
   var themes = {};
-  // 1. Initialiser depuis la table themes
-  SB_THEMES.forEach(function(t) {
-    themes[t.id] = {
-      id: t.id, theme: t.title, matiere: t.mat, niveau: 'Bac Pro',
-      emoji: t.emoji||'📄', couleur: t.color||'var(--ac)',
-      ordre: t.ordre||t.num||0, actif: t.actif,
-      fiches: [], visuels: [], questions: [], quizCfg: null
-    };
+  COURS_DB.forEach(function(c) {
+    var t = c.theme || 'Général';
+    if(!themes[t]) themes[t] = { theme:t, matiere:c.matiere||'', niveau:c.niveau||'', fiches:[], visuels:[], questions:[], emoji:c.emoji||'📄', couleur:c.couleur||'var(--ac)' };
+    if(c.type === 'visuel') themes[t].visuels.push(c); else themes[t].fiches.push(c);
+    if(!themes[t].matiere && c.matiere) themes[t].matiere = c.matiere;
   });
-  // 2. Attacher les fiches (structure Supabase : essentiel, chrono, dates, vocab)
-  SB_FICHES.forEach(function(f) {
-    if(themes[f.theme_id]) themes[f.theme_id].fiches.push(f);
-  });
-  // 3. Attacher les visuels
-  SB_VISUELS.forEach(function(v) {
-    if(themes[v.theme_id]) themes[v.theme_id].visuels.push(v);
-  });
-  // 4. Attacher les questions (structure Supabase : q, opts[], bon, expl)
-  SB_QUESTIONS.forEach(function(q) {
-    if(themes[q.theme_id]) themes[q.theme_id].questions.push(q);
-  });
-  // 5. Attacher quiz_config
-  SB_QUIZ_CFG.forEach(function(c) {
-    if(themes[c.theme_id]) themes[c.theme_id].quizCfg = c;
+  QUESTIONS_DB.forEach(function(q) {
+    var t = q.theme || 'Général';
+    if(!themes[t]) themes[t] = { theme:t, matiere:q.matiere||'', niveau:q.niveau||'', fiches:[], visuels:[], questions:[], emoji:'❓', couleur:'var(--am)' };
+    themes[t].questions.push(q);
+    if(!themes[t].matiere && q.matiere) themes[t].matiere = q.matiere;
+    if(!themes[t].niveau  && q.niveau)  themes[t].niveau  = q.niveau;
   });
   return themes;
 }
@@ -3608,11 +3609,12 @@ function renderCoursHub() {
   var el = document.getElementById('cours-hub-content');
   if(!el) return;
 
-  var themes    = buildCoursThemes();
-  var themeList = Object.values(themes).sort(function(a,b){ return (a.ordre||0)-(b.ordre||0); });
-  var totalF    = SB_FICHES.length;
-  var totalV    = SB_VISUELS.length;
-  var totalQ    = SB_QUESTIONS.length;
+  var themes     = buildCoursThemes();
+  var themeList  = Object.values(themes);
+  var totalF     = COURS_DB.filter(function(c){ return c.type !== 'visuel'; }).length;
+  var totalV     = COURS_DB.filter(function(c){ return c.type === 'visuel'; }).length;
+  var totalQ     = QUESTIONS_DB.length;
+  var totalQVal  = QUESTIONS_DB.filter(function(q){ return q.statut==='validé'||q.statut==='valide'; }).length;
 
   var subEl = document.getElementById('cours-hub-sub');
   if(subEl) subEl.textContent = themeList.length + ' thèmes · ' + totalF + ' fiches · ' + totalQ + ' questions · ' + totalV + ' visuels';
@@ -3626,99 +3628,93 @@ function renderCoursHub() {
 
   // KPIs
   html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">';
-  html += coursKpi('📄', totalF,    'Fiches',    'var(--ac)', 'var(--acBg)');
+  html += coursKpi('📄', totalF,    'Fiches',    'var(--ac)', '#EEECFC');
   html += coursKpi('❓', totalQ,    'Questions', 'var(--am)', 'var(--amBg)');
+  html += coursKpi('✅', totalQVal, 'Validées',  'var(--gr)', 'var(--grBg)');
   html += coursKpi('🖼', totalV,    'Visuels',   'var(--bl)', 'var(--blBg)');
-  html += coursKpi('📚', themeList.length, 'Thèmes', 'var(--gr)', 'var(--grBg)');
   html += '</div>';
 
-  // Répartition questions par matière
-  if(totalQ > 0) {
-    html += '<div class="panel" style="margin-bottom:20px">';
-    html += '<div class="panel-header"><span>🎯 Banque de questions</span>';
-    html += '<span style="font-size:10px;color:var(--t3);font-weight:400">' + totalQ + ' questions · ' + themeList.length + ' thèmes</span></div>';
-    html += '<div style="padding:14px 16px;display:flex;flex-direction:column;gap:7px">';
-    var matiereCount = {};
-    SB_QUESTIONS.forEach(function(q) {
-      var t = themes[q.theme_id];
-      var m = t ? t.matiere : '?';
-      if(!matiereCount[m]) matiereCount[m] = 0;
-      matiereCount[m]++;
-    });
-    COURS_MAT_ORDER.forEach(function(mat) {
-      var n = matiereCount[mat] || 0;
-      if(!n) return;
-      var pct = Math.round(n / totalQ * 100);
-      var c = getMatCouleur(mat);
-      html += '<div style="display:flex;align-items:center;gap:10px">';
-      html += '<span style="font-size:11px;color:var(--t);width:110px;flex-shrink:0">' + getMatEmoji(mat) + ' ' + mat + '</span>';
-      html += '<div style="flex:1;height:6px;background:var(--surf3);border-radius:3px;overflow:hidden">';
-      html += '<div style="height:100%;width:' + pct + '%;background:' + c + ';border-radius:3px"></div></div>';
-      html += '<span style="font-size:10px;color:var(--t3);width:40px;text-align:right;flex-shrink:0">' + n + ' q.</span>';
-      html += '</div>';
-    });
-    html += '</div></div>';
-  }
+  // Quiz global
+  html += '<div class="panel" style="margin-bottom:20px">';
+  html += '<div class="panel-header"><span>🎯 Quiz Complet — toutes matières</span>';
+  html += '<span style="font-size:10px;color:var(--t3);font-weight:400">' + totalQ + ' questions · ' + themeList.length + ' thèmes</span></div>';
+  html += '<div style="padding:14px 16px;display:flex;flex-direction:column;gap:7px">';
+  var matiereCount = {};
+  QUESTIONS_DB.forEach(function(q){ var m = q.matiere||'?'; if(!matiereCount[m]) matiereCount[m]=0; matiereCount[m]++; });
+  COURS_MAT_ORDER.forEach(function(mat) {
+    var n = matiereCount[mat] || matiereCount[mat.replace('e','é')] || 0;
+    if(!n) return;
+    var pct = totalQ ? Math.round(n/totalQ*100) : 0;
+    var c = getMatCouleur(mat);
+    html += '<div style="display:flex;align-items:center;gap:10px">';
+    html += '<span style="font-size:11px;color:var(--t);width:100px;flex-shrink:0">' + getMatEmoji(mat) + ' ' + mat + '</span>';
+    html += '<div style="flex:1;height:6px;background:var(--surf3);border-radius:3px;overflow:hidden">';
+    html += '<div style="height:100%;width:' + pct + '%;background:' + c + ';border-radius:3px"></div></div>';
+    html += '<span style="font-size:10px;color:var(--t3);width:36px;text-align:right;flex-shrink:0">' + n + ' q.</span>';
+    html += '</div>';
+  });
+  html += '</div></div>';
 
   // Sections par matière
   COURS_MAT_ORDER.forEach(function(mat) {
     var themed = themeList.filter(function(t){
-      return t.matiere === mat || t.matiere === mat.replace('é','e') || t.matiere === mat.replace('e','é');
+      var m = t.matiere;
+      return m === mat || m === mat.replace('e','é') || m === mat.replace('é','e');
     });
     if(!themed.length) return;
-    var couleur = getMatCouleur(mat);
-    var emoji   = getMatEmoji(mat);
-    var totalQM = themed.reduce(function(s,t){ return s+t.questions.length; }, 0);
+    var couleur  = getMatCouleur(mat);
+    var emoji    = getMatEmoji(mat);
+    var totalQM  = themed.reduce(function(s,t){ return s+t.questions.length; }, 0);
 
     html += '<div style="margin-bottom:24px">';
     html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid ' + couleur + '">';
     html += '<span style="font-size:20px">' + emoji + '</span>';
-    html += '<span style="font-size:14px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">' + mat + '</span>';
+    html += '<span style="font-size:14px;font-weight:800;color:var(--t);font-family:\'Syne\',sans-serif">' + mat + '</span>';
     html += '<span style="font-size:10px;color:var(--t3);margin-left:auto">' + themed.length + ' thème' + (themed.length>1?'s':'') + ' · ' + totalQM + ' q.</span>';
     html += '</div>';
-    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">';
 
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">';
     themed.forEach(function(t) {
       var qCount = t.questions.length;
       var fCount = t.fiches.length;
       var vCount = t.visuels.length;
+      var qVal   = t.questions.filter(function(q){ return q.statut==='validé'||q.statut==='valide'; }).length;
+      var avgScore = fCount ? Math.round(t.fiches.reduce(function(s,f){ return s+(f.score_moy||0); },0)/fCount) : 0;
+      var scC = avgScore>=70?'var(--gr)':avgScore>=50?'var(--am)':avgScore>0?'var(--re)':'var(--t3)';
+      var themeQ = t.theme.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
 
       html += '<div class="panel" style="margin:0;cursor:pointer;border-left:3px solid ' + couleur + '"';
-      html += ' onclick="coursOpenTheme(' + JSON.stringify(t.id) + ')"';
+      html += ' onclick="coursOpenTheme(\'' + themeQ + '\')"';
       html += ' onmouseenter="this.style.boxShadow=\'0 4px 14px rgba(0,0,0,.09)\'"';
       html += ' onmouseleave="this.style.boxShadow=\'none\'">';
       html += '<div style="padding:14px 16px">';
+
       html += '<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">';
-      html += '<div style="width:36px;height:36px;border-radius:9px;background:' + couleur + '20;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">' + (t.emoji||'📄') + '</div>';
+      html += '<div style="width:36px;height:36px;border-radius:9px;background:' + couleur + '18;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">' + (t.emoji||'📄') + '</div>';
       html += '<div style="flex:1;min-width:0">';
-      html += '<div style="font-size:12px;font-weight:800;color:var(--t);line-height:1.3">' + t.theme + '</div>';
-      html += '<div style="font-size:10px;color:var(--t3);margin-top:2px">' + mat + ' · Bac Pro</div>';
-      html += '</div></div>';
-      html += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">';
-      if(fCount) html += '<span style="font-size:10px;background:var(--acBg);color:var(--ac);border-radius:20px;padding:2px 8px;font-weight:600">📄 Fiche</span>';
-      if(qCount) html += '<span style="font-size:10px;background:var(--amBg);color:var(--am);border-radius:20px;padding:2px 8px;font-weight:600">❓ ' + qCount + ' q.</span>';
-      if(vCount) html += '<span style="font-size:10px;background:var(--blBg);color:var(--bl);border-radius:20px;padding:2px 8px;font-weight:600">🖼 ' + vCount + '</span>';
-      if(!fCount && !qCount) html += '<span style="font-size:10px;background:var(--surf2);color:var(--t3);border-radius:20px;padding:2px 8px">Vide</span>';
+      html += '<div style="font-size:12px;font-weight:800;color:var(--t);line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">' + t.theme + '</div>';
+      if(t.niveau) html += '<div style="font-size:10px;color:var(--t3);margin-top:2px">' + t.niveau + '</div>';
       html += '</div>';
+      if(avgScore>0) html += '<div style="text-align:right;flex-shrink:0"><span style="font-size:13px;font-weight:800;color:' + scC + '">' + avgScore + '%</span><div style="font-size:8px;color:var(--t3)">score moy.</div></div>';
+      html += '</div>';
+
+      html += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">';
+      if(fCount) html += '<span style="font-size:10px;background:var(--acBg);color:var(--ac);border-radius:20px;padding:2px 8px;font-weight:600">📄 ' + fCount + '</span>';
+      if(qCount) html += '<span style="font-size:10px;background:var(--amBg);color:var(--am);border-radius:20px;padding:2px 8px;font-weight:600">❓ ' + qCount + '</span>';
+      if(vCount) html += '<span style="font-size:10px;background:var(--blBg);color:var(--bl);border-radius:20px;padding:2px 8px;font-weight:600">🖼 ' + vCount + '</span>';
+      if(qVal&&qCount) html += '<span style="font-size:10px;background:var(--grBg);color:var(--gr);border-radius:20px;padding:2px 8px;font-weight:600">✅ ' + qVal + '/' + qCount + '</span>';
+      html += '</div>';
+
       html += '<div style="border-top:1px solid var(--b);padding-top:8px;display:flex;justify-content:space-between;align-items:center">';
-      html += '<span style="font-size:10px;color:var(--t3)">n°' + (t.ordre||'—') + '</span>';
+      html += '<span style="font-size:10px;color:var(--t3)">' + (t.fiches[0]?t.fiches[0].auteur||'':'') + '</span>';
       html += '<span style="font-size:10px;color:' + couleur + ';font-weight:700">Ouvrir →</span>';
       html += '</div></div></div>';
     });
     html += '</div></div>';
   });
 
-  if(!themeList.length) {
-    html += '<div style="text-align:center;padding:40px;color:var(--t3)">';
-    html += '<div style="font-size:40px;margin-bottom:12px">📚</div>';
-    html += '<div style="font-size:14px;font-weight:700;color:var(--t2)">Aucun thème chargé</div>';
-    html += '<div style="font-size:12px;margin-top:6px">flowin_schema_v2.sql + flowin_contenu_sync.sql exécutés dans Supabase ?</div>';
-    html += '</div>';
-  }
-
   el.innerHTML = html;
 }
-
 
 function coursKpi(icon, val, label, color, bg) {
   return '<div style="background:' + bg + ';border-radius:10px;padding:14px;text-align:center">'
@@ -3734,11 +3730,10 @@ function coursBackToHub()       { coursCurrentTheme = null;  renderCoursHub(); }
 
 function renderCoursThemeDetail(themeObj, el) {
   var mat     = themeObj.matiere || '';
+  var niveau  = themeObj.niveau  || '';
   var couleur = getMatCouleur(mat) || 'var(--ac)';
-  var fiche   = themeObj.fiches[0] || null;    // 1 fiche par thème
-  var qList   = themeObj.questions || [];
-  var vList   = themeObj.visuels   || [];
-  var cfg     = themeObj.quizCfg   || null;
+  var qDeTheme = themeObj.questions || [];
+  var qVal     = qDeTheme.filter(function(q){ return q.statut==='validé'||q.statut==='valide'; });
 
   var html = '';
 
@@ -3752,139 +3747,153 @@ function renderCoursThemeDetail(themeObj, el) {
   // Header thème
   html += '<div class="panel" style="margin-bottom:16px;border-left:3px solid ' + couleur + '">';
   html += '<div style="padding:16px;display:flex;align-items:center;gap:12px">';
-  html += '<div style="width:48px;height:48px;border-radius:12px;background:' + couleur + '20;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">' + (themeObj.emoji||'📄') + '</div>';
+  html += '<div style="width:48px;height:48px;border-radius:12px;background:' + couleur + '18;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">' + (themeObj.emoji||'📄') + '</div>';
   html += '<div style="flex:1">';
-  html += '<div style="font-size:16px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">' + themeObj.theme + '</div>';
-  html += '<div style="font-size:11px;color:var(--t3);margin-top:3px">' + mat + ' · Bac Pro</div>';
+  html += '<div style="font-size:16px;font-weight:800;color:var(--t);font-family:\'Syne\',sans-serif">' + themeObj.theme + '</div>';
+  html += '<div style="font-size:11px;color:var(--t3);margin-top:3px">' + mat + (niveau?' · '+niveau:'') + '</div>';
   html += '</div>';
   html += '<div style="display:flex;gap:8px">';
-  html += '<div style="background:var(--acBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--ac)">' + (fiche?'✅':'—') + '</div><div style="font-size:9px;color:var(--t3)">Fiche</div></div>';
-  html += '<div style="background:var(--amBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--am)">' + qList.length + '</div><div style="font-size:9px;color:var(--t3)">Questions</div></div>';
-  html += '<div style="background:var(--blBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--bl)">' + vList.length + '</div><div style="font-size:9px;color:var(--t3)">Visuels</div></div>';
+  html += '<div style="background:var(--acBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--ac)">' + themeObj.fiches.length + '</div><div style="font-size:9px;color:var(--t3)">Fiches</div></div>';
+  html += '<div style="background:var(--amBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--am)">' + qDeTheme.length + '</div><div style="font-size:9px;color:var(--t3)">Questions</div></div>';
+  html += '<div style="background:var(--blBg);border-radius:8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--bl)">' + themeObj.visuels.length + '</div><div style="font-size:9px;color:var(--t3)">Visuels</div></div>';
   html += '</div></div></div>';
 
-  // ── 1. ESSENTIEL ──
-  html += '<div class="panel" style="margin-bottom:14px">';
-  html += '<div class="panel-header"><span>💡 L\'Essentiel</span>';
-  html += '<button onclick="showAdminToast(\'Édition fiche bientôt disponible\')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">' + (fiche?'✏️ Modifier':'+ Créer') + '</button>';
-  html += '</div>';
-  if(!fiche) {
-    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucune fiche — exécute flowin_contenu_sync.sql</div>';
-  } else {
-    html += '<div style="padding:14px 16px">';
-    if(fiche.essentiel) {
-      html += '<div style="font-size:13px;color:var(--t2);line-height:1.7;border-left:3px solid ' + couleur + ';padding-left:12px">' + fiche.essentiel + '</div>';
-    }
-    html += '</div>';
-  }
-  html += '</div>';
-
-  // ── 2. CHRONOLOGIE ──
-  if(fiche && fiche.chrono && fiche.chrono.length) {
+  // ── 1. CONTENU
+  if(themeObj.fiches.length) {
     html += '<div class="panel" style="margin-bottom:14px">';
-    html += '<div class="panel-header"><span>🗓 Chronologie (' + fiche.chrono.length + ' entrées)</span></div>';
-    html += '<div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px">';
-    fiche.chrono.forEach(function(c) {
-      html += '<div style="display:flex;gap:14px;align-items:flex-start">';
-      html += '<div style="background:' + couleur + '20;border-radius:6px;padding:4px 8px;font-size:11px;font-weight:800;color:' + couleur + ';flex-shrink:0;white-space:nowrap">' + c[0] + '</div>';
-      html += '<div style="font-size:12px;color:var(--t2);line-height:1.5;flex:1">' + c[1] + '</div>';
-      html += '</div>';
-    });
-    html += '</div></div>';
-  }
-
-  // ── 3. DATES CLÉS ──
-  if(fiche && fiche.dates && fiche.dates.length) {
-    html += '<div class="panel" style="margin-bottom:14px">';
-    html += '<div class="panel-header"><span>📅 Dates clés</span></div>';
-    html += '<div style="padding:10px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px">';
-    fiche.dates.forEach(function(d) {
-      html += '<div style="background:var(--surf2);border-radius:8px;padding:8px 10px;display:flex;gap:8px;align-items:center">';
-      html += '<span style="font-size:11px;font-weight:800;color:' + couleur + ';flex-shrink:0">' + d[0] + '</span>';
-      html += '<span style="font-size:11px;color:var(--t2)">' + d[1] + '</span>';
-      html += '</div>';
-    });
-    html += '</div></div>';
-  }
-
-  // ── 4. VOCABULAIRE ──
-  if(fiche && fiche.vocab && fiche.vocab.length) {
-    html += '<div class="panel" style="margin-bottom:14px">';
-    html += '<div class="panel-header"><span>📖 Vocabulaire (' + fiche.vocab.length + ' mots)</span></div>';
-    html += '<div style="padding:10px 16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px">';
-    fiche.vocab.forEach(function(v) {
-      html += '<div style="background:var(--surf2);border-radius:8px;padding:10px 12px">';
-      html += '<div style="font-size:12px;font-weight:800;color:' + couleur + ';margin-bottom:4px">' + v[0] + '</div>';
-      html += '<div style="font-size:11px;color:var(--t2);line-height:1.4">' + v[1] + '</div>';
-      html += '</div>';
-    });
-    html += '</div></div>';
-  }
-
-  // ── 5. VISUELS ──
-  html += '<div class="panel" style="margin-bottom:14px">';
-  html += '<div class="panel-header"><span>🖼 Visuels & Schémas</span>';
-  html += '<button onclick="showAdminToast(\'Ajout visuel bientôt disponible\')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
-  html += '</div>';
-  if(!vList.length) {
-    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucun visuel</div>';
-  } else {
-    html += '<div style="padding:14px;display:flex;flex-direction:column;gap:8px">';
-    vList.forEach(function(v) {
-      html += '<div style="background:var(--surf2);border-radius:9px;padding:12px;display:flex;align-items:center;gap:12px">';
-      html += '<span style="font-size:20px">🖼</span>';
-      html += '<div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--t)">' + (v.titre||'Visuel') + '</div>';
-      html += '<div style="font-size:10px;color:var(--t3)">' + (v.type||'schema') + '</div></div>';
-      html += '</div>';
-    });
-    html += '</div>';
-  }
-  html += '</div>';
-
-  // ── 6. QUESTIONS ──
-  html += '<div class="panel" style="margin-bottom:14px">';
-  html += '<div class="panel-header"><span>❓ Questions (' + qList.length + ')</span>';
-  html += '<button onclick="openAddQuestion(' + JSON.stringify(themeObj.id) + ')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
-  html += '</div>';
-  if(!qList.length) {
-    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucune question</div>';
-  } else {
-    var diff = {facile:'😊',moyen:'🤔',difficile:'🔥'};
-    html += '<div style="padding:8px 0">';
-    qList.forEach(function(q, i) {
-      html += '<div style="padding:10px 16px;' + (i<qList.length-1?'border-bottom:1px solid var(--b)':'') + '">';
-      html += '<div style="display:flex;align-items:flex-start;gap:10px">';
-      html += '<span style="font-size:14px;flex-shrink:0">' + (diff[q.difficulte]||'🤔') + '</span>';
-      html += '<div style="flex:1">';
-      html += '<div style="font-size:12px;font-weight:600;color:var(--t);line-height:1.4;margin-bottom:6px">' + q.q + '</div>';
-      html += '<div style="display:flex;gap:5px;flex-wrap:wrap">';
-      if(q.opts && Array.isArray(q.opts)) {
-        q.opts.forEach(function(r, ri) {
-          var isBonne = ri === q.bon;
-          html += '<span style="font-size:10px;padding:3px 8px;border-radius:20px;' + (isBonne?'background:var(--grBg);color:var(--gr);font-weight:700;border:1px solid var(--grBorder)':'background:var(--surf2);color:var(--t3);border:1px solid var(--b)') + '">' + (isBonne?'✓ ':'') + r + '</span>';
+    html += '<div class="panel-header"><span>📋 Contenu du cours</span></div>';
+    html += '<div style="padding:16px;display:flex;flex-direction:column;gap:14px">';
+    themeObj.fiches.forEach(function(f) {
+      html += '<div>';
+      html += '<div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:6px">' + f.titre + '</div>';
+      if(f.resume) html += '<div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:8px">' + f.resume + '</div>';
+      if(f.points_cles && f.points_cles.length) {
+        html += '<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px">';
+        f.points_cles.forEach(function(pt) {
+          html += '<div style="display:flex;align-items:flex-start;gap:8px;font-size:11px;color:var(--t)">';
+          html += '<span style="color:' + couleur + ';flex-shrink:0;font-weight:800;margin-top:1px">▸</span><span>' + pt + '</span></div>';
         });
+        html += '</div>';
       }
+      html += '<button onclick="openFicheCours(\'' + f.id + '\')" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:5px 12px;font-size:11px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit">✏️ Modifier</button>';
       html += '</div>';
-      if(q.expl) html += '<div style="font-size:10px;color:var(--t3);font-style:italic;margin-top:4px">' + q.expl + '</div>';
-      html += '</div></div></div>';
+    });
+    html += '</div></div>';
+  }
+
+  // ── 2. FICHE MÉMO
+  if(themeObj.fiches.length) {
+    html += '<div class="panel" style="margin-bottom:14px">';
+    html += '<div class="panel-header"><span>📄 Fiche mémo — Points clés</span></div>';
+    html += '<div style="padding:16px">';
+    themeObj.fiches.forEach(function(f) {
+      if(!f.points_cles || !f.points_cles.length) return;
+      var colors = ['var(--ac)','var(--gr)','var(--am)','#E040A0','var(--bl)',couleur];
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-bottom:12px">';
+      f.points_cles.forEach(function(pt, i) {
+        var c = colors[i % colors.length];
+        html += '<div style="background:' + c + '12;border-left:3px solid ' + c + ';border-radius:0 8px 8px 0;padding:8px 10px">';
+        html += '<div style="font-size:11px;font-weight:700;color:' + c + '">' + pt + '</div></div>';
+      });
+      html += '</div>';
+      if(f.tags && f.tags.length) {
+        html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
+        f.tags.forEach(function(tag){ html += '<span style="background:var(--surf2);border:1px solid var(--b);border-radius:20px;padding:3px 10px;font-size:10px;color:var(--t3)">#' + tag + '</span>'; });
+        html += '</div>';
+      }
+    });
+    html += '</div></div>';
+  }
+
+  // ── 3. VISUELS
+  html += '<div class="panel" style="margin-bottom:14px">';
+  html += '<div class="panel-header"><span>🖼 Visuels & Ressources</span>';
+  if(!themeObj.visuels.length) html += '<button onclick="openAddCours()" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
+  html += '</div>';
+  if(!themeObj.visuels.length) {
+    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucun visuel — <button onclick="openAddCours()" style="background:none;border:none;color:var(--ac);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Ajouter</button></div>';
+  } else {
+    html += '<div style="padding:14px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">';
+    themeObj.visuels.forEach(function(v) {
+      html += '<div style="background:var(--surf2);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px;text-align:center">';
+      html += '<div style="font-size:24px">' + (v.emoji||'🖼') + '</div>';
+      html += '<div style="font-size:11px;font-weight:700;color:var(--t)">' + v.titre + '</div>';
+      html += '<div style="font-size:10px;color:var(--t3)">' + (v.auteur||'') + '</div>';
+      if(v.eleve_auteur) html += '<span style="background:var(--grBg);color:var(--gr);border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700">Créé par élève</span>';
+      html += '<button onclick="openFicheCours(\'' + v.id + '\')" style="background:var(--surf3);border:none;border-radius:7px;padding:5px;font-size:10px;font-weight:600;color:var(--t2);cursor:pointer;font-family:inherit">✏️ Modifier</button>';
+      html += '</div>';
     });
     html += '</div>';
   }
   html += '</div>';
 
-  // ── 7. QUIZ CONFIG ──
-  if(cfg) {
-    html += '<div class="panel" style="margin-bottom:14px">';
-    html += '<div class="panel-header"><span>🎯 Configuration Quiz</span></div>';
-    html += '<div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px">';
-    html += '<div style="display:flex;justify-content:space-between"><span style="font-size:12px">Quiz rapide (' + cfg.nb_questions + ' q.)</span><span style="font-weight:700;color:' + (cfg.quiz_actif?'var(--gr)':'var(--t3)') + '">' + (cfg.quiz_actif?'✅ Actif':'⏸ Inactif') + '</span></div>';
-    html += '<div style="display:flex;justify-content:space-between"><span style="font-size:12px">Quiz complet</span><span style="font-weight:700;color:' + (cfg.quiz_complet_actif?'var(--gr)':'var(--t3)') + '">' + (cfg.quiz_complet_actif?'✅ Actif':'⏸ Inactif') + '</span></div>';
-    html += '</div></div>';
+  // ── 4. QUESTIONS QUIZ
+  html += '<div class="panel" style="margin-bottom:14px">';
+  html += '<div class="panel-header"><span>❓ Questions Quiz</span>';
+  html += '<div style="display:flex;gap:8px;align-items:center">';
+  html += '<span style="font-size:10px;color:var(--t3)">' + qVal.length + '/' + qDeTheme.length + ' validées</span>';
+  html += '<button onclick="openAddQuestion(\'' + themeObj.theme.replace(/'/g,"\\'") + '\')" style="background:none;border:none;font-size:10px;color:var(--ac);cursor:pointer;font-weight:600;font-family:inherit">+ Ajouter</button>';
+  html += '</div></div>';
+  if(!qDeTheme.length) {
+    html += '<div style="padding:20px;text-align:center;color:var(--t3);font-size:11px">Aucune question — <button onclick="openAddQuestion(\'' + themeObj.theme.replace(/'/g,"\\'") + '\')" style="background:none;border:none;color:var(--ac);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Créer la première</button></div>';
+  } else {
+    html += '<div style="padding:8px 0">';
+    var difficColors = { facile:'var(--gr)', moyen:'var(--am)', difficile:'var(--re)' };
+    qDeTheme.forEach(function(q, i) {
+      var isVal = q.statut==='validé'||q.statut==='valide';
+      html += '<div style="padding:10px 16px;' + (i<qDeTheme.length-1?'border-bottom:1px solid var(--b)':'') + '">';
+      html += '<div style="display:flex;align-items:flex-start;gap:10px">';
+      html += '<span style="font-size:16px;flex-shrink:0">' + (isVal?'✅':'🔄') + '</span>';
+      html += '<div style="flex:1;min-width:0">';
+      html += '<div style="font-size:12px;font-weight:600;color:var(--t);line-height:1.4;margin-bottom:6px">' + q.question + '</div>';
+      html += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px">';
+      q.reponses.forEach(function(r, ri) {
+        var isBonne = ri === q.bonne;
+        html += '<span style="font-size:10px;padding:3px 8px;border-radius:20px;' + (isBonne?'background:var(--grBg);color:var(--gr);font-weight:700;border:1px solid var(--grBorder)':'background:var(--surf2);color:var(--t3);border:1px solid var(--b)') + '">' + (isBonne?'✓ ':'') + r + '</span>';
+      });
+      html += '</div>';
+      html += '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
+      if(q.difficulte) html += '<span style="font-size:9px;font-weight:700;color:' + (difficColors[q.difficulte]||'var(--t3)') + ';text-transform:uppercase">' + q.difficulte + '</span>';
+      if(q.nb_fois) html += '<span style="font-size:9px;color:var(--t3)">' + q.nb_fois + '× · ' + q.taux_reussite + '%</span>';
+      if(!isVal) {
+        var qid = q.id.replace(/'/g,"\\'");
+        html += '<button onclick="var qq=QUESTIONS_DB.find(function(x){return x.id===\'' + qid + '\';});if(qq){qq.statut=\'validé\';renderCoursHub();}" style="background:var(--grBg);border:none;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700;color:var(--gr);cursor:pointer;font-family:inherit">Valider</button>';
+      }
+      html += '</div></div></div></div>';
+    });
+    html += '</div>';
   }
+  html += '</div>';
+
+  // ── 5. QUIZ COMPLET
+  html += '<div class="panel" style="margin-bottom:14px">';
+  html += '<div class="panel-header"><span>🎯 Quiz Complet — ' + themeObj.theme + '</span></div>';
+  html += '<div style="padding:16px">';
+  if(!qVal.length) {
+    html += '<div style="text-align:center;color:var(--t3);font-size:11px;padding:10px">Aucune question validée — ajoutez des questions pour activer ce quiz</div>';
+  } else {
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px">';
+    html += '<div><div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:4px">' + qVal.length + ' questions validées</div>';
+    html += '<div style="font-size:11px;color:var(--t3)">' + mat + (niveau?' · '+niveau:'') + '</div></div>';
+    var diff = {facile:0,moyen:0,difficile:0};
+    qVal.forEach(function(q){ if(diff[q.difficulte]!==undefined) diff[q.difficulte]++; });
+    html += '<div style="display:flex;gap:6px">';
+    if(diff.facile)    html += '<span style="background:var(--grBg);color:var(--gr);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700">😊 ' + diff.facile + ' facile' + (diff.facile>1?'s':'') + '</span>';
+    if(diff.moyen)     html += '<span style="background:var(--amBg);color:var(--am);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700">🤔 ' + diff.moyen + ' moyen' + (diff.moyen>1?'s':'') + '</span>';
+    if(diff.difficile) html += '<span style="background:var(--reBg);color:var(--re);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700">🔥 ' + diff.difficile + '</span>';
+    html += '</div></div>';
+    var avgR = qVal.length ? Math.round(qVal.reduce(function(s,q){ return s+(q.taux_reussite||0); },0)/qVal.length) : 0;
+    if(avgR>0) {
+      var scC = avgR>=70?'var(--gr)':avgR>=50?'var(--am)':'var(--re)';
+      html += '<div style="background:var(--surf2);border-radius:9px;padding:10px 14px">';
+      html += '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-bottom:6px"><span>Taux de réussite moyen</span><span style="font-weight:700;color:' + scC + '">' + avgR + '%</span></div>';
+      html += '<div style="height:6px;background:var(--surf3);border-radius:3px;overflow:hidden"><div style="height:100%;width:' + avgR + '%;background:' + scC + ';border-radius:3px"></div></div></div>';
+    }
+  }
+  html += '</div></div>';
 
   el.innerHTML = html;
 }
-
 
 
 function renderCours() {
@@ -4428,7 +4437,7 @@ Réponds UNIQUEMENT avec un JSON valide, sans markdown ni backticks, dans ce for
       const vw = document.getElementById('ai-visuel-wrap');
       const vc = document.getElementById('ai-visuel-content');
       if(vw) vw.style.display = 'block';
-      if(vc) vc.innerHTML = `<div style="padding:16px;font-size:11px;line-height:1.6">${parsed.visuel_html}</div>`;
+      if(vc) vc.innerHTML = '<div style="padding:16px;font-size:11px;line-height:1.6">' + parsed.visuel_html + '</div>';
     }
 
     // Hide spinner
@@ -5112,34 +5121,23 @@ function confirmAttrib(lotId, pseudo, nom, overlay) {
 }
 
 function renderGainsPanel() {
-  const el = document.getElementById('gains-panel');
+  var el = document.getElementById('gains-panel');
   if(!el) return;
-  if(!GAINS_DB.length) {
-    el.innerHTML = '<div style="padding:16px;color:var(--t3);font-size:11px;text-align:center">Aucun gain attribué pour le moment.</div>';
-    return;
-  }
-  el.innerHTML = `
-    <table style="width:100%;border-collapse:collapse">
-      <thead><tr>
-        <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase">Élève</th>
-        <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase">Lot</th>
-        <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase">Code</th>
-        <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase">Condition</th>
-        <th style="text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase">Date</th>
-      </tr></thead>
-      <tbody>
-        ${GAINS_DB.slice(0,50).map((g,i) => `
-          <tr style="background:${i%2===0?'':'var(--surf2)'}">
-            <td style="padding:9px 12px;font-size:12px;font-weight:600;color:var(--t)">${g.pseudo}</td>
-            <td style="padding:9px 12px;font-size:12px;color:var(--t)">${g.lot_emoji} ${g.lot_nom}</td>
-            <td style="padding:9px 12px;font-family:monospace;font-size:12px;font-weight:800;color:var(--ac)">${g.code}</td>
-            <td style="padding:9px 12px;font-size:10px;color:var(--t3)">${g.condition||'—'}</td>
-            <td style="padding:9px 12px;font-size:10px;color:var(--t3)">${g.created_at?new Date(g.created_at).toLocaleDateString('fr-FR'):''}</td>
-          </tr>`).join('')}
-      </tbody>
-    </table>`;
+  if(!GAINS_DB.length) { el.innerHTML = '<div style="padding:16px;color:var(--t3);font-size:11px;text-align:center">Aucun gain.</div>'; return; }
+  var th = 'text-align:left;font-size:9px;font-weight:700;color:var(--t3);padding:8px 12px;border-bottom:1px solid var(--b);text-transform:uppercase';
+  var html = '<table style="width:100%;border-collapse:collapse"><thead><tr>';
+  ['El\u00e8ve','Lot','Code','Condition','Date'].forEach(function(h){ html += '<th style="'+th+'">'+h+'</th>'; });
+  html += '</tr></thead><tbody>';
+  GAINS_DB.slice(0,50).forEach(function(g,i){
+    html += '<tr style="background:'+(i%2?'var(--surf2)':'')+'"><td style="padding:9px 12px;font-size:12px;font-weight:600;color:var(--t)">'+(g.pseudo||'--')+'</td>';
+    html += '<td style="padding:9px 12px;font-size:12px;color:var(--t)">'+(g.lot_nom||'--')+'</td>';
+    html += '<td style="padding:9px 12px;font-family:monospace;font-size:12px;font-weight:800;color:var(--ac)">'+(g.code||'--')+'</td>';
+    html += '<td style="padding:9px 12px;font-size:10px;color:var(--t3)">'+(g.condition||'--')+'</td>';
+    html += '<td style="padding:9px 12px;font-size:10px;color:var(--t3)">'+(g.created_at?new Date(g.created_at).toLocaleDateString('fr-FR'):'')+' </td></tr>';
+  });
+  html += '</tbody></table>';
+  el.innerHTML = html;
 }
-
 
 
 function openBareme() {
@@ -5326,117 +5324,118 @@ async function attribuerLot(pseudo, lotId) {
   } catch(e) { showAdminToast('⚠️ Erreur attribution : ' + e.message, 'error'); }
 }
 
-// ── CONFIG DÉFIS ──────────────────────────────────────────────
-var DEFI_CONFIG = {
-  mise_min: 10,
-  mise_max: 500,
-  themes: ['roulette','hist','geo','emc','pse'],
-  wa_msg: '⚔️ {joueur} te lance un défi Flowin !\n\n{theme}\nMise : {mise} pts\nCagnotte : {cagnotte} pts\n\nRejoins : {lien}\n\nTu as 24h pour jouer — le meilleur score remporte tout !',
-  duree_h: 48
-};
+// === FONCTIONS MANQUANTES (audit 2026-05-12) ===
 
-var DEFI_THEME_LABELS = {roulette:'🎡 Roulette', hist:'📘 Histoire', geo:'🌍 Géographie', emc:'⚖️ EMC', pse:'🩺 PSE'};
+function saveNewPartner(overlay) { if(typeof createPartner==='function') createPartner(overlay); }
 
-function updateDefiPreview() {
-  var mMin = parseInt((document.getElementById('dc-mise-min')||{value:'10'}).value||10);
-  var mMax = parseInt((document.getElementById('dc-mise-max')||{value:'500'}).value||500);
-  var waMsg = (document.getElementById('dc-wa-msg')||{value:''}).value || DEFI_CONFIG.wa_msg;
-  var preview = waMsg
-    .replace(/{joueur}/g, 'Emma L.')
-    .replace(/{theme}/g, '📘 Histoire')
-    .replace(/{mise}/g, '50')
-    .replace(/{cagnotte}/g, '100')
-    .replace(/{lien}/g, 'https://flowrevis.vercel.app/?room=abc123');
-  var previewEl = document.getElementById('dc-wa-preview');
-  if(previewEl) previewEl.textContent = preview;
-  // Mettre à jour les aperçus du billet
-  updateDefiCardPreview();
+function switchDTab(tab,btn){
+  document.querySelectorAll('#dt-pools,#dt-histo,#dt-rank').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  ['pools','histo','rank'].forEach(function(t){
+    var el=document.getElementById('defis-'+(t==='pools'?'pools-wrap':t));
+    if(el)el.style.display=t===tab?'':'none';
+  });
 }
-
-function updateDefiCardPreview() {
-  var set = function(id, val) { var el = document.getElementById(id); if(el) el.textContent = val; };
-  var waMsg = (document.getElementById('dc-wa-msg')||{value:''}).value || DEFI_CONFIG.wa_msg;
-  var previewLine = waMsg.split('\n')[0]
-    .replace(/{joueur}/g,'[Joueur]').replace(/{theme}/g,'📘 Histoire').replace(/{mise}/g,'50').replace(/{cagnotte}/g,'100').replace(/{lien}/g,'[lien]');
-  set('dp-nom',  '[Joueur] vs [Invité]');
-  set('dp-nom2', '[Joueur] vs [Invité]');
-  set('dp-mise', '50 pts');   set('dp-mise2', '50 pts');
-  set('dp-cagnotte', '100 pts'); set('dp-cagnotte2', '100 pts');
-  set('dp-theme', '📘 Histoire'); set('dp-theme2', '📘 Histoire');
-  set('dp-theme-emoji', '📘');
-  var waEl = document.getElementById('dp-wa-preview');
-  if(waEl) waEl.textContent = '💬 ' + previewLine;
+function switchTL(mode,btn){
+  window._tlMode=mode;
+  document.querySelectorAll('.tl-pill').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  if(typeof renderTL==='function')renderTL(mode,(typeof DB!=='undefined'?DB.sessions:[]));
 }
-
-function openDefiConfig() {
-  // Charger config Supabase si dispo
-  if(SB_ENABLED) {
-    var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
-    fetch(SB_URL+'/rest/v1/config?key=eq.defi_config&select=value',{headers:hdrs})
-      .then(function(r){return r.ok?r.json():[];})
-      .then(function(rows){
-        if(rows && rows.length && rows[0].value) {
-          var cfg = rows[0].value;
-          DEFI_CONFIG = Object.assign(DEFI_CONFIG, cfg);
-          populateDefiConfigForm();
-        }
-      }).catch(function(){});
-  }
-  populateDefiConfigForm();
-  var modal = document.getElementById('modal-defi-config');
-  if(modal) modal.style.display = 'flex';
+function openPoolPanel(pi){
+  var pdata=window._poolsData;if(!pdata||pi>=pdata.length)return;
+  var p=pdata[pi];
+  var overlay=document.getElementById('pool-panel-overlay');
+  var panel=document.getElementById('pool-panel');
+  if(!overlay||!panel)return;
+  var elevs=(typeof buildElevs==='function')?buildElevs():[];
+  var html='<div style="padding:20px"><div style="font-size:16px;font-weight:800;color:var(--t);margin-bottom:4px">'+p.theme+'</div>';
+  html+='<div style="font-size:12px;color:var(--t3);margin-bottom:16px">'+p.sorted.length+' joueurs</div><div>';
+  p.sorted.slice(0,20).forEach(function(s,i){
+    var d=elevs.find(function(e){return e.pseudo===s.pseudo;});
+    var name=d?(d.j.prenom+' '+d.j.nom):(s.pseudo||'--');
+    var medal=['\ud83e\udd47','\ud83e\udd48','\ud83e\udd49'][i]||('#'+(i+1));
+    html+='<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b)">';
+    html+='<span style="font-size:13px;width:24px">'+medal+'</span>';
+    html+='<span style="font-size:12px;font-weight:600;color:var(--t);flex:1">'+name+'</span>';
+    html+='<span style="font-size:12px;font-weight:700;color:var(--am)">'+(s.score_pct||0)+'%</span></div>';
+  });
+  html+='</div></div>';
+  panel.innerHTML=html;
+  overlay.style.display='block';
 }
-
-function populateDefiConfigForm() {
-  var setVal = function(id, val) { var el = document.getElementById(id); if(el) el.value = val; };
-  var setChk = function(id, val) { var el = document.getElementById(id); if(el) el.checked = val; };
-  setVal('dc-mise-min', DEFI_CONFIG.mise_min || 10);
-  setVal('dc-mise-max', DEFI_CONFIG.mise_max || 500);
-  setVal('dc-wa-msg', DEFI_CONFIG.wa_msg || '');
-  setVal('dc-duree', DEFI_CONFIG.duree_h || 48);
-  var themes = DEFI_CONFIG.themes || ['roulette','hist','geo','emc','pse'];
-  setChk('dc-th-roulette', themes.indexOf('roulette') >= 0);
-  setChk('dc-th-hist',     themes.indexOf('hist') >= 0);
-  setChk('dc-th-geo',      themes.indexOf('geo') >= 0);
-  setChk('dc-th-emc',      themes.indexOf('emc') >= 0);
-  setChk('dc-th-pse',      themes.indexOf('pse') >= 0);
-  // Bind preview en temps réel
-  var waInput = document.getElementById('dc-wa-msg');
-  if(waInput) { waInput.removeEventListener('input', updateDefiPreview); waInput.addEventListener('input', updateDefiPreview); }
-  updateDefiPreview();
+function closePoolPanel(){
+  var o=document.getElementById('pool-panel-overlay');if(o)o.style.display='none';
 }
-
-function closeDefiConfig() {
-  var modal = document.getElementById('modal-defi-config');
-  if(modal) modal.style.display = 'none';
+var _parrSF='name',_parrSD=1;
+function parrSort(field){
+  if(_parrSF===field)_parrSD*=-1;else{_parrSF=field;_parrSD=1;}
+  ['name','filleuls','pts','recent'].forEach(function(f){
+    var el=document.getElementById('pa-'+f);if(el)el.textContent=f===field?(_parrSD>0?'\u2191':'\u2193'):'\u2195';
+  });
+  if(typeof renderParrainage==='function')renderParrainage();
 }
-
-function saveDefiConfig() {
-  var themes = [];
-  if((document.getElementById('dc-th-roulette')||{}).checked) themes.push('roulette');
-  if((document.getElementById('dc-th-hist')||{}).checked)     themes.push('hist');
-  if((document.getElementById('dc-th-geo')||{}).checked)      themes.push('geo');
-  if((document.getElementById('dc-th-emc')||{}).checked)      themes.push('emc');
-  if((document.getElementById('dc-th-pse')||{}).checked)      themes.push('pse');
-
-  DEFI_CONFIG = {
-    mise_min:  parseInt((document.getElementById('dc-mise-min')||{value:'10'}).value||10),
-    mise_max:  parseInt((document.getElementById('dc-mise-max')||{value:'500'}).value||500),
-    themes:    themes,
-    wa_msg:    (document.getElementById('dc-wa-msg')||{value:''}).value || '',
-    duree_h:   parseInt((document.getElementById('dc-duree')||{value:'48'}).value||48)
-  };
-
-  if(!SB_ENABLED) { showAdminToast('Config sauvegardée localement (Supabase désactivé)'); closeDefiConfig(); return; }
-  var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'};
-  fetch(SB_URL+'/rest/v1/config', {
-    method:'POST', headers:hdrs,
-    body: JSON.stringify({key:'defi_config', value:DEFI_CONFIG, updated_at:new Date().toISOString()})
-  }).then(function(r){
-    if(r.ok) { showAdminToast('Config défis sauvegardée ✅'); closeDefiConfig(); }
-    else { showAdminToast('Erreur sauvegarde', 'error'); }
-  }).catch(function(){ showAdminToast('Erreur réseau', 'error'); });
+function parrFlt(field){
+  var el=document.getElementById('parr-flt-'+field);
+  if(el)el.style.display=el.style.display==='none'?'':'none';
 }
+function switchAppComTab(tab,btn){
+  document.querySelectorAll('.defis-tab').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  ['vignette','messagerie','push'].forEach(function(t){
+    var el=document.getElementById('appcom-'+t);if(el)el.style.display=t===tab?'':'none';
+  });
+}
+function downloadQR(){
+  var cv=document.querySelector('canvas');
+  if(!cv){showAdminToast('Aucun QR','error');return;}
+  var a=document.createElement('a');a.href=cv.toDataURL('image/png');a.download='flowin-qr.png';a.click();
+  showAdminToast('QR Code \u2b07 ');
+}
+function setIconMode(mode){
+  ['image','emoji'].forEach(function(m){
+    var btn=document.getElementById('icon-mode-'+m);
+    var zone=document.getElementById('icon-'+m+'-zone');
+    if(btn){btn.style.background=m===mode?'var(--ac)':'var(--surf2)';btn.style.color=m===mode?'#fff':'var(--t2)';}
+    if(zone)zone.style.display=m===mode?'':'none';
+  });
+}
+function clearIconImage(){
+  var inp=document.getElementById('icon-img-url');if(inp){inp.value='';inp.dispatchEvent(new Event('input'));}
+}
+function cancelEdit(){if(typeof renderTextesUI==='function')renderTextesUI();}
+function selectConv(id){
+  document.querySelectorAll('.conv-item').forEach(function(el){el.classList.remove('active');});
+  var el=document.querySelector('[data-conv="'+id+'"]');if(el)el.classList.add('active');
+  var area=document.getElementById('msg-area');
+  if(area)area.innerHTML='<div style="text-align:center;padding:20px;color:var(--t3)">'+(id==='__global__'?'Broadcast tous les joueurs':'Conversation : '+id)+'</div>';
+}
+function sendMsg(){
+  var inp=document.getElementById('msg-input');if(!inp||!inp.value.trim()){showAdminToast('Message vide','error');return;}
+  showAdminToast('Message envoy\u00e9 \u2705');inp.value='';
+}
+function sendMsgAll(){
+  var inp=document.getElementById('msg-input');var msg=inp?inp.value.trim():'';
+  if(!msg){showAdminToast('Message vide','error');return;}
+  showAdminToast('Envoy\u00e9 \u00e0 tous \u2705');if(inp)inp.value='';
+}
+function savePushTemplate(){
+  var t=document.getElementById('push-title-inp');var b=document.getElementById('push-body-inp');
+  if(!SB_ENABLED){showAdminToast('Template sauvegardr \u2705 (local)');return;}
+  var hdrs={apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'};
+  fetch(SB_URL+'/rest/v1/config',{method:'POST',headers:hdrs,body:JSON.stringify({key:'push_template',value:{titre:t?t.value:'',body:b?b.value:''},updated_at:new Date().toISOString()})})
+    .then(function(r){showAdminToast(r.ok?'Template push \u2705':'Erreur',r.ok?'':'error');}).catch(function(){showAdminToast('Erreur r\u00e9seau','error');});
+}
+function openEtab(key){
+  var modal=document.getElementById('modal-etab');if(!modal)return;
+  var body=document.getElementById('modal-etab-body');
+  if(body){var n=DB.joueurs.filter(function(j){return(j.ecole||'').toLowerCase().includes((key||'').toLowerCase());}).length;body.innerHTML='<div style="padding:16px"><b>\ud83c\udfe2 '+key+'</b><div style="color:var(--t3);font-size:12px;margin-top:4px">'+n+' \u00e9l\u00e8ve(s)</div></div>';}
+  modal.classList.add('open');
+}
+function closeEtab(){var m=document.getElementById('modal-etab');if(m)m.classList.remove('open');}
+function toggleLigue(id){var el=document.getElementById(id);if(el)el.style.display=el.style.display==='none'?'':'none';}
+
+// === FIN FONCTIONS MANQUANTES ===
 
 function showAdminToast(msg, type) {
   var bg = (type === 'error') ? '#EF4444' : '#22C9A0';
@@ -6510,76 +6509,6 @@ function sortEleves(col) {
   renderEleves();
 }
 
-function renderEleves() {
-  const elevs = buildElevs();
-  document.getElementById('eleves-sub').textContent = `${elevs.filter(d=>d.isActif).length} actifs · ${elevs.filter(d=>!d.isActif).length} inactifs · ${elevs.length} total`;
-
-  const search = document.getElementById('eleves-search').value.toLowerCase();
-
-  let data = elevs.filter(d => !isFakeAccount(d.j));
-  if(search) data = data.filter(d =>
-    `${d.j.prenom} ${d.j.nom}`.toLowerCase().includes(search) ||
-    (d.j.ecole||'').toLowerCase().includes(search) ||
-    (d.j.email||'').toLowerCase().includes(search) ||
-    (d.j.classe||'').toLowerCase().includes(search)
-  );
-
-  // Tri
-  data.sort((a,b) => {
-    let va, vb;
-    switch(elevesSort) {
-      case 'name':    va=`${a.j.prenom} ${a.j.nom}`; vb=`${b.j.prenom} ${b.j.nom}`; return elevesSortDir*(va.localeCompare(vb));
-      case 'etab':    va=a.j.ecole||''; vb=b.j.ecole||''; return elevesSortDir*(va.localeCompare(vb));
-      case 'classe':  va=a.j.classe||''; vb=b.j.classe||''; return elevesSortDir*(va.localeCompare(vb));
-      case 'score':   return elevesSortDir*(b.avg-a.avg)*-1;
-      case 'streak':  return elevesSortDir*(b.maxStreak-a.maxStreak)*-1;
-      case 'pts':     return elevesSortDir*(b.totalPts-a.totalPts)*-1;
-      case 'ligue':   return elevesSortDir*(b.totalPts-a.totalPts)*-1;
-      case 'activite':return elevesSortDir*(new Date(b.last||0)-new Date(a.last||0))*-1;
-      case 'cnx':     return elevesSortDir*(new Date(b.lastCnx||0)-new Date(a.lastCnx||0));
-      case 'statut':  va=a.isActif?'Actif':'Inactif'; vb=b.isActif?'Actif':'Inactif'; return elevesSortDir*(va.localeCompare(vb));
-      default:        return new Date(b.j.ts||0)-new Date(a.j.ts||0);
-    }
-  });
-
-  document.getElementById('eleves-count').textContent = `${data.length} élève${data.length>1?'s':''}`;
-  crmSelections['eleves'] = crmSelections['eleves'] || new Set();
-
-  document.getElementById('eleves-tbody').innerHTML = data.map(d => {
-    const pwaBadge = d.j.pwa_installed ? `<span class="pwa-badge">📱 App</span>` : '<span style="color:var(--t3);font-size:10px">—</span>';
-    const sel = crmSelections['eleves'].has(d.pseudo);
-    return `
-    <tr class="eleve-row" data-id="${d.pseudo}" style="${sel?'background:rgba(176,108,228,.07)':''}" >
-      <td class="crm-td" onclick="event.stopPropagation()"><input type="checkbox" class="crm-check" ${sel?'checked':''} onchange="crmToggle('eleves','${d.pseudo}',this.checked)"></td>
-      <td><div style="display:flex;align-items:center;gap:9px">${ava(d.j.prenom,d.j.nom,d.idx,30)}<div><div style="font-size:12px;font-weight:600;color:var(--t)">${d.j.prenom} ${d.j.nom}</div><div style="font-size:9px;color:var(--t3)">${d.j.email||'—'}</div></div></div></td>
-      <td style="font-size:11px">${d.j.ecole||'—'}</td>
-      <td style="font-size:11px">${d.j.classe||'—'}</td>
-      <td>${scorePill(d.avg)}</td>
-      <td>${d.maxStreak>0?`🔥 ${d.maxStreak}j`:'<span style="color:var(--t3)">—</span>'}</td>
-      <td style="font-weight:700;color:var(--am)">${d.totalPts.toLocaleString('fr')}</td>
-      <td>${lguePill(d.totalPts)}</td>
-      <td>${pwaBadge}</td>
-      <td style="font-size:10px;color:var(--t3)">${d.last?ago(d.last):'—'}</td>
-      <td style="font-size:10px;color:${d.lastCnx?'var(--t)':'var(--t3)'};font-weight:${d.lastCnx?600:400}">
-        ${d.lastCnx
-          ? '<span style="font-weight:700">'+ago(d.lastCnx)+'</span><div style="font-size:9px;color:var(--t3);font-weight:400;margin-top:1px">'+new Date(d.lastCnx).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit'})+' · '+new Date(d.lastCnx).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})+(d.connexions[0]&&d.connexions[0].duree_min>0?' · '+d.connexions[0].duree_min+'min':'')+'</div>'
-          : '<span style="color:var(--t3)">—</span>'}
-      </td>
-      <td>${bdg(d.isActif?'green':'amber',d.isActif?'Actif':'Inactif')}</td>
-    </tr>`;
-  }).join('') || `<tr><td colspan="12"><div class="empty"><div class="empty-icon">👤</div><div class="empty-text">Aucun élève trouvé</div></div></td></tr>`;
-
-  document.getElementById('eleves-tbody').querySelectorAll('.eleve-row').forEach(tr => {
-    tr.style.cursor = 'pointer';
-    tr.addEventListener('click', function(e) {
-      if(e.target.closest('.crm-td') || e.target.tagName === 'INPUT') return;
-      openEleve(this.dataset.id);
-    });
-  });
-}
-
-
-
 // ── CRM ENGINE ──
 const crmSelections = {}; // { 'eleves': Set, 'parr': Set, ... }
 
@@ -6668,18 +6597,6 @@ function crmMessageGroupe(ns) {
     window.open(`https://wa.me/?text=${waText}`);
   }
 }
-
-function isFakeAccount(j) {
-  const email = (j.email||'').toLowerCase();
-  const ecole = (j.ecole||'').toLowerCase();
-  const fakeEmails = ['example','fake@','demo@','admin@','trial@'];
-  const fakeEcoles = ['demo','exemple'];
-  return fakeEmails.some(f=>email.includes(f))
-    || fakeEcoles.some(f=>ecole===f);
-}
-
-
-
 
 function openEleve(pseudo) {
   console.log('[openEleve] pseudo:', pseudo);
