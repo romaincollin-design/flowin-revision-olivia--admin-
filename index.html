@@ -7824,7 +7824,7 @@ function renderParrainage() {
       nameWrap.appendChild(avDiv);
     }
     var nameSpan = document.createElement('span');
-    nameSpan.style.cssText = 'font-size:13px;font-weight:700;color:' + (d?'var(--ac)':'var(--t)') + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+    nameSpan.style.cssText = 'font-size:13px;font-weight:700;color:var(--ac);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:underline;text-underline-offset:2px';
     nameSpan.textContent = r.name + (d?' →':'');
     nameWrap.appendChild(nameSpan);
     td1.appendChild(nameWrap);
@@ -7874,7 +7874,8 @@ function renderParrainage() {
           var ps   = (elv.pseudo||'').toLowerCase();
           var pr   = (elv.j.prenom||'').toLowerCase();
           var full = (pr + ' ' + (elv.j.nom||'')).toLowerCase().trim();
-          return n===ps || n===full || n===pr || (pr.length>2 && (full.includes(n) || n.includes(pr)));
+          return n===ps || n===full || n===pr || full===n
+          || (pr.length>2 && (full.includes(n) || n.includes(pr) || ps.includes(n) || n.includes(ps)));
         });
         if(found) openEleveOnTab(found.pseudo, 'filleuls');
       });
