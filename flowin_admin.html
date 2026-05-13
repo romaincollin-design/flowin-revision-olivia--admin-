@@ -1690,7 +1690,7 @@ const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const SB_ENABLED = true; // ← mettre false pour mode démo
 
 // ── DB ──
-const DB = { joueurs: [], sessions: [], parrainage: [], connexions: [] };
+const DB = { joueurs: [], sessions: [], parrainage: [], connexions: [], defis: [], defis_participants: [] };
 let liveMode = false;
 
 // ── LIGUES ──
@@ -1813,6 +1813,18 @@ async function loadData() {
         if(typeof currentView !== 'undefined' && currentView === 'cours') {
           try { renderCoursHub(); } catch(e) {}
         }
+        // Charger defis & defis_participants (fire-and-forget)
+        Promise.all([
+          fetch(SB_URL+'/rest/v1/defis?order=ts.desc&limit=500',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];}),
+          fetch(SB_URL+'/rest/v1/defis_participants?order=ts.desc&limit=2000',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];})
+        ]).then(function(d){
+          DB.defis = d[0] || [];
+          DB.defis_participants = d[1] || [];
+          console.log('[loadData] defis:', DB.defis.length, '· participants:', DB.defis_participants.length);
+          if(typeof currentView !== 'undefined' && currentView === 'defis') {
+            try { renderDefis(); } catch(e) {}
+          }
+        }).catch(function(e){ console.warn('Defis load fail:', e); });
       }).catch(function(e){ console.log('Contenu pédagogique non chargé:', e.message); });
       console.log(`✅ Supabase OK — ${j.length} joueurs, ${DB.sessions.length} sessions, ${DB.parrainage.length} parrainages, ${DB.connexions.length} connexions`);
     } else {
@@ -4371,6 +4383,47 @@ function switchFicheTab(btn, pseudo, tab) {
   if(tab === 'defis') setTimeout(function(){ renderDefisFiche(pseudo, 'crees'); }, 50);
 }
 
+function editPoints(pseudo, mode) {
+  var inp = document.getElementById('pts-delta-' + pseudo);
+  if(!inp) { showAdminToast('Champ valeur introuvable', 'error'); return; }
+  var val = parseInt(inp.value, 10);
+  if(isNaN(val) || val < 0) { showAdminToast('Entre un nombre valide', 'error'); return; }
+
+  var elev = (typeof DB!=='undefined' && DB.joueurs) ? DB.joueurs.find(function(j){return j.pseudo===pseudo;}) : null;
+  if(!elev) { showAdminToast('Joueur introuvable', 'error'); return; }
+
+  var current = parseInt(elev.pts_total||0, 10);
+  var newTotal;
+  var action;
+  if(mode === 'add')      { newTotal = current + val; action = '+' + val; }
+  else if(mode === 'sub') { newTotal = Math.max(0, current - val); action = '−' + val; }
+  else                    { newTotal = val;            action = '= ' + val; }
+
+  if(!confirm('Modifier les points de ' + (elev.prenom||pseudo) + ' ?\n\nActuel: ' + current + ' pts\nAction: ' + action + '\nNouveau: ' + newTotal + ' pts')) return;
+
+  var hdrs = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+  fetch(SB_URL+'/rest/v1/joueurs?pseudo=eq.'+encodeURIComponent(pseudo), {
+    method:'PATCH', headers:hdrs,
+    body: JSON.stringify({pts_total: newTotal})
+  }).then(function(r){
+    if(r.ok) {
+      elev.pts_total = newTotal;
+      showAdminToast('Points mis à jour: ' + newTotal + ' pts', 'success');
+      // Rafraichir la fiche si elle est ouverte
+      var modal = document.getElementById('modal-eleve');
+      if(modal && modal.classList.contains('open')) {
+        setTimeout(function(){ openEleve(pseudo); }, 100);
+      }
+      // Refresh liste
+      if(typeof renderEleves === 'function') setTimeout(renderEleves, 200);
+    } else {
+      showAdminToast('Erreur '+r.status, 'error');
+    }
+  }).catch(function(e){
+    showAdminToast('Erreur réseau: ' + e.message, 'error');
+  });
+}
+
 function sendActivationLink(email, prenom) {
   if(!email) { showAdminToast('Email manquant', 'error'); return; }
   if(!confirm('Envoyer un billet d\'activation à ' + email + ' ?')) return;
@@ -6872,96 +6925,230 @@ function renderDefisRank(rows) {
 
 function renderDefis() {
   const per = (document.getElementById('defis-periode')||{value:'7'}).value||'7';
-  const mat = (document.getElementById('defis-matiere')||{value:''}).value||'';
   const q   = ((document.getElementById('defis-search')||{value:''}).value||'').toLowerCase();
-  const cut = per==='0' ? '' : new Date(Date.now()-parseInt(per)*86400000).toISOString();
-  let rows  = per==='0' ? [...DB.sessions] : DB.sessions.filter(s=>s.ts>cut);
-  if(mat) rows = rows.filter(s=>(s.matiere||s.theme||'').includes(mat));
-  if(q)   rows = rows.filter(s=>(s.pseudo||'').toLowerCase().includes(q)||(s.theme||s.matiere||'').toLowerCase().includes(q));
+  const cut = per==='0' ? null : new Date(Date.now()-parseInt(per)*86400000).toISOString();
+
+  let defis = (DB.defis||[]).slice();
+  if(cut) defis = defis.filter(function(d){ return (d.ts||'') >= cut; });
+  if(q)   defis = defis.filter(function(d){
+    return (d.createur||'').toLowerCase().includes(q)
+        || (d.invite||'').toLowerCase().includes(q)
+        || (d.theme||'').toLowerCase().includes(q);
+  });
+
+  // KPIs
+  const total    = defis.length;
+  const waiting  = defis.filter(function(d){return d.status==='waiting';}).length;
+  const accepted = defis.filter(function(d){return d.status==='accepted';}).length;
+  const done     = defis.filter(function(d){return d.status==='done';}).length;
+  const prives   = defis.filter(function(d){return d.is_private;}).length;
+  const refuses  = defis.filter(function(d){return d.status==='refuse';}).length;
+
+  const kpisEl = document.getElementById('defis-kpis');
+  if(kpisEl) {
+    kpisEl.innerHTML =
+      '<div class="kpi"><div class="kpi-val">'+total+'</div><div class="kpi-lbl">Total</div></div>' +
+      '<div class="kpi"><div class="kpi-val" style="color:var(--am)">'+waiting+'</div><div class="kpi-lbl">En attente</div></div>' +
+      '<div class="kpi"><div class="kpi-val" style="color:var(--gr)">'+accepted+'</div><div class="kpi-lbl">Acceptés</div></div>' +
+      '<div class="kpi"><div class="kpi-val" style="color:var(--ac)">'+done+'</div><div class="kpi-lbl">Terminés</div></div>' +
+      '<div class="kpi"><div class="kpi-val" style="color:#E040A0">'+prives+'</div><div class="kpi-lbl">Privés</div></div>' +
+      '<div class="kpi"><div class="kpi-val" style="color:var(--re)">'+refuses+'</div><div class="kpi-lbl">Refusés</div></div>';
+  }
 
   const cnt = document.getElementById('defis-count');
-  if(cnt) cnt.textContent = rows.length + ' sessions';
+  if(cnt) cnt.textContent = defis.length + ' défis';
 
-  const nP = new Set(rows.map(s=>s.theme||s.matiere||'Général')).size;
-  const nJ = new Set(rows.map(s=>s.pseudo)).size;
-  const avg = rows.length ? Math.round(rows.reduce((a,s)=>a+(s.score_pct||0),0)/rows.length) : 0;
+  // ── ONGLET POOLS ACTIVES (waiting/accepted) ──
+  const actives = defis.filter(function(d){ return d.status==='waiting' || d.status==='accepted'; });
+  const poolsEl = document.getElementById('defis-pools');
+  if(poolsEl) {
+    if(!actives.length) {
+      poolsEl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3);font-size:13px"><div style="font-size:36px;margin-bottom:10px">⚔️</div>Aucun défi actif</div>';
+    } else {
+      let html = '<div style="display:flex;flex-direction:column;gap:8px">';
+      actives.forEach(function(d) {
+        const parts = (DB.defis_participants||[]).filter(function(p){ return p.defi_id === d.id; });
+        const stCol = d.status==='waiting' ? 'var(--am)' : 'var(--gr)';
+        const stLbl = d.status==='waiting' ? '⏳ En attente' : '✅ Accepté';
+        const priv = d.is_private ? '<span style="background:#FCE4EC;color:#E040A0;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">🔒 Privé</span>' : '<span style="background:#EEECFC;color:var(--ac);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">🌐 Public</span>';
+        html += '<div class="panel" style="cursor:pointer;padding:12px 14px" onclick="openDefiDetail(\''+d.id+'\')">';
+        html += '<div style="display:flex;align-items:center;gap:12px">';
+        html += '<div style="flex:1;min-width:0">';
+        html += '<div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;flex-wrap:wrap">';
+        html += '<span style="font-size:13px;font-weight:700;color:var(--t)">'+(d.theme||'—')+'</span>';
+        html += '<span style="background:'+stCol+'15;color:'+stCol+';padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">'+stLbl+'</span>';
+        html += priv;
+        html += '</div>';
+        html += '<div style="font-size:11px;color:var(--t3)">'+(d.createur||'?')+(d.invite ? ' → '+d.invite : '')+' · '+parts.length+' participant(s) · mise '+(d.mise||0)+' pts</div>';
+        html += '</div>';
+        html += '<div style="font-size:10px;color:var(--t3);text-align:right;flex-shrink:0">'+(d.ts ? new Date(d.ts).toLocaleDateString('fr-FR') : '—')+'</div>';
+        html += '<button onclick="event.stopPropagation();openDefiDetail(\''+d.id+'\')" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Voir →</button>';
+        html += '</div></div>';
+      });
+      html += '</div>';
+      poolsEl.innerHTML = html;
+    }
+  }
 
-  document.getElementById('defis-kpis').innerHTML = [
-    {v:nP,              l:'Pools actives',  s:'thèmes joués',   c:'var(--ac)', i:'🎮', t:'pools'},
-    {v:nJ,              l:'Joueurs actifs', s:'cette période',  c:'var(--gr)', i:'👥', t:'rank'},
-    {v:rows.length,     l:'Parties',        s:'sessions total', c:'var(--am)', i:'⚡', t:'histo'},
-    {v:rows.length?avg+'%':'—', l:'Score moyen', s:'toutes sessions', c:'var(--bl)', i:'🎯', t:''},
-  ].map(function(k) {
-    var kCursor  = k.t ? 'pointer' : 'default';
-    var kOnclick = k.t ? "switchDTab('" + k.t + "',document.getElementById('dt-" + k.t + "'))" : '';
-    return '<div class="kpi-card" style="cursor:' + kCursor + '" onclick="' + kOnclick + '">'
-      + '<div class="kpi-bar" style="background:' + k.c + '"></div>'
-      + '<div class="kpi-icon">' + k.i + '</div>'
-      + '<div class="kpi-val">' + k.v + '</div>'
-      + '<div class="kpi-label">' + k.l + '</div>'
-      + '<div class="kpi-sub">' + k.s + '</div>'
-      + '</div>';
-  }).join('');
+  // ── ONGLET HISTORIQUE (done/refuse) ──
+  const histo = defis.filter(function(d){ return d.status==='done' || d.status==='refuse'; }).slice(0,50);
+  const histoEl = document.getElementById('defis-histo');
+  if(histoEl) {
+    if(!histo.length) {
+      histoEl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3);font-size:13px">Aucun défi terminé</div>';
+    } else {
+      let html = '<table style="width:100%;border-collapse:collapse"><thead><tr>'
+        + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Type</th>'
+        + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Créateur → Invité</th>'
+        + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Thème</th>'
+        + '<th style="text-align:right;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Scores</th>'
+        + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Statut</th>'
+        + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Date</th>'
+        + '</tr></thead><tbody>';
+      histo.forEach(function(d) {
+        const dt = d.ts ? new Date(d.ts) : null;
+        const stCol = d.status==='done' ? 'var(--gr)' : 'var(--re)';
+        const stLbl = d.status==='done' ? '✓ Terminé' : '✗ Refusé';
+        const scores = (d.score_createur!=null||d.score_invite!=null) ? (d.score_createur||0)+'% vs '+(d.score_invite||0)+'%' : '—';
+        html += '<tr style="cursor:pointer" data-id="'+d.id+'" class="tbl-row-hover">'
+          + '<td style="padding:8px;font-size:12px;border-bottom:1px solid var(--b)">'+(d.is_private?'🔒':'🌐')+'</td>'
+          + '<td style="padding:8px;font-size:12px;font-weight:600;color:var(--t);border-bottom:1px solid var(--b)">'+(d.createur||'?')+(d.invite?' → '+d.invite:'')+'</td>'
+          + '<td style="padding:8px;font-size:11px;color:var(--t3);border-bottom:1px solid var(--b)">'+(d.theme||'—')+'</td>'
+          + '<td style="padding:8px;font-size:11px;color:var(--t);border-bottom:1px solid var(--b);text-align:right;font-weight:600">'+scores+'</td>'
+          + '<td style="padding:8px;font-size:11px;border-bottom:1px solid var(--b)"><span style="color:'+stCol+';font-weight:700">'+stLbl+'</span></td>'
+          + '<td style="padding:8px;font-size:11px;color:var(--t3);border-bottom:1px solid var(--b)">'+(dt?dt.toLocaleDateString('fr-FR'):'—')+'</td>'
+          + '</tr>';
+      });
+      html += '</tbody></table>';
+      histoEl.innerHTML = html;
+      histoEl.querySelectorAll('tr[data-id]').forEach(function(tr){
+        tr.addEventListener('click', function(){ openDefiDetail(tr.dataset.id); });
+      });
+    }
+  }
 
-  const emj = {Histoire:'📜',Géographie:'🌍',EMC:'⚖️',PSE:'🩺',Roulette:'🎰',Général:'🎯'};
-  const avC = [['#EEECFC','#6C5FE8'],['#E6F7F1','#1B9E75'],['#FEF3DC','#B87A10'],['#E8F2FC','#2478CC'],['#F5EDE3','#9A6B3A'],['#FBEAF0','#993556']];
-  const pools = {};
-  rows.forEach(s => {
-    const t = s.theme||s.matiere||'Général';
-    if(!pools[t]) pools[t]=[];
-    if(!pools[t].find(p=>p.pseudo===s.pseudo)) pools[t].push(s);
-  });
-  const elevs = buildElevs();
-  const pdata = Object.entries(pools).sort((a,b)=>b[1].length-a[1].length).map(([theme,joueurs],pi) => {
-    const sorted = [...joueurs].sort((a,b)=>(b.score_pct||0)-(a.score_pct||0));
-    const pavg   = sorted.length ? Math.round(sorted.reduce((a,s)=>a+(s.score_pct||0),0)/sorted.length) : 0;
-    return {theme, sorted, pavg, pi};
-  });
-  window._poolsData = pdata;
-
-  const pEl = document.getElementById('defis-pools');
-  if(pEl) pEl.innerHTML = pdata.length ? pdata.map(p => {
-    const w  = p.sorted[0];
-    const we = w ? elevs.find(e=>e.pseudo===w.pseudo) : null;
-    const wn = we ? we.j.prenom+' '+we.j.nom : w?.pseudo||'—';
-    const col = scColor(p.pavg);
-    const avH = p.sorted.slice(0,3).map((s,i) => {
-      const d  = elevs.find(e=>e.pseudo===s.pseudo);
-      const [bg,fg] = avC[i%avC.length];
-      const ini = d ? (d.j.prenom[0]||'?')+(d.j.nom[0]||'') : (s.pseudo||'?').slice(0,2);
-      return `<div class="pool-av" style="background:${bg};color:${fg}">${ini.toUpperCase()}</div>`;
-    }).join('') + (p.sorted.length>3 ? `<div class="pool-av" style="background:var(--surf2);color:var(--t3)">+${p.sorted.length-3}</div>` : '');
-    return `<div class="pool-row" onclick="openPoolPanel(${p.pi})">
-      <div class="pc-th">
-        <div style="width:32px;min-width:32px;height:32px;border-radius:8px;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:14px">${emj[p.theme]||'🎯'}</div>
-        <div style="min-width:0;overflow:hidden">
-          <div class="pool-nm">${p.theme}</div>
-          <div class="pool-sb"><span class="pool-dot"></span>Actif · ${p.sorted.length}j</div>
-        </div>
-      </div>
-      <div class="pc-pl"><div class="pool-avs">${avH}</div></div>
-      <div class="pc-sc"><div class="pool-sc" style="color:${col}">${p.pavg}%</div></div>
-      <div class="pc-ld"><div class="pool-ln">${wn}</div><div class="pool-ls" style="color:${w?scColor(w.score_pct||0):'var(--t3)'}">${w?w.score_pct||0:0}%</div></div>
-      <div class="pc-vr">Voir →</div>
-    </div>`;
-  }).join('') : `<div class="empty"><div class="empty-icon">⚔️</div><div class="empty-text">Aucune pool active</div></div>`;
-
-  // Remplir le classement (defis-rank)
-  renderDefisRank(rows);
-
-  document.getElementById('defis-histo').innerHTML = `<div class="panel"><div class="panel-header">📋 Historique</div><table><thead><tr><th>Joueur</th><th>Thème</th><th>Score</th><th>Pts</th><th>Date</th></tr></thead><tbody>${
-    DB.sessions.slice(0,30).map(s=>`<tr><td style="font-weight:600">${s.pseudo||'—'}</td><td style="font-size:11px">${s.theme||s.matiere||'—'}</td><td>${scorePill(s.score_pct||0)}</td><td style="font-weight:700;color:var(--am)">+${s.pts_round||0}</td><td style="font-size:10px;color:var(--t3)">${ago(s.ts)}</td></tr>`).join('')
-  }</tbody></table></div>`;
-
-  const sm={};
-  DB.sessions.forEach(s=>{if(!s.pseudo)return;if(!sm[s.pseudo])sm[s.pseudo]={n:0,pts:0,wins:0,ecole:s.ecole,pseudo:s.pseudo};sm[s.pseudo].n++;sm[s.pseudo].pts=Math.max(sm[s.pseudo].pts,s.pts_total||0);if((s.score_pct||0)>=80)sm[s.pseudo].wins++;});
-  document.getElementById('defis-rank').innerHTML = `<div class="panel"><div class="panel-header">🏆 Classement</div><table><thead><tr><th>#</th><th>Joueur</th><th>École</th><th>Sessions</th><th>Wins</th><th>Pts</th></tr></thead><tbody>${
-    Object.values(sm).sort((a,b)=>b.pts-a.pts).slice(0,20).map((r,i) => {
-      const jd = DB.joueurs.find(j=>j.pseudo===r.pseudo);
-      return `<tr><td style="font-weight:800">${['🥇','🥈','🥉'][i]||'#'+(i+1)}</td><td style="font-weight:600;font-size:12px">${jd?jd.prenom+' '+jd.nom:r.pseudo}</td><td style="font-size:11px">${r.ecole||'—'}</td><td>${r.n}</td><td>${r.wins?'⚡'+r.wins:'—'}</td><td style="font-weight:700;color:var(--am)">${r.pts.toLocaleString('fr')}</td></tr>`;
-    }).join('')
-  }</tbody></table></div>`;
+  // ── ONGLET CLASSEMENT ──
+  const rankEl = document.getElementById('defis-rank');
+  if(rankEl) {
+    const byPlayer = {};
+    defis.forEach(function(d) {
+      if(d.status !== 'done') return;
+      [['createur','score_createur'],['invite','score_invite']].forEach(function(pair) {
+        const p = d[pair[0]]; if(!p) return;
+        if(!byPlayer[p]) byPlayer[p] = {pseudo:p, defis:0, totalScore:0, won:0};
+        byPlayer[p].defis++;
+        byPlayer[p].totalScore += (d[pair[1]]||0);
+        const myScore = d[pair[1]]||0;
+        const otherScore = pair[0]==='createur' ? (d.score_invite||0) : (d.score_createur||0);
+        if(myScore > otherScore) byPlayer[p].won++;
+      });
+    });
+    const sorted = Object.values(byPlayer).sort(function(a,b){ return b.won - a.won || b.totalScore - a.totalScore; });
+    if(!sorted.length) {
+      rankEl.innerHTML = '<div style="text-align:center;padding:30px;color:var(--t3);font-size:12px">Aucun défi terminé</div>';
+    } else {
+      let html = '<table style="width:100%;border-collapse:collapse"><thead><tr>'
+        + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">#</th>'
+        + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Joueur</th>'
+        + '<th style="text-align:right;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Défis</th>'
+        + '<th style="text-align:right;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Victoires</th>'
+        + '<th style="text-align:right;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Score moy.</th>'
+        + '</tr></thead><tbody>';
+      sorted.slice(0,20).forEach(function(p, i) {
+        const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);
+        const avg = p.defis ? Math.round(p.totalScore/p.defis) : 0;
+        const _pp = (p.pseudo||'').replace(/["><]/g,'');
+        html += '<tr style="cursor:pointer" class="tbl-row-hover" data-pseudo="'+_pp+'">'
+          + '<td style="padding:8px;font-size:12px;font-weight:700;border-bottom:1px solid var(--b)">'+medal+'</td>'
+          + '<td style="padding:8px;font-size:12px;font-weight:700;color:var(--t);border-bottom:1px solid var(--b)">'+p.pseudo+'</td>'
+          + '<td style="padding:8px;font-size:12px;text-align:right;color:var(--t3);border-bottom:1px solid var(--b)">'+p.defis+'</td>'
+          + '<td style="padding:8px;font-size:12px;text-align:right;font-weight:700;color:var(--gr);border-bottom:1px solid var(--b)">'+p.won+'</td>'
+          + '<td style="padding:8px;font-size:12px;text-align:right;font-weight:700;color:var(--am);border-bottom:1px solid var(--b)">'+avg+'%</td>'
+          + '</tr>';
+      });
+      html += '</tbody></table>';
+      rankEl.innerHTML = html;
+      rankEl.querySelectorAll('tr[data-pseudo]').forEach(function(tr) {
+        tr.addEventListener('click', function(){ openEleve(tr.dataset.pseudo); });
+      });
+    }
+  }
 }
+
+// ── DÉTAIL D'UN DÉFI ──
+function openDefiDetail(defiId) {
+  const d = (DB.defis||[]).find(function(x){ return x.id === defiId; });
+  if(!d) { showAdminToast('Défi introuvable', 'error'); return; }
+  const parts = (DB.defis_participants||[]).filter(function(p){ return p.defi_id === defiId; });
+
+  const modal = document.createElement('div');
+  modal.id = 'modal-defi';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
+
+  const stCol = d.status==='waiting'?'var(--am)':d.status==='done'?'var(--gr)':d.status==='refuse'?'var(--re)':'var(--ac)';
+  const stLbl = d.status==='waiting'?'⏳ En attente':d.status==='done'?'✓ Terminé':d.status==='refuse'?'✗ Refusé':'✅ Accepté';
+  const winnerLbl = (d.status==='done' && d.score_createur!=null && d.score_invite!=null) ? (
+    d.score_createur > d.score_invite ? '🏆 '+d.createur+' a gagné' :
+    d.score_invite > d.score_createur ? '🏆 '+d.invite+' a gagné' :
+    '🤝 Égalité'
+  ) : '';
+
+  modal.innerHTML = '<div style="background:var(--surf);border-radius:14px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">'
+    + '<div style="padding:18px 22px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surf);z-index:1">'
+    + '<div><div style="font-size:15px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">⚔️ Détail du défi</div>'
+    + '<div style="font-size:11px;color:var(--t3);margin-top:2px">'+(d.is_private?'🔒 Défi privé':'🌐 Défi public')+'</div></div>'
+    + '<button id="defi-close" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px">✕</button>'
+    + '</div>'
+    + '<div style="padding:20px 22px">'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">'
+    + '<div class="fiche-block"><div class="fiche-block-title">📋 Infos</div>'
+    + '<div class="info-row"><span class="info-key">Thème</span><span class="info-val">'+(d.theme||'—')+'</span></div>'
+    + '<div class="info-row"><span class="info-key">Statut</span><span class="info-val" style="color:'+stCol+';font-weight:700">'+stLbl+'</span></div>'
+    + '<div class="info-row"><span class="info-key">Mise</span><span class="info-val">'+(d.mise||0)+' pts</span></div>'
+    + '<div class="info-row"><span class="info-key">Date</span><span class="info-val">'+(d.ts?new Date(d.ts).toLocaleDateString("fr-FR"):'—')+'</span></div>'
+    + '</div>'
+    + '<div class="fiche-block"><div class="fiche-block-title">👥 Joueurs</div>'
+    + '<div class="info-row"><span class="info-key">Créateur</span><span class="info-val" style="color:var(--ac);cursor:pointer;text-decoration:underline" onclick="openEleve(\''+d.createur+'\')">'+(d.createur||'?')+'</span></div>'
+    + '<div class="info-row"><span class="info-key">Score créateur</span><span class="info-val" style="font-weight:700">'+(d.score_createur!=null?d.score_createur+'%':'—')+'</span></div>'
+    + (d.invite ? '<div class="info-row"><span class="info-key">Invité</span><span class="info-val" style="color:var(--ac);cursor:pointer;text-decoration:underline" onclick="openEleve(\''+d.invite+'\')">'+d.invite+'</span></div>' : '')
+    + (d.invite ? '<div class="info-row"><span class="info-key">Score invité</span><span class="info-val" style="font-weight:700">'+(d.score_invite!=null?d.score_invite+'%':'—')+'</span></div>' : '')
+    + '</div>'
+    + '</div>'
+    + (winnerLbl ? '<div style="background:var(--grBg);border:1px solid var(--grBorder);border-radius:10px;padding:14px;text-align:center;margin-bottom:14px;font-size:14px;font-weight:800;color:var(--gr)">'+winnerLbl+'</div>' : '')
+    + '<div class="fiche-block"><div class="fiche-block-title">👤 Participants ('+parts.length+')</div>'
+    + (parts.length ? parts.map(function(p,i){
+        return '<div style="display:flex;align-items:center;gap:10px;padding:7px 0;'+(i<parts.length-1?'border-bottom:1px solid var(--b)':'')+';cursor:pointer" onclick="openEleve(\''+p.pseudo+'\')"><span style="font-size:12px;font-weight:600;color:var(--ac);flex:1">→ '+p.pseudo+'</span><span style="font-size:11px;color:var(--t3)">mise: '+(p.mise||0)+' pts</span></div>';
+      }).join('') : '<div style="text-align:center;color:var(--t3);font-size:11px;padding:10px">Aucun participant</div>')
+    + '</div>'
+    + '<div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end">'
+    + (d.status==='waiting' || d.status==='accepted' ? '<button onclick="cancelDefi(\''+d.id+'\')" style="background:var(--reBg);color:var(--re);border:1px solid var(--reBorder);border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🗑 Annuler ce défi</button>' : '')
+    + '<button onclick="document.getElementById(\'modal-defi\').remove()" style="background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:8px 16px;font-size:12px;cursor:pointer;font-family:inherit;color:var(--t2)">Fermer</button>'
+    + '</div>'
+    + '</div></div>';
+
+  document.body.appendChild(modal);
+  document.getElementById('defi-close').addEventListener('click', function(){ modal.remove(); });
+}
+
+function cancelDefi(defiId) {
+  if(!confirm('Annuler ce défi ? Le statut passera à "refuse".')) return;
+  const hdrs = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+  fetch(SB_URL+'/rest/v1/defis?id=eq.'+encodeURIComponent(defiId), {
+    method:'PATCH', headers:hdrs,
+    body: JSON.stringify({status:'refuse', cancelled_by_admin: true})
+  }).then(function(r){
+    if(r.ok) {
+      const d = (DB.defis||[]).find(function(x){return x.id===defiId;});
+      if(d) d.status = 'refuse';
+      const m = document.getElementById('modal-defi'); if(m) m.remove();
+      showAdminToast('Défi annulé', 'success');
+      renderDefis();
+    } else {
+      showAdminToast('Erreur '+r.status, 'error');
+    }
+  }).catch(function(){ showAdminToast('Erreur réseau', 'error'); });
+}
+
 
 function renderParrainage() {
   const elevs  = buildElevs();
