@@ -818,31 +818,47 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
         <button class="crm-btn" onclick="crmMessageGroupe('parr')">💬 Message</button>
         <button class="crm-btn" style="margin-left:auto" onclick="crmDeselectAll('parr')">✕</button>
       </div>
-      <div class="panel" style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;table-layout:fixed">
-          <thead><tr>
-            <th class="crm-th" style="width:30px"><input type="checkbox" id="parr-all" onchange="crmToggleAll('parr',this.checked)"></th>
-            <th style="width:25%"><div class="pth" onclick="parrSort('name')">Parrain <span id="pa-name">↕</span></div></th>
-            <th style="width:22%">
-              <div class="pth" onclick="parrFlt('etab')">École ⌄</div>
-              <div id="parr-flt-etab" style="display:none;padding:0 10px 8px"><select class="cflt" id="parr-etab" onchange="renderParrainage()"><option value="">Toutes</option></select></div>
-            </th>
-            <th style="width:9%"><div class="pth" onclick="parrSort('filleuls')">Filleuls <span id="pa-filleuls">↕</span></div></th>
-            <th style="width:15%">
-              <div class="pth" onclick="parrFlt('canal')">Canal ⌄</div>
-              <div id="parr-flt-canal" style="display:none;padding:0 10px 8px">
-                <select class="cflt" id="parr-canal" onchange="renderParrainage()">
-                  <option value="">Tous</option>
-                  <option value="whatsapp">💬 WhatsApp</option>
-                  <option value="telegram">✈️ Telegram</option>
-                  <option value="copy">📋 Copie</option>
-                  <option value="native">↗️ Partage</option>
-                </select>
-              </div>
-            </th>
-            <th style="width:12%"><div class="pth" onclick="parrSort('pts')">Pts <span id="pa-pts">↕</span></div></th>
-            <th style="width:12%"><div class="pth" onclick="parrSort('recent')">Dernière <span id="pa-recent">↕</span></div></th>
-          </tr></thead>
+      <div class="panel" id="parr-table-wrap" style="overflow-x:auto">
+        <table id="parr-table" style="width:100%;border-collapse:collapse;min-width:600px">
+          <thead>
+            <tr>
+              <th class="crm-th" style="width:36px;padding:8px 10px"><input type="checkbox" id="parr-all" onchange="crmToggleAll('parr',this.checked)"></th>
+              <th style="text-align:left;padding:8px 10px;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap">
+                <span style="cursor:pointer" onclick="parrSort('name')">Parrain <span id="pa-name">↕</span></span>
+              </th>
+              <th style="text-align:left;padding:8px 10px;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em">
+                <div style="display:flex;align-items:center;gap:4px">
+                  <span style="cursor:pointer" onclick="parrFlt('etab')">École <span id="pa-etab">⌄</span></span>
+                  <div id="parr-flt-etab" style="display:none;position:absolute;z-index:99;background:var(--surf);border:1px solid var(--b);border-radius:8px;padding:6px;margin-top:24px">
+                    <select class="cflt" id="parr-etab" onchange="renderParrainage()"><option value="">Toutes</option></select>
+                  </div>
+                </div>
+              </th>
+              <th style="text-align:center;padding:8px 10px;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap">
+                <span style="cursor:pointer" onclick="parrSort('filleuls')">Filleuls <span id="pa-filleuls">↕</span></span>
+              </th>
+              <th style="text-align:left;padding:8px 10px;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em">
+                <div style="display:flex;align-items:center;gap:4px">
+                  <span style="cursor:pointer" onclick="parrFlt('canal')">Canal <span id="pa-canal">⌄</span></span>
+                  <div id="parr-flt-canal" style="display:none;position:absolute;z-index:99;background:var(--surf);border:1px solid var(--b);border-radius:8px;padding:6px;margin-top:24px">
+                    <select class="cflt" id="parr-canal" onchange="renderParrainage()">
+                      <option value="">Tous</option>
+                      <option value="whatsapp">💬 WhatsApp</option>
+                      <option value="telegram">✈️ Telegram</option>
+                      <option value="copy">📋 Copie</option>
+                      <option value="native">↗️ Partage</option>
+                    </select>
+                  </div>
+                </div>
+              </th>
+              <th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap">
+                <span style="cursor:pointer" onclick="parrSort('pts')">Pts <span id="pa-pts">↕</span></span>
+              </th>
+              <th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap">
+                <span style="cursor:pointer" onclick="parrSort('recent')">Dernière <span id="pa-recent">↕</span></span>
+              </th>
+            </tr>
+          </thead>
           <tbody id="parr-tbody"></tbody>
         </table>
       </div>
@@ -7669,103 +7685,200 @@ function cancelDefi(defiId) {
 
 
 function renderParrainage() {
-  if(typeof window._parrSF === "undefined") window._parrSF = "name";
-  if(typeof window._parrSD === "undefined") window._parrSD = 1;
-  var _parrSF = window._parrSF;
-  var _parrSD = window._parrSD;
-  const elevs  = buildElevs();
-  const pp     = (typeof BAREME_CONFIG!=='undefined' && BAREME_CONFIG.pts_parrainage) ? BAREME_CONFIG.pts_parrainage : 100;
-  const snd    = {};
-  DB.parrainage.forEach(p => {
+  if(typeof window._parrSF === 'undefined') window._parrSF = 'name';
+  if(typeof window._parrSD === 'undefined') window._parrSD = 1;
+  var _parrSF = window._parrSF, _parrSD = window._parrSD;
+  var elevs = buildElevs();
+  var pp = (typeof BAREME_CONFIG !== 'undefined' && BAREME_CONFIG.pts_parrainage) ? BAREME_CONFIG.pts_parrainage : 100;
+  var chLabels = {whatsapp:'💬 WhatsApp', telegram:'✈️ Telegram', copy:'📋 Copie', native:'↗️ Partage'};
+
+  // ── Construire snd : agréger les parrainages par sender ──────────────────
+  var snd = {};
+  (DB.parrainage||[]).forEach(function(p) {
     if(!p.sender) return;
-    const me = elevs.find(e => {
-      const fn = (e.j.prenom+' '+e.j.nom).toLowerCase();
-      const ps = (p.sender||'').toLowerCase();
-      return ps===fn || ps===(e.pseudo||'').toLowerCase();
+    var me = elevs.find(function(e) {
+      var fn = ((e.j.prenom||'') + ' ' + (e.j.nom||'')).toLowerCase().trim();
+      var ps = (p.sender||'').toLowerCase().trim();
+      return ps === fn || ps === (e.pseudo||'').toLowerCase();
     });
-    const k = me ? (me.j.prenom+' '+me.j.nom) : p.sender;
-    if(!snd[k]) snd[k] = {name:k, etab:me?(me.j.ecole||'—'):(p.sender_etab||'—'), elev:me||null, fils:[], chs:[], last:null};
+    var k = me ? ((me.j.prenom||'') + ' ' + (me.j.nom||'')).trim() : p.sender;
+    if(!snd[k]) snd[k] = {name:k, etab: me?(me.j.ecole||'—'):(p.sender_etab||'—'), elev:me||null, fils:[], chs:[], last:null};
     snd[k].fils.push(p.destinataire);
-    snd[k].chs.push(p.channel);
-    if(!snd[k].last || p.ts>snd[k].last) snd[k].last = p.ts;
+    snd[k].chs.push(p.channel||'');
+    if(!snd[k].last || (p.ts && p.ts > snd[k].last)) snd[k].last = p.ts;
   });
 
-  const q   = ((document.getElementById('parr-search')||{value:''}).value||'').toLowerCase();
-  const ev  = (document.getElementById('parr-etab')||{value:''}).value||'';
-  const cv  = (document.getElementById('parr-canal')||{value:''}).value||'';
-  const all = Object.values(snd);
+  var all = Object.values(snd);
 
-  const es = document.getElementById('parr-etab');
-  if(es) {
-    const etabs = [...new Set(all.map(r=>r.etab).filter(e=>e&&e!=='—'))].sort();
-    const cur = es.value;
-    es.innerHTML = '<option value="">Toutes</option>' + etabs.map(e=>`<option value="${e}"${e===cur?' selected':''}>${e}</option>`).join('');
+  // ── Filtre établissements ─────────────────────────────────────────────────
+  var esEl = document.getElementById('parr-etab');
+  if(esEl) {
+    var etabs = [];
+    all.forEach(function(r){ if(r.etab && r.etab !== '—' && etabs.indexOf(r.etab) < 0) etabs.push(r.etab); });
+    etabs.sort();
+    var curEtab = esEl.value;
+    esEl.innerHTML = '<option value="">Toutes</option>';
+    etabs.forEach(function(e){ var o=document.createElement('option'); o.value=e; o.textContent=e; if(e===curEtab) o.selected=true; esEl.appendChild(o); });
   }
 
-  const totalP = DB.parrainage.reduce((s,p)=>s+(p.pts||pp),0);
-  const topC   = DB.parrainage.length ? Object.entries(DB.parrainage.reduce((acc,p)=>{acc[p.channel]=(acc[p.channel]||0)+1;return acc},{})).sort((a,b)=>b[1]-a[1])[0][0] : '—';
-  const chI    = {whatsapp:'💬 WhatsApp',telegram:'✈️ Telegram',copy:'📋 Copie',native:'↗️ Partage'};
+  // ── KPIs ─────────────────────────────────────────────────────────────────
+  var totalP = (DB.parrainage||[]).reduce(function(s,p){ return s+(p.pts||pp); }, 0);
+  var chanCount = {};
+  (DB.parrainage||[]).forEach(function(p){ chanCount[p.channel]=(chanCount[p.channel]||0)+1; });
+  var topC = Object.keys(chanCount).sort(function(a,b){ return chanCount[b]-chanCount[a]; })[0] || '—';
+  var kpisEl = document.getElementById('parr-kpis');
+  if(kpisEl) {
+    var kpis = [
+      {v:(DB.parrainage||[]).length, l:'Invitations', s:'total', c:'#E040A0', i:'🎁'},
+      {v:all.length, l:'Parrains actifs', s:'≥1 filleul', c:'var(--ac)', i:'👤'},
+      {v:totalP, l:'Points distribués', s:pp+' pts/parr.', c:'var(--am)', i:'⭐'},
+      {v:chLabels[topC]||topC, l:'Canal favori', s:'le plus utilisé', c:'var(--gr)', i:'📡'},
+    ];
+    kpisEl.innerHTML = '';
+    kpis.forEach(function(k) {
+      var card = document.createElement('div');
+      card.className = 'kpi-card';
+      card.style.cssText = 'cursor:default';
+      card.innerHTML = '<div class="kpi-bar" style="background:'+k.c+'"></div>'
+        + '<div class="kpi-icon">'+k.i+'</div>'
+        + '<div class="kpi-val" style="font-size:'+(typeof k.v==='string'&&k.v.length>8?'13px':'26px')+'">'+k.v+'</div>'
+        + '<div class="kpi-label">'+k.l+'</div>'
+        + '<div class="kpi-sub">'+k.s+'</div>';
+      kpisEl.appendChild(card);
+    });
+  }
 
-  document.getElementById('parr-kpis').innerHTML = [
-    {v:DB.parrainage.length, l:'Invitations',       s:'total',          c:'#E040A0', i:'🎁'},
-    {v:all.length,           l:'Parrains actifs',   s:'≥1 filleul',     c:'var(--ac)',i:'👤'},
-    {v:totalP,               l:'Points distribués', s:pp+' pts/parr.',  c:'var(--am)',i:'⭐'},
-    {v:chI[topC]||topC,      l:'Canal favori',      s:'le plus utilisé',c:'var(--gr)',i:'📡'},
-  ].map(k=>`<div class="kpi-card" style="cursor:default"><div class="kpi-bar" style="background:${k.c}"></div><div class="kpi-icon">${k.i}</div><div class="kpi-val" style="font-size:${typeof k.v==='string'&&k.v.length>8?'13px':'26px'}">${k.v}</div><div class="kpi-label">${k.l}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+  // ── Filtrage + tri ────────────────────────────────────────────────────────
+  var q  = ((document.getElementById('parr-search')||{value:''}).value||'').toLowerCase();
+  var ev = (document.getElementById('parr-etab')||{value:''}).value||'';
+  var cv = (document.getElementById('parr-canal')||{value:''}).value||'';
 
-  let data = all.filter(r => {
+  var data = all.filter(function(r) {
     if(q && !r.name.toLowerCase().includes(q) && !(r.etab||'').toLowerCase().includes(q)) return false;
-    if(ev && r.etab!==ev) return false;
-    if(cv && !r.chs.includes(cv)) return false;
+    if(ev && r.etab !== ev) return false;
+    if(cv && r.chs.indexOf(cv) < 0) return false;
     return true;
-  }).sort((a,b) => {
-    const d = _parrSD;
-    if(_parrSF==='name')    return d * a.name.localeCompare(b.name);
-    if(_parrSF==='etab')    return d * (a.etab||'').localeCompare(b.etab||'');
-    if(_parrSF==='filleuls'||_parrSF==='pts') return d * (a.fils.length-b.fils.length);
-    if(_parrSF==='recent')  return d * (new Date(a.last||0)-new Date(b.last||0));
+  });
+
+  data.sort(function(a, b) {
+    var d = _parrSD;
+    if(_parrSF === 'name')    return d * a.name.localeCompare(b.name);
+    if(_parrSF === 'etab')    return d * (a.etab||'').localeCompare(b.etab||'');
+    if(_parrSF === 'filleuls' || _parrSF === 'pts') return d * (a.fils.length - b.fils.length);
+    if(_parrSF === 'recent')  return d * (new Date(a.last||0) - new Date(b.last||0));
     return 0;
   });
 
-  const cntEl = document.getElementById('parr-cnt');
-  if(cntEl) cntEl.textContent = data.length + ' parrain' + (data.length>1?'s':'');
+  var cntEl = document.getElementById('parr-cnt');
+  if(cntEl) cntEl.textContent = data.length + ' parrain' + (data.length > 1 ? 's' : '');
+
   crmSelections['parr'] = crmSelections['parr'] || new Set();
-  const tC = r => { const f={}; r.chs.forEach(ch=>f[ch]=(f[ch]||0)+1); return Object.entries(f).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—'; };
 
-  document.getElementById('parr-tbody').innerHTML = data.length ? data.map(r => {
-    const d   = r.elev;
-    const sel = crmSelections['parr'].has(r.name);
-    const ch  = tC(r);
-    const av_html = d ? ava(d.j.prenom,d.j.nom,d.idx,28) : `<div style="width:28px;height:28px;border-radius:50%;background:var(--surf2);color:var(--t3);font-size:11px;display:flex;align-items:center;justify-content:center">${(r.name[0]||'?').toUpperCase()}</div>`;
-    return `<tr style="${sel?'background:rgba(108,95,232,.07)':''}" class="parr-row" data-pseudo="${d?d.pseudo:''}" data-name="${r.name.replace(/"/g,'&quot;')}" style2="cursor:pointer">
-      <td class="crm-td"><input type="checkbox" ${sel?'checked':''} onchange="crmToggle('parr','${r.name.replace(/'/g,"\'")}',this.checked)"></td>
-      <td><div style="display:flex;align-items:center;gap:8px">${av_html}<div style="font-size:12px;font-weight:600;color:${d?'var(--ac)':'var(--t)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name}${d?' →':''}</div></div></td>
-      <td style="font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.etab}</td>
-      <td><span style="font-size:16px;font-weight:800;color:var(--ac)">${r.fils.length}</span></td>
-      <td><span class="bdg purple">${chI[ch]||ch}</span></td>
-      <td style="font-weight:700;color:var(--am)">+${r.fils.length*pp}</td>
-      <td style="font-size:10px;color:var(--t3)">${ago(r.last)}</td>
-    </tr>`;
-  }).join('') : `<tr><td colspan="7"><div class="empty"><div class="empty-icon">🎁</div><div class="empty-text">Aucun parrain</div></div></td></tr>`;
+  // ── Rendu tbody — DOM pur (zéro innerHTML, zéro template literal) ─────────
+  var tbody = document.getElementById('parr-tbody');
+  if(!tbody) return;
+  tbody.innerHTML = '';
 
-  // Clic sur ligne → fiche élève onglet Filleuls (addEventListener R5)
-  document.querySelectorAll('#parr-tbody .parr-row').forEach(function(tr) {
-    tr.style.cursor = 'pointer';
-    tr.addEventListener('click', function(e) {
-      if(e.target.type === 'checkbox') return;
-      var pseudo = tr.dataset.pseudo;
-      if(pseudo) { openEleveOnTab(pseudo, 'filleuls'); return; }
-      var name = tr.dataset.name || '';
-      if(!name) return;
-      var n = name.toLowerCase();
-      var found = buildElevs().find(function(elv) {
-        var ps = (elv.pseudo||'').toLowerCase();
-        var pr = (elv.j.prenom||'').toLowerCase();
-        var full = pr + ' ' + (elv.j.nom||'').toLowerCase();
-        return n===ps || n===full || n===pr || (pr.length>2 && full.includes(n));
+  if(!data.length) {
+    var emptyRow = tbody.insertRow();
+    var emptyCell = emptyRow.insertCell();
+    emptyCell.colSpan = 7;
+    emptyCell.innerHTML = '<div class="empty"><div class="empty-icon">🎁</div><div class="empty-text">Aucun parrain</div></div>';
+    return;
+  }
+
+  data.forEach(function(r) {
+    var d   = r.elev;
+    var sel = crmSelections['parr'].has(r.name);
+    // Canal dominant
+    var chCount = {};
+    r.chs.forEach(function(c){ chCount[c]=(chCount[c]||0)+1; });
+    var topCh = Object.keys(chCount).sort(function(a,b){ return chCount[b]-chCount[a]; })[0] || '—';
+
+    var tr = tbody.insertRow();
+    tr.style.cssText = 'cursor:pointer;border-bottom:1px solid var(--b)' + (sel?';background:rgba(108,95,232,.07)':'');
+    tr.className = 'tbl-row-hover';
+
+    // TD checkbox
+    var td0 = tr.insertCell();
+    td0.style.cssText = 'width:36px;padding:8px 10px;vertical-align:middle';
+    var cb = document.createElement('input');
+    cb.type = 'checkbox';
+    if(sel) cb.checked = true;
+    cb.addEventListener('click', function(e){ e.stopPropagation(); });
+    cb.addEventListener('change', (function(name){ return function(){ crmToggle('parr', name, cb.checked); }; })(r.name));
+    td0.appendChild(cb);
+
+    // TD parrain (avatar + nom)
+    var td1 = tr.insertCell();
+    td1.style.cssText = 'padding:8px 10px;vertical-align:middle';
+    var nameWrap = document.createElement('div');
+    nameWrap.style.cssText = 'display:flex;align-items:center;gap:10px;min-width:0';
+    // Avatar
+    if(d) {
+      nameWrap.innerHTML = ava(d.j.prenom, d.j.nom, d.idx, 28);
+    } else {
+      var avDiv = document.createElement('div');
+      avDiv.style.cssText = 'width:28px;height:28px;border-radius:50%;background:var(--surf2);color:var(--t3);font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0';
+      avDiv.textContent = (r.name[0]||'?').toUpperCase();
+      nameWrap.appendChild(avDiv);
+    }
+    var nameSpan = document.createElement('span');
+    nameSpan.style.cssText = 'font-size:13px;font-weight:700;color:' + (d?'var(--ac)':'var(--t)') + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+    nameSpan.textContent = r.name + (d?' →':'');
+    nameWrap.appendChild(nameSpan);
+    td1.appendChild(nameWrap);
+
+    // TD école
+    var td2 = tr.insertCell();
+    td2.style.cssText = 'padding:8px 10px;font-size:12px;color:var(--t2);vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px';
+    td2.textContent = r.etab || '—';
+
+    // TD filleuls
+    var td3 = tr.insertCell();
+    td3.style.cssText = 'padding:8px 10px;text-align:center;vertical-align:middle';
+    var filSpan = document.createElement('span');
+    filSpan.style.cssText = 'font-size:16px;font-weight:800;color:var(--ac)';
+    filSpan.textContent = r.fils.length;
+    td3.appendChild(filSpan);
+
+    // TD canal
+    var td4 = tr.insertCell();
+    td4.style.cssText = 'padding:8px 10px;vertical-align:middle';
+    var canalSpan = document.createElement('span');
+    canalSpan.className = 'bdg purple';
+    canalSpan.textContent = chLabels[topCh] || topCh;
+    td4.appendChild(canalSpan);
+
+    // TD pts
+    var td5 = tr.insertCell();
+    td5.style.cssText = 'padding:8px 10px;font-weight:700;color:var(--am);text-align:right;vertical-align:middle;white-space:nowrap';
+    td5.textContent = '+' + (r.fils.length * pp);
+
+    // TD dernière
+    var td6 = tr.insertCell();
+    td6.style.cssText = 'padding:8px 10px;font-size:11px;color:var(--t3);text-align:right;vertical-align:middle;white-space:nowrap';
+    td6.textContent = ago(r.last);
+
+    // ── Clic ligne → fiche élève onglet Filleuls ─────────────────────────
+    (function(row, elev, name) {
+      row.addEventListener('click', function(e) {
+        if(e.target.type === 'checkbox') return;
+        if(elev) {
+          openEleveOnTab(elev.pseudo, 'filleuls');
+          return;
+        }
+        // Chercher par nom
+        var n = name.toLowerCase().trim();
+        var found = buildElevs().find(function(elv) {
+          var ps   = (elv.pseudo||'').toLowerCase();
+          var pr   = (elv.j.prenom||'').toLowerCase();
+          var full = (pr + ' ' + (elv.j.nom||'')).toLowerCase().trim();
+          return n===ps || n===full || n===pr || (pr.length>2 && (full.includes(n) || n.includes(pr)));
+        });
+        if(found) openEleveOnTab(found.pseudo, 'filleuls');
       });
-      if(found) openEleveOnTab(found.pseudo, 'filleuls');
-    });
+    })(tr, d, r.name);
   });
 }
 
