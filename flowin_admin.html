@@ -7641,11 +7641,23 @@ function renderParrainage() {
   const snd    = {};
   DB.parrainage.forEach(p => {
     if(!p.sender) return;
-    const me = elevs.find(e => {
-      const fn = (e.j.prenom+' '+e.j.nom).toLowerCase();
-      const ps = (p.sender||'').toLowerCase();
-      return ps===fn || ps===(e.pseudo||'').toLowerCase();
-    });
+    const me = (function(){
+      var ps = (p.sender||'').toLowerCase().trim();
+      if(!ps) return null;
+      var psEmail = ps.split('@')[0]; // prefix email si sender est un email
+      return elevs.find(function(e){
+        var pseudo = (e.pseudo||'').toLowerCase();
+        var prenom = (e.j.prenom||'').toLowerCase();
+        var nom    = (e.j.nom||'').toLowerCase();
+        var full   = prenom + ' ' + nom;
+        var email  = (e.j.email||'').toLowerCase();
+        return ps===pseudo || ps===full || ps===prenom
+          || psEmail===pseudo || psEmail===prenom
+          || email===ps
+          || pseudo.includes(ps) || ps.includes(pseudo)
+          || prenom.includes(ps) || ps.includes(prenom);
+      });
+    })();
     const k = me ? (me.j.prenom+' '+me.j.nom) : p.sender;
     if(!snd[k]) snd[k] = {name:k, etab:me?(me.j.ecole||'—'):(p.sender_etab||'—'), elev:me||null, fils:[], chs:[], last:null};
     snd[k].fils.push(p.destinataire);
