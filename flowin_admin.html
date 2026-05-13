@@ -4792,70 +4792,139 @@ function toggleQBank(id) {
 
 // ── FICHE COURS (modal) ──
 function openFicheCours(id) {
-  const c = COURS_DB.find(x=>x.id===id);
+  var c = COURS_DB.find(function(x){ return x.id===id; });
   if(!c) return;
-  const qs = QUESTIONS_DB.filter(q=>q.theme===c.theme&&q.statut==='validé');
+  var qs = QUESTIONS_DB.filter(function(q){ return q.theme===c.theme && q.statut==='validé'; });
   document.getElementById('modal-cours-title').textContent = c.titre;
-  document.getElementById('modal-cours-body').innerHTML = `
-    <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px">
-      <div>
-        <!-- Résumé -->
-        <div style="background:${c.couleur}10;border-left:4px solid ${c.couleur};border-radius:0 8px 8px 0;padding:14px;margin-bottom:14px">
-          <div style="font-size:11px;font-weight:700;color:${c.couleur};margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">📋 Résumé du cours</div>
-          <div style="font-size:12px;color:var(--t);line-height:1.7">${c.resume}</div>
-        </div>
-        <!-- Points clés -->
-        ${c.points_cles.length>0?`<div class="panel" style="margin-bottom:12px">
-          <div class="panel-header">🎯 Points clés à retenir</div>
-          <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px">
-            ${c.points_cles.map((p,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:${c.couleur}08;border-radius:7px;border-left:3px solid ${c.couleur}">
-              <span style="font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:${c.couleur};min-width:20px;text-align:center">${i+1}</span>
-              <span style="font-size:12px;color:var(--t)">${p}</span>
-            </div>`).join('')}
-          </div>
-        </div>`:''}
-        <!-- Tags -->
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
-          ${c.tags.map(t=>`<span style="background:var(--surf2);color:var(--t3);border-radius:20px;padding:3px 10px;font-size:10px">#${t}</span>`).join('')}
-        </div>
-      </div>
-      <div>
-        <!-- Infos -->
-        <div class="panel" style="margin-bottom:12px">
-          <div class="panel-header">ℹ️ Informations</div>
-          <div style="padding:12px 14px">
-            ${[['Matière',c.matiere],['Thème',c.theme],['Niveau',c.niveau],['Auteur',c.auteur],['Créé le',c.date],['Type',c.type]].map(([k,v])=>`<div class="info-row"><span class="info-key">${k}</span><span class="info-val">${v}</span></div>`).join('')}
-          </div>
-        </div>
-        <!-- Stats -->
-        <div class="panel" style="margin-bottom:12px">
-          <div class="panel-header">📊 Stats d'utilisation</div>
-          <div style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            ${[['❓',qs.length,'Questions'],['👤',c.nb_eleves_vus,'Élèves'],['🎯',c.score_moy?c.score_moy+'%':'—','Score moy.']].map(([ic,v,l])=>`<div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:16px;margin-bottom:3px">${ic}</div><div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--t)">${v}</div><div style="font-size:9px;color:var(--t3)">${l}</div></div>`).join('')}
-          </div>
-        </div>
-        <!-- Stats -->
-        <div class="panel" style="margin-bottom:12px">
-          <div class="panel-header">📊 Stats d'utilisation</div>
-          <div style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
-            ${[['❓',qs.length,'Questions'],['👤',c.nb_eleves_vus,'Élèves'],['🎯',c.score_moy?c.score_moy+'%':'—','Score moy.'],['📎',c.source_file?'Oui':'Non','Fichier source']].map(([ic,v,l])=>`<div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center"><div style="font-size:16px;margin-bottom:3px">${ic}</div><div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--t)">${v}</div><div style="font-size:9px;color:var(--t3)">${l}</div></div>`).join('')}
-          </div>
-        </div>
-        <!-- Actions -->
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <button onclick="openAddQuestion('${c.theme}')" style="background:var(--gr);color:#fff;border:none;border-radius:7px;padding:8px;font-size:11px;font-weight:600;cursor:pointer;width:100%">+ Ajouter une question</button>
-          <button onclick="editCours('${c.id}')" style="background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:8px;font-size:11px;cursor:pointer;width:100%">✏️ Modifier ce cours</button>
-          <button onclick="if(confirm('Supprimer ce cours ?')){COURS_DB.splice(COURS_DB.findIndex(x=>x.id==='${c.id}'),1);closeCours();renderCours();}" style="background:var(--reBg);color:var(--re);border:none;border-radius:7px;padding:8px;font-size:11px;font-weight:600;cursor:pointer;width:100%">🗑 Supprimer</button>
-        </div>
-      </div>
-    </div>
-    ${c.visuel_html?`<div style="margin-top:16px"><div style="font-size:12px;font-weight:700;color:var(--t);margin-bottom:8px">🖼 Visuel généré par Claude</div><div style="background:var(--surf2);border-radius:12px;padding:20px;border:1px solid var(--b);font-size:11px;line-height:1.6">${c.visuel_html}</div></div>`:''}
-    <!-- Questions liées -->
-    ${qs.length>0?`<div style="margin-top:14px"><div style="font-size:12px;font-weight:700;color:var(--t);margin-bottom:8px">❓ Questions liées (${qs.length})</div>
-    <table style="width:100%"><thead><tr><th>Question</th><th>Difficulté</th><th>Joué</th><th>Réussite</th></tr></thead><tbody>
-    ${qs.map(q=>`<tr style="cursor:default"><td><div style="font-size:11px;font-weight:500;color:var(--t)">${q.question}</div></td><td>${bdg(q.difficulte==='facile'?'green':'amber',q.difficulte)}</td><td>${q.nb_fois}</td><td>${scorePill(q.taux_reussite)}</td></tr>`).join('')}
-    </tbody></table></div>`:''}
-  `;
+  var SYNE = "font-family:'Syne',sans-serif;";
+
+  // ── Points clés ──
+  var pointsClesHtml = '';
+  if(c.points_cles && c.points_cles.length > 0) {
+    var items = '';
+    c.points_cles.forEach(function(p, i) {
+      items += '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:' + c.couleur + '08;border-radius:7px;border-left:3px solid ' + c.couleur + '">'
+             + '<span style="' + SYNE + 'font-size:14px;font-weight:800;color:' + c.couleur + ';min-width:20px;text-align:center">' + (i+1) + '</span>'
+             + '<span style="font-size:12px;color:var(--t)">' + p + '</span>'
+             + '</div>';
+    });
+    pointsClesHtml = '<div class="panel" style="margin-bottom:12px">'
+      + '<div class="panel-header">🎯 Points clés à retenir</div>'
+      + '<div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px">' + items + '</div>'
+      + '</div>';
+  }
+
+  // ── Tags ──
+  var tagsHtml = '';
+  if(c.tags && c.tags.length > 0) {
+    c.tags.forEach(function(t) {
+      tagsHtml += '<span style="background:var(--surf2);color:var(--t3);border-radius:20px;padding:3px 10px;font-size:10px">#' + t + '</span>';
+    });
+  }
+
+  // ── Infos ──
+  var infoFields = [['Matière',c.matiere],['Thème',c.theme],['Niveau',c.niveau],['Auteur',c.auteur],['Créé le',c.date],['Type',c.type]];
+  var infosHtml = '';
+  infoFields.forEach(function(kv) {
+    infosHtml += '<div class="info-row"><span class="info-key">' + kv[0] + '</span><span class="info-val">' + kv[1] + '</span></div>';
+  });
+
+  // ── Stats cartes ──
+  var statsData = [['❓',qs.length,'Questions'],['👤',c.nb_eleves_vus,'Élèves'],['🎯',c.score_moy?c.score_moy+'%':'—','Score moy.'],['📎',c.source_file?'Oui':'Non','Fichier source']];
+  var statsHtml = '';
+  statsData.forEach(function(s) {
+    statsHtml += '<div style="background:var(--surf2);border-radius:8px;padding:10px;text-align:center">'
+      + '<div style="font-size:16px;margin-bottom:3px">' + s[0] + '</div>'
+      + '<div style="' + SYNE + 'font-size:16px;font-weight:800;color:var(--t)">' + s[1] + '</div>'
+      + '<div style="font-size:9px;color:var(--t3)">' + s[2] + '</div>'
+      + '</div>';
+  });
+
+  // ── Visuel HTML ──
+  var visuelHtml = '';
+  if(c.visuel_html) {
+    visuelHtml = '<div style="margin-top:16px">'
+      + '<div style="font-size:12px;font-weight:700;color:var(--t);margin-bottom:8px">🖼 Visuel généré par Claude</div>'
+      + '<div style="background:var(--surf2);border-radius:12px;padding:20px;border:1px solid var(--b);font-size:11px;line-height:1.6">' + c.visuel_html + '</div>'
+      + '</div>';
+  }
+
+  // ── Questions liées ──
+  var qsHtml = '';
+  if(qs.length > 0) {
+    var qsRows = '';
+    qs.forEach(function(q) {
+      qsRows += '<tr style="cursor:default">'
+        + '<td><div style="font-size:11px;font-weight:500;color:var(--t)">' + q.question + '</div></td>'
+        + '<td>' + bdg(q.difficulte==='facile'?'green':'amber', q.difficulte) + '</td>'
+        + '<td>' + q.nb_fois + '</td>'
+        + '<td>' + scorePill(q.taux_reussite) + '</td>'
+        + '</tr>';
+    });
+    qsHtml = '<div style="margin-top:14px">'
+      + '<div style="font-size:12px;font-weight:700;color:var(--t);margin-bottom:8px">❓ Questions liées (' + qs.length + ')</div>'
+      + '<table style="width:100%"><thead><tr><th>Question</th><th>Difficulté</th><th>Joué</th><th>Réussite</th></tr></thead>'
+      + '<tbody>' + qsRows + '</tbody></table>'
+      + '</div>';
+  }
+
+  // ── Boutons actions (R5 : addEventListener) ──
+  var themeEs = (c.theme||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  var idEs = (c.id||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  var actionsHtml = '<div style="display:flex;flex-direction:column;gap:6px" id="fiche-cours-actions-' + idEs + '"></div>';
+
+  // ── Assemblage HTML ──
+  document.getElementById('modal-cours-body').innerHTML =
+    '<div style="display:grid;grid-template-columns:2fr 1fr;gap:16px">'
+    + '<div>'
+      + '<div style="background:' + c.couleur + '10;border-left:4px solid ' + c.couleur + ';border-radius:0 8px 8px 0;padding:14px;margin-bottom:14px">'
+        + '<div style="font-size:11px;font-weight:700;color:' + c.couleur + ';margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">📋 Résumé du cours</div>'
+        + '<div style="font-size:12px;color:var(--t);line-height:1.7">' + (c.resume||'') + '</div>'
+      + '</div>'
+      + pointsClesHtml
+      + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">' + tagsHtml + '</div>'
+    + '</div>'
+    + '<div>'
+      + '<div class="panel" style="margin-bottom:12px">'
+        + '<div class="panel-header">ℹ️ Informations</div>'
+        + '<div style="padding:12px 14px">' + infosHtml + '</div>'
+      + '</div>'
+      + '<div class="panel" style="margin-bottom:12px">'
+        + '<div class="panel-header">📊 Stats d\'utilisation</div>'
+        + '<div style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px">' + statsHtml + '</div>'
+      + '</div>'
+      + actionsHtml
+    + '</div>'
+    + '</div>'
+    + visuelHtml
+    + qsHtml;
+
+  // ── Boutons injectés via addEventListener (R5) ──
+  var actEl = document.getElementById('fiche-cours-actions-' + idEs);
+  if(actEl) {
+    var btnQ = document.createElement('button');
+    btnQ.textContent = '+ Ajouter une question';
+    btnQ.style.cssText = 'background:var(--gr);color:#fff;border:none;border-radius:7px;padding:8px;font-size:11px;font-weight:600;cursor:pointer;width:100%';
+    btnQ.addEventListener('click', function(){ openAddQuestion(c.theme); });
+    var btnE = document.createElement('button');
+    btnE.textContent = '✏️ Modifier ce cours';
+    btnE.style.cssText = 'background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:8px;font-size:11px;cursor:pointer;width:100%';
+    btnE.addEventListener('click', function(){ editCours(c.id); });
+    var btnD = document.createElement('button');
+    btnD.textContent = '🗑 Supprimer';
+    btnD.style.cssText = 'background:var(--reBg);color:var(--re);border:none;border-radius:7px;padding:8px;font-size:11px;font-weight:600;cursor:pointer;width:100%';
+    btnD.addEventListener('click', function(){
+      if(confirm('Supprimer ce cours ?')) {
+        var i = COURS_DB.findIndex(function(x){ return x.id===c.id; });
+        if(i>=0) COURS_DB.splice(i,1);
+        closeCours(); renderCours();
+      }
+    });
+    actEl.appendChild(btnQ);
+    actEl.appendChild(btnE);
+    actEl.appendChild(btnD);
+  }
+
   document.getElementById('modal-cours').classList.add('open');
 }
 function closeCours() { document.getElementById('modal-cours').classList.remove('open'); }
@@ -6086,31 +6155,51 @@ async function loadStockAndGains() {
 
 async function attribuerLot(pseudo, lotId) {
   if(!SB_ENABLED) { alert('Mode démo — Supabase désactivé'); return; }
-  // Trouver un code disponible dans le stock pour ce lot
-  const dispo = STOCK_DB.find(s => s.lot_id === lotId && s.statut === 'disponible');
-  if(!dispo) { alert('⚠️ Plus de codes disponibles pour ce lot !'); return; }
-  const lot = LOTS_DB.find(l => l.id === lotId);
-  const hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json'};
+  var lot = LOTS_DB.find(function(l){ return l.id === lotId; });
+  var hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json'};
   try {
-    // 1. Marquer le code comme attribué dans lots_stock
-    await fetch(SB_URL+`/rest/v1/lots_stock?id=eq.${dispo.id}`, {
-      method:'PATCH', headers:{...hdrs,'Prefer':'return=minimal'},
-      body: JSON.stringify({statut:'attribue', pseudo, attribue_le: new Date().toISOString()})
+    // RPC atomique attribuer_lot_auto (Supabase — déployée)
+    var rpcRes = await fetch(SB_URL+'/rest/v1/rpc/attribuer_lot_auto', {
+      method:'POST',
+      headers:{apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json'},
+      body: JSON.stringify({p_pseudo: pseudo, p_lot_id: lotId})
     });
-    // 2. Créer une entrée dans gains
-    await fetch(SB_URL+'/rest/v1/gains', {
-      method:'POST', headers:{...hdrs,'Prefer':'return=minimal'},
-      body: JSON.stringify({
-        pseudo: pseudo, lot_id: lotId, lot_nom: (lot && lot.titre)||'Lot', lot_emoji: (lot && lot.emoji)||'🎁',
-        code: dispo.code, condition: (lot && lot.cond)||'', ts: new Date().toISOString(), created_at: new Date().toISOString()
-      })
-    });
-    // 3. Mettre à jour local
-    dispo.statut = 'attribue'; dispo.pseudo = pseudo; dispo.attribue_le = new Date().toISOString();
-    GAINS_DB.unshift({pseudo, lot_id:lotId, lot_nom:lot?.titre||'Lot', lot_emoji:lot?.emoji||'🎁', code:dispo.code, condition:lot?.cond||'', created_at:new Date().toISOString()});
-    showAdminToast('✅ Code "' + dispo.code + '" attribué à ' + pseudo + ' !');
-    if(currentView==='bareme') renderBaremeView();
-  } catch(e) { showAdminToast('⚠️ Erreur attribution : ' + e.message, 'error'); }
+    if(!rpcRes.ok) {
+      var errTxt = await rpcRes.text().catch(function(){return rpcRes.status;});
+      throw new Error('RPC attribuer_lot_auto : ' + errTxt);
+    }
+    var rpcData = await rpcRes.json().catch(function(){return null;});
+    // Récupérer le code attribué depuis la réponse RPC ou depuis STOCK_DB local
+    var code = (rpcData && rpcData.code) || (rpcData && rpcData[0] && rpcData[0].code) || '—';
+    // Mettre à jour STOCK_DB local
+    var dispo = STOCK_DB.find(function(s){ return s.lot_id === lotId && s.statut === 'disponible'; });
+    if(dispo) {
+      dispo.statut = 'attribue'; dispo.pseudo = pseudo; dispo.attribue_le = new Date().toISOString();
+      if(code === '—') code = dispo.code;
+    }
+    // Mettre à jour GAINS_DB local
+    GAINS_DB.unshift({pseudo:pseudo, lot_id:lotId, lot_nom:(lot&&lot.titre)||'Lot', lot_emoji:(lot&&lot.emoji)||'🎁', code:code, condition:(lot&&lot.cond)||'', created_at:new Date().toISOString()});
+    showAdminToast('✅ Code "' + code + '" attribué à ' + pseudo + ' !');
+    if(typeof refreshStock === 'function') refreshStock();
+  } catch(e) {
+    // Fallback manuel si RPC indisponible
+    var dispoFb = STOCK_DB.find(function(s){ return s.lot_id === lotId && s.statut === 'disponible'; });
+    if(!dispoFb) { alert('⚠️ Plus de codes disponibles pour ce lot !'); return; }
+    try {
+      await fetch(SB_URL+'/rest/v1/lots_stock?id=eq.'+dispoFb.id, {
+        method:'PATCH', headers:Object.assign({},hdrs,{'Prefer':'return=minimal'}),
+        body: JSON.stringify({statut:'attribue', pseudo:pseudo, attribue_le: new Date().toISOString()})
+      });
+      await fetch(SB_URL+'/rest/v1/gains', {
+        method:'POST', headers:Object.assign({},hdrs,{'Prefer':'return=minimal'}),
+        body: JSON.stringify({pseudo:pseudo, lot_id:lotId, lot_nom:(lot&&lot.titre)||'Lot', lot_emoji:(lot&&lot.emoji)||'🎁', code:dispoFb.code, condition:(lot&&lot.cond)||'', ts:new Date().toISOString(), created_at:new Date().toISOString()})
+      });
+      dispoFb.statut = 'attribue'; dispoFb.pseudo = pseudo; dispoFb.attribue_le = new Date().toISOString();
+      GAINS_DB.unshift({pseudo:pseudo, lot_id:lotId, lot_nom:(lot&&lot.titre)||'Lot', lot_emoji:(lot&&lot.emoji)||'🎁', code:dispoFb.code, condition:(lot&&lot.cond)||'', created_at:new Date().toISOString()});
+      showAdminToast('✅ Code "' + dispoFb.code + '" attribué à ' + pseudo + ' !');
+      if(typeof refreshStock === 'function') refreshStock();
+    } catch(e2) { showAdminToast('⚠️ Erreur attribution : ' + e2.message, 'error'); }
+  }
 }
 
 // === FONCTIONS MANQUANTES (audit 2026-05-12) ===
@@ -8214,8 +8303,8 @@ function openEleve(pseudo, _fromStack) {
       <span style="font-size:11px;color:var(--t2);min-width:90px">${lg.icon} ${lg.name}</span>
       <div style="flex:1;height:5px;background:var(--surf3);border-radius:5px;overflow:hidden"><div style="height:100%;width:${Math.min(100,Math.round(d.totalPts/lg.next*100))}%;background:${lg.color};border-radius:5px"></div></div>
       <span style="font-size:10px;color:var(--t3)">${d.totalPts} / ${lg.next} pts</span>
-      ${d.j.email ? `<a href="mailto:${d.j.email}" style="padding:3px 9px;border-radius:6px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:10px;font-weight:600;text-decoration:none">✉️</a>` : ''}
-      ${d.j.email ? `<a href="https://wa.me/?text=${encodeURIComponent('Bonjour '+d.j.prenom+' !')}" target="_blank" style="padding:3px 9px;border-radius:6px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:10px;font-weight:600;text-decoration:none">💬</a>` : ''}
+      ${d.j.email ? '<a href="mailto:' + d.j.email + '" style="padding:3px 9px;border-radius:6px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:10px;font-weight:600;text-decoration:none">✉️</a>' : ''}
+      ${d.j.email ? '<a href="https://wa.me/?text=' + encodeURIComponent('Bonjour '+d.j.prenom+' !') + '" target="_blank" style="padding:3px 9px;border-radius:6px;border:1px solid var(--b);background:var(--surf2);color:var(--t2);font-size:10px;font-weight:600;text-decoration:none">💬</a>' : ''}
     </div>
 
     <!-- Onglets -->
@@ -8244,7 +8333,7 @@ function openEleve(pseudo, _fromStack) {
             ['Dernière session', d.last?ago(d.last):'—'],
             ['Mot de passe', d.j.email?'<span style="color:var(--gr);font-weight:700">✓ Activable</span>':'<span style="color:var(--t3)">— Email requis</span>'],
           ].map(([k,v])=>`<div class="info-row"><span class="info-key">${k}</span><span class="info-val">${v}</span></div>`).join('')}
-          ${d.j.email ? `<button onclick="sendActivationLink('${d.j.email}','${(d.j.prenom||d.pseudo).replace(/'/g,"\\'")}\")" style="margin-top:8px;width:100%;background:var(--ac);color:#fff;border:none;border-radius:7px;padding:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✉️ Billet d'activation</button>` : ''}
+          ${d.j.email ? '<button onclick="sendActivationLink(\'' + d.j.email + '\',\'' + (d.j.prenom||d.pseudo||'?').replace(/'/g,"\\'") + '\')" style="margin-top:8px;width:100%;background:var(--ac);color:#fff;border:none;border-radius:7px;padding:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✉️ Billet d\'activation</button>' : ''}
           <button onclick="sendPushNotification('${d.pseudo}','${d.j.prenom||d.pseudo}')" style="margin-top:6px;width:100%;background:#7C5CFC;color:#fff;border:none;border-radius:7px;padding:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">📨 Envoyer notification</button>
         </div>
 
