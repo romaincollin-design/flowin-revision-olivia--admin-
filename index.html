@@ -7641,23 +7641,11 @@ function renderParrainage() {
   const snd    = {};
   DB.parrainage.forEach(p => {
     if(!p.sender) return;
-    const me = (function(){
-      var ps = (p.sender||'').toLowerCase().trim();
-      if(!ps) return null;
-      var psEmail = ps.split('@')[0]; // prefix email si sender est un email
-      return elevs.find(function(e){
-        var pseudo = (e.pseudo||'').toLowerCase();
-        var prenom = (e.j.prenom||'').toLowerCase();
-        var nom    = (e.j.nom||'').toLowerCase();
-        var full   = prenom + ' ' + nom;
-        var email  = (e.j.email||'').toLowerCase();
-        return ps===pseudo || ps===full || ps===prenom
-          || psEmail===pseudo || psEmail===prenom
-          || email===ps
-          || pseudo.includes(ps) || ps.includes(pseudo)
-          || prenom.includes(ps) || ps.includes(prenom);
-      });
-    })();
+    const me = elevs.find(function(e){
+      var fn = (e.j.prenom+' '+e.j.nom).toLowerCase();
+      var ps = (p.sender||'').toLowerCase();
+      return ps===fn || ps===(e.pseudo||'').toLowerCase();
+    });
     const k = me ? (me.j.prenom+' '+me.j.nom) : p.sender;
     if(!snd[k]) snd[k] = {name:k, etab:me?(me.j.ecole||'—'):(p.sender_etab||'—'), elev:me||null, fils:[], chs:[], last:null};
     snd[k].fils.push(p.destinataire);
@@ -7708,21 +7696,13 @@ function renderParrainage() {
   const tC = r => { const f={}; r.chs.forEach(ch=>f[ch]=(f[ch]||0)+1); return Object.entries(f).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—'; };
 
   document.getElementById('parr-tbody').innerHTML = data.length ? data.map(r => {
-
-  // Click listener — noms parrains cliquables (addEventListener R5)
-  document.querySelectorAll('#parr-tbody [data-pseudo]').forEach(function(el) {
-    var ps = el.dataset.pseudo;
-    if(ps) {
-      el.addEventListener('click', function(){ openEleveOnTab(ps, 'filleuls'); });
-    }
-  });
     const d   = r.elev;
     const sel = crmSelections['parr'].has(r.name);
     const ch  = tC(r);
     const av_html = d ? ava(d.j.prenom,d.j.nom,d.idx,28) : `<div style="width:28px;height:28px;border-radius:50%;background:var(--surf2);color:var(--t3);font-size:11px;display:flex;align-items:center;justify-content:center">${(r.name[0]||'?').toUpperCase()}</div>`;
-    return `<tr style="${sel?'background:rgba(108,95,232,.07)':''}">
+    return `<tr style="${sel?'background:rgba(108,95,232,.07)':''};cursor:pointer" class="parr-row" data-parrain="${encodeURIComponent(r.name)}">
       <td class="crm-td"><input type="checkbox" ${sel?'checked':''} onchange="crmToggle('parr','${r.name.replace(/'/g,"\'")}',this.checked)"></td>
-      <td><div style="display:flex;align-items:center;gap:8px" id="parr-name-${r.name.replace(/ /g,'_')}">${av_html}<div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:${d?'var(--ac)':' var(--t)'};cursor:${d?'pointer':'default'}" data-pseudo="${d?d.pseudo:''}">${r.name}${d?' →':''}</div></div></td>
+      <td><div style="display:flex;align-items:center;gap:8px">${av_html}<div style="font-size:12px;font-weight:600;color:var(--t);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name}</div></div></td>
       <td style="font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.etab}</td>
       <td><span style="font-size:16px;font-weight:800;color:var(--ac)">${r.fils.length}</span></td>
       <td><span class="bdg purple">${chI[ch]||ch}</span></td>
@@ -7730,6 +7710,22 @@ function renderParrainage() {
       <td style="font-size:10px;color:var(--t3)">${ago(r.last)}</td>
     </tr>`;
   }).join('') : `<tr><td colspan="7"><div class="empty"><div class="empty-icon">🎁</div><div class="empty-text">Aucun parrain</div></div></td></tr>`;
+  // Clic ligne parrain → ouvre fiche (R5)
+  document.querySelectorAll("#parr-tbody .parr-row").forEach(function(tr) {
+    tr.addEventListener("click", function(e) {
+      if(e.target.type === "checkbox") return;
+      var name = decodeURIComponent(tr.dataset.parrain || "");
+      if(!name) return;
+      var found = buildElevs().find(function(elv) {
+        var pseudo = (elv.pseudo||"").toLowerCase();
+        var prenom = (elv.j.prenom||"").toLowerCase();
+        var full   = prenom + " " + (elv.j.nom||"").toLowerCase();
+        var n      = name.toLowerCase();
+        return n===pseudo || n===full || n===prenom || (prenom.length>2 && (n.includes(prenom) || full.includes(n)));
+      });
+      if(found) openEleveOnTab(found.pseudo, "filleuls");
+    });
+  });
 }
 
 function renderLigues() {
