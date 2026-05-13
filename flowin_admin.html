@@ -7678,9 +7678,9 @@ function renderParrainage() {
   const snd    = {};
   DB.parrainage.forEach(p => {
     if(!p.sender) return;
-    const me = elevs.find(function(e){
-      var fn = (e.j.prenom+' '+e.j.nom).toLowerCase();
-      var ps = (p.sender||'').toLowerCase();
+    const me = elevs.find(e => {
+      const fn = (e.j.prenom+' '+e.j.nom).toLowerCase();
+      const ps = (p.sender||'').toLowerCase();
       return ps===fn || ps===(e.pseudo||'').toLowerCase();
     });
     const k = me ? (me.j.prenom+' '+me.j.nom) : p.sender;
@@ -7732,37 +7732,29 @@ function renderParrainage() {
   crmSelections['parr'] = crmSelections['parr'] || new Set();
   const tC = r => { const f={}; r.chs.forEach(ch=>f[ch]=(f[ch]||0)+1); return Object.entries(f).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—'; };
 
-  document.getElementById('parr-tbody').innerHTML = data.length ? data.map(function(r) {
-    var d   = r.elev;
-    var sel = crmSelections['parr'] && crmSelections['parr'].has(r.name);
-    var ch  = tC(r);
-    var av_html = d ? ava(d.j.prenom,d.j.nom,d.idx,28)
-      : '<div style="width:28px;height:28px;border-radius:50%;background:var(--surf2);color:var(--t3);font-size:11px;display:flex;align-items:center;justify-content:center">'+(r.name[0]||'?').toUpperCase()+'</div>';
-    var nameStyle = d ? 'font-size:12px;font-weight:600;color:var(--ac);cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'
-                      : 'font-size:12px;font-weight:600;color:var(--t);overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
-    var cbName = r.name.replace(/'/g,"\\'");
-    return '<tr style="cursor:pointer' + (sel?';background:rgba(108,95,232,.07)':'') + '" class="parr-row" data-pseudo="' + (d?d.pseudo:'') + '" data-name="' + r.name.replace(/"/g,'&quot;') + '">'
-      + '<td class="crm-td"><input type="checkbox" ' + (sel?'checked':'') + ' onclick="event.stopPropagation();crmToggle(\'parr\',\'' + cbName + '\',this.checked)"></td>'
-      + '<td><div style="display:flex;align-items:center;gap:8px">' + av_html + '<div style="' + nameStyle + '">' + r.name + (d?' →':'') + '</div></div></td>'
-      + '<td style="font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + r.etab + '</td>'
-      + '<td><span style="font-size:16px;font-weight:800;color:var(--ac)">' + r.fils.length + '</span></td>'
-      + '<td><span class="bdg purple">' + (chI[ch]||ch) + '</span></td>'
-      + '<td style="font-weight:700;color:var(--am)">+' + (r.fils.length*pp) + '</td>'
-      + '<td style="font-size:10px;color:var(--t3)">' + ago(r.last) + '</td>'
-      + '</tr>';
-  }).join('')
-  : '<tr><td colspan="7"><div class="empty"><div class="empty-icon">🎁</div><div class="empty-text">Aucun parrain</div></div></td></tr>';
+  document.getElementById('parr-tbody').innerHTML = data.length ? data.map(r => {
+    const d   = r.elev;
+    const sel = crmSelections['parr'].has(r.name);
+    const ch  = tC(r);
+    const av_html = d ? ava(d.j.prenom,d.j.nom,d.idx,28) : `<div style="width:28px;height:28px;border-radius:50%;background:var(--surf2);color:var(--t3);font-size:11px;display:flex;align-items:center;justify-content:center">${(r.name[0]||'?').toUpperCase()}</div>`;
+    return `<tr style="${sel?'background:rgba(108,95,232,.07)':''}" class="parr-row" data-pseudo="${d?d.pseudo:''}" data-name="${r.name.replace(/"/g,'&quot;')}" style2="cursor:pointer">
+      <td class="crm-td"><input type="checkbox" ${sel?'checked':''} onchange="crmToggle('parr','${r.name.replace(/'/g,"\'")}',this.checked)"></td>
+      <td><div style="display:flex;align-items:center;gap:8px">${av_html}<div style="font-size:12px;font-weight:600;color:${d?'var(--ac)':'var(--t)'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name}${d?' →':''}</div></div></td>
+      <td style="font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.etab}</td>
+      <td><span style="font-size:16px;font-weight:800;color:var(--ac)">${r.fils.length}</span></td>
+      <td><span class="bdg purple">${chI[ch]||ch}</span></td>
+      <td style="font-weight:700;color:var(--am)">+${r.fils.length*pp}</td>
+      <td style="font-size:10px;color:var(--t3)">${ago(r.last)}</td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="7"><div class="empty"><div class="empty-icon">🎁</div><div class="empty-text">Aucun parrain</div></div></td></tr>`;
 
-  // Clic sur ligne → fiche élève onglet Filleuls (R5 addEventListener)
+  // Clic sur ligne → fiche élève onglet Filleuls (addEventListener R5)
   document.querySelectorAll('#parr-tbody .parr-row').forEach(function(tr) {
+    tr.style.cursor = 'pointer';
     tr.addEventListener('click', function(e) {
       if(e.target.type === 'checkbox') return;
       var pseudo = tr.dataset.pseudo;
-      if(pseudo) {
-        openEleveOnTab(pseudo, 'filleuls');
-        return;
-      }
-      // Chercher par nom si pseudo absent
+      if(pseudo) { openEleveOnTab(pseudo, 'filleuls'); return; }
       var name = tr.dataset.name || '';
       if(!name) return;
       var n = name.toLowerCase();
