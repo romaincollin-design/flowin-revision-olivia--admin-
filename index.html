@@ -7562,6 +7562,11 @@ function openEleve(pseudo) {
   });
   const chIc = {whatsapp:'💬',telegram:'✈️',copy:'📋',native:'↗️'};
 
+  // Lien de parrainage
+  const BASE_URL = 'https://flowrevis.vercel.app/?ref=';
+  const refCode  = (d.j.prenom||d.pseudo||'').replace(/\s+/g,'').substring(0,10);
+  const refLink  = BASE_URL + encodeURIComponent(refCode);
+
   // Heatmap 30j
   const now = new Date();
   const heat = Array.from({length:30},(_,i)=>{
