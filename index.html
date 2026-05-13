@@ -7411,36 +7411,73 @@ function renderDefis() {
   const cnt = document.getElementById('defis-count');
   if(cnt) cnt.textContent = defis.length + ' défis';
 
-  // ── ONGLET POOLS ACTIVES (waiting/accepted) ──
-  const actives = defis.filter(function(d){ return d.status==='waiting' || d.status==='accepted'; });
-  const poolsEl = document.getElementById('defis-pools');
+  // ── ONGLET POOLS ACTIVES — colonnes JOUEURS/SCORE/LEADER ──
+  var actives = defis.filter(function(d){ return d.status==='waiting' || d.status==='accepted'; });
+  var poolsEl = document.getElementById('defis-pools');
   if(poolsEl) {
     if(!actives.length) {
       poolsEl.innerHTML = '<div style="text-align:center;padding:40px;color:var(--t3);font-size:13px"><div style="font-size:36px;margin-bottom:10px">⚔️</div>Aucun défi actif</div>';
     } else {
-      let html = '<div style="display:flex;flex-direction:column;gap:8px">';
+      var html = '';
       actives.forEach(function(d) {
-        const parts = (DB.defis_participants||[]).filter(function(p){ return p.defi_id === d.id; });
-        const stCol = d.status==='waiting' ? 'var(--am)' : 'var(--gr)';
-        const stLbl = d.status==='waiting' ? '⏳ En attente' : '✅ Accepté';
-        const priv = d.is_private ? '<span style="background:#FCE4EC;color:#E040A0;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">🔒 Privé</span>' : '<span style="background:#EEECFC;color:var(--ac);padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">🌐 Public</span>';
-        html += '<div class="panel" style="cursor:pointer;padding:12px 14px" onclick="openDefiDetail(\''+d.id+'\')">';
-        html += '<div style="display:flex;align-items:center;gap:12px">';
-        html += '<div style="flex:1;min-width:0">';
-        html += '<div style="display:flex;align-items:center;gap:7px;margin-bottom:4px;flex-wrap:wrap">';
-        html += '<span style="font-size:13px;font-weight:700;color:var(--t)">'+(d.theme||'—')+'</span>';
-        html += '<span style="background:'+stCol+'15;color:'+stCol+';padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700">'+stLbl+'</span>';
-        html += priv;
-        html += '</div>';
-        html += '<div style="font-size:11px;color:var(--t3)">'+(d.createur||'?')+(d.invite ? ' → '+d.invite : '')+' · '+parts.length+' participant(s) · mise '+(d.mise||0)+' pts</div>';
-        html += '</div>';
-        html += '<div style="font-size:10px;color:var(--t3);text-align:right;flex-shrink:0">'+(d.ts ? new Date(d.ts).toLocaleDateString('fr-FR') : '—')+'</div>';
-        html += '<button onclick="event.stopPropagation();openDefiDetail(\''+d.id+'\')" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Voir →</button>';
-        html += '</div></div>';
+        var parts = (DB.defis_participants||[]).filter(function(p){ return p.defi_id === d.id; });
+        var stCol = d.status==='waiting' ? 'var(--am)' : 'var(--gr)';
+        var stLbl = d.status==='waiting' ? '⏳ En attente' : '✅ Accepté';
+        var privBdg = d.is_private
+          ? '<span style="background:#FCE4EC;color:#E040A0;padding:1px 6px;border-radius:20px;font-size:9px;font-weight:700">🔒 Privé</span>'
+          : '<span style="background:#EEECFC;color:var(--ac);padding:1px 6px;border-radius:20px;font-size:9px;font-weight:700">🌐 Public</span>';
+        // JOUEURS
+        var joueurs = [];
+        if(d.createur) joueurs.push(d.createur);
+        if(d.invite && joueurs.indexOf(d.invite)<0) joueurs.push(d.invite);
+        parts.forEach(function(p){ if(p.pseudo && joueurs.indexOf(p.pseudo)<0) joueurs.push(p.pseudo); });
+        var joueursHtml = joueurs.map(function(ps){
+          return '<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--ac);color:#fff;font-size:9px;font-weight:800;margin-right:2px" title="'+ps+'">'+(ps[0]||'?').toUpperCase()+'</span>';
+        }).join('') + '<span style="font-size:10px;color:var(--t3);margin-left:3px">'+joueurs.length+'</span>';
+        // SCORE
+        var scoreHtml = '<span style="color:var(--t3);font-size:11px">—</span>';
+        if(parts.length > 0) {
+          scoreHtml = parts.map(function(p){
+            if(p.score==null) return '<span style="color:var(--t3);font-size:10px">?</span>';
+            var col = p.score>=70?'var(--gr)':p.score>=50?'var(--am)':'var(--re)';
+            return '<span style="font-size:11px;font-weight:700;color:'+col+'">'+p.score+'%</span>';
+          }).join('<span style="color:var(--t3);font-size:9px;margin:0 2px">vs</span>');
+        } else if(d.score_createur!=null) {
+          var c1=d.score_createur>=70?'var(--gr)':d.score_createur>=50?'var(--am)':'var(--re)';
+          var sc2=d.score_invite||0; var c2=sc2>=70?'var(--gr)':sc2>=50?'var(--am)':'var(--re)';
+          scoreHtml = '<span style="font-size:11px;font-weight:700;color:'+c1+'">'+d.score_createur+'%</span>'
+            +'<span style="color:var(--t3);font-size:9px;margin:0 2px">vs</span>'
+            +'<span style="font-size:11px;font-weight:700;color:'+c2+'">'+sc2+'%</span>';
+        }
+        // LEADER
+        var leaderHtml = '<span style="color:var(--t3);font-size:11px">—</span>';
+        var bestPart = parts.filter(function(p){return p.score!=null;}).reduce(function(a,b){return (b.score||0)>(a?a.score||0:0)?b:a;}, null);
+        if(bestPart) {
+          leaderHtml = '<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--am);color:#fff;font-size:8px;font-weight:800;margin-right:5px">'+(bestPart.pseudo[0]||'?').toUpperCase()+'</span>'
+            +'<span style="font-size:11px;font-weight:700;color:var(--t)">'+bestPart.pseudo+'</span>'
+            +'<span style="font-size:10px;color:var(--gr);margin-left:4px">'+bestPart.score+'%</span>';
+        }
+        var _did = (d.id||'').replace(/'/g,"\\'");
+        html += '<div class="panel" style="cursor:pointer;padding:10px 14px;display:flex;align-items:center;gap:10px" onclick="openDefiDetail(\''+_did+'\')"><div class="pc-th"><div style="min-width:0"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="font-size:12px;font-weight:700;color:var(--t);overflow:hidden;text-overflow:ellipsis;max-width:170px;white-space:nowrap">'+(d.theme||'—')+'</span><span style="background:'+stCol+'20;color:'+stCol+';padding:1px 7px;border-radius:20px;font-size:9px;font-weight:700">'+stLbl+'</span>'+privBdg+'</div><div style="font-size:10px;color:var(--t3);margin-top:2px">'+(d.createur||'?')+(d.invite?' → '+d.invite:'')+' · mise <b>'+(d.mise||0)+'</b> pts</div></div></div><div class="pc-pl">'+joueursHtml+'</div><div class="pc-sc" style="text-align:center">'+scoreHtml+'</div><div class="pc-ld">'+leaderHtml+'</div><div class="pc-vr"><span style="font-size:10px;color:var(--t3);display:block;text-align:right;margin-bottom:3px">'+(d.ts?new Date(d.ts).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'}):'—')+'</span><button onclick="event.stopPropagation();openDefiDetail(\''+_did+'\')" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit">Voir →</button></div></div>';
       });
-      html += '</div>';
       poolsEl.innerHTML = html;
     }
+  }
+
+  // ── ACTIVITÉ RÉCENTE ──
+  var tlEl = document.getElementById('defis-tl');
+  if(tlEl) {
+    var tlMode = window._tlMode || 'all';
+    var tlRows = [];
+    (DB.sessions||[]).slice(0,100).forEach(function(s){
+      if(s._demo) return;
+      tlRows.push({type:'quiz', pseudo:s.pseudo, theme:s.theme||s.theme_id||'—', score:s.score||0, pts:s.pts||0, ts:s.ts});
+    });
+    (DB.connexions||[]).slice(0,50).forEach(function(c){
+      tlRows.push({type:'cnx', pseudo:c.pseudo, theme:'Connexion', score:null, pts:null, ts:c.ts});
+    });
+    tlRows.sort(function(a,b){ return new Date(b.ts||0)-new Date(a.ts||0); });
+    renderTL(tlMode, tlRows);
   }
 
   // ── ONGLET HISTORIQUE (done/refuse) ──
