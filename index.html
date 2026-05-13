@@ -4424,6 +4424,51 @@ function editPoints(pseudo, mode) {
   });
 }
 
+function sendPushNotification(pseudo, prenom) {
+  if(!pseudo) { showAdminToast('Pseudo manquant', 'error'); return; }
+  var titre = prompt('Titre de la notification (ex: 🎯 Quiz du jour) :');
+  if(!titre) return;
+  var corps = prompt('Message (ex: N\'oublie pas ta révision Histoire !) :');
+  if(corps === null) return;
+  
+  var hdrs = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+  fetch(SB_URL + '/rest/v1/notifications', {
+    method: 'POST', headers: hdrs,
+    body: JSON.stringify({
+      pseudo: pseudo, type: 'admin_msg', titre: titre, corps: corps, lue: false,
+      data: {sender: 'admin'}
+    })
+  }).then(function(r) {
+    if(r.ok) {
+      showAdminToast('📨 Notification envoyée à ' + (prenom || pseudo), 'success');
+    } else {
+      showAdminToast('Erreur envoi (' + r.status + ')', 'error');
+    }
+  }).catch(function() { showAdminToast('Erreur réseau', 'error'); });
+}
+
+function sendBulkPush() {
+  var titre = prompt('Titre commun (ex: 🎉 Nouveau quiz disponible) :');
+  if(!titre) return;
+  var corps = prompt('Message commun :');
+  if(corps === null) return;
+  if(!confirm('Envoyer à TOUS les ' + DB.joueurs.length + ' joueurs ?')) return;
+  
+  var hdrs = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
+  var payloads = DB.joueurs.map(function(j) {
+    return { pseudo: j.pseudo, type: 'admin_msg', titre: titre, corps: corps, lue: false, data: {sender:'admin', bulk:true} };
+  });
+  fetch(SB_URL + '/rest/v1/notifications', {
+    method: 'POST', headers: hdrs, body: JSON.stringify(payloads)
+  }).then(function(r) {
+    if(r.ok) {
+      showAdminToast('📨 ' + payloads.length + ' notifications envoyées', 'success');
+    } else {
+      showAdminToast('Erreur envoi bulk (' + r.status + ')', 'error');
+    }
+  }).catch(function() { showAdminToast('Erreur réseau', 'error'); });
+}
+
 function sendActivationLink(email, prenom) {
   if(!email) { showAdminToast('Email manquant', 'error'); return; }
   if(!confirm('Envoyer un billet d\'activation à ' + email + ' ?')) return;
@@ -7850,6 +7895,7 @@ function openEleve(pseudo) {
             ['Mot de passe', d.j.email?'<span style="color:var(--gr);font-weight:700">✓ Activable</span>':'<span style="color:var(--t3)">— Email requis</span>'],
           ].map(([k,v])=>`<div class="info-row"><span class="info-key">${k}</span><span class="info-val">${v}</span></div>`).join('')}
           ${d.j.email ? `<button onclick="sendActivationLink('${d.j.email}','${(d.j.prenom||d.pseudo).replace(/'/g,"\\'")}\")" style="margin-top:8px;width:100%;background:var(--ac);color:#fff;border:none;border-radius:7px;padding:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✉️ Billet d'activation</button>` : ''}
+          <button onclick="sendPushNotification('${d.pseudo}','${d.j.prenom||d.pseudo}')" style="margin-top:6px;width:100%;background:#7C5CFC;color:#fff;border:none;border-radius:7px;padding:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">📨 Envoyer notification</button>
         </div>
 
         <!-- Filleuls -->
