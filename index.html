@@ -1534,24 +1534,13 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
     <!-- ══ VUE ENVOIS & PUSH ══ -->
     <div class="view" id="v-envois">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-        <div class="view-title" style="margin-bottom:0">📨 Envois & Communication</div>
+        <div class="view-title" style="margin-bottom:0">📨 Envois &amp; Communication</div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <button id="env-quick-new" style="background:var(--ac);color:#fff;border:none;border-radius:9px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">+ Nouveau message</button>
           <button id="env-refresh" style="background:var(--surf2);color:var(--t2);border:1px solid var(--b);border-radius:9px;padding:9px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">↻ Actualiser</button>
         </div>
       </div>
-
-      <!-- KPIs -->
       <div class="kpi-grid" id="envois-kpis" style="margin-bottom:14px"></div>
-
-      <!-- Onglets -->
-      <div id="envois-tabs" style="display:flex;border-bottom:1px solid var(--b);margin-bottom:16px;gap:0">
-        <button class="defis-tab active" id="env-tab-compose" onclick="envoisTab('compose',this)">✍️ Composer</button>
-        <button class="defis-tab" id="env-tab-histo" onclick="envoisTab('histo',this)">📋 Historique</button>
-        <button class="defis-tab" id="env-tab-rules" onclick="envoisTab('rules',this)">⚙️ Automatisation</button>
-        <button class="defis-tab" id="env-tab-templates" onclick="envoisTab('templates',this)">📝 Templates</button>
-      </div>
-
+      <div id="envois-tabs" style="display:flex;border-bottom:1px solid var(--b);margin-bottom:16px;gap:0"></div>
       <div id="envois-content"></div>
     </div>
 
@@ -2296,13 +2285,28 @@ function openFichePartenaire(id) {
           + '<div style="background:var(--amBg);border-radius:10px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--am)">'+(distribues-utilises)+'</div><div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-top:3px">En attente</div></div>'
           + '</div>'
 
-          // Coordonnées
+          // Formulaire identité complet (éditable)
           + '<div style="background:var(--surf2);border-radius:10px;padding:14px;margin-bottom:14px">'
-          + '<div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Coordonnées</div>'
-          + infoRow('Email',  p.contact_email||'—')
-          + infoRow('Tél',    p.contact_tel||'—')
-          + infoRow('Site',   p.site_web||'—')
+          + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
+          + '<div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em">Identité &amp; contact</div>'
+          + '<button id="fp-save-identite" style="background:var(--ac);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit">💾 Enregistrer</button>'
           + '</div>'
+          + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'
+          + '<div><label style="font-size:10px;color:var(--t3);font-weight:600">Nom partenaire</label>'
+          + '<input id="fp-nom" value=' + JSON.stringify(p.nom||'') + ' style="width:100%;border:1px solid var(--b);border-radius:6px;padding:6px 9px;font-size:11px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box;margin-top:3px"></div>'
+          + '<div><label style="font-size:10px;color:var(--t3);font-weight:600">Emoji</label>'
+          + '<input id="fp-emoji" value=' + JSON.stringify(p.emoji||'🎁') + ' style="width:100%;border:1px solid var(--b);border-radius:6px;padding:6px 9px;font-size:14px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box;margin-top:3px;text-align:center"></div>'
+          + '<div style="grid-column:1/-1"><label style="font-size:10px;color:var(--t3);font-weight:600">Adresse</label>'
+          + '<input id="fp-adresse" value=' + JSON.stringify(p.adresse||'') + ' placeholder="Ex: 12 rue de la République, 06140 Vence" style="width:100%;border:1px solid var(--b);border-radius:6px;padding:6px 9px;font-size:11px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box;margin-top:3px"></div>'
+          + '<div><label style="font-size:10px;color:var(--t3);font-weight:600">Contact (nom)</label>'
+          + '<input id="fp-contact-nom" value=' + JSON.stringify(p.contact_nom||'') + ' style="width:100%;border:1px solid var(--b);border-radius:6px;padding:6px 9px;font-size:11px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box;margin-top:3px"></div>'
+          + '<div><label style="font-size:10px;color:var(--t3);font-weight:600">Email</label>'
+          + '<input id="fp-email" type="email" value=' + JSON.stringify(p.contact_email||'') + ' style="width:100%;border:1px solid var(--b);border-radius:6px;padding:6px 9px;font-size:11px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box;margin-top:3px"></div>'
+          + '<div><label style="font-size:10px;color:var(--t3);font-weight:600">Téléphone</label>'
+          + '<input id="fp-tel" value=' + JSON.stringify(p.contact_tel||'') + ' style="width:100%;border:1px solid var(--b);border-radius:6px;padding:6px 9px;font-size:11px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box;margin-top:3px"></div>'
+          + '<div><label style="font-size:10px;color:var(--t3);font-weight:600">Site web</label>'
+          + '<input id="fp-site" value=' + JSON.stringify(p.site_web||'') + ' placeholder="https://..." style="width:100%;border:1px solid var(--b);border-radius:6px;padding:6px 9px;font-size:11px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box;margin-top:3px"></div>'
+          + '</div></div>'
 
           // Encart éditorial
           + '<div style="background:var(--surf2);border-radius:12px;padding:14px;margin-bottom:14px">'
@@ -2386,6 +2390,38 @@ function openFichePartenaire(id) {
         // Close
         var closeBtn = document.getElementById('fp-close-btn');
         if(closeBtn) closeBtn.addEventListener('click', closeFichePartenaire);
+
+        // Save form identité partenaire
+        var btnSaveId = document.getElementById('fp-save-identite');
+        if(btnSaveId) btnSaveId.addEventListener('click', function() {
+          var payload = {
+            nom:           (document.getElementById('fp-nom')||{}).value || '',
+            emoji:         (document.getElementById('fp-emoji')||{}).value || '🎁',
+            adresse:       (document.getElementById('fp-adresse')||{}).value || '',
+            contact_nom:   (document.getElementById('fp-contact-nom')||{}).value || '',
+            contact_email: (document.getElementById('fp-email')||{}).value || '',
+            contact_tel:   (document.getElementById('fp-tel')||{}).value || '',
+            site_web:      (document.getElementById('fp-site')||{}).value || ''
+          };
+          payload.nom = payload.nom.trim();
+          if(!payload.nom) { showAdminToast('Le nom est obligatoire', 'error'); return; }
+          btnSaveId.disabled = true; btnSaveId.textContent = '⏳';
+          var hdrs2 = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', Prefer:'return=minimal'};
+          fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+encodeURIComponent(p.id), {
+            method:'PATCH', headers:hdrs2, body: JSON.stringify(payload)
+          }).then(function(r) {
+            btnSaveId.disabled = false; btnSaveId.textContent = '💾 Enregistrer';
+            if(r.ok) {
+              showAdminToast('✅ Partenaire mis à jour', 'success');
+              Object.assign(p, payload);
+            } else {
+              showAdminToast('Erreur '+r.status, 'error');
+            }
+          }).catch(function() {
+            btnSaveId.disabled = false; btnSaveId.textContent = '💾 Enregistrer';
+            showAdminToast('Erreur réseau', 'error');
+          });
+        });
 
         // Switch Visible
         var swActif = document.getElementById('fp-switch-actif');
@@ -4387,29 +4423,26 @@ function editPoints(pseudo, mode) {
 
 function sendWhatsApp(pseudo, prenom, tel) {
   if(!tel || !tel.trim()) {
-    var newTel = prompt('Numéro de téléphone de ' + prenom + ' (format international ex: +33612345678) :');
+    var newTel = prompt('Numéro de ' + prenom + ' (format ex: +33612345678) :');
     if(!newTel) return;
-    // Mémoriser pour la prochaine fois
     fetch(SB_URL+'/rest/v1/joueurs?pseudo=eq.'+encodeURIComponent(pseudo), {
       method:'PATCH', headers:{apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', Prefer:'return=minimal'},
       body: JSON.stringify({tel: newTel})
     }).catch(function(){});
     tel = newTel;
   }
-  var titre = prompt('Titre du message (ex: 🎯 Bonjour ' + prenom + ') :');
+  var titre = prompt('Titre du message :');
   if(!titre) return;
   var corps = prompt('Message :');
   if(corps === null) return;
   var hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', Prefer:'return=minimal'};
-  // Logger
   fetch(SB_URL+'/rest/v1/envois_log', {method:'POST', headers:hdrs,
-    body: JSON.stringify({type:'libre', canal:'whatsapp', pseudo: prenom, titre:titre, corps:corps, statut:'envoye'})
+    body: JSON.stringify({type:'libre', canal:'whatsapp', pseudo:pseudo, titre:titre, corps:corps, statut:'envoye'})
   }).catch(function(){});
-  // Ouvrir WhatsApp
   var num = tel.replace(/\D/g,'');
   var msg = encodeURIComponent(titre + '\n\n' + corps);
   window.open('https://wa.me/' + num + '?text=' + msg, '_blank');
-  showAdminToast('💬 WhatsApp ouvert pour ' + prenom, 'success');
+  showAdminToast('💬 WhatsApp ouvert', 'success');
 }
 
 function sendPushNotification(pseudo, prenom) {
@@ -6161,7 +6194,8 @@ function closePoolPanel(){
 }
 var _parrSF='name',_parrSD=1;
 function parrSort(field){
-  if(_parrSF===field)_parrSD*=-1;else{_parrSF=field;_parrSD=1;}
+  if(typeof window._parrSF === 'undefined') { window._parrSF = 'name'; window._parrSD = 1; }
+  if(window._parrSF===field) window._parrSD *= -1; else { window._parrSF=field; window._parrSD=1; }
   ['name','filleuls','pts','recent'].forEach(function(f){
     var el=document.getElementById('pa-'+f);if(el)el.textContent=f===field?(_parrSD>0?'\u2191':'\u2193'):'\u2195';
   });
@@ -6233,220 +6267,71 @@ function toggleLigue(id){var el=document.getElementById(id);if(el)el.style.displ
 // ENVOIS & PUSH
 // ═══════════════════════════════════════════════
 
-function renderEnvois() {
-  // CRM Envois — délègue à envoisCRMRender qui gère onglets + KPIs + composer
-  if(typeof envoisCRMRender === 'function') {
-    envoisCRMRender();
-    return;
-  }
-  // Fallback minimaliste
-  var el = document.getElementById('envois-content');
-  if(el) el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--t3)">Module Envois en chargement…</div>';
-}
-
-function renderEnvoisList() {
-  var listEl = document.getElementById('envois-list');
-  if(!listEl) return;
-  var joueurs = DB.joueurs || [];
-  var filter = document.getElementById('envois-filter');
-  var fVal = filter ? filter.value : 'all';
-
-  var filtered = joueurs.filter(function(j) {
-    if(fVal === 'noemail')  return !j.email || !j.email.trim();
-    if(fVal === 'pending')  return j.email && j.email.trim();
-    return true;
-  });
-
-  if(!filtered.length) {
-    listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">Aucun joueur dans ce filtre</div>';
-    return;
-  }
-
-  var html = '';
-  filtered.forEach(function(j) {
-    var hasEmail = j.email && j.email.trim();
-    var initials = ((j.prenom||'?').charAt(0) + (j.nom||'?').charAt(0)).toUpperCase();
-    var color = ['#7C5CFC','#22C9A0','#F4A83A','#E84855','#3B82F6'][(j.pseudo||'').charCodeAt(0)%5];
-    html += '<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--b)">';
-    html += '<div style="width:32px;height:32px;border-radius:50%;background:' + color + ';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0">' + initials + '</div>';
-    html += '<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:var(--t)">' + (j.pseudo||'—') + '</div>';
-    html += '<div style="font-size:10px;color:var(--t3)">' + (j.prenom||'') + ' ' + (j.nom||'') + ' · ' + (j.ecole||'—') + '</div></div>';
-    if(hasEmail) {
-      html += '<span style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;background:var(--grBg);color:var(--gr)">✉️ ' + j.email + '</span>';
-    } else {
-      html += '<span style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;background:var(--reBg,#FFF0F0);color:var(--re,#E84855)">❌ sans email</span>';
-    }
-    html += '</div>';
-  });
-
-  listEl.innerHTML = html;
-}
-
-// ── Modal envoi billet ──
-var _envoiSelected = new Set();
-
-function openEnvoiBillet() {
-  var modal = document.getElementById('modal-envoi-billet');
-  if(!modal) return;
-  modal.style.display = 'flex';
-  renderEnvoiJoueursList();
-
-  // Binder boutons
-  function bind(id, fn) {
-    var el = document.getElementById(id);
-    if(el && !el._envBound) { el._envBound = true; el.addEventListener('click', fn); }
-  }
-  bind('modal-envoi-close',  function(){ document.getElementById('modal-envoi-billet').style.display='none'; });
-  bind('modal-envoi-close2', function(){ document.getElementById('modal-envoi-billet').style.display='none'; });
-  bind('envoi-sel-tous',    function(){ selectEnvoiJoueurs('all'); });
-  bind('envoi-sel-pending', function(){ selectEnvoiJoueurs('pending'); });
-  bind('envoi-sel-none',    function(){ selectEnvoiJoueurs('none'); });
-  bind('btn-envoyer-billets', envoyerBillets);
-}
-
-function openEnvoiLibre() {
-  showAdminToast('Message libre — utilise le billet d\'activation et modifie le texte', '');
-  openEnvoiBillet();
-}
-
-function renderEnvoiJoueursList() {
-  var listEl = document.getElementById('envoi-joueurs-list');
-  if(!listEl) return;
-  _envoiSelected = new Set();
-  var joueurs = (DB.joueurs||[]).filter(function(j){ return j.email && j.email.trim(); });
-
-  if(!joueurs.length) {
-    listEl.innerHTML = '<div style="text-align:center;padding:16px;color:var(--t3);font-size:12px">Aucun joueur avec email enregistré</div>';
-    return;
-  }
-
-  var html = '';
-  joueurs.forEach(function(j, i) {
-    var initials = ((j.prenom||'?').charAt(0)+(j.nom||'?').charAt(0)).toUpperCase();
-    html += '<label style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;background:var(--surf2);border:1px solid var(--b)" id="envoi-row-' + i + '">';
-    html += '<input type="checkbox" data-email="' + (j.email||'') + '" data-prenom="' + (j.prenom||j.pseudo||'') + '" data-pseudo="' + (j.pseudo||'') + '" class="envoi-chk" style="cursor:pointer">';
-    html += '<div style="width:28px;height:28px;border-radius:50%;background:var(--ac);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">' + initials + '</div>';
-    html += '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--t)">' + (j.pseudo||j.prenom||'—') + '</div>';
-    html += '<div style="font-size:10px;color:var(--t3)">' + (j.email||'') + '</div></div>';
-    html += '</label>';
-  });
-  listEl.innerHTML = html;
-
-  // Binder checkboxes
-  listEl.querySelectorAll('.envoi-chk').forEach(function(chk) {
-    chk.addEventListener('change', function() {
-      if(chk.checked) _envoiSelected.add(chk.dataset.email);
-      else _envoiSelected.delete(chk.dataset.email);
-      var countEl = document.getElementById('envoi-count');
-      if(countEl) countEl.textContent = _envoiSelected.size;
-    });
-  });
-}
-
-function selectEnvoiJoueurs(mode) {
-  var chks = document.querySelectorAll('.envoi-chk');
-  _envoiSelected = new Set();
-  chks.forEach(function(chk) {
-    chk.checked = mode !== 'none';
-    if(chk.checked) _envoiSelected.add(chk.dataset.email);
-  });
-  var countEl = document.getElementById('envoi-count');
-  if(countEl) countEl.textContent = _envoiSelected.size;
-}
-
-async function envoyerBillets() {
-  if(!_envoiSelected.size) { showAdminToast('Sélectionne au moins un joueur', 'error'); return; }
-  var btn = document.getElementById('btn-envoyer-billets');
-  var resultEl = document.getElementById('envoi-result');
-  if(btn) { btn.disabled = true; btn.textContent = '⏳ Envoi en cours…'; }
-
-  var corps = document.getElementById('envoi-corps') ? document.getElementById('envoi-corps').value : '';
-  var sent = 0, errors = 0;
-
-  // Envoyer un reset password pour chaque email sélectionné
-  for(var email of _envoiSelected) {
-    var joueur = (DB.joueurs||[]).find(function(j){ return j.email === email; });
-    var prenom = joueur ? (joueur.prenom || joueur.pseudo || '') : '';
-    var pseudo = joueur ? (joueur.pseudo || '') : '';
-
-    try {
-      if(sbClient) {
-        var res = await sbClient.auth.resetPasswordForEmail(email, {
-          redirectTo: 'https://flowrevis.vercel.app/?mode=activation'
-        });
-        if(res.error) { errors++; console.error('Erreur', email, res.error); }
-        else { sent++; }
-      } else {
-        // Sans sbClient — simulation
-        sent++;
-      }
-    } catch(e) { errors++; }
-  }
-
-  if(btn) { btn.disabled = false; btn.textContent = '✉️ Envoyer les billets'; }
-  if(resultEl) {
-    resultEl.style.display = '';
-    if(errors === 0) {
-      resultEl.style.background = 'var(--grBg)'; resultEl.style.color = 'var(--gr)';
-      resultEl.textContent = '✅ ' + sent + ' billet(s) envoyé(s) avec succès !';
-    } else {
-      resultEl.style.background = 'var(--amBg)'; resultEl.style.color = 'var(--am)';
-      resultEl.textContent = sent + ' envoyé(s), ' + errors + ' erreur(s)';
-    }
-  }
-  showAdminToast(sent + ' billet(s) envoyé(s) ✅');
-  setTimeout(function(){ if(resultEl) resultEl.style.display = 'none'; }, 5000);
-}
-
 // ════════════════════════════════════════════════════════════════════
-// CRM ENVOIS — Gestion complète des communications admin → élèves
+// CRM ENVOIS — Gestion complète admin → élèves (DOM pur, sans template)
 // ════════════════════════════════════════════════════════════════════
 var ENVOIS_LOG = [];
+var ENVOIS_TEMPLATES_FALLBACK = [
+  {id:'billet_activation', nom:'Billet d activation', emoji:'✉️', titre:'Active ton compte Flowin', corps:'Bonjour {{prenom}} ! Voici ton lien pour rejoindre Flowin.', cta_label:'Activer', canaux:['email','whatsapp']},
+  {id:'rappel_inactif_3j', nom:'Rappel 3j inactif', emoji:'⏰', titre:'On t attend sur Flowin !', corps:'Ça fait quelques jours qu on ne t a pas vu(e). Reviens vite !', cta_label:'Reprendre', canaux:['in_app','email']},
+  {id:'bravo_streak_7', nom:'Bravo streak 7j', emoji:'🔥', titre:'Félicitations {{prenom}} !', corps:'Tu as une série de 7 jours ! Continue.', cta_label:'Continuer', canaux:['in_app']},
+  {id:'libre', nom:'Message libre', emoji:'💬', titre:'', corps:'', canaux:['email','in_app','whatsapp']}
+];
 var ENVOIS_TEMPLATES = [];
-var ENVOIS_REGLES = [];
-var ENVOIS_SELECTED_PSEUDOS = [];
-var ENVOIS_CURRENT_TAB = 'compose';
+var ENVOIS_SELECTED = [];
+var ENVOIS_TAB = 'compose';
 
-async function envoisCRMLoadData() {
+async function envoisLoadData() {
   if(typeof SB_ENABLED === 'undefined' || !SB_ENABLED) {
-    ENVOIS_LOG = []; ENVOIS_REGLES = [];
-    if(ENVOIS_TEMPLATES.length === 0) {
-      ENVOIS_TEMPLATES = [
-        {id:'billet_activation', nom:'Billet d activation initial', emoji:'✉️', titre:'Active ton compte', corps:'Bonjour {{prenom}} !', canaux:['email','whatsapp']},
-        {id:'libre', nom:'Message libre', emoji:'💬', titre:'', corps:'', canaux:['email','in_app']}
-      ];
-    }
+    ENVOIS_LOG = []; ENVOIS_TEMPLATES = ENVOIS_TEMPLATES_FALLBACK.slice();
     return;
   }
   var hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY};
   try {
     var r1 = await fetch(SB_URL+'/rest/v1/envois_log?order=ts.desc&limit=500', {headers:hdrs});
-    if(r1.ok) ENVOIS_LOG = await r1.json();
-  } catch(e){ ENVOIS_LOG = []; }
+    ENVOIS_LOG = r1.ok ? await r1.json() : [];
+  } catch(e) { ENVOIS_LOG = []; }
   try {
     var r2 = await fetch(SB_URL+'/rest/v1/envois_templates?actif=eq.true&order=id', {headers:hdrs});
-    if(r2.ok) ENVOIS_TEMPLATES = await r2.json();
-  } catch(e){ ENVOIS_TEMPLATES = []; }
-  try {
-    var r3 = await fetch(SB_URL+'/rest/v1/envois_regles?order=created_at.desc', {headers:hdrs});
-    if(r3.ok) ENVOIS_REGLES = await r3.json();
-  } catch(e){ ENVOIS_REGLES = []; }
+    var tpls = r2.ok ? await r2.json() : [];
+    ENVOIS_TEMPLATES = tpls.length > 0 ? tpls : ENVOIS_TEMPLATES_FALLBACK.slice();
+  } catch(e) { ENVOIS_TEMPLATES = ENVOIS_TEMPLATES_FALLBACK.slice(); }
 }
 
-function envoisCRMRender() {
-  // Charger les données puis afficher
-  envoisCRMLoadData().then(function(){
-    envoisCRMRenderKpis();
-    envoisCRMRenderTab(ENVOIS_CURRENT_TAB);
-  });
-  // Binder boutons header (idempotent)
-  var btnNew = document.getElementById('env-quick-new');
-  if(btnNew && !btnNew._bound) { btnNew._bound = true; btnNew.addEventListener('click', function(){ envoisTab('compose', document.getElementById('env-tab-compose')); }); }
+function renderEnvois() {
+  // Build onglets si pas déjà
+  var tabsEl = document.getElementById('envois-tabs');
+  if(tabsEl && !tabsEl.querySelector('button')) {
+    [
+      {k:'compose', l:'✍️ Composer'},
+      {k:'histo', l:'📋 Historique'},
+      {k:'templates', l:'📝 Templates'}
+    ].forEach(function(t) {
+      var b = document.createElement('button');
+      b.className = 'defis-tab' + (t.k === ENVOIS_TAB ? ' active' : '');
+      b.id = 'env-tab-' + t.k;
+      b.textContent = t.l;
+      b.addEventListener('click', function() {
+        ENVOIS_TAB = t.k;
+        Array.prototype.forEach.call(tabsEl.querySelectorAll('button'), function(x){ x.classList.remove('active'); });
+        b.classList.add('active');
+        envoisRenderTab();
+      });
+      tabsEl.appendChild(b);
+    });
+  }
   var btnRefresh = document.getElementById('env-refresh');
-  if(btnRefresh && !btnRefresh._bound) { btnRefresh._bound = true; btnRefresh.addEventListener('click', envoisCRMRender); }
+  if(btnRefresh && !btnRefresh._bound) {
+    btnRefresh._bound = true;
+    btnRefresh.addEventListener('click', renderEnvois);
+  }
+  envoisLoadData().then(function() {
+    envoisRenderKpis();
+    envoisRenderTab();
+  });
 }
 
-function envoisCRMRenderKpis() {
+function envoisRenderKpis() {
   var el = document.getElementById('envois-kpis');
   if(!el) return;
   var now = Date.now();
@@ -6455,142 +6340,202 @@ function envoisCRMRenderKpis() {
   var nb7j = ENVOIS_LOG.filter(function(e){ return new Date(e.ts).getTime() > j7; }).length;
   var nbClics = ENVOIS_LOG.filter(function(e){ return e.statut === 'clique'; }).length;
   var tauxClic = nbTotal > 0 ? Math.round(nbClics/nbTotal*100) : 0;
-  var nbInactifs7j = (DB.joueurs||[]).filter(function(j){
+  var nbInactifs = (DB.joueurs||[]).filter(function(j){
     var lastSess = (DB.sessions||[]).filter(function(s){return s.pseudo===j.pseudo;}).map(function(s){return new Date(s.ts).getTime();}).sort().pop();
     return !lastSess || lastSess < j7;
   }).length;
-  
+  el.innerHTML = '';
   var kpis = [
-    {val:nbTotal,      label:'Total envois',     sub:'depuis le début',          color:'var(--ac)',  icon:'📨'},
-    {val:nb7j,         label:'Cette semaine',    sub:'envois 7 derniers jours',  color:'var(--gr)',  icon:'📊'},
-    {val:tauxClic+'%', label:'Taux de clic',     sub:nbClics+' clics / '+nbTotal,color:'var(--am)',  icon:'👆'},
-    {val:nbInactifs7j, label:'Joueurs à relancer',sub:'inactifs depuis 7 jours', color:'var(--re)',  icon:'⏰'},
+    ['var(--ac)','📨', nbTotal, 'Total envois', 'depuis le début'],
+    ['var(--gr)','📊', nb7j, 'Cette semaine', '7 derniers jours'],
+    ['var(--am)','👆', tauxClic+'%', 'Taux de clic', nbClics+' / '+nbTotal],
+    ['var(--re)','⏰', nbInactifs, 'À relancer', 'inactifs 7j+']
   ];
-  
-  el.innerHTML = kpis.map(function(k){
-    return '<div class="kpi-card" style="border-left:3px solid '+k.color+'">'
-      + '<div class="kpi-icon">'+k.icon+'</div>'
-      + '<div class="kpi-val" style="color:'+k.color+'">'+k.val+'</div>'
-      + '<div class="kpi-label">'+k.label+'</div>'
-      + '<div class="kpi-sub">'+k.sub+'</div>'
-      + '</div>';
-  }).join('');
+  kpis.forEach(function(k) {
+    var card = document.createElement('div');
+    card.className = 'kpi-card';
+    card.style.cssText = 'border-left:3px solid '+k[0];
+    card.innerHTML = '<div class="kpi-icon">'+k[1]+'</div><div class="kpi-val" style="color:'+k[0]+'">'+k[2]+'</div><div class="kpi-label">'+k[3]+'</div><div class="kpi-sub">'+k[4]+'</div>';
+    el.appendChild(card);
+  });
 }
 
-function envoisTab(tab, btn) {
-  ENVOIS_CURRENT_TAB = tab;
-  if(btn) {
-    document.querySelectorAll('#envois-tabs .defis-tab').forEach(function(b){ b.classList.remove('active'); });
-    btn.classList.add('active');
-  }
-  envoisCRMRenderTab(tab);
-}
-
-function envoisCRMRenderTab(tab) {
+function envoisRenderTab() {
   var el = document.getElementById('envois-content');
   if(!el) return;
-  if(tab === 'compose') envoisRenderCompose(el);
-  else if(tab === 'histo') envoisRenderHisto(el);
-  else if(tab === 'rules') envoisRenderRules(el);
-  else if(tab === 'templates') envoisRenderTemplates(el);
+  el.innerHTML = '';
+  if(ENVOIS_TAB === 'compose')   envoisRenderCompose(el);
+  else if(ENVOIS_TAB === 'histo') envoisRenderHisto(el);
+  else if(ENVOIS_TAB === 'templates') envoisRenderTemplates(el);
 }
 
-// ── ONGLET COMPOSER ──────────────────────────────────────────────────
 function envoisRenderCompose(el) {
-  var joueurs = DB.joueurs || [];
-  var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">';
-  
-  // COLONNE GAUCHE : destinataires + template + contenu
-  html += '<div class="fiche-block">';
-  html += '<div class="fiche-block-title">🎯 Destinataires</div>';
-  html += '<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">'
-    + '<button class="env-seg-btn" data-seg="all" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Tous ('+joueurs.length+')</button>'
-    + '<button class="env-seg-btn" data-seg="email" style="background:var(--surf2);color:var(--t2);border:1px solid var(--b);border-radius:7px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Avec email</button>'
-    + '<button class="env-seg-btn" data-seg="noemail" style="background:var(--surf2);color:var(--t2);border:1px solid var(--b);border-radius:7px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Sans email</button>'
-    + '<button class="env-seg-btn" data-seg="inactif" style="background:var(--surf2);color:var(--t2);border:1px solid var(--b);border-radius:7px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Inactifs 3j+</button>'
-    + '<button class="env-seg-btn" data-seg="none" style="background:var(--surf2);color:var(--t2);border:1px solid var(--b);border-radius:7px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Aucun</button>'
-    + '</div>';
-  html += '<div id="env-dest-count" style="font-size:11px;color:var(--ac);font-weight:700;margin-bottom:8px">0 destinataire(s) sélectionné(s)</div>';
-  html += '<input id="env-dest-search" placeholder="🔍 Filtrer..." style="width:100%;padding:7px 11px;border:1px solid var(--b);border-radius:7px;font-size:12px;font-family:inherit;margin-bottom:8px;background:var(--surf2);color:var(--t)" oninput="envoisFiltrerListe()">';
-  html += '<div id="env-dest-list" style="max-height:280px;overflow-y:auto;border:1px solid var(--b);border-radius:8px;padding:6px"></div>';
-  html += '</div>';
-  
-  // COLONNE DROITE : composition message
-  html += '<div class="fiche-block">';
-  html += '<div class="fiche-block-title">✍️ Message</div>';
-  
-  // Sélecteur template
-  html += '<label style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;font-weight:700;display:block;margin-bottom:5px">Template</label>';
-  html += '<select id="env-template" onchange="envoisAppliquerTemplate()" style="width:100%;padding:8px 11px;border:1px solid var(--b);border-radius:7px;font-size:12px;font-family:inherit;margin-bottom:10px;background:var(--surf2);color:var(--t)">'
-    + '<option value="">— Choisir un template —</option>'
-    + ENVOIS_TEMPLATES.map(function(t){ return '<option value="'+t.id+'">'+(t.emoji||'✉️')+' '+t.nom+'</option>'; }).join('')
-    + '</select>';
-  
-  // Canaux
-  html += '<label style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;font-weight:700;display:block;margin-bottom:5px">Canal d\'envoi</label>';
-  html += '<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">'
-    + '<label style="display:flex;align-items:center;gap:5px;background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:6px 10px;font-size:11px;cursor:pointer"><input type="checkbox" id="env-canal-email" checked> ✉️ Email</label>'
-    + '<label style="display:flex;align-items:center;gap:5px;background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:6px 10px;font-size:11px;cursor:pointer"><input type="checkbox" id="env-canal-inapp" checked> 📱 In-app</label>'
-    + '<label style="display:flex;align-items:center;gap:5px;background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:6px 10px;font-size:11px;cursor:pointer"><input type="checkbox" id="env-canal-wa"> 💬 WhatsApp</label>'
-    + '<label style="display:flex;align-items:center;gap:5px;background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:6px 10px;font-size:11px;cursor:pointer"><input type="checkbox" id="env-canal-qr"> 🔗 QR / Copie</label>'
-    + '</div>';
-  
-  // Titre
-  html += '<label style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;font-weight:700;display:block;margin-bottom:5px">Titre</label>';
-  html += '<input id="env-titre" placeholder="Ex: 🎯 Quiz du jour" style="width:100%;padding:8px 11px;border:1px solid var(--b);border-radius:7px;font-size:12px;font-family:inherit;margin-bottom:10px;background:var(--surf2);color:var(--t)">';
-  
-  // Corps
-  html += '<label style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;font-weight:700;display:block;margin-bottom:5px">Message <span style="font-weight:400;text-transform:none;color:var(--t3)">(variables : {{prenom}}, {{pseudo}})</span></label>';
-  html += '<textarea id="env-corps" rows="5" placeholder="Salut {{prenom}}, on t\'attend sur Flowin..." style="width:100%;padding:8px 11px;border:1px solid var(--b);border-radius:7px;font-size:12px;font-family:inherit;margin-bottom:10px;background:var(--surf2);color:var(--t);resize:vertical"></textarea>';
-  
-  // CTA
-  html += '<label style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;font-weight:700;display:block;margin-bottom:5px">Lien d\'action (optionnel)</label>';
-  html += '<div style="display:flex;gap:6px;margin-bottom:14px">'
-    + '<input id="env-cta-label" placeholder="Texte bouton" style="flex:1;padding:8px 11px;border:1px solid var(--b);border-radius:7px;font-size:12px;font-family:inherit;background:var(--surf2);color:var(--t)">'
-    + '<input id="env-cta-url" placeholder="https://flowrevis.vercel.app/" style="flex:2;padding:8px 11px;border:1px solid var(--b);border-radius:7px;font-size:12px;font-family:inherit;background:var(--surf2);color:var(--t)">'
-    + '</div>';
-  
-  // Aperçu + Envoyer
-  html += '<div style="display:flex;gap:8px">';
-  html += '<button onclick="envoisPreview()" style="flex:1;background:var(--surf2);color:var(--t2);border:1px solid var(--b);border-radius:8px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">👁️ Aperçu</button>';
-  html += '<button onclick="envoisEnvoyer()" style="flex:2;background:var(--ac);color:#fff;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">📨 Envoyer maintenant</button>';
-  html += '</div>';
-  html += '</div>';
-  
-  html += '</div>'; // grid
-  
-  el.innerHTML = html;
-  
-  // Bind segments
-  el.querySelectorAll('.env-seg-btn').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      el.querySelectorAll('.env-seg-btn').forEach(function(b){
-        b.style.background = 'var(--surf2)'; b.style.color = 'var(--t2)'; b.style.border = '1px solid var(--b)';
+  // Layout 2 colonnes en pur DOM
+  var grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:14px';
+
+  // ─── COL GAUCHE : destinataires ───
+  var col1 = document.createElement('div');
+  col1.className = 'fiche-block';
+  col1.innerHTML = '<div class="fiche-block-title">🎯 Destinataires</div>';
+
+  // Segments
+  var segs = document.createElement('div');
+  segs.style.cssText = 'display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap';
+  [
+    {k:'all', l:'Tous'},
+    {k:'email', l:'Avec email'},
+    {k:'noemail', l:'Sans email'},
+    {k:'inactif', l:'Inactifs 3j+'},
+    {k:'none', l:'Aucun'}
+  ].forEach(function(s) {
+    var b = document.createElement('button');
+    b.className = 'env-seg-btn';
+    b.textContent = s.l;
+    b.style.cssText = 'background:var(--surf2);color:var(--t2);border:1px solid var(--b);border-radius:7px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit';
+    b.addEventListener('click', function() {
+      Array.prototype.forEach.call(segs.querySelectorAll('button'), function(x){
+        x.style.background='var(--surf2)'; x.style.color='var(--t2)'; x.style.border='1px solid var(--b)';
       });
-      btn.style.background = 'var(--ac)'; btn.style.color = '#fff'; btn.style.border = 'none';
-      envoisAppliquerSegment(btn.dataset.seg);
+      b.style.background='var(--ac)'; b.style.color='#fff'; b.style.border='none';
+      envoisAppliquerSegment(s.k);
     });
+    segs.appendChild(b);
   });
-  
+  col1.appendChild(segs);
+
+  // Compteur
+  var cnt = document.createElement('div');
+  cnt.id = 'env-dest-count';
+  cnt.style.cssText = 'font-size:11px;color:var(--ac);font-weight:700;margin-bottom:8px';
+  cnt.textContent = '0 destinataire(s) sélectionné(s)';
+  col1.appendChild(cnt);
+
+  // Recherche
+  var srch = document.createElement('input');
+  srch.id = 'env-dest-search';
+  srch.placeholder = '🔍 Filtrer...';
+  srch.style.cssText = 'width:100%;padding:7px 11px;border:1px solid var(--b);border-radius:7px;font-size:12px;font-family:inherit;margin-bottom:8px;background:var(--surf2);color:var(--t);box-sizing:border-box';
+  srch.addEventListener('input', envoisFiltrerListe);
+  col1.appendChild(srch);
+
+  // Liste destinataires
+  var list = document.createElement('div');
+  list.id = 'env-dest-list';
+  list.style.cssText = 'max-height:280px;overflow-y:auto;border:1px solid var(--b);border-radius:8px;padding:6px';
+  col1.appendChild(list);
+
+  // ─── COL DROITE : composition ───
+  var col2 = document.createElement('div');
+  col2.className = 'fiche-block';
+  col2.innerHTML = '<div class="fiche-block-title">✍️ Message</div>';
+
+  // Template selector
+  col2.appendChild(makeLabel('Template'));
+  var selTpl = document.createElement('select');
+  selTpl.id = 'env-template';
+  selTpl.style.cssText = 'width:100%;padding:8px 11px;border:1px solid var(--b);border-radius:7px;font-size:12px;font-family:inherit;margin-bottom:10px;background:var(--surf2);color:var(--t)';
+  var optDef = document.createElement('option');
+  optDef.value = ''; optDef.textContent = '— Choisir un template —';
+  selTpl.appendChild(optDef);
+  ENVOIS_TEMPLATES.forEach(function(t) {
+    var opt = document.createElement('option');
+    opt.value = t.id;
+    opt.textContent = (t.emoji||'✉️') + ' ' + t.nom;
+    selTpl.appendChild(opt);
+  });
+  selTpl.addEventListener('change', envoisAppliquerTemplate);
+  col2.appendChild(selTpl);
+
+  // Canaux
+  col2.appendChild(makeLabel('Canaux d envoi'));
+  var canauxDiv = document.createElement('div');
+  canauxDiv.style.cssText = 'display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap';
+  [
+    ['email',   '✉️ Email',  true],
+    ['inapp',   '📱 In-app', true],
+    ['wa',      '💬 WhatsApp', false],
+    ['qr',      '🔗 QR/Copie', false]
+  ].forEach(function(c) {
+    var lbl = document.createElement('label');
+    lbl.style.cssText = 'display:flex;align-items:center;gap:5px;background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:6px 10px;font-size:11px;cursor:pointer';
+    var cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.id = 'env-canal-' + c[0]; cb.checked = c[2];
+    lbl.appendChild(cb);
+    var sp = document.createElement('span');
+    sp.textContent = ' ' + c[1];
+    lbl.appendChild(sp);
+    canauxDiv.appendChild(lbl);
+  });
+  col2.appendChild(canauxDiv);
+
+  // Titre
+  col2.appendChild(makeLabel('Titre'));
+  var inpTitre = document.createElement('input');
+  inpTitre.id = 'env-titre';
+  inpTitre.placeholder = 'Ex: 🎯 Quiz du jour';
+  inpTitre.style.cssText = 'width:100%;padding:8px 11px;border:1px solid var(--b);border-radius:7px;font-size:12px;font-family:inherit;margin-bottom:10px;background:var(--surf2);color:var(--t);box-sizing:border-box';
+  col2.appendChild(inpTitre);
+
+  // Corps
+  var lblCorps = makeLabel('Message');
+  var spVar = document.createElement('span');
+  spVar.style.cssText = 'font-weight:400;text-transform:none;color:var(--t3);font-size:10px';
+  spVar.textContent = ' (variables : {{prenom}}, {{pseudo}})';
+  lblCorps.appendChild(spVar);
+  col2.appendChild(lblCorps);
+
+  var taCorps = document.createElement('textarea');
+  taCorps.id = 'env-corps';
+  taCorps.rows = 5;
+  taCorps.placeholder = 'Salut {{prenom}}, on t attend sur Flowin...';
+  taCorps.style.cssText = 'width:100%;padding:8px 11px;border:1px solid var(--b);border-radius:7px;font-size:12px;font-family:inherit;margin-bottom:14px;background:var(--surf2);color:var(--t);resize:vertical;box-sizing:border-box';
+  col2.appendChild(taCorps);
+
+  // Boutons action
+  var btnRow = document.createElement('div');
+  btnRow.style.cssText = 'display:flex;gap:8px';
+  var btnPreview = document.createElement('button');
+  btnPreview.textContent = '👁️ Aperçu';
+  btnPreview.style.cssText = 'flex:1;background:var(--surf2);color:var(--t2);border:1px solid var(--b);border-radius:8px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit';
+  btnPreview.addEventListener('click', envoisPreview);
+  btnRow.appendChild(btnPreview);
+
+  var btnSend = document.createElement('button');
+  btnSend.textContent = '📨 Envoyer maintenant';
+  btnSend.style.cssText = 'flex:2;background:var(--ac);color:#fff;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit';
+  btnSend.addEventListener('click', envoisEnvoyer);
+  btnRow.appendChild(btnSend);
+
+  col2.appendChild(btnRow);
+
+  grid.appendChild(col1);
+  grid.appendChild(col2);
+  el.appendChild(grid);
+
   envoisFiltrerListe();
+}
+
+function makeLabel(text) {
+  var lbl = document.createElement('label');
+  lbl.style.cssText = 'font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;font-weight:700;display:block;margin-bottom:5px';
+  lbl.textContent = text;
+  return lbl;
 }
 
 function envoisAppliquerSegment(seg) {
   var joueurs = DB.joueurs || [];
   var now = Date.now();
   var j3 = now - 3*86400000;
-  if(seg === 'all') {
-    ENVOIS_SELECTED_PSEUDOS = joueurs.map(function(j){return j.pseudo;});
-  } else if(seg === 'email') {
-    ENVOIS_SELECTED_PSEUDOS = joueurs.filter(function(j){return j.email&&j.email.trim();}).map(function(j){return j.pseudo;});
-  } else if(seg === 'noemail') {
-    ENVOIS_SELECTED_PSEUDOS = joueurs.filter(function(j){return !j.email||!j.email.trim();}).map(function(j){return j.pseudo;});
-  } else if(seg === 'inactif') {
-    ENVOIS_SELECTED_PSEUDOS = joueurs.filter(function(j){
+  if(seg === 'all') ENVOIS_SELECTED = joueurs.map(function(j){return j.pseudo;});
+  else if(seg === 'email') ENVOIS_SELECTED = joueurs.filter(function(j){return j.email && j.email.trim();}).map(function(j){return j.pseudo;});
+  else if(seg === 'noemail') ENVOIS_SELECTED = joueurs.filter(function(j){return !j.email || !j.email.trim();}).map(function(j){return j.pseudo;});
+  else if(seg === 'inactif') {
+    ENVOIS_SELECTED = joueurs.filter(function(j){
       var lastSess = (DB.sessions||[]).filter(function(s){return s.pseudo===j.pseudo;}).map(function(s){return new Date(s.ts).getTime();}).sort().pop();
       return !lastSess || lastSess < j3;
     }).map(function(j){return j.pseudo;});
-  } else { ENVOIS_SELECTED_PSEUDOS = []; }
+  } else ENVOIS_SELECTED = [];
   envoisFiltrerListe();
 }
 
@@ -6598,36 +6543,42 @@ function envoisFiltrerListe() {
   var list = document.getElementById('env-dest-list');
   var count = document.getElementById('env-dest-count');
   if(!list) return;
-  var search = ((document.getElementById('env-dest-search')||{}).value || '').toLowerCase();
-  var joueurs = (DB.joueurs || []).filter(function(j){
+  var srchEl = document.getElementById('env-dest-search');
+  var search = (srchEl ? srchEl.value : '').toLowerCase();
+  var joueurs = (DB.joueurs || []).filter(function(j) {
     if(!search) return true;
-    return ((j.pseudo||'')+' '+(j.prenom||'')+' '+(j.nom||'')+' '+(j.email||'')).toLowerCase().indexOf(search) >= 0;
+    var blob = ((j.pseudo||'')+' '+(j.prenom||'')+' '+(j.nom||'')+' '+(j.email||'')).toLowerCase();
+    return blob.indexOf(search) >= 0;
   });
-  
-  list.innerHTML = joueurs.length === 0 
-    ? '<div style="text-align:center;padding:14px;color:var(--t3);font-size:11px">Aucun joueur</div>'
-    : joueurs.map(function(j){
-      var sel = ENVOIS_SELECTED_PSEUDOS.indexOf(j.pseudo) >= 0;
-      var em = j.email ? '<span style="color:var(--t3);font-size:10px">'+j.email+'</span>' : '<span style="color:var(--re);font-size:10px">— sans email</span>';
-      return '<label style="display:flex;align-items:center;gap:8px;padding:5px 7px;border-radius:6px;cursor:pointer;'+(sel?'background:var(--acBg)':'')+'">'
-        + '<input type="checkbox" class="env-dest-cb" data-pseudo="'+j.pseudo+'"'+(sel?' checked':'')+'>'
-        + '<span style="flex:1;font-size:12px;color:var(--t)"><strong>'+(j.prenom||j.pseudo)+'</strong> '+(j.nom||'')+' '+em+'</span>'
-        + '</label>';
-    }).join('');
-  
-  list.querySelectorAll('.env-dest-cb').forEach(function(cb){
-    cb.addEventListener('change', function(){
-      var p = cb.dataset.pseudo;
-      if(cb.checked) {
-        if(ENVOIS_SELECTED_PSEUDOS.indexOf(p)<0) ENVOIS_SELECTED_PSEUDOS.push(p);
-      } else {
-        ENVOIS_SELECTED_PSEUDOS = ENVOIS_SELECTED_PSEUDOS.filter(function(x){return x!==p;});
-      }
-      envoisFiltrerListe();
+  list.innerHTML = '';
+  if(joueurs.length === 0) {
+    var em = document.createElement('div');
+    em.style.cssText = 'text-align:center;padding:14px;color:var(--t3);font-size:11px';
+    em.textContent = 'Aucun joueur';
+    list.appendChild(em);
+  } else {
+    joueurs.forEach(function(j) {
+      var sel = ENVOIS_SELECTED.indexOf(j.pseudo) >= 0;
+      var lbl = document.createElement('label');
+      lbl.style.cssText = 'display:flex;align-items:center;gap:8px;padding:5px 7px;border-radius:6px;cursor:pointer;' + (sel?'background:var(--acBg)':'');
+      var cb = document.createElement('input');
+      cb.type = 'checkbox'; cb.checked = sel; cb.dataset.pseudo = j.pseudo;
+      cb.addEventListener('change', function() {
+        var p = cb.dataset.pseudo;
+        if(cb.checked) { if(ENVOIS_SELECTED.indexOf(p)<0) ENVOIS_SELECTED.push(p); }
+        else ENVOIS_SELECTED = ENVOIS_SELECTED.filter(function(x){return x!==p;});
+        envoisFiltrerListe();
+      });
+      lbl.appendChild(cb);
+      var sp = document.createElement('span');
+      sp.style.cssText = 'flex:1;font-size:12px;color:var(--t)';
+      var em = j.email ? '<span style="color:var(--t3);font-size:10px"> '+j.email+'</span>' : '<span style="color:var(--re);font-size:10px"> — sans email</span>';
+      sp.innerHTML = '<strong>'+(j.prenom||j.pseudo)+'</strong> '+(j.nom||'')+' '+em;
+      lbl.appendChild(sp);
+      list.appendChild(lbl);
     });
-  });
-  
-  if(count) count.textContent = ENVOIS_SELECTED_PSEUDOS.length + ' destinataire(s) sélectionné(s)';
+  }
+  if(count) count.textContent = ENVOIS_SELECTED.length + ' destinataire(s) sélectionné(s)';
 }
 
 function envoisAppliquerTemplate() {
@@ -6635,234 +6586,149 @@ function envoisAppliquerTemplate() {
   if(!sel || !sel.value) return;
   var t = ENVOIS_TEMPLATES.find(function(x){return x.id===sel.value;});
   if(!t) return;
-  document.getElementById('env-titre').value = (t.emoji||'') + ' ' + t.titre;
-  document.getElementById('env-corps').value = t.corps || '';
-  document.getElementById('env-cta-label').value = t.cta_label || '';
-  // Pre-set canaux selon template
+  var titre = document.getElementById('env-titre');
+  var corps = document.getElementById('env-corps');
+  if(titre) titre.value = (t.emoji||'') + ' ' + (t.titre||'');
+  if(corps) corps.value = t.corps || '';
   if(t.canaux) {
-    document.getElementById('env-canal-email').checked = t.canaux.indexOf('email')>=0;
-    document.getElementById('env-canal-inapp').checked = t.canaux.indexOf('in_app')>=0;
-    document.getElementById('env-canal-wa').checked = t.canaux.indexOf('whatsapp')>=0;
-    document.getElementById('env-canal-qr').checked = t.canaux.indexOf('qr')>=0;
+    var ce = document.getElementById('env-canal-email');
+    var ci = document.getElementById('env-canal-inapp');
+    var cw = document.getElementById('env-canal-wa');
+    var cq = document.getElementById('env-canal-qr');
+    if(ce) ce.checked = t.canaux.indexOf('email') >= 0;
+    if(ci) ci.checked = t.canaux.indexOf('in_app') >= 0;
+    if(cw) cw.checked = t.canaux.indexOf('whatsapp') >= 0;
+    if(cq) cq.checked = t.canaux.indexOf('qr') >= 0;
   }
 }
 
 function envoisPreview() {
-  var titre = document.getElementById('env-titre').value;
-  var corps = document.getElementById('env-corps').value;
+  var titre = (document.getElementById('env-titre')||{}).value || '';
+  var corps = (document.getElementById('env-corps')||{}).value || '';
   var sample = (DB.joueurs||[])[0] || {prenom:'Léa', pseudo:'lea07'};
   var t2 = titre.replace(/\{\{prenom\}\}/g, sample.prenom||'').replace(/\{\{pseudo\}\}/g, sample.pseudo||'');
   var c2 = corps.replace(/\{\{prenom\}\}/g, sample.prenom||'').replace(/\{\{pseudo\}\}/g, sample.pseudo||'');
-  alert('APERÇU pour '+sample.prenom+'\n\n'+t2+'\n\n'+c2);
+  alert('APERÇU pour ' + (sample.prenom||sample.pseudo) + '\n\n' + t2 + '\n\n' + c2);
 }
 
 async function envoisEnvoyer() {
-  if(ENVOIS_SELECTED_PSEUDOS.length === 0) { showAdminToast('Aucun destinataire sélectionné', 'error'); return; }
-  var titre = document.getElementById('env-titre').value.trim();
-  var corps = document.getElementById('env-corps').value.trim();
-  var ctaLabel = document.getElementById('env-cta-label').value.trim();
-  var ctaUrl = document.getElementById('env-cta-url').value.trim();
+  if(ENVOIS_SELECTED.length === 0) { showAdminToast('Aucun destinataire sélectionné', 'error'); return; }
+  var titre = ((document.getElementById('env-titre')||{}).value||'').trim();
+  var corps = ((document.getElementById('env-corps')||{}).value||'').trim();
   if(!titre) { showAdminToast('Titre obligatoire', 'error'); return; }
-  
-  var canEmail = document.getElementById('env-canal-email').checked;
-  var canInapp = document.getElementById('env-canal-inapp').checked;
-  var canWA = document.getElementById('env-canal-wa').checked;
-  var canQR = document.getElementById('env-canal-qr').checked;
-  if(!canEmail && !canInapp && !canWA && !canQR) { showAdminToast('Choisis au moins un canal', 'error'); return; }
-  
-  if(!confirm('Envoyer à '+ENVOIS_SELECTED_PSEUDOS.length+' destinataire(s) ?')) return;
-  
+  var canEmail = (document.getElementById('env-canal-email')||{}).checked;
+  var canInapp = (document.getElementById('env-canal-inapp')||{}).checked;
+  var canWA    = (document.getElementById('env-canal-wa')||{}).checked;
+  if(!canEmail && !canInapp && !canWA) { showAdminToast('Choisis au moins un canal', 'error'); return; }
+  if(!confirm('Envoyer à ' + ENVOIS_SELECTED.length + ' destinataire(s) ?')) return;
+
   var hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', Prefer:'return=minimal'};
   var joueurs = DB.joueurs || [];
-  var nbOk = 0, nbErr = 0;
-  
-  for(var i=0; i<ENVOIS_SELECTED_PSEUDOS.length; i++) {
-    var pseudo = ENVOIS_SELECTED_PSEUDOS[i];
-    var j = joueurs.find(function(x){return x.pseudo===pseudo;});
+  var nbOk = 0;
+
+  for(var i = 0; i < ENVOIS_SELECTED.length; i++) {
+    var j = joueurs.find(function(x){return x.pseudo === ENVOIS_SELECTED[i];});
     if(!j) continue;
-    
     var titreVar = titre.replace(/\{\{prenom\}\}/g, j.prenom||'').replace(/\{\{pseudo\}\}/g, j.pseudo||'');
     var corpsVar = corps.replace(/\{\{prenom\}\}/g, j.prenom||'').replace(/\{\{pseudo\}\}/g, j.pseudo||'');
-    
-    // Canal IN-APP
     if(canInapp) {
-      try {
-        await fetch(SB_URL+'/rest/v1/notifications', {method:'POST', headers:hdrs,
-          body: JSON.stringify({pseudo:pseudo, type:'admin_msg', titre:titreVar, corps:corpsVar, lue:false, data:{cta_url:ctaUrl, cta_label:ctaLabel}})});
-      } catch(e){}
+      try { await fetch(SB_URL+'/rest/v1/notifications', {method:'POST', headers:hdrs, body: JSON.stringify({pseudo:j.pseudo, type:'admin_msg', titre:titreVar, corps:corpsVar, lue:false})}); } catch(e){}
     }
-    // Canal EMAIL — recover si pas d'email saisi, sinon contact direct (non implémenté ici)
     if(canEmail && j.email) {
-      try {
-        await fetch(SB_URL+'/auth/v1/recover', {method:'POST', headers:{apikey:SB_KEY,'Content-Type':'application/json'},
-          body: JSON.stringify({email:j.email, options:{redirectTo:'https://flowrevis.vercel.app/?mode=activation'}})});
-      } catch(e){}
+      try { await fetch(SB_URL+'/auth/v1/recover', {method:'POST', headers:{apikey:SB_KEY,'Content-Type':'application/json'}, body: JSON.stringify({email:j.email})}); } catch(e){}
     }
-    // Log
     try {
-      await fetch(SB_URL+'/rest/v1/envois_log', {method:'POST', headers:hdrs,
-        body: JSON.stringify({
-          type: 'libre', canal: canInapp?'in_app':(canEmail?'email':(canWA?'whatsapp':'qr')),
-          pseudo: pseudo, segment: null, destinataires_count: 1,
-          template_id: (document.getElementById('env-template')||{}).value || null,
-          titre: titreVar, corps: corpsVar, cta_label: ctaLabel, cta_url: ctaUrl,
-          statut: 'envoye', envoye_par: 'admin', data: {canaux:{email:canEmail,inapp:canInapp,wa:canWA,qr:canQR}}
-        })});
+      await fetch(SB_URL+'/rest/v1/envois_log', {method:'POST', headers:hdrs, body: JSON.stringify({type:'libre', canal: canInapp?'in_app':(canEmail?'email':'whatsapp'), pseudo:j.pseudo, titre:titreVar, corps:corpsVar, statut:'envoye'})});
       nbOk++;
-    } catch(e){ nbErr++; }
+    } catch(e){}
   }
-  
-  // Canal WhatsApp — ouvrir l'app/web avec message pré-rempli (1 par 1)
   if(canWA) {
-    var dests = ENVOIS_SELECTED_PSEUDOS.map(function(p){
-      return joueurs.find(function(j){return j.pseudo===p;});
-    }).filter(function(j){return j && j.tel;});
-    if(dests.length > 0) {
-      if(confirm('Ouvrir WhatsApp pour '+dests.length+' destinataires (1 à la fois) ?')) {
-        dests.forEach(function(j, idx){
-          setTimeout(function(){
-            var t = j.tel.replace(/\D/g,'');
-            var msg = encodeURIComponent((titre+'\n\n'+corps).replace(/\{\{prenom\}\}/g, j.prenom||'').replace(/\{\{pseudo\}\}/g, j.pseudo||'') + (ctaUrl?'\n\n'+ctaUrl:''));
-            window.open('https://wa.me/'+t+'?text='+msg, '_blank');
-          }, idx * 800);
-        });
-      }
-    } else {
-      showAdminToast('Aucun destinataire n\'a de numéro de téléphone', 'warning');
+    var withTel = ENVOIS_SELECTED.map(function(p){ return joueurs.find(function(j){return j.pseudo===p;}); }).filter(function(j){return j && j.tel;});
+    if(withTel.length > 0 && confirm('Ouvrir WhatsApp pour ' + withTel.length + ' destinataires ?')) {
+      withTel.forEach(function(j, idx) {
+        setTimeout(function() {
+          var t = j.tel.replace(/\D/g,'');
+          var msg = encodeURIComponent(titre.replace(/\{\{prenom\}\}/g, j.prenom||'') + '\n\n' + corps.replace(/\{\{prenom\}\}/g, j.prenom||''));
+          window.open('https://wa.me/' + t + '?text=' + msg, '_blank');
+        }, idx * 800);
+      });
     }
   }
-  
-  // Canal QR / Copie — afficher modal avec QR ou copier
-  if(canQR && ENVOIS_SELECTED_PSEUDOS.length === 1) {
-    var pseudo = ENVOIS_SELECTED_PSEUDOS[0];
-    var msg = titre+'\n\n'+corps+(ctaUrl?'\n\n'+ctaUrl:'');
-    navigator.clipboard.writeText(msg).then(function(){
-      showAdminToast('📋 Message copié dans le presse-papier', 'success');
-    });
-  }
-  
-  showAdminToast('✅ '+nbOk+' envoi(s) effectué(s)'+(nbErr>0?', '+nbErr+' erreur(s)':''), nbOk>0?'success':'error');
-  envoisCRMRender();
+  showAdminToast('✅ ' + nbOk + ' envoi(s) effectué(s)', 'success');
+  renderEnvois();
 }
 
-// ── ONGLET HISTORIQUE ────────────────────────────────────────────────
 function envoisRenderHisto(el) {
   if(ENVOIS_LOG.length === 0) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Aucun envoi enregistré pour le moment</div></div>';
+    var em = document.createElement('div');
+    em.className = 'empty';
+    em.innerHTML = '<div class="empty-icon">📭</div><div class="empty-text">Aucun envoi enregistré</div>';
+    el.appendChild(em);
     return;
   }
-  var canalIcons = {email:'✉️', in_app:'📱', whatsapp:'💬', sms:'📨', qr:'🔗', copie:'📋'};
-  var statutColors = {envoye:'var(--ac)', lu:'var(--gr)', clique:'var(--am)', echec:'var(--re)', expire:'var(--t3)'};
-  
-  var html = '<div class="fiche-block">';
-  html += '<div class="fiche-block-title">📋 Historique des envois ('+ENVOIS_LOG.length+')</div>';
-  html += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse">';
-  html += '<thead><tr>'
-    + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Date</th>'
-    + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Canal</th>'
-    + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Destinataire</th>'
-    + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Titre</th>'
-    + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Statut</th>'
-    + '</tr></thead><tbody>';
-  
-  ENVOIS_LOG.slice(0, 100).forEach(function(e){
+  var block = document.createElement('div');
+  block.className = 'fiche-block';
+  block.innerHTML = '<div class="fiche-block-title">📋 Historique des envois ('+ENVOIS_LOG.length+')</div>';
+  var canalIcons = {email:'✉️', in_app:'📱', whatsapp:'💬', qr:'🔗'};
+  var statColors = {envoye:'var(--ac)', lu:'var(--gr)', clique:'var(--am)', echec:'var(--re)'};
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'overflow-x:auto';
+  var tbl = document.createElement('table');
+  tbl.style.cssText = 'width:100%;border-collapse:collapse';
+  tbl.innerHTML = '<thead><tr><th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Date</th><th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Canal</th><th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Destinataire</th><th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Titre</th><th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Statut</th></tr></thead>';
+  var tbody = document.createElement('tbody');
+  ENVOIS_LOG.slice(0, 100).forEach(function(e) {
     var dt = new Date(e.ts);
-    var dateStr = dt.toLocaleDateString('fr-FR') + ' ' + dt.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
-    var icon = canalIcons[e.canal] || '📨';
-    var statColor = statutColors[e.statut] || 'var(--t3)';
-    var dest = e.pseudo || (e.destinataires_count>1 ? e.destinataires_count+' destinataires' : '—');
-    html += '<tr style="cursor:pointer" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'\'">'
-      + '<td style="padding:7px 8px;font-size:11px;color:var(--t3);border-bottom:1px solid var(--b);white-space:nowrap">'+dateStr+'</td>'
-      + '<td style="padding:7px 8px;font-size:13px;border-bottom:1px solid var(--b)">'+icon+'</td>'
-      + '<td style="padding:7px 8px;font-size:12px;border-bottom:1px solid var(--b);font-weight:600;color:var(--t)">'+dest+'</td>'
+    var dateStr = dt.toLocaleDateString('fr-FR') + ' ' + dt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td style="padding:7px 8px;font-size:11px;color:var(--t3);border-bottom:1px solid var(--b);white-space:nowrap">'+dateStr+'</td>'
+      + '<td style="padding:7px 8px;font-size:13px;border-bottom:1px solid var(--b)">'+(canalIcons[e.canal]||'📨')+'</td>'
+      + '<td style="padding:7px 8px;font-size:12px;border-bottom:1px solid var(--b);font-weight:600;color:var(--t)">'+(e.pseudo||'—')+'</td>'
       + '<td style="padding:7px 8px;font-size:11px;border-bottom:1px solid var(--b);color:var(--t2);max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(e.titre||'—')+'</td>'
-      + '<td style="padding:7px 8px;font-size:10px;border-bottom:1px solid var(--b)"><span style="background:'+statColor+';color:#fff;padding:2px 8px;border-radius:12px;font-weight:700;text-transform:uppercase">'+(e.statut||'envoyé')+'</span></td>'
-      + '</tr>';
+      + '<td style="padding:7px 8px;font-size:10px;border-bottom:1px solid var(--b)"><span style="background:'+(statColors[e.statut]||'var(--t3)')+';color:#fff;padding:2px 8px;border-radius:12px;font-weight:700;text-transform:uppercase">'+(e.statut||'envoyé')+'</span></td>';
+    tbody.appendChild(tr);
   });
-  html += '</tbody></table></div></div>';
-  el.innerHTML = html;
+  tbl.appendChild(tbody);
+  wrap.appendChild(tbl);
+  block.appendChild(wrap);
+  el.appendChild(block);
 }
 
-// ── ONGLET RÈGLES (automatisation) ───────────────────────────────────
-function envoisRenderRules(el) {
-  var html = '<div class="fiche-block">';
-  html += '<div class="fiche-block-title">⚙️ Règles d\'envoi automatique</div>';
-  html += '<div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.5">Configure des envois récurrents déclenchés par un événement (ex: inactivité, streak atteint).</div>';
-  
-  if(ENVOIS_REGLES.length === 0) {
-    html += '<div style="text-align:center;padding:24px;color:var(--t3);font-size:12px">Aucune règle configurée pour le moment.</div>';
-  } else {
-    html += '<div style="display:flex;flex-direction:column;gap:8px">';
-    ENVOIS_REGLES.forEach(function(r){
-      var triggerLabel = {
-        inactivite: '⏰ Inactivité '+(r.trigger_value?.jours||3)+' jours',
-        streak: '🔥 Streak '+(r.trigger_value?.seuil||7)+' atteint',
-        inscription: '👋 Nouvelle inscription',
-        ligue_up: '⬆️ Passage de ligue'
-      }[r.trigger_type] || r.trigger_type;
-      html += '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf2);border-radius:8px;border:1px solid var(--b)">'
-        + '<div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--t)">'+r.nom+'</div>'
-        + '<div style="font-size:10px;color:var(--t3);margin-top:2px">'+triggerLabel+' → template <code style="background:var(--acBg);color:var(--ac);padding:1px 5px;border-radius:4px">'+r.template_id+'</code></div></div>'
-        + '<span class="bdg '+(r.actif?'green':'gray')+'" style="font-size:9px">'+(r.actif?'Actif':'Pause')+'</span>'
-        + '</div>';
-    });
-    html += '</div>';
-  }
-  
-  html += '<button onclick="envoisNouvelleRegle()" style="margin-top:14px;background:var(--ac);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">+ Nouvelle règle</button>';
-  html += '</div>';
-  el.innerHTML = html;
-}
-
-function envoisNouvelleRegle() {
-  var nom = prompt('Nom de la règle (ex: Rappel inactif 3j) :');
-  if(!nom) return;
-  var trigType = prompt('Type de déclenchement : inactivite, streak, inscription, ligue_up ?', 'inactivite');
-  if(!trigType) return;
-  var jours = 3;
-  if(trigType === 'inactivite') jours = parseInt(prompt('Après combien de jours d\'inactivité ?', '3'), 10) || 3;
-  var templateChoices = ENVOIS_TEMPLATES.map(function(t){return t.id;}).join(', ');
-  var templateId = prompt('Template ID à envoyer ('+templateChoices+') :', 'rappel_inactif_3j');
-  if(!templateId) return;
-  
-  var hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', Prefer:'return=minimal'};
-  fetch(SB_URL+'/rest/v1/envois_regles', {method:'POST', headers:hdrs,
-    body: JSON.stringify({nom:nom, template_id:templateId, trigger_type:trigType, trigger_value:{jours:jours}, canaux:['in_app','email'], actif:true})
-  }).then(function(r){
-    if(r.ok) {
-      showAdminToast('✅ Règle créée', 'success');
-      envoisCRMRender();
-    } else {
-      showAdminToast('Erreur '+r.status, 'error');
-    }
-  });
-}
-
-// ── ONGLET TEMPLATES ─────────────────────────────────────────────────
 function envoisRenderTemplates(el) {
-  var html = '<div class="fiche-block">';
-  html += '<div class="fiche-block-title">📝 Templates de messages ('+ENVOIS_TEMPLATES.length+')</div>';
-  html += '<div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.5">Modèles réutilisables. Variables disponibles : <code style="background:var(--acBg);color:var(--ac);padding:1px 5px;border-radius:4px">{{prenom}}</code> <code style="background:var(--acBg);color:var(--ac);padding:1px 5px;border-radius:4px">{{pseudo}}</code></div>';
-  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">';
-  ENVOIS_TEMPLATES.forEach(function(t){
-    html += '<div style="padding:11px;background:var(--surf2);border-radius:8px;border:1px solid var(--b)">'
-      + '<div style="display:flex;align-items:start;gap:8px;margin-bottom:6px">'
+  var block = document.createElement('div');
+  block.className = 'fiche-block';
+  block.innerHTML = '<div class="fiche-block-title">📝 Templates ('+ENVOIS_TEMPLATES.length+')</div>'
+    + '<div style="font-size:12px;color:var(--t2);margin-bottom:14px">Variables : <code style="background:var(--acBg);color:var(--ac);padding:1px 5px;border-radius:4px">{{prenom}}</code> <code style="background:var(--acBg);color:var(--ac);padding:1px 5px;border-radius:4px">{{pseudo}}</code></div>';
+  var grid = document.createElement('div');
+  grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:10px';
+  ENVOIS_TEMPLATES.forEach(function(t) {
+    var card = document.createElement('div');
+    card.style.cssText = 'padding:11px;background:var(--surf2);border-radius:8px;border:1px solid var(--b)';
+    card.innerHTML = '<div style="display:flex;align-items:start;gap:8px;margin-bottom:6px">'
       + '<span style="font-size:18px">'+(t.emoji||'✉️')+'</span>'
       + '<div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--t)">'+t.nom+'</div>'
       + '<div style="font-size:10px;color:var(--t3)">id: '+t.id+'</div></div></div>'
       + '<div style="font-size:11px;color:var(--t);font-weight:700;margin-bottom:3px">'+(t.titre||'')+'</div>'
-      + '<div style="font-size:11px;color:var(--t2);line-height:1.4">'+(t.corps||'').substring(0,140)+(t.corps && t.corps.length>140?'...':'')+'</div>'
-      + '<div style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap">'
-      + (t.canaux||[]).map(function(ca){
-          var icons = {email:'✉️',in_app:'📱',whatsapp:'💬',qr:'🔗',sms:'📨'};
-          return '<span style="font-size:9px;background:var(--surf);border:1px solid var(--b);padding:1px 6px;border-radius:10px;color:var(--t3)">'+(icons[ca]||'')+' '+ca+'</span>';
-        }).join('')
-      + '</div></div>';
+      + '<div style="font-size:11px;color:var(--t2);line-height:1.4">'+((t.corps||'').substring(0,140))+'</div>';
+    grid.appendChild(card);
   });
-  html += '</div></div>';
-  el.innerHTML = html;
+  block.appendChild(grid);
+  el.appendChild(block);
 }
 
+// Stubs pour anciennes fonctions (compat ascendante)
+function renderEnvoisList() {}
+function openEnvoiBillet() {}
+function openEnvoiLibre() { renderEnvois(); }
+function envoyerBillets() {}
+function selectEnvoiJoueurs() {}
+function renderEnvoiJoueursList() {}
+function updateBadges() {
+  try {
+    var b = document.getElementById('badge-envois');
+    if(b) b.style.display = 'none';
+  } catch(e){}
+}
 
 
 function showAdminToast(msg, type) {
@@ -7631,6 +7497,10 @@ function cancelDefi(defiId) {
 
 
 function renderParrainage() {
+  if(typeof window._parrSF === "undefined") window._parrSF = "name";
+  if(typeof window._parrSD === "undefined") window._parrSD = 1;
+  var _parrSF = window._parrSF;
+  var _parrSD = window._parrSD;
   const elevs  = buildElevs();
   const pp     = (typeof BAREME_CONFIG!=='undefined' && BAREME_CONFIG.pts_parrainage) ? BAREME_CONFIG.pts_parrainage : 100;
   const snd    = {};
@@ -7677,11 +7547,11 @@ function renderParrainage() {
     if(cv && !r.chs.includes(cv)) return false;
     return true;
   }).sort((a,b) => {
-    const d = _psd;
-    if(_psk==='name')    return d * a.name.localeCompare(b.name);
-    if(_psk==='etab')    return d * (a.etab||'').localeCompare(b.etab||'');
-    if(_psk==='filleuls'||_psk==='pts') return d * (a.fils.length-b.fils.length);
-    if(_psk==='recent')  return d * (new Date(a.last||0)-new Date(b.last||0));
+    const d = _parrSD;
+    if(_parrSF==='name')    return d * a.name.localeCompare(b.name);
+    if(_parrSF==='etab')    return d * (a.etab||'').localeCompare(b.etab||'');
+    if(_parrSF==='filleuls'||_parrSF==='pts') return d * (a.fils.length-b.fils.length);
+    if(_parrSF==='recent')  return d * (new Date(a.last||0)-new Date(b.last||0));
     return 0;
   });
 
@@ -8219,8 +8089,13 @@ function crmMessageGroupe(ns) {
   }
 }
 
-function openEleve(pseudo) {
+function openEleve(pseudo, _fromStack) {
   console.log('[openEleve] pseudo:', pseudo);
+  if(!window._ficheStack) window._ficheStack = [];
+  if(!_fromStack) {
+    var stackLast = window._ficheStack[window._ficheStack.length-1];
+    if(stackLast !== pseudo) window._ficheStack.push(pseudo);
+  }
   const elevs = buildElevs();
   console.log('[openEleve] elevs:', elevs.length, elevs.map(e=>e.pseudo));
   const d = elevs.find(e=>e.pseudo===pseudo);
@@ -8343,7 +8218,6 @@ function openEleve(pseudo) {
           ].map(([k,v])=>`<div class="info-row"><span class="info-key">${k}</span><span class="info-val">${v}</span></div>`).join('')}
           ${d.j.email ? `<button onclick="sendActivationLink('${d.j.email}','${(d.j.prenom||d.pseudo).replace(/'/g,"\\'")}\")" style="margin-top:8px;width:100%;background:var(--ac);color:#fff;border:none;border-radius:7px;padding:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✉️ Billet d'activation</button>` : ''}
           <button onclick="sendPushNotification('${d.pseudo}','${d.j.prenom||d.pseudo}')" style="margin-top:6px;width:100%;background:#7C5CFC;color:#fff;border:none;border-radius:7px;padding:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">📨 Envoyer notification</button>
-          <button onclick="sendWhatsApp('${d.pseudo}','${d.j.prenom||d.pseudo}','${d.j.tel||""}')" style="margin-top:6px;width:100%;background:#25D366;color:#fff;border:none;border-radius:7px;padding:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">💬 Envoyer un message WhatsApp</button>
         </div>
 
         <!-- Filleuls -->
@@ -8519,6 +8393,18 @@ function openEleve(pseudo) {
     </div>
   `;
   document.getElementById('modal-eleve').classList.add('open');
+  // Injecter bouton "← Retour parrain" si stack > 1 (arrivée depuis un filleul)
+  if(window._ficheStack && window._ficheStack.length > 1) {
+    var navBar = document.querySelector('#modal-eleve-body > div:first-child');
+    if(navBar && !navBar.querySelector('.btn-fiche-back')) {
+      var backBtn = document.createElement('button');
+      backBtn.className = 'btn-fiche-back';
+      backBtn.textContent = '← Retour';
+      backBtn.style.cssText = 'padding:5px 11px;border-radius:7px;border:1px solid var(--ac);background:var(--acBg);color:var(--ac);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;margin-right:8px';
+      backBtn.onclick = ficheGoBack;
+      navBar.insertBefore(backBtn, navBar.firstChild);
+    }
+  }
   // Charger onglet défis par défaut
   setTimeout(function(){ renderDefisFiche(pseudo, 'crees'); }, 100);
 }
@@ -8689,7 +8575,14 @@ async function adminUpdatePoints(pseudo, action) {
   }
 }
 
-function closeEleve() { document.getElementById('modal-eleve').classList.remove('open'); }
+function ficheGoBack() {
+  if(!window._ficheStack || window._ficheStack.length < 2) { closeEleve(); return; }
+  window._ficheStack.pop();
+  var prev = window._ficheStack.pop();
+  openEleve(prev);
+}
+
+function closeEleve() { window._ficheStack = []; document.getElementById('modal-eleve').classList.remove('open'); }
 
 // ── INIT ──
 buildNav();
