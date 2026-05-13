@@ -7885,7 +7885,11 @@ function renderParrainage() {
           return n===ps || n===full || n===pr || full===n
           || (pr.length>2 && (full.includes(n) || n.includes(pr) || ps.includes(n) || n.includes(ps)));
         });
-        if(found) openEleveOnTab(found.pseudo, 'filleuls');
+        if(found) {
+          openEleveOnTab(found.pseudo, 'filleuls');
+        } else {
+          showAdminToast('Aucun compte joueur trouvé pour "' + name + '"', 'info');
+        }
       });
     })(tr, d, r.name);
   });
