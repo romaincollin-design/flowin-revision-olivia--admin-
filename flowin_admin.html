@@ -1623,7 +1623,7 @@ L'équipe OPCONSULT</textarea>
           <button class="defis-tab active" onclick="navTo('bareme')">Barème & Ligues</button>
           <button class="defis-tab" onclick="navTo('cours')">Contenus</button>
           <button class="defis-tab" onclick="navTo('textes')">Textes app</button>
-          <button class="defis-tab" onclick="navTo('appcom')">App & Com</button>
+          <!-- AppCom désactivé : fonctions buildEmojiGrid/updateQR/initMsgData/renderMsgList/loadPushTemplate manquantes - à réimplémenter -->
         </div>
       </div>
       <div id="parametres-content"></div>
@@ -1796,6 +1796,17 @@ async function loadData() {
       dot.className = 'live-dot on';
       lbl.className = 'live-label on';
       lbl.textContent = `Live Supabase (${j.length} élèves)`;
+      // Charger gains pour fiches élèves
+      fetch(SB_URL+'/rest/v1/gains?order=ts.desc&limit=2000',{headers:hdrs})
+        .then(function(r){return r.ok?r.json():[];})
+        .then(function(g){ GAINS_DB = Array.isArray(g)?g:[]; console.log('[loadData] gains:', GAINS_DB.length); })
+        .catch(function(){ GAINS_DB = []; });
+      // Charger notifications pour suivi (vue admin si besoin)
+      fetch(SB_URL+'/rest/v1/notifications?order=created_at.desc&limit=500',{headers:hdrs})
+        .then(function(r){return r.ok?r.json():[];})
+        .then(function(n){ window.NOTIFICATIONS_DB = Array.isArray(n)?n:[]; })
+        .catch(function(){ window.NOTIFICATIONS_DB = []; });
+
       // Charger contenu pédagogique — 5 tables (sans colonne inexistante)
       Promise.all([
         fetch(SB_URL+'/rest/v1/themes?order=num.asc&limit=200',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
@@ -7571,16 +7582,28 @@ function renderEtabs() {
 }
 
 function renderAppCom() {
-  buildEmojiGrid();
-  buildEmojiQuick();
-  buildColorPalette();
-  applyColor();
-  updateQR();
-  if(Object.keys(msgConversations).length===0) initMsgData();
-  // Always render msg so it works whichever tab is active
-  renderMsgList();
-  selectConv(msgSelected);
-  loadPushTemplate('inactif3');
+  // Module désactivé temporairement — appels protégés par typeof
+  try { if(typeof buildEmojiGrid==='function') buildEmojiGrid(); } catch(e){}
+  try { if(typeof buildEmojiQuick==='function') buildEmojiQuick(); } catch(e){}
+  try { if(typeof buildColorPalette==='function') buildColorPalette(); } catch(e){}
+  try { if(typeof applyColor==='function') applyColor(); } catch(e){}
+  try { if(typeof updateQR==='function') updateQR(); } catch(e){}
+  try {
+    if(typeof initMsgData==='function' && typeof msgConversations!=='undefined'
+       && Object.keys(msgConversations).length===0) initMsgData();
+    if(typeof renderMsgList==='function') renderMsgList();
+    if(typeof selectConv==='function' && typeof msgSelected!=='undefined') selectConv(msgSelected);
+    if(typeof loadPushTemplate==='function') loadPushTemplate('inactif3');
+  } catch(e){}
+  // Affichage minimal de remplacement
+  var view = document.getElementById('v-appcom');
+  if(view && view.innerHTML.trim().length < 200) {
+    view.innerHTML = '<div style="padding:40px;text-align:center;color:var(--t3)">'
+      + '<div style="font-size:48px;margin-bottom:12px">🛠️</div>'
+      + '<div style="font-size:18px;font-weight:700;color:var(--t);margin-bottom:6px">App & Communication</div>'
+      + '<div style="font-size:13px;max-width:360px;margin:0 auto;line-height:1.6">Ce module est en cours de refonte. Utilise pour l\'instant <strong>Envois & Push</strong> pour envoyer des messages aux élèves.</div>'
+      + '</div>';
+  }
 }
 function openFicheEleve(pseudo) {
   navTo('eleves');
