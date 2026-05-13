@@ -7696,13 +7696,21 @@ function renderParrainage() {
   var snd = {};
   (DB.parrainage||[]).forEach(function(p) {
     if(!p.sender) return;
+    var sender = (p.sender||'').toLowerCase().trim();
+    var senderEmail = sender.split('@')[0];
     var me = elevs.find(function(e) {
-      var fn = ((e.j.prenom||'') + ' ' + (e.j.nom||'')).toLowerCase().trim();
-      var ps = (p.sender||'').toLowerCase().trim();
-      return ps === fn || ps === (e.pseudo||'').toLowerCase();
+      var pseudo = (e.pseudo||'').toLowerCase();
+      var prenom = (e.j.prenom||'').toLowerCase();
+      var nom    = (e.j.nom||'').toLowerCase();
+      var full   = (prenom + ' ' + nom).trim();
+      var email  = (e.j.email||'').toLowerCase();
+      return sender===pseudo || sender===full || sender===prenom
+        || senderEmail===pseudo || senderEmail===prenom
+        || email===sender || (e.j.email && e.j.email===(p.sender_email||''))
+        || (prenom.length>2 && (full.includes(sender) || sender.includes(prenom)));
     });
     var k = me ? ((me.j.prenom||'') + ' ' + (me.j.nom||'')).trim() : p.sender;
-    if(!snd[k]) snd[k] = {name:k, etab: me?(me.j.ecole||'—'):(p.sender_etab||'—'), elev:me||null, fils:[], chs:[], last:null};
+    if(!snd[k]) snd[k] = {name:k, etab: me?(me.j.ecole||p.sender_etab||'—'):(p.sender_etab||p.sender_ecole||'—'), elev:me||null, fils:[], chs:[], last:null};
     snd[k].fils.push(p.destinataire);
     snd[k].chs.push(p.channel||'');
     if(!snd[k].last || (p.ts && p.ts > snd[k].last)) snd[k].last = p.ts;
