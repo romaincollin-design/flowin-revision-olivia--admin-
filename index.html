@@ -6010,7 +6010,43 @@ function switchTL(mode,btn){
   window._tlMode=mode;
   document.querySelectorAll('.tl-pill').forEach(function(b){b.classList.remove('on');});
   if(btn)btn.classList.add('on');
-  if(typeof renderTL==='function')renderTL(mode,(typeof DB!=='undefined'?DB.sessions:[]));
+  renderTL(mode,(typeof DB!=='undefined'?DB.sessions:[]));
+}
+
+function renderTL(mode, rows) {
+  var el = document.getElementById('defis-tl');
+  if(!el) return;
+  var filtered = rows;
+  if(mode==='quiz')  filtered = rows.filter(function(s){ return s.type!=='cnx'; });
+  if(mode==='cnx')   filtered = rows.filter(function(s){ return s.type==='cnx'; });
+  if(!filtered.length) {
+    el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--t3);font-size:12px">Aucune activité dans cette période</div>';
+    return;
+  }
+  var html = '<table style="width:100%;border-collapse:collapse">'
+    + '<thead><tr>'
+    + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:7px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Joueur</th>'
+    + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:7px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Thème</th>'
+    + '<th style="text-align:right;font-size:10px;font-weight:700;color:var(--t3);padding:7px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Score</th>'
+    + '<th style="text-align:right;font-size:10px;font-weight:700;color:var(--t3);padding:7px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Pts</th>'
+    + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:7px 8px;border-bottom:1px solid var(--b);text-transform:uppercase">Date</th>'
+    + '</tr></thead><tbody>';
+  filtered.slice(0,50).forEach(function(s) {
+    var sc = s.score||0;
+    var scColor = sc>=70?'var(--gr)':sc>=50?'var(--am)':'var(--re)';
+    var dt = s.ts ? new Date(s.ts) : null;
+    var dateStr = dt ? dt.toLocaleDateString('fr-FR') + ' ' + dt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) : '—';
+    var _ps = (s.pseudo||'').replace(/['"<>]/g,''); html += '<tr style="cursor:pointer" class="tbl-row-hover" onclick="openEleve(\"' + _ps + '\")">'+
+      + '<td style="padding:7px 8px;font-size:12px;font-weight:600;color:var(--t);border-bottom:1px solid var(--b)">' + (s.pseudo||'—') + '</td>'
+      + '<td style="padding:7px 8px;font-size:11px;color:var(--t3);border-bottom:1px solid var(--b);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (s.theme||s.theme_id||'—') + '</td>'
+      + '<td style="padding:7px 8px;font-size:12px;font-weight:700;text-align:right;color:' + scColor + ';border-bottom:1px solid var(--b)">' + sc + '%</td>'
+      + '<td style="padding:7px 8px;font-size:12px;font-weight:700;text-align:right;color:var(--am);border-bottom:1px solid var(--b)">+' + (s.pts||0) + '</td>'
+      + '<td style="padding:7px 8px;font-size:11px;color:var(--t3);border-bottom:1px solid var(--b)">' + dateStr + '</td>'
+      + '</tr>';
+  });
+  html += '</tbody></table>';
+  if(filtered.length>50) html += '<div style="text-align:center;font-size:10px;color:var(--t3);padding:8px;border-top:1px solid var(--b)">+ '+(filtered.length-50)+' sessions plus anciennes</div>';
+  el.innerHTML = html;
 }
 function openPoolPanel(pi){
   var pdata=window._poolsData;if(!pdata||pi>=pdata.length)return;
@@ -6788,6 +6824,52 @@ function buildElevs() {
   });
 }
 
+function renderDefisRank(rows) {
+  var el = document.getElementById('defis-rank');
+  if(!el) return;
+  // Agréger par joueur
+  var byPlayer = {};
+  rows.forEach(function(s) {
+    var p = s.pseudo || '—';
+    if(!byPlayer[p]) byPlayer[p] = {pseudo:p, sessions:0, totalPts:0, totalScore:0};
+    byPlayer[p].sessions++;
+    byPlayer[p].totalPts   += (s.pts||0);
+    byPlayer[p].totalScore += (s.score||0);
+  });
+  var sorted = Object.values(byPlayer).sort(function(a,b){ return b.totalPts - a.totalPts; });
+  if(!sorted.length) {
+    el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--t3);font-size:12px">Aucune donnée pour cette période</div>';
+    return;
+  }
+  var html = '<div class="panel"><div class="panel-header">🏆 Classement joueurs</div>';
+  html += '<table style="width:100%;border-collapse:collapse">'
+    + '<thead><tr>'
+    + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">#</th>'
+    + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Joueur</th>'
+    + '<th style="text-align:center;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Sessions</th>'
+    + '<th style="text-align:right;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Score moy.</th>'
+    + '<th style="text-align:right;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Points</th>'
+    + '</tr></thead><tbody>';
+  sorted.slice(0,20).forEach(function(p, i) {
+    var medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':''+(i+1);
+    var avg = p.sessions > 0 ? Math.round(p.totalScore/p.sessions) : 0;
+    var scoreColor = avg>=70?'var(--gr)':avg>=50?'var(--am)':'var(--re)';
+    html += '<tr style="cursor:pointer" class="tbl-row-hover" data-pseudo="' + (p.pseudo||'').replace(/"/g,'') + '">' 
+      + '<td style="padding:8px;font-size:12px;font-weight:700;border-bottom:1px solid var(--b)">' + medal + '</td>'
+      + '<td style="padding:8px;font-size:12px;font-weight:700;color:var(--t);border-bottom:1px solid var(--b)">' + p.pseudo + '</td>'
+      + '<td style="padding:8px;font-size:12px;text-align:center;color:var(--t3);border-bottom:1px solid var(--b)">' + p.sessions + '</td>'
+      + '<td style="padding:8px;font-size:12px;text-align:right;font-weight:700;color:' + scoreColor + ';border-bottom:1px solid var(--b)">' + avg + '%</td>'
+      + '<td style="padding:8px;font-size:12px;text-align:right;font-weight:700;color:var(--am);border-bottom:1px solid var(--b)">+' + p.totalPts.toLocaleString('fr') + '</td>'
+      + '</tr>';
+  });
+  html += '</tbody></table></div>';
+  el.innerHTML = html;
+  // Rendre les lignes cliquables via addEventListener
+  el.querySelectorAll('tr[data-pseudo]').forEach(function(tr) {
+    tr.addEventListener('click', function(){ openEleve(tr.dataset.pseudo); });
+  });
+}
+
 function renderDefis() {
   const per = (document.getElementById('defis-periode')||{value:'7'}).value||'7';
   const mat = (document.getElementById('defis-matiere')||{value:''}).value||'';
@@ -6864,7 +6946,8 @@ function renderDefis() {
     </div>`;
   }).join('') : `<div class="empty"><div class="empty-icon">⚔️</div><div class="empty-text">Aucune pool active</div></div>`;
 
-  renderTL(window._tlMode||'all', rows);
+  // Remplir le classement (defis-rank)
+  renderDefisRank(rows);
 
   document.getElementById('defis-histo').innerHTML = `<div class="panel"><div class="panel-header">📋 Historique</div><table><thead><tr><th>Joueur</th><th>Thème</th><th>Score</th><th>Pts</th><th>Date</th></tr></thead><tbody>${
     DB.sessions.slice(0,30).map(s=>`<tr><td style="font-weight:600">${s.pseudo||'—'}</td><td style="font-size:11px">${s.theme||s.matiere||'—'}</td><td>${scorePill(s.score_pct||0)}</td><td style="font-weight:700;color:var(--am)">+${s.pts_round||0}</td><td style="font-size:10px;color:var(--t3)">${ago(s.ts)}</td></tr>`).join('')
