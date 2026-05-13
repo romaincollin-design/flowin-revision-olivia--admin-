@@ -1534,85 +1534,27 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
     <!-- ══ VUE ENVOIS & PUSH ══ -->
     <div class="view" id="v-envois">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-        <div class="view-title" style="margin-bottom:0">✉️ Envois &amp; Push</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button id="btn-send-billet" style="background:var(--ac);color:#fff;border:none;border-radius:9px;padding:9px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">✉️ Billet d'activation</button>
-          <button id="btn-send-libre" style="background:var(--surf2);border:1px solid var(--b);border-radius:9px;padding:9px 18px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--t2)">📝 Message libre</button>
+        <div class="view-title" style="margin-bottom:0">📨 Envois & Communication</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button id="env-quick-new" style="background:var(--ac);color:#fff;border:none;border-radius:9px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">+ Nouveau message</button>
+          <button id="env-refresh" style="background:var(--surf2);color:var(--t2);border:1px solid var(--b);border-radius:9px;padding:9px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">↻ Actualiser</button>
         </div>
       </div>
-      <div class="kpi-grid" style="margin-bottom:20px">
-        <div class="kpi-card"><div class="kpi-bar" style="background:var(--ac)"></div><div class="kpi-icon">👥</div><div class="kpi-val" id="kpi-total-joueurs">—</div><div class="kpi-label">Joueurs</div><div class="kpi-sub">inscrits</div></div>
-        <div class="kpi-card"><div class="kpi-bar" style="background:#22C9A0"></div><div class="kpi-icon">✅</div><div class="kpi-val" id="kpi-joueurs-actives">—</div><div class="kpi-label">Avec compte</div><div class="kpi-sub">email+password</div></div>
-        <div class="kpi-card"><div class="kpi-bar" style="background:#F4A83A"></div><div class="kpi-icon">⏳</div><div class="kpi-val" id="kpi-joueurs-pending">—</div><div class="kpi-label">À activer</div><div class="kpi-sub">sans password</div></div>
-        <div class="kpi-card"><div class="kpi-bar" style="background:#E84855"></div><div class="kpi-icon">❌</div><div class="kpi-val" id="kpi-joueurs-noemail">—</div><div class="kpi-label">Sans email</div><div class="kpi-sub">non contactables</div></div>
+
+      <!-- KPIs -->
+      <div class="kpi-grid" id="envois-kpis" style="margin-bottom:14px"></div>
+
+      <!-- Onglets -->
+      <div id="envois-tabs" style="display:flex;border-bottom:1px solid var(--b);margin-bottom:16px;gap:0">
+        <button class="defis-tab active" id="env-tab-compose" onclick="envoisTab('compose',this)">✍️ Composer</button>
+        <button class="defis-tab" id="env-tab-histo" onclick="envoisTab('histo',this)">📋 Historique</button>
+        <button class="defis-tab" id="env-tab-rules" onclick="envoisTab('rules',this)">⚙️ Automatisation</button>
+        <button class="defis-tab" id="env-tab-templates" onclick="envoisTab('templates',this)">📝 Templates</button>
       </div>
-      <div class="panel">
-        <div class="panel-header">
-          <span>👥 Joueurs — statut activation</span>
-          <div style="display:flex;gap:8px;align-items:center">
-            <select id="envois-filter" style="font-size:11px;padding:4px 8px;border:1px solid var(--b);border-radius:6px;background:var(--surf2);color:var(--t);cursor:pointer">
-              <option value="all">Tous</option>
-              <option value="noemail">Sans email</option>
-              <option value="pending">À activer</option>
-            </select>
-            <button class="act-btn" id="envois-refresh-btn">↻</button>
-          </div>
-        </div>
-        <div id="envois-list" style="padding:4px 0"></div>
-      </div>
+
+      <div id="envois-content"></div>
     </div>
 
-    <!-- Modal envoi billet -->
-    <div id="modal-envoi-billet" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;padding:16px">
-      <div style="background:var(--surf);border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">
-        <div style="padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between">
-          <div style="font-size:16px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">✉️ Envoyer billet d'activation</div>
-          <button id="modal-envoi-close" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px">✕</button>
-        </div>
-        <div style="padding:16px;display:flex;flex-direction:column;gap:14px">
-
-          <!-- Étape 1 : Message -->
-          <div style="background:var(--surf2);border-radius:10px;padding:14px">
-            <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">📝 Message (variables : {prenom}, {pseudo}, {lien})</div>
-            <input id="envoi-sujet" placeholder="Objet : Ton accès Flowin t'attend !"
-              style="width:100%;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;font-family:inherit;background:var(--surf);color:var(--t);box-sizing:border-box;margin-bottom:8px">
-            <textarea id="envoi-corps" rows="7"
-              style="width:100%;border:1px solid var(--b);border-radius:7px;padding:8px 10px;font-size:12px;font-family:inherit;background:var(--surf);color:var(--t);resize:vertical;box-sizing:border-box;line-height:1.6">Salut {prenom} 👋
-
-Ton appli Flowin évolue !
-
-Tu as un compte privé prêt — crée ton mot de passe pour accéder à tous tes résultats, défier tes amis et remporter des lots.
-
-→ Créer mon mot de passe : {lien}
-
-À très vite sur Flowin !
-L'équipe OPCONSULT</textarea>
-            <div style="margin-top:8px;font-size:10px;color:var(--t3)">Le lien de réinitialisation est valide 24h.</div>
-          </div>
-
-          <!-- Étape 2 : Destinataires -->
-          <div style="background:var(--surf2);border-radius:10px;padding:14px">
-            <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">👥 Destinataires</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-              <button id="envoi-sel-tous" style="background:var(--ac);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">Tous avec email</button>
-              <button id="envoi-sel-pending" style="background:var(--surf);border:1px solid var(--b);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--t2)">À activer uniquement</button>
-              <button id="envoi-sel-none" style="background:var(--surf);border:1px solid var(--b);border-radius:6px;padding:5px 12px;font-size:11px;cursor:pointer;font-family:inherit;color:var(--t2)">Déselectionner</button>
-            </div>
-            <div id="envoi-joueurs-list" style="max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:4px"></div>
-            <div style="margin-top:8px;font-size:11px;color:var(--t3)">Sélectionnés : <span id="envoi-count" style="font-weight:700;color:var(--ac)">0</span></div>
-          </div>
-
-          <!-- Résumé + Envoi -->
-          <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:4px">
-            <button id="modal-envoi-close2" style="background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:9px 16px;font-size:12px;cursor:pointer;font-family:inherit">Annuler</button>
-            <button id="btn-envoyer-billets" style="background:var(--ac);color:#fff;border:none;border-radius:8px;padding:9px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">✉️ Envoyer les billets</button>
-          </div>
-          <div id="envoi-result" style="display:none;padding:10px 12px;border-radius:8px;font-size:12px;font-weight:600;text-align:center"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ VUE PARAMÈTRES ══ -->
     <div class="view" id="v-parametres">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
         <div>
@@ -4443,6 +4385,33 @@ function editPoints(pseudo, mode) {
   });
 }
 
+function sendWhatsApp(pseudo, prenom, tel) {
+  if(!tel || !tel.trim()) {
+    var newTel = prompt('Numéro de téléphone de ' + prenom + ' (format international ex: +33612345678) :');
+    if(!newTel) return;
+    // Mémoriser pour la prochaine fois
+    fetch(SB_URL+'/rest/v1/joueurs?pseudo=eq.'+encodeURIComponent(pseudo), {
+      method:'PATCH', headers:{apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', Prefer:'return=minimal'},
+      body: JSON.stringify({tel: newTel})
+    }).catch(function(){});
+    tel = newTel;
+  }
+  var titre = prompt('Titre du message (ex: 🎯 Bonjour ' + prenom + ') :');
+  if(!titre) return;
+  var corps = prompt('Message :');
+  if(corps === null) return;
+  var hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', Prefer:'return=minimal'};
+  // Logger
+  fetch(SB_URL+'/rest/v1/envois_log', {method:'POST', headers:hdrs,
+    body: JSON.stringify({type:'libre', canal:'whatsapp', pseudo: prenom, titre:titre, corps:corps, statut:'envoye'})
+  }).catch(function(){});
+  // Ouvrir WhatsApp
+  var num = tel.replace(/\D/g,'');
+  var msg = encodeURIComponent(titre + '\n\n' + corps);
+  window.open('https://wa.me/' + num + '?text=' + msg, '_blank');
+  showAdminToast('💬 WhatsApp ouvert pour ' + prenom, 'success');
+}
+
 function sendPushNotification(pseudo, prenom) {
   if(!pseudo) { showAdminToast('Pseudo manquant', 'error'); return; }
   var titre = prompt('Titre de la notification (ex: 🎯 Quiz du jour) :');
@@ -6265,34 +6234,14 @@ function toggleLigue(id){var el=document.getElementById(id);if(el)el.style.displ
 // ═══════════════════════════════════════════════
 
 function renderEnvois() {
-  updateBadges();
-  var joueurs = DB.joueurs || [];
-  var avecEmail   = joueurs.filter(function(j){ return j.email && j.email.trim(); });
-  var sansEmail   = joueurs.filter(function(j){ return !j.email || !j.email.trim(); });
-  // On considère "activé" = a un email (proxy — on ne sait pas si Auth Supabase)
-  var kpiTotal    = joueurs.length;
-  var kpiActive   = avecEmail.length;
-  var kpiPending  = avecEmail.length; // tous avec email peuvent être activés
-  var kpiNoEmail  = sansEmail.length;
-
-  var set = function(id, v) { var el = document.getElementById(id); if(el) el.textContent = v; };
-  set('kpi-total-joueurs',   kpiTotal);
-  set('kpi-joueurs-actives', kpiActive);
-  set('kpi-joueurs-pending', kpiPending);
-  set('kpi-joueurs-noemail', kpiNoEmail);
-
-  // Binder boutons
-  var btnBillet  = document.getElementById('btn-send-billet');
-  var btnLibre   = document.getElementById('btn-send-libre');
-  var btnRefresh = document.getElementById('envois-refresh-btn');
-  var filterSel  = document.getElementById('envois-filter');
-
-  if(btnBillet  && !btnBillet._bound)  { btnBillet._bound  = true; btnBillet.addEventListener('click',  openEnvoiBillet); }
-  if(btnLibre   && !btnLibre._bound)   { btnLibre._bound   = true; btnLibre.addEventListener('click',   openEnvoiLibre); }
-  if(btnRefresh && !btnRefresh._bound) { btnRefresh._bound = true; btnRefresh.addEventListener('click', function(){ renderEnvoisList(); }); }
-  if(filterSel  && !filterSel._bound)  { filterSel._bound  = true; filterSel.addEventListener('change', function(){ renderEnvoisList(); }); }
-
-  renderEnvoisList();
+  // CRM Envois — délègue à envoisCRMRender qui gère onglets + KPIs + composer
+  if(typeof envoisCRMRender === 'function') {
+    envoisCRMRender();
+    return;
+  }
+  // Fallback minimaliste
+  var el = document.getElementById('envois-content');
+  if(el) el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--t3)">Module Envois en chargement…</div>';
 }
 
 function renderEnvoisList() {
@@ -6448,6 +6397,473 @@ async function envoyerBillets() {
   showAdminToast(sent + ' billet(s) envoyé(s) ✅');
   setTimeout(function(){ if(resultEl) resultEl.style.display = 'none'; }, 5000);
 }
+
+// ════════════════════════════════════════════════════════════════════
+// CRM ENVOIS — Gestion complète des communications admin → élèves
+// ════════════════════════════════════════════════════════════════════
+var ENVOIS_LOG = [];
+var ENVOIS_TEMPLATES = [];
+var ENVOIS_REGLES = [];
+var ENVOIS_SELECTED_PSEUDOS = [];
+var ENVOIS_CURRENT_TAB = 'compose';
+
+async function envoisCRMLoadData() {
+  if(typeof SB_ENABLED === 'undefined' || !SB_ENABLED) {
+    ENVOIS_LOG = []; ENVOIS_REGLES = [];
+    if(ENVOIS_TEMPLATES.length === 0) {
+      ENVOIS_TEMPLATES = [
+        {id:'billet_activation', nom:'Billet d activation initial', emoji:'✉️', titre:'Active ton compte', corps:'Bonjour {{prenom}} !', canaux:['email','whatsapp']},
+        {id:'libre', nom:'Message libre', emoji:'💬', titre:'', corps:'', canaux:['email','in_app']}
+      ];
+    }
+    return;
+  }
+  var hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY};
+  try {
+    var r1 = await fetch(SB_URL+'/rest/v1/envois_log?order=ts.desc&limit=500', {headers:hdrs});
+    if(r1.ok) ENVOIS_LOG = await r1.json();
+  } catch(e){ ENVOIS_LOG = []; }
+  try {
+    var r2 = await fetch(SB_URL+'/rest/v1/envois_templates?actif=eq.true&order=id', {headers:hdrs});
+    if(r2.ok) ENVOIS_TEMPLATES = await r2.json();
+  } catch(e){ ENVOIS_TEMPLATES = []; }
+  try {
+    var r3 = await fetch(SB_URL+'/rest/v1/envois_regles?order=created_at.desc', {headers:hdrs});
+    if(r3.ok) ENVOIS_REGLES = await r3.json();
+  } catch(e){ ENVOIS_REGLES = []; }
+}
+
+function envoisCRMRender() {
+  // Charger les données puis afficher
+  envoisCRMLoadData().then(function(){
+    envoisCRMRenderKpis();
+    envoisCRMRenderTab(ENVOIS_CURRENT_TAB);
+  });
+  // Binder boutons header (idempotent)
+  var btnNew = document.getElementById('env-quick-new');
+  if(btnNew && !btnNew._bound) { btnNew._bound = true; btnNew.addEventListener('click', function(){ envoisTab('compose', document.getElementById('env-tab-compose')); }); }
+  var btnRefresh = document.getElementById('env-refresh');
+  if(btnRefresh && !btnRefresh._bound) { btnRefresh._bound = true; btnRefresh.addEventListener('click', envoisCRMRender); }
+}
+
+function envoisCRMRenderKpis() {
+  var el = document.getElementById('envois-kpis');
+  if(!el) return;
+  var now = Date.now();
+  var j7 = now - 7*86400000;
+  var nbTotal = ENVOIS_LOG.length;
+  var nb7j = ENVOIS_LOG.filter(function(e){ return new Date(e.ts).getTime() > j7; }).length;
+  var nbClics = ENVOIS_LOG.filter(function(e){ return e.statut === 'clique'; }).length;
+  var tauxClic = nbTotal > 0 ? Math.round(nbClics/nbTotal*100) : 0;
+  var nbInactifs7j = (DB.joueurs||[]).filter(function(j){
+    var lastSess = (DB.sessions||[]).filter(function(s){return s.pseudo===j.pseudo;}).map(function(s){return new Date(s.ts).getTime();}).sort().pop();
+    return !lastSess || lastSess < j7;
+  }).length;
+  
+  var kpis = [
+    {val:nbTotal,      label:'Total envois',     sub:'depuis le début',          color:'var(--ac)',  icon:'📨'},
+    {val:nb7j,         label:'Cette semaine',    sub:'envois 7 derniers jours',  color:'var(--gr)',  icon:'📊'},
+    {val:tauxClic+'%', label:'Taux de clic',     sub:nbClics+' clics / '+nbTotal,color:'var(--am)',  icon:'👆'},
+    {val:nbInactifs7j, label:'Joueurs à relancer',sub:'inactifs depuis 7 jours', color:'var(--re)',  icon:'⏰'},
+  ];
+  
+  el.innerHTML = kpis.map(function(k){
+    return '<div class="kpi-card" style="border-left:3px solid '+k.color+'">'
+      + '<div class="kpi-icon">'+k.icon+'</div>'
+      + '<div class="kpi-val" style="color:'+k.color+'">'+k.val+'</div>'
+      + '<div class="kpi-label">'+k.label+'</div>'
+      + '<div class="kpi-sub">'+k.sub+'</div>'
+      + '</div>';
+  }).join('');
+}
+
+function envoisTab(tab, btn) {
+  ENVOIS_CURRENT_TAB = tab;
+  if(btn) {
+    document.querySelectorAll('#envois-tabs .defis-tab').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+  }
+  envoisCRMRenderTab(tab);
+}
+
+function envoisCRMRenderTab(tab) {
+  var el = document.getElementById('envois-content');
+  if(!el) return;
+  if(tab === 'compose') envoisRenderCompose(el);
+  else if(tab === 'histo') envoisRenderHisto(el);
+  else if(tab === 'rules') envoisRenderRules(el);
+  else if(tab === 'templates') envoisRenderTemplates(el);
+}
+
+// ── ONGLET COMPOSER ──────────────────────────────────────────────────
+function envoisRenderCompose(el) {
+  var joueurs = DB.joueurs || [];
+  var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">';
+  
+  // COLONNE GAUCHE : destinataires + template + contenu
+  html += '<div class="fiche-block">';
+  html += '<div class="fiche-block-title">🎯 Destinataires</div>';
+  html += '<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">'
+    + '<button class="env-seg-btn" data-seg="all" style="background:var(--ac);color:#fff;border:none;border-radius:7px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Tous ('+joueurs.length+')</button>'
+    + '<button class="env-seg-btn" data-seg="email" style="background:var(--surf2);color:var(--t2);border:1px solid var(--b);border-radius:7px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Avec email</button>'
+    + '<button class="env-seg-btn" data-seg="noemail" style="background:var(--surf2);color:var(--t2);border:1px solid var(--b);border-radius:7px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Sans email</button>'
+    + '<button class="env-seg-btn" data-seg="inactif" style="background:var(--surf2);color:var(--t2);border:1px solid var(--b);border-radius:7px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Inactifs 3j+</button>'
+    + '<button class="env-seg-btn" data-seg="none" style="background:var(--surf2);color:var(--t2);border:1px solid var(--b);border-radius:7px;padding:6px 11px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">Aucun</button>'
+    + '</div>';
+  html += '<div id="env-dest-count" style="font-size:11px;color:var(--ac);font-weight:700;margin-bottom:8px">0 destinataire(s) sélectionné(s)</div>';
+  html += '<input id="env-dest-search" placeholder="🔍 Filtrer..." style="width:100%;padding:7px 11px;border:1px solid var(--b);border-radius:7px;font-size:12px;font-family:inherit;margin-bottom:8px;background:var(--surf2);color:var(--t)" oninput="envoisFiltrerListe()">';
+  html += '<div id="env-dest-list" style="max-height:280px;overflow-y:auto;border:1px solid var(--b);border-radius:8px;padding:6px"></div>';
+  html += '</div>';
+  
+  // COLONNE DROITE : composition message
+  html += '<div class="fiche-block">';
+  html += '<div class="fiche-block-title">✍️ Message</div>';
+  
+  // Sélecteur template
+  html += '<label style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;font-weight:700;display:block;margin-bottom:5px">Template</label>';
+  html += '<select id="env-template" onchange="envoisAppliquerTemplate()" style="width:100%;padding:8px 11px;border:1px solid var(--b);border-radius:7px;font-size:12px;font-family:inherit;margin-bottom:10px;background:var(--surf2);color:var(--t)">'
+    + '<option value="">— Choisir un template —</option>'
+    + ENVOIS_TEMPLATES.map(function(t){ return '<option value="'+t.id+'">'+(t.emoji||'✉️')+' '+t.nom+'</option>'; }).join('')
+    + '</select>';
+  
+  // Canaux
+  html += '<label style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;font-weight:700;display:block;margin-bottom:5px">Canal d\'envoi</label>';
+  html += '<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">'
+    + '<label style="display:flex;align-items:center;gap:5px;background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:6px 10px;font-size:11px;cursor:pointer"><input type="checkbox" id="env-canal-email" checked> ✉️ Email</label>'
+    + '<label style="display:flex;align-items:center;gap:5px;background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:6px 10px;font-size:11px;cursor:pointer"><input type="checkbox" id="env-canal-inapp" checked> 📱 In-app</label>'
+    + '<label style="display:flex;align-items:center;gap:5px;background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:6px 10px;font-size:11px;cursor:pointer"><input type="checkbox" id="env-canal-wa"> 💬 WhatsApp</label>'
+    + '<label style="display:flex;align-items:center;gap:5px;background:var(--surf2);border:1px solid var(--b);border-radius:7px;padding:6px 10px;font-size:11px;cursor:pointer"><input type="checkbox" id="env-canal-qr"> 🔗 QR / Copie</label>'
+    + '</div>';
+  
+  // Titre
+  html += '<label style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;font-weight:700;display:block;margin-bottom:5px">Titre</label>';
+  html += '<input id="env-titre" placeholder="Ex: 🎯 Quiz du jour" style="width:100%;padding:8px 11px;border:1px solid var(--b);border-radius:7px;font-size:12px;font-family:inherit;margin-bottom:10px;background:var(--surf2);color:var(--t)">';
+  
+  // Corps
+  html += '<label style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;font-weight:700;display:block;margin-bottom:5px">Message <span style="font-weight:400;text-transform:none;color:var(--t3)">(variables : {{prenom}}, {{pseudo}})</span></label>';
+  html += '<textarea id="env-corps" rows="5" placeholder="Salut {{prenom}}, on t\'attend sur Flowin..." style="width:100%;padding:8px 11px;border:1px solid var(--b);border-radius:7px;font-size:12px;font-family:inherit;margin-bottom:10px;background:var(--surf2);color:var(--t);resize:vertical"></textarea>';
+  
+  // CTA
+  html += '<label style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;font-weight:700;display:block;margin-bottom:5px">Lien d\'action (optionnel)</label>';
+  html += '<div style="display:flex;gap:6px;margin-bottom:14px">'
+    + '<input id="env-cta-label" placeholder="Texte bouton" style="flex:1;padding:8px 11px;border:1px solid var(--b);border-radius:7px;font-size:12px;font-family:inherit;background:var(--surf2);color:var(--t)">'
+    + '<input id="env-cta-url" placeholder="https://flowrevis.vercel.app/" style="flex:2;padding:8px 11px;border:1px solid var(--b);border-radius:7px;font-size:12px;font-family:inherit;background:var(--surf2);color:var(--t)">'
+    + '</div>';
+  
+  // Aperçu + Envoyer
+  html += '<div style="display:flex;gap:8px">';
+  html += '<button onclick="envoisPreview()" style="flex:1;background:var(--surf2);color:var(--t2);border:1px solid var(--b);border-radius:8px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">👁️ Aperçu</button>';
+  html += '<button onclick="envoisEnvoyer()" style="flex:2;background:var(--ac);color:#fff;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">📨 Envoyer maintenant</button>';
+  html += '</div>';
+  html += '</div>';
+  
+  html += '</div>'; // grid
+  
+  el.innerHTML = html;
+  
+  // Bind segments
+  el.querySelectorAll('.env-seg-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      el.querySelectorAll('.env-seg-btn').forEach(function(b){
+        b.style.background = 'var(--surf2)'; b.style.color = 'var(--t2)'; b.style.border = '1px solid var(--b)';
+      });
+      btn.style.background = 'var(--ac)'; btn.style.color = '#fff'; btn.style.border = 'none';
+      envoisAppliquerSegment(btn.dataset.seg);
+    });
+  });
+  
+  envoisFiltrerListe();
+}
+
+function envoisAppliquerSegment(seg) {
+  var joueurs = DB.joueurs || [];
+  var now = Date.now();
+  var j3 = now - 3*86400000;
+  if(seg === 'all') {
+    ENVOIS_SELECTED_PSEUDOS = joueurs.map(function(j){return j.pseudo;});
+  } else if(seg === 'email') {
+    ENVOIS_SELECTED_PSEUDOS = joueurs.filter(function(j){return j.email&&j.email.trim();}).map(function(j){return j.pseudo;});
+  } else if(seg === 'noemail') {
+    ENVOIS_SELECTED_PSEUDOS = joueurs.filter(function(j){return !j.email||!j.email.trim();}).map(function(j){return j.pseudo;});
+  } else if(seg === 'inactif') {
+    ENVOIS_SELECTED_PSEUDOS = joueurs.filter(function(j){
+      var lastSess = (DB.sessions||[]).filter(function(s){return s.pseudo===j.pseudo;}).map(function(s){return new Date(s.ts).getTime();}).sort().pop();
+      return !lastSess || lastSess < j3;
+    }).map(function(j){return j.pseudo;});
+  } else { ENVOIS_SELECTED_PSEUDOS = []; }
+  envoisFiltrerListe();
+}
+
+function envoisFiltrerListe() {
+  var list = document.getElementById('env-dest-list');
+  var count = document.getElementById('env-dest-count');
+  if(!list) return;
+  var search = ((document.getElementById('env-dest-search')||{}).value || '').toLowerCase();
+  var joueurs = (DB.joueurs || []).filter(function(j){
+    if(!search) return true;
+    return ((j.pseudo||'')+' '+(j.prenom||'')+' '+(j.nom||'')+' '+(j.email||'')).toLowerCase().indexOf(search) >= 0;
+  });
+  
+  list.innerHTML = joueurs.length === 0 
+    ? '<div style="text-align:center;padding:14px;color:var(--t3);font-size:11px">Aucun joueur</div>'
+    : joueurs.map(function(j){
+      var sel = ENVOIS_SELECTED_PSEUDOS.indexOf(j.pseudo) >= 0;
+      var em = j.email ? '<span style="color:var(--t3);font-size:10px">'+j.email+'</span>' : '<span style="color:var(--re);font-size:10px">— sans email</span>';
+      return '<label style="display:flex;align-items:center;gap:8px;padding:5px 7px;border-radius:6px;cursor:pointer;'+(sel?'background:var(--acBg)':'')+'">'
+        + '<input type="checkbox" class="env-dest-cb" data-pseudo="'+j.pseudo+'"'+(sel?' checked':'')+'>'
+        + '<span style="flex:1;font-size:12px;color:var(--t)"><strong>'+(j.prenom||j.pseudo)+'</strong> '+(j.nom||'')+' '+em+'</span>'
+        + '</label>';
+    }).join('');
+  
+  list.querySelectorAll('.env-dest-cb').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      var p = cb.dataset.pseudo;
+      if(cb.checked) {
+        if(ENVOIS_SELECTED_PSEUDOS.indexOf(p)<0) ENVOIS_SELECTED_PSEUDOS.push(p);
+      } else {
+        ENVOIS_SELECTED_PSEUDOS = ENVOIS_SELECTED_PSEUDOS.filter(function(x){return x!==p;});
+      }
+      envoisFiltrerListe();
+    });
+  });
+  
+  if(count) count.textContent = ENVOIS_SELECTED_PSEUDOS.length + ' destinataire(s) sélectionné(s)';
+}
+
+function envoisAppliquerTemplate() {
+  var sel = document.getElementById('env-template');
+  if(!sel || !sel.value) return;
+  var t = ENVOIS_TEMPLATES.find(function(x){return x.id===sel.value;});
+  if(!t) return;
+  document.getElementById('env-titre').value = (t.emoji||'') + ' ' + t.titre;
+  document.getElementById('env-corps').value = t.corps || '';
+  document.getElementById('env-cta-label').value = t.cta_label || '';
+  // Pre-set canaux selon template
+  if(t.canaux) {
+    document.getElementById('env-canal-email').checked = t.canaux.indexOf('email')>=0;
+    document.getElementById('env-canal-inapp').checked = t.canaux.indexOf('in_app')>=0;
+    document.getElementById('env-canal-wa').checked = t.canaux.indexOf('whatsapp')>=0;
+    document.getElementById('env-canal-qr').checked = t.canaux.indexOf('qr')>=0;
+  }
+}
+
+function envoisPreview() {
+  var titre = document.getElementById('env-titre').value;
+  var corps = document.getElementById('env-corps').value;
+  var sample = (DB.joueurs||[])[0] || {prenom:'Léa', pseudo:'lea07'};
+  var t2 = titre.replace(/\{\{prenom\}\}/g, sample.prenom||'').replace(/\{\{pseudo\}\}/g, sample.pseudo||'');
+  var c2 = corps.replace(/\{\{prenom\}\}/g, sample.prenom||'').replace(/\{\{pseudo\}\}/g, sample.pseudo||'');
+  alert('APERÇU pour '+sample.prenom+'\n\n'+t2+'\n\n'+c2);
+}
+
+async function envoisEnvoyer() {
+  if(ENVOIS_SELECTED_PSEUDOS.length === 0) { showAdminToast('Aucun destinataire sélectionné', 'error'); return; }
+  var titre = document.getElementById('env-titre').value.trim();
+  var corps = document.getElementById('env-corps').value.trim();
+  var ctaLabel = document.getElementById('env-cta-label').value.trim();
+  var ctaUrl = document.getElementById('env-cta-url').value.trim();
+  if(!titre) { showAdminToast('Titre obligatoire', 'error'); return; }
+  
+  var canEmail = document.getElementById('env-canal-email').checked;
+  var canInapp = document.getElementById('env-canal-inapp').checked;
+  var canWA = document.getElementById('env-canal-wa').checked;
+  var canQR = document.getElementById('env-canal-qr').checked;
+  if(!canEmail && !canInapp && !canWA && !canQR) { showAdminToast('Choisis au moins un canal', 'error'); return; }
+  
+  if(!confirm('Envoyer à '+ENVOIS_SELECTED_PSEUDOS.length+' destinataire(s) ?')) return;
+  
+  var hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', Prefer:'return=minimal'};
+  var joueurs = DB.joueurs || [];
+  var nbOk = 0, nbErr = 0;
+  
+  for(var i=0; i<ENVOIS_SELECTED_PSEUDOS.length; i++) {
+    var pseudo = ENVOIS_SELECTED_PSEUDOS[i];
+    var j = joueurs.find(function(x){return x.pseudo===pseudo;});
+    if(!j) continue;
+    
+    var titreVar = titre.replace(/\{\{prenom\}\}/g, j.prenom||'').replace(/\{\{pseudo\}\}/g, j.pseudo||'');
+    var corpsVar = corps.replace(/\{\{prenom\}\}/g, j.prenom||'').replace(/\{\{pseudo\}\}/g, j.pseudo||'');
+    
+    // Canal IN-APP
+    if(canInapp) {
+      try {
+        await fetch(SB_URL+'/rest/v1/notifications', {method:'POST', headers:hdrs,
+          body: JSON.stringify({pseudo:pseudo, type:'admin_msg', titre:titreVar, corps:corpsVar, lue:false, data:{cta_url:ctaUrl, cta_label:ctaLabel}})});
+      } catch(e){}
+    }
+    // Canal EMAIL — recover si pas d'email saisi, sinon contact direct (non implémenté ici)
+    if(canEmail && j.email) {
+      try {
+        await fetch(SB_URL+'/auth/v1/recover', {method:'POST', headers:{apikey:SB_KEY,'Content-Type':'application/json'},
+          body: JSON.stringify({email:j.email, options:{redirectTo:'https://flowrevis.vercel.app/?mode=activation'}})});
+      } catch(e){}
+    }
+    // Log
+    try {
+      await fetch(SB_URL+'/rest/v1/envois_log', {method:'POST', headers:hdrs,
+        body: JSON.stringify({
+          type: 'libre', canal: canInapp?'in_app':(canEmail?'email':(canWA?'whatsapp':'qr')),
+          pseudo: pseudo, segment: null, destinataires_count: 1,
+          template_id: (document.getElementById('env-template')||{}).value || null,
+          titre: titreVar, corps: corpsVar, cta_label: ctaLabel, cta_url: ctaUrl,
+          statut: 'envoye', envoye_par: 'admin', data: {canaux:{email:canEmail,inapp:canInapp,wa:canWA,qr:canQR}}
+        })});
+      nbOk++;
+    } catch(e){ nbErr++; }
+  }
+  
+  // Canal WhatsApp — ouvrir l'app/web avec message pré-rempli (1 par 1)
+  if(canWA) {
+    var dests = ENVOIS_SELECTED_PSEUDOS.map(function(p){
+      return joueurs.find(function(j){return j.pseudo===p;});
+    }).filter(function(j){return j && j.tel;});
+    if(dests.length > 0) {
+      if(confirm('Ouvrir WhatsApp pour '+dests.length+' destinataires (1 à la fois) ?')) {
+        dests.forEach(function(j, idx){
+          setTimeout(function(){
+            var t = j.tel.replace(/\D/g,'');
+            var msg = encodeURIComponent((titre+'\n\n'+corps).replace(/\{\{prenom\}\}/g, j.prenom||'').replace(/\{\{pseudo\}\}/g, j.pseudo||'') + (ctaUrl?'\n\n'+ctaUrl:''));
+            window.open('https://wa.me/'+t+'?text='+msg, '_blank');
+          }, idx * 800);
+        });
+      }
+    } else {
+      showAdminToast('Aucun destinataire n\'a de numéro de téléphone', 'warning');
+    }
+  }
+  
+  // Canal QR / Copie — afficher modal avec QR ou copier
+  if(canQR && ENVOIS_SELECTED_PSEUDOS.length === 1) {
+    var pseudo = ENVOIS_SELECTED_PSEUDOS[0];
+    var msg = titre+'\n\n'+corps+(ctaUrl?'\n\n'+ctaUrl:'');
+    navigator.clipboard.writeText(msg).then(function(){
+      showAdminToast('📋 Message copié dans le presse-papier', 'success');
+    });
+  }
+  
+  showAdminToast('✅ '+nbOk+' envoi(s) effectué(s)'+(nbErr>0?', '+nbErr+' erreur(s)':''), nbOk>0?'success':'error');
+  envoisCRMRender();
+}
+
+// ── ONGLET HISTORIQUE ────────────────────────────────────────────────
+function envoisRenderHisto(el) {
+  if(ENVOIS_LOG.length === 0) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Aucun envoi enregistré pour le moment</div></div>';
+    return;
+  }
+  var canalIcons = {email:'✉️', in_app:'📱', whatsapp:'💬', sms:'📨', qr:'🔗', copie:'📋'};
+  var statutColors = {envoye:'var(--ac)', lu:'var(--gr)', clique:'var(--am)', echec:'var(--re)', expire:'var(--t3)'};
+  
+  var html = '<div class="fiche-block">';
+  html += '<div class="fiche-block-title">📋 Historique des envois ('+ENVOIS_LOG.length+')</div>';
+  html += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse">';
+  html += '<thead><tr>'
+    + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Date</th>'
+    + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Canal</th>'
+    + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Destinataire</th>'
+    + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Titre</th>'
+    + '<th style="text-align:left;font-size:10px;font-weight:700;color:var(--t3);padding:8px;border-bottom:1px solid var(--b);text-transform:uppercase">Statut</th>'
+    + '</tr></thead><tbody>';
+  
+  ENVOIS_LOG.slice(0, 100).forEach(function(e){
+    var dt = new Date(e.ts);
+    var dateStr = dt.toLocaleDateString('fr-FR') + ' ' + dt.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+    var icon = canalIcons[e.canal] || '📨';
+    var statColor = statutColors[e.statut] || 'var(--t3)';
+    var dest = e.pseudo || (e.destinataires_count>1 ? e.destinataires_count+' destinataires' : '—');
+    html += '<tr style="cursor:pointer" onmouseover="this.style.background=\'var(--surf2)\'" onmouseout="this.style.background=\'\'">'
+      + '<td style="padding:7px 8px;font-size:11px;color:var(--t3);border-bottom:1px solid var(--b);white-space:nowrap">'+dateStr+'</td>'
+      + '<td style="padding:7px 8px;font-size:13px;border-bottom:1px solid var(--b)">'+icon+'</td>'
+      + '<td style="padding:7px 8px;font-size:12px;border-bottom:1px solid var(--b);font-weight:600;color:var(--t)">'+dest+'</td>'
+      + '<td style="padding:7px 8px;font-size:11px;border-bottom:1px solid var(--b);color:var(--t2);max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(e.titre||'—')+'</td>'
+      + '<td style="padding:7px 8px;font-size:10px;border-bottom:1px solid var(--b)"><span style="background:'+statColor+';color:#fff;padding:2px 8px;border-radius:12px;font-weight:700;text-transform:uppercase">'+(e.statut||'envoyé')+'</span></td>'
+      + '</tr>';
+  });
+  html += '</tbody></table></div></div>';
+  el.innerHTML = html;
+}
+
+// ── ONGLET RÈGLES (automatisation) ───────────────────────────────────
+function envoisRenderRules(el) {
+  var html = '<div class="fiche-block">';
+  html += '<div class="fiche-block-title">⚙️ Règles d\'envoi automatique</div>';
+  html += '<div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.5">Configure des envois récurrents déclenchés par un événement (ex: inactivité, streak atteint).</div>';
+  
+  if(ENVOIS_REGLES.length === 0) {
+    html += '<div style="text-align:center;padding:24px;color:var(--t3);font-size:12px">Aucune règle configurée pour le moment.</div>';
+  } else {
+    html += '<div style="display:flex;flex-direction:column;gap:8px">';
+    ENVOIS_REGLES.forEach(function(r){
+      var triggerLabel = {
+        inactivite: '⏰ Inactivité '+(r.trigger_value?.jours||3)+' jours',
+        streak: '🔥 Streak '+(r.trigger_value?.seuil||7)+' atteint',
+        inscription: '👋 Nouvelle inscription',
+        ligue_up: '⬆️ Passage de ligue'
+      }[r.trigger_type] || r.trigger_type;
+      html += '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf2);border-radius:8px;border:1px solid var(--b)">'
+        + '<div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--t)">'+r.nom+'</div>'
+        + '<div style="font-size:10px;color:var(--t3);margin-top:2px">'+triggerLabel+' → template <code style="background:var(--acBg);color:var(--ac);padding:1px 5px;border-radius:4px">'+r.template_id+'</code></div></div>'
+        + '<span class="bdg '+(r.actif?'green':'gray')+'" style="font-size:9px">'+(r.actif?'Actif':'Pause')+'</span>'
+        + '</div>';
+    });
+    html += '</div>';
+  }
+  
+  html += '<button onclick="envoisNouvelleRegle()" style="margin-top:14px;background:var(--ac);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">+ Nouvelle règle</button>';
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function envoisNouvelleRegle() {
+  var nom = prompt('Nom de la règle (ex: Rappel inactif 3j) :');
+  if(!nom) return;
+  var trigType = prompt('Type de déclenchement : inactivite, streak, inscription, ligue_up ?', 'inactivite');
+  if(!trigType) return;
+  var jours = 3;
+  if(trigType === 'inactivite') jours = parseInt(prompt('Après combien de jours d\'inactivité ?', '3'), 10) || 3;
+  var templateChoices = ENVOIS_TEMPLATES.map(function(t){return t.id;}).join(', ');
+  var templateId = prompt('Template ID à envoyer ('+templateChoices+') :', 'rappel_inactif_3j');
+  if(!templateId) return;
+  
+  var hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', Prefer:'return=minimal'};
+  fetch(SB_URL+'/rest/v1/envois_regles', {method:'POST', headers:hdrs,
+    body: JSON.stringify({nom:nom, template_id:templateId, trigger_type:trigType, trigger_value:{jours:jours}, canaux:['in_app','email'], actif:true})
+  }).then(function(r){
+    if(r.ok) {
+      showAdminToast('✅ Règle créée', 'success');
+      envoisCRMRender();
+    } else {
+      showAdminToast('Erreur '+r.status, 'error');
+    }
+  });
+}
+
+// ── ONGLET TEMPLATES ─────────────────────────────────────────────────
+function envoisRenderTemplates(el) {
+  var html = '<div class="fiche-block">';
+  html += '<div class="fiche-block-title">📝 Templates de messages ('+ENVOIS_TEMPLATES.length+')</div>';
+  html += '<div style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.5">Modèles réutilisables. Variables disponibles : <code style="background:var(--acBg);color:var(--ac);padding:1px 5px;border-radius:4px">{{prenom}}</code> <code style="background:var(--acBg);color:var(--ac);padding:1px 5px;border-radius:4px">{{pseudo}}</code></div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">';
+  ENVOIS_TEMPLATES.forEach(function(t){
+    html += '<div style="padding:11px;background:var(--surf2);border-radius:8px;border:1px solid var(--b)">'
+      + '<div style="display:flex;align-items:start;gap:8px;margin-bottom:6px">'
+      + '<span style="font-size:18px">'+(t.emoji||'✉️')+'</span>'
+      + '<div style="flex:1"><div style="font-size:12px;font-weight:700;color:var(--t)">'+t.nom+'</div>'
+      + '<div style="font-size:10px;color:var(--t3)">id: '+t.id+'</div></div></div>'
+      + '<div style="font-size:11px;color:var(--t);font-weight:700;margin-bottom:3px">'+(t.titre||'')+'</div>'
+      + '<div style="font-size:11px;color:var(--t2);line-height:1.4">'+(t.corps||'').substring(0,140)+(t.corps && t.corps.length>140?'...':'')+'</div>'
+      + '<div style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap">'
+      + (t.canaux||[]).map(function(ca){
+          var icons = {email:'✉️',in_app:'📱',whatsapp:'💬',qr:'🔗',sms:'📨'};
+          return '<span style="font-size:9px;background:var(--surf);border:1px solid var(--b);padding:1px 6px;border-radius:10px;color:var(--t3)">'+(icons[ca]||'')+' '+ca+'</span>';
+        }).join('')
+      + '</div></div>';
+  });
+  html += '</div></div>';
+  el.innerHTML = html;
+}
+
+
 
 function showAdminToast(msg, type) {
   var bg = (type === 'error') ? '#EF4444' : '#22C9A0';
@@ -7927,6 +8343,7 @@ function openEleve(pseudo) {
           ].map(([k,v])=>`<div class="info-row"><span class="info-key">${k}</span><span class="info-val">${v}</span></div>`).join('')}
           ${d.j.email ? `<button onclick="sendActivationLink('${d.j.email}','${(d.j.prenom||d.pseudo).replace(/'/g,"\\'")}\")" style="margin-top:8px;width:100%;background:var(--ac);color:#fff;border:none;border-radius:7px;padding:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✉️ Billet d'activation</button>` : ''}
           <button onclick="sendPushNotification('${d.pseudo}','${d.j.prenom||d.pseudo}')" style="margin-top:6px;width:100%;background:#7C5CFC;color:#fff;border:none;border-radius:7px;padding:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">📨 Envoyer notification</button>
+          <button onclick="sendWhatsApp('${d.pseudo}','${d.j.prenom||d.pseudo}','${d.j.tel||""}')" style="margin-top:6px;width:100%;background:#25D366;color:#fff;border:none;border-radius:7px;padding:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">💬 Envoyer un message WhatsApp</button>
         </div>
 
         <!-- Filleuls -->
