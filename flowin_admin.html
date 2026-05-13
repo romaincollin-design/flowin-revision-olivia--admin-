@@ -7467,6 +7467,7 @@ function openDefiDetail(defiId) {
       }).join('') : '<div style="text-align:center;color:var(--t3);font-size:11px;padding:10px">Aucun participant</div>')
     + '</div>'
     + '<div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end">'
+    + ((d.status==='waiting' || d.status==='accepted' || d.status==='in_progress') ? "<button onclick='cloturerDefiAdmin(\""+d.id+"\")' style='background:var(--grBg);color:var(--gr);border:1px solid var(--gr);border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;margin-right:6px'>🏁 Clôturer</button>" : '')
     + (d.status==='waiting' || d.status==='accepted' ? '<button onclick="cancelDefi(\''+d.id+'\')" style="background:var(--reBg);color:var(--re);border:1px solid var(--reBorder);border-radius:8px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">🗑 Annuler ce défi</button>' : '')
     + '<button onclick="document.getElementById(\'modal-defi\').remove()" style="background:var(--surf2);border:1px solid var(--b);border-radius:8px;padding:8px 16px;font-size:12px;cursor:pointer;font-family:inherit;color:var(--t2)">Fermer</button>'
     + '</div>'
@@ -7474,6 +7475,33 @@ function openDefiDetail(defiId) {
 
   document.body.appendChild(modal);
   document.getElementById('defi-close').addEventListener('click', function(){ modal.remove(); });
+}
+
+async function cloturerDefiAdmin(defiId) {
+  if(!confirm('Clôturer ce défi maintenant ? Le gagnant sera désigné automatiquement (meilleur score) et la cagnotte distribuée.')) return;
+  if(!SB_ENABLED) { showAdminToast('Mode démo — Supabase désactivé', 'error'); return; }
+  var hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json'};
+  try {
+    var r = await fetch(SB_URL+'/rest/v1/rpc/cloturer_defi', {
+      method:'POST', headers:hdrs, body: JSON.stringify({p_defi_id: defiId})
+    });
+    var data = await r.json();
+    if(data && data.status === 'ok') {
+      showAdminToast('🏆 Défi clôturé — Gagnant: ' + data.gagnant + ' (+' + data.cagnotte + ' pts)', 'success');
+      var modal = document.getElementById('modal-defi');
+      if(modal) modal.remove();
+      if(typeof loadData === 'function') setTimeout(loadData, 400);
+    } else if(data && data.status === 'deja_clos') {
+      showAdminToast('Défi déjà clos — Gagnant: ' + data.gagnant, 'info');
+    } else if(data && data.error) {
+      showAdminToast('❌ ' + data.error, 'error');
+    } else {
+      showAdminToast('Réponse RPC inattendue', 'error');
+    }
+  } catch(e) {
+    console.error('cloturerDefiAdmin', e);
+    showAdminToast('Erreur réseau lors de la clôture', 'error');
+  }
 }
 
 function cancelDefi(defiId) {
