@@ -4408,7 +4408,15 @@ function editPoints(pseudo, mode) {
   }).then(function(r){
     if(r.ok) {
       elev.pts_total = newTotal;
-      showAdminToast('Points mis à jour: ' + newTotal + ' pts', 'success');
+      // Créer notification in-app pour l'élève (visible au retour sur l'app)
+      var delta = newTotal - current;
+      var notifTitre = delta > 0 ? '🎉 +' + delta + ' points ajoutés' : delta < 0 ? '⚠️ ' + delta + ' points retirés' : '⚖️ Points ajustés';
+      var notifCorps = 'Tu as maintenant ' + newTotal + ' pts. (Action admin)';
+      fetch(SB_URL+'/rest/v1/notifications', {
+        method:'POST', headers:hdrs,
+        body: JSON.stringify({pseudo:pseudo, type:'admin_msg', titre:notifTitre, corps:notifCorps, lue:false, data:{delta:delta, new_total:newTotal}})
+      }).catch(function(){});
+      showAdminToast('Points mis à jour: ' + newTotal + ' pts + notif envoyée', 'success');
       // Rafraichir la fiche si elle est ouverte
       var modal = document.getElementById('modal-eleve');
       if(modal && modal.classList.contains('open')) {
