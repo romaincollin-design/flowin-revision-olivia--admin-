@@ -7709,7 +7709,8 @@ function renderParrainage() {
         || email===sender || (e.j.email && e.j.email===(p.sender_email||''))
         || (prenom.length>2 && (full.includes(sender) || sender.includes(prenom)));
     });
-    var k = me ? ((me.j.prenom||'') + ' ' + (me.j.nom||'')).trim() : p.sender;
+    var k = me ? ((me.j.prenom||'') + ' ' + (me.j.nom||'')).trim() : (p.sender||'');
+    if(!k) k = me ? (me.pseudo||'?') : '(inconnu)';
     if(!snd[k]) snd[k] = {name:k, etab: me?(me.j.ecole||p.sender_etab||'—'):(p.sender_etab||p.sender_ecole||'—'), elev:me||null, fils:[], chs:[], last:null};
     snd[k].fils.push(p.destinataire);
     snd[k].chs.push(p.channel||'');
