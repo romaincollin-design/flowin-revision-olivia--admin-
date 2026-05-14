@@ -8546,10 +8546,18 @@ function openEleve(pseudo, _fromStack) {
             ? '<div style="font-size:11px;color:var(--t3);text-align:center;padding:12px 0">Aucun parrainage</div>'
             : parr.slice(0,5).map((p,i)=>{
                 const dest = (p.destinataire||'').trim().toLowerCase();
-                const filleul = (buildElevs()||[]).find(e=> {
-                  const ep=(e.pseudo||'').toLowerCase();
-                  const efn=(e.j.prenom||'').toLowerCase();
-                  return ep===dest||efn===dest||ep.includes(dest)||dest.includes(ep)||efn.includes(dest)||dest.includes(efn);
+                const filleul = (buildElevs()||[]).find(function(e){
+                  const ep=(e.pseudo||'').toLowerCase().trim();
+                  const efn=(e.j.prenom||'').toLowerCase().trim();
+                  const enm=(e.j.nom||'').toLowerCase().trim();
+                  const full=(efn+' '+enm).trim();
+                  if(!dest || dest.length<3) return false;
+                  // Match exact pseudo, prenom, full name
+                  if(ep===dest || efn===dest || full===dest) return true;
+                  // Match seulement si dest >= 3 chars ET pseudo >= 3 chars
+                  if(ep.length>=3 && (ep===dest)) return true;
+                  // Plus de partial includes : trop ambigu
+                  return false;
                 });
                 const _oc1 = filleul ? 'onclick="openEleve(\'' + filleul.pseudo + '\')"' : '';
                 return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;'
@@ -8631,7 +8639,7 @@ function openEleve(pseudo, _fromStack) {
             ? '<div style="text-align:center;padding:20px;color:var(--t3);font-size:11px">Aucun parrainage</div>'
             : parr.map((p,i)=>{
                 const dest=(p.destinataire||'').trim().toLowerCase();
-                const filleul=(buildElevs()||[]).find(e=>{const ep=(e.pseudo||'').toLowerCase();const efn=(e.j.prenom||'').toLowerCase();return ep===dest||efn===dest||ep.includes(dest)||dest.includes(ep)||efn.includes(dest)||dest.includes(efn);});
+                const filleul=(buildElevs()||[]).find(function(e){const ep=(e.pseudo||'').toLowerCase().trim();const efn=(e.j.prenom||'').toLowerCase().trim();const full=(efn+' '+(e.j.nom||'').toLowerCase()).trim();if(!dest||dest.length<3)return false;return ep===dest||efn===dest||full===dest;});
                 const _oc2 = filleul ? 'onclick="openEleve(\'' + filleul.pseudo + '\')"' : '';
                 return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;'
                   +(i<parr.length-1?'border-bottom:1px solid var(--b)':'')
