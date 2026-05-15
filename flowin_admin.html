@@ -6897,8 +6897,32 @@ function openEmojiPickerAdmin(i, logoEl) {
 }
 
 function deletePartner(i) {
-  if(!confirm('Supprimer ce partenaire ?')) return;
-  LOTS_DB.splice(i,1); renderStockPanel();
+  var partner = LOTS_DB[i];
+  if(!partner) return;
+  if(!confirm('Supprimer ce partenaire et tous ses codes ?\n\nCette action est irréversible.')) return;
+
+  // Supprimer local immédiatement (UX)
+  LOTS_DB.splice(i,1);
+  renderStockPanel();
+
+  // Persistance Supabase
+  if(!SB_ENABLED) return;
+  var hdrs = {apikey:SB_KEY, Authorization:'Bearer '+SB_KEY, 'Content-Type':'application/json', 'Prefer':'return=minimal'};
+  // 1. Supprimer les codes lots_stock liés
+  if(partner.id) {
+    fetch(SB_URL+'/rest/v1/lots_stock?lot_id=eq.'+encodeURIComponent(partner.id), {
+      method:'DELETE', headers:hdrs
+    }).catch(function(e){ console.warn('[deletePartner] lots_stock:', e); });
+    // 2. Supprimer le partenaire lui-même
+    fetch(SB_URL+'/rest/v1/partenaires?id=eq.'+encodeURIComponent(partner.id), {
+      method:'DELETE', headers:hdrs
+    }).then(function(r){
+      if(r.ok) showAdminToast('✅ Partenaire "' + (partner.titre||partner.nom||'?') + '" supprimé');
+      else showAdminToast('⚠️ Erreur suppression partenaire : ' + r.status, 'error');
+    }).catch(function(e){
+      showAdminToast('⚠️ Erreur réseau : ' + e.message, 'error');
+    });
+  }
 }
 
 function addPartner() {
