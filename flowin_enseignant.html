@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowin — Espace Enseignant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ac:#6C5FE8; --ac2:#9B7BFF;
+    --gr:#22C9A0; --grBg:#E8F8F3;
+    --am:#E89A22; --amBg:#FEF5E6;
+    --re:#E84855; --reBg:#FDECEE;
+    --bl:#3B82F6; --blBg:#EBF2FE;
+    --t:#1A1730; --t2:#5A5374; --t3:#9A8FBF;
+    --surf:#FFFFFF; --surf2:#F4F5F9;
+    --b:#E5E3F0;
+    --sh:0 4px 20px rgba(0,0,0,.04);
+    --sh2:0 12px 40px rgba(108,95,232,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'DM Sans',sans-serif;
+    background:var(--surf2);
+    color:var(--t);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .syne{font-family:'Syne',sans-serif}
+
+  /* ─── LOGIN ─── */
+  .v-login{
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    padding:20px;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(108,95,232,.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 50% 100%, rgba(155,123,255,.08) 0%, transparent 60%),
+      var(--surf2);
+  }
+  .login-card{
+    background:var(--surf);
+    border-radius:24px;
+    padding:40px 32px;
+    width:100%;max-width:420px;
+    box-shadow:var(--sh2);
+    position:relative;
+    overflow:hidden;
+  }
+  .login-card::before{
+    content:'';
+    position:absolute;top:0;left:0;right:0;height:5px;
+    background:linear-gradient(90deg, var(--ac), var(--ac2), #E040A0);
+  }
+  .login-logo{
+    text-align:center;
+    margin-bottom:28px;
+  }
+  .login-logo-emoji{
+    font-size:42px;
+    display:inline-block;
+    animation:float 3s ease-in-out infinite;
+  }
+  @keyframes float{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-6px)}
+  }
+  .login-logo-text{
+    font-family:'Syne',sans-serif;
+    font-weight:800;
+    font-size:32px;
+    color:var(--t);
+    margin-top:4px;
+    letter-spacing:-0.02em;
+  }
+  .login-logo-sub{
+    font-size:12px;font-weight:700;
+    color:var(--ac);
+    text-transform:uppercase;
+    letter-spacing:0.15em;
+    margin-top:6px;
+  }
+  .login-tagline{
+    text-align:center;
+    color:var(--t2);
+    font-size:14px;
+    margin-bottom:28px;
+    line-height:1.5;
+  }
+  .login-label{
+    display:block;
+    font-size:11px;font-weight:700;
+    color:var(--t3);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin-bottom:8px;
+  }
+  .login-input{
+    width:100%;
+    background:var(--surf2);
+    border:1.5px solid var(--b);
+    border-radius:12px;
+    padding:14px 16px;
+    font-family:inherit;
+    font-size:15px;
+    color:var(--t);
+    transition:all 0.2s ease;
+  }
+  .login-input:focus{
+    outline:none;
+    border-color:var(--ac);
+    background:var(--surf);
+    box-shadow:0 0 0 4px rgba(108,95,232,.1);
+  }
+  .login-btn{
+    width:100%;
+    background:linear-gradient(135deg, var(--ac), var(--ac2));
+    color:#fff;
+    border:none;
+    border-radius:14px;
+    padding:16px;
+    font-family:'Syne',sans-serif;
+    font-size:16px;font-weight:800;
+    cursor:pointer;
+    margin-top:16px;
+    transition:transform 0.15s ease, box-shadow 0.2s ease;
+    letter-spacing:0.02em;
+  }
+  .login-btn:hover{
+    transform:translateY(-1px);
+    box-shadow:0 8px 24px rgba(108,95,232,.35);
+  }
+  .login-btn:active{transform:translateY(0)}
+  .login-btn:disabled{opacity:0.6;cursor:wait}
+  .login-error{
+    background:var(--reBg);
+    color:var(--re);
+    border-radius:10px;
+    padding:10px 14px;
+    font-size:13px;font-weight:600;
+    margin-top:14px;
+    display:none;
+    text-align:center;
+  }
+  .login-info{
+    text-align:center;
+    margin-top:24px;
+    padding-top:20px;
+    border-top:1px solid var(--b);
+    font-size:11px;
+    color:var(--t3);
+    line-height:1.6;
+  }
+
+  /* ─── DASHBOARD ─── */
+  .v-dashboard{display:none}
+  .v-dashboard.active{display:block}
+
+  .topbar{
+    background:var(--surf);
+    border-bottom:1px solid var(--b);
+    padding:16px 28px;
+    display:flex;align-items:center;justify-content:space-between;
+    position:sticky;top:0;z-index:10;
+    backdrop-filter:blur(20px);
+  }
+  .topbar-left{display:flex;align-items:center;gap:14px}
+  .topbar-logo{
+    font-family:'Syne',sans-serif;font-weight:800;font-size:18px;
+    color:var(--t);
+  }
+  .topbar-divider{
+    width:1px;height:24px;background:var(--b);
+  }
+  .topbar-school{
+    display:flex;flex-direction:column;
+  }
+  .topbar-school-label{
+    font-size:10px;font-weight:700;
+    color:var(--t3);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+  }
+  .topbar-school-name{
+    font-size:14px;font-weight:700;
+    color:var(--t);
+  }
+  .topbar-right{display:flex;align-items:center;gap:10px}
+  .logout-btn{
+    background:var(--surf2);
+    border:1px solid var(--b);
+    border-radius:10px;
+    padding:8px 14px;
+    font-family:inherit;font-size:13px;font-weight:600;
+    color:var(--t2);
+    cursor:pointer;
+    transition:all 0.15s ease;
+  }
+  .logout-btn:hover{
+    background:var(--reBg);
+    color:var(--re);
+    border-color:var(--re);
+  }
+
+  .container{
+    max-width:1400px;margin:0 auto;
+    padding:28px;
+  }
+
+  .page-header{
+    margin-bottom:24px;
+  }
+  .page-title{
+    font-family:'Syne',sans-serif;
+    font-size:32px;font-weight:800;
+    color:var(--t);
+    letter-spacing:-0.02em;
+    margin-bottom:6px;
+  }
+  .page-sub{
+    color:var(--t2);
+    font-size:14px;
+  }
+
+  /* ─── KPIs ─── */
+  .kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:16px;
+    margin-bottom:28px;
+  }
+  .kpi-card{
+    background:var(--surf);
+    border-radius:16px;
+    padding:20px;
+    box-shadow:var(--sh);
+    position:relative;
+    overflow:hidden;
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .kpi-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 32px rgba(0,0,0,.06);
+  }
+  .kpi-bar{
+    position:absolute;top:0;left:0;right:0;height:3px;
+  }
+  .kpi-icon{font-size:24px;margin-bottom:8px}
+  .kpi-val{
+    font-family:'Syne',sans-serif;
+    font-size:32px;font-weight:800;
+    color:var(--t);
+    line-height:1;
+    letter-spacing:-0.02em;
+  }
+  .kpi-label{
+    font-size:11px;font-weight:700;
+    color:var(--t3);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-top:8px;
+  }
+  .kpi-sub{
+    font-size:12px;
+    color:var(--t2);
+    margin-top:4px;
+  }
+
+  /* ─── Section ─── */
+  .section{
+    background:var(--surf);
+    border-radius:16px;
+    padding:24px;
+    box-shadow:var(--sh);
+    margin-bottom:20px;
+  }
+  .section-header{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:18px;
+  }
+  .section-title{
+    font-family:'Syne',sans-serif;
+    font-size:18px;font-weight:800;
+    color:var(--t);
+    letter-spacing:-0.01em;
+  }
+  .section-count{
+    font-size:12px;
+    color:var(--t3);
+    font-weight:600;
+  }
+
+  /* ─── Performance par matière ─── */
+  .matiere-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:14px;
+  }
+  .matiere-card{
+    background:var(--surf2);
+    border-radius:14px;
+    padding:18px;
+    border:1.5px solid transparent;
+    transition:all 0.2s ease;
+    position:relative;
+    overflow:hidden;
+  }
+  .matiere-card:hover{
+    border-color:var(--b);
+    background:var(--surf);
+  }
+  .matiere-emoji{font-size:28px;margin-bottom:8px}
+  .matiere-name{
+    font-family:'Syne',sans-serif;
+    font-size:15px;font-weight:700;
+    color:var(--t);
+    margin-bottom:14px;
+  }
+  .matiere-score{
+    display:flex;align-items:baseline;gap:6px;
+    margin-bottom:10px;
+  }
+  .matiere-score-val{
+    font-family:'Syne',sans-serif;
+    font-size:28px;font-weight:800;
+    color:var(--t);
+    letter-spacing:-0.02em;
+  }
+  .matiere-score-unit{
+    font-size:14px;font-weight:600;
+    color:var(--t3);
+  }
+  .matiere-bar-track{
+    height:6px;background:var(--surf);
+    border-radius:3px;overflow:hidden;
+    margin-bottom:10px;
+  }
+  .matiere-bar-fill{
+    height:100%;border-radius:3px;
+    transition:width 0.6s ease;
+  }
+  .matiere-meta{
+    display:flex;justify-content:space-between;
+    font-size:11px;
+    color:var(--t3);
+    font-weight:600;
+  }
+
+  /* ─── Tabs Top/Décrocheurs ─── */
+  .tabs{
+    display:flex;gap:4px;
+    background:var(--surf2);
+    padding:4px;
+    border-radius:12px;
+    margin-bottom:18px;
+    width:fit-content;
+  }
+  .tab{
+    background:transparent;
+    border:none;
+    padding:8px 16px;
+    border-radius:9px;
+    font-family:inherit;font-size:13px;font-weight:700;
+    color:var(--t3);
+    cursor:pointer;
+    transition:all 0.15s ease;
+  }
+  .tab.active{
+    background:var(--surf);
+    color:var(--t);
+    box-shadow:0 1px 4px rgba(0,0,0,.04);
+  }
+
+  /* ─── Liste élèves ─── */
+  .eleves-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+  .eleves-panel{
+    background:var(--surf2);
+    border-radius:14px;
+    padding:18px;
+  }
+  .eleves-panel-title{
+    font-family:'Syne',sans-serif;
+    font-size:14px;font-weight:800;
+    color:var(--t);
+    margin-bottom:14px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .eleve-row{
+    display:flex;align-items:center;gap:12px;
+    padding:10px 12px;
+    background:var(--surf);
+    border-radius:10px;
+    margin-bottom:6px;
+    transition:transform 0.15s ease;
+  }
+  .eleve-row:hover{transform:translateX(2px)}
+  .eleve-avatar{
+    width:34px;height:34px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:700;font-size:12px;
+    flex-shrink:0;
+  }
+  .eleve-info{flex:1;min-width:0}
+  .eleve-name{
+    font-size:13px;font-weight:700;
+    color:var(--t);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .eleve-meta{
+    font-size:11px;color:var(--t3);
+    margin-top:2px;
+  }
+  .eleve-pts{
+    font-family:'Syne',sans-serif;
+    font-size:15px;font-weight:800;
+    color:var(--ac);
+    text-align:right;
+  }
+  .eleve-pts-sub{
+    font-size:10px;
+    color:var(--t3);
+    margin-top:2px;
+  }
+  .rank-badge{
+    width:24px;height:24px;
+    border-radius:50%;
+    background:var(--ac);
+    color:#fff;
+    font-family:'Syne',sans-serif;font-size:11px;font-weight:800;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .rank-badge.gold{background:linear-gradient(135deg,#FFD700,#FFA500)}
+  .rank-badge.silver{background:linear-gradient(135deg,#C0C0C0,#A8A8A8)}
+  .rank-badge.bronze{background:linear-gradient(135deg,#CD7F32,#A0522D)}
+  .rank-badge.danger{background:var(--re)}
+
+  /* ─── Table élèves complète ─── */
+  .table-wrap{
+    overflow-x:auto;
+    margin:0 -24px;
+    padding:0 24px;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+  thead{
+    background:var(--surf2);
+  }
+  th{
+    text-align:left;
+    padding:12px 16px;
+    font-size:10px;font-weight:700;
+    color:var(--t3);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    border-bottom:1px solid var(--b);
+  }
+  th:last-child{text-align:right}
+  td{
+    padding:14px 16px;
+    border-bottom:1px solid var(--b);
+    vertical-align:middle;
+  }
+  tbody tr:hover{background:var(--surf2)}
+  td:last-child{text-align:right}
+  .ligue-pill{
+    display:inline-block;
+    padding:3px 8px;
+    border-radius:20px;
+    font-size:10px;font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+  }
+  .ligue-bronze{background:linear-gradient(135deg,#CD7F32,#A0522D);color:#fff}
+  .ligue-argent{background:linear-gradient(135deg,#C0C0C0,#A8A8A8);color:#fff}
+  .ligue-or{background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff}
+  .ligue-platine{background:linear-gradient(135deg,#9D5BFF,#7B3FE3);color:#fff}
+  .ligue-legende{background:linear-gradient(135deg,#E040A0,#9B27B0);color:#fff}
+  .activity-dot{
+    display:inline-block;
+    width:8px;height:8px;
+    border-radius:50%;
+    margin-right:6px;
+  }
+  .activity-active{background:var(--gr);box-shadow:0 0 0 3px rgba(34,201,160,.15)}
+  .activity-warning{background:var(--am)}
+  .activity-danger{background:var(--re)}
+
+  /* ─── Search ─── */
+  .search-input{
+    width:100%;
+    background:var(--surf2);
+    border:1px solid var(--b);
+    border-radius:10px;
+    padding:10px 14px;
+    font-family:inherit;font-size:13px;
+    color:var(--t);
+    margin-bottom:14px;
+  }
+  .search-input:focus{
+    outline:none;
+    border-color:var(--ac);
+    background:var(--surf);
+  }
+
+  /* ─── Empty ─── */
+  .empty{
+    text-align:center;
+    padding:40px 20px;
+    color:var(--t3);
+  }
+  .empty-icon{
+    font-size:40px;
+    margin-bottom:10px;
+    opacity:0.4;
+  }
+
+  /* ─── Mobile ─── */
+  @media (max-width:900px){
+    .kpi-grid{grid-template-columns:repeat(2, 1fr)}
+    .matiere-grid{grid-template-columns:repeat(2, 1fr)}
+    .eleves-grid{grid-template-columns:1fr}
+    .container{padding:16px}
+    .topbar{padding:12px 16px}
+    .page-title{font-size:24px}
+  }
+
+  /* ─── Toast ─── */
+  .toast{
+    position:fixed;
+    bottom:24px;left:50%;
+    transform:translateX(-50%);
+    background:var(--t);
+    color:#fff;
+    padding:12px 20px;
+    border-radius:12px;
+    font-size:13px;font-weight:600;
+    box-shadow:0 8px 24px rgba(0,0,0,.2);
+    z-index:9999;
+    animation:slideUp 0.3s ease;
+  }
+  @keyframes slideUp{
+    from{transform:translate(-50%, 20px);opacity:0}
+    to{transform:translate(-50%, 0);opacity:1}
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- VUE LOGIN -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="v-login" id="v-login">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-emoji">🌊</div>
+      <div class="login-logo-text">Flowin</div>
+      <div class="login-logo-sub">Espace Enseignant</div>
+    </div>
+    <div class="login-tagline">
+      Suis la progression de tes élèves<br>en histoire-géographie, EMC et PSE
+    </div>
+    <div>
+      <label class="login-label" for="loginPwd">Code d'accès</label>
+      <input id="loginPwd" type="password" class="login-input" placeholder="Saisis ton code…" autocomplete="off" autofocus>
+    </div>
+    <button class="login-btn" id="loginBtn" onclick="login()">
+      Accéder au tableau de bord →
+    </button>
+    <div class="login-error" id="loginErr"></div>
+    <div class="login-info">
+      Code fourni par l'équipe Flowin.<br>
+      Une question ? <strong style="color:var(--ac)">contact@flowin.app</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- VUE DASHBOARD -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="v-dashboard" id="v-dashboard">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">🌊 Flowin</div>
+      <div class="topbar-divider"></div>
+      <div class="topbar-school">
+        <div class="topbar-school-label">Établissement</div>
+        <div class="topbar-school-name" id="topbarSchool">—</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="logout-btn" onclick="logout()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">Tableau de bord</h1>
+      <p class="page-sub" id="pageSubInfo">Chargement des données…</p>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <!-- Performance par matière -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">📚 Performance par matière</div>
+        <div class="section-count" id="matiereCount">Sur les 30 derniers jours</div>
+      </div>
+      <div class="matiere-grid" id="matiereGrid"></div>
+    </div>
+
+    <!-- Top performers / Décrocheurs -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">🎯 Élèves à suivre</div>
+      </div>
+      <div class="eleves-grid">
+        <div class="eleves-panel">
+          <div class="eleves-panel-title">🏆 Top performers (≥ 500 pts)</div>
+          <div id="topPerformersList"></div>
+        </div>
+        <div class="eleves-panel">
+          <div class="eleves-panel-title">⚠️ Décrocheurs (inactifs &gt; 14 jours)</div>
+          <div id="decrocheursList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste complète -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">👥 Tous les élèves</div>
+        <div class="section-count" id="totalEleves">0 élève</div>
+      </div>
+      <input type="text" class="search-input" id="searchInput" placeholder="🔍 Rechercher un élève par prénom, nom ou pseudo…" oninput="renderTable()">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Élève</th>
+              <th>Classe</th>
+              <th>Ligue</th>
+              <th>Points</th>
+              <th>Quiz joués</th>
+              <th>Dernière activité</th>
+            </tr>
+          </thead>
+          <tbody id="elevesTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// FLOWIN — ESPACE ENSEIGNANT
+// ════════════════════════════════════════════════════════════════
+
+const SB_URL = 'https://ywcqtupgoxfzkddqkztk.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3Y3F0dXBnb3hmemtkZHFrenRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMjQ0MDUsImV4cCI6MjA5MjgwMDQwNX0.Y8sb7Faqlp-uFyUjGl013018RWP0MIbbWzPAVcTMIoI';
+
+// ─── État global ───
+var STATE = {
+  ecole: '',
+  joueurs: [],
+  sessions: [],
+  connexions: [],
+};
+
+// ─── Couleurs avatars ───
+const AVA_COLORS = ['#6C5FE8','#22C9A0','#E89A22','#E84855','#9B7BFF','#3B82F6','#E040A0','#10B981'];
+
+// ─── Couleurs matières ───
+const MATIERE_COLORS = {
+  hist: { c:'#E89A22', bg:'#FEF5E6', emoji:'📜', label:'Histoire' },
+  geo:  { c:'#22C9A0', bg:'#E8F8F3', emoji:'🌍', label:'Géographie' },
+  emc:  { c:'#6C5FE8', bg:'rgba(108,95,232,.1)', emoji:'⚖️', label:'EMC' },
+  pse:  { c:'#E84855', bg:'#FDECEE', emoji:'🩺', label:'PSE' },
+};
+
+// ─── Seuils ligues ───
+const LIGUES = [
+  { nom:'Bronze',  min:0,     cls:'bronze' },
+  { nom:'Argent',  min:1000,  cls:'argent' },
+  { nom:'Or',      min:5000,  cls:'or' },
+  { nom:'Platine', min:15000, cls:'platine' },
+  { nom:'Légende', min:50000, cls:'legende' },
+];
+function getLigue(pts) {
+  var l = LIGUES[0];
+  for(var i = 0; i < LIGUES.length; i++) if(pts >= LIGUES[i].min) l = LIGUES[i];
+  return l;
+}
+
+// ─── Helpers ───
+function ago(ts) {
+  if(!ts) return '—';
+  var d = (Date.now() - new Date(ts).getTime()) / 1000;
+  if(d < 60) return 'à l\'instant';
+  if(d < 3600) return Math.round(d/60) + ' min';
+  if(d < 86400) return Math.round(d/3600) + ' h';
+  var j = Math.round(d/86400);
+  if(j === 1) return 'hier';
+  if(j < 30) return 'il y a ' + j + ' j';
+  if(j < 365) return 'il y a ' + Math.round(j/30) + ' mois';
+  return 'il y a ' + Math.round(j/365) + ' an';
+}
+function avatar(name, idx, size) {
+  size = size || 34;
+  var ini = (name || '?').substring(0,2).toUpperCase();
+  var bg = AVA_COLORS[idx % AVA_COLORS.length];
+  return '<div class="eleve-avatar" style="width:' + size + 'px;height:' + size + 'px;background:' + bg + '">' + ini + '</div>';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AUTH — Login par mot de passe d'établissement
+// ═══════════════════════════════════════════════════════════════
+async function login() {
+  var pwd = (document.getElementById('loginPwd').value || '').trim();
+  var err = document.getElementById('loginErr');
+  var btn = document.getElementById('loginBtn');
+  if(!pwd) {
+    err.textContent = 'Saisis ton code d\'accès.';
+    err.style.display = 'block';
+    return;
+  }
+  btn.disabled = true; btn.textContent = '⏳ Vérification…'; err.style.display = 'none';
+
+  try {
+    // Lire les passwords enseignants depuis config
+    var hdrs = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
+    var r = await fetch(SB_URL + '/rest/v1/config?key=eq.passwords_enseignant&select=value', { headers: hdrs });
+    if(!r.ok) throw new Error('Erreur réseau');
+    var rows = await r.json();
+    if(!rows.length) {
+      err.textContent = 'Système non configuré. Contacte Flowin.';
+      err.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Accéder au tableau de bord →';
+      return;
+    }
+    var passwords = rows[0].value || {};
+    // Chercher l'école correspondant au mot de passe
+    var ecole = null;
+    for(var school in passwords) {
+      if(passwords[school] === pwd) { ecole = school; break; }
+    }
+    if(!ecole) {
+      err.textContent = '❌ Code incorrect. Vérifie avec l\'équipe Flowin.';
+      err.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Accéder au tableau de bord →';
+      return;
+    }
+    // Login OK
+    STATE.ecole = ecole;
+    try { sessionStorage.setItem('flowin_teacher_ecole', ecole); } catch(e){}
+    showDashboard();
+  } catch(e) {
+    console.error('[login]', e);
+    err.textContent = 'Erreur de connexion. Réessaie dans un instant.';
+    err.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Accéder au tableau de bord →';
+  }
+}
+
+function logout() {
+  try { sessionStorage.removeItem('flowin_teacher_ecole'); } catch(e){}
+  STATE = { ecole:'', joueurs:[], sessions:[], connexions:[] };
+  document.getElementById('v-dashboard').classList.remove('active');
+  document.getElementById('v-login').style.display = 'flex';
+  document.getElementById('loginPwd').value = '';
+  document.getElementById('loginBtn').disabled = false;
+  document.getElementById('loginBtn').textContent = 'Accéder au tableau de bord →';
+}
+
+// Permettre Enter pour login
+document.getElementById('loginPwd').addEventListener('keydown', function(e) {
+  if(e.key === 'Enter') login();
+});
+
+// ═══════════════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════════════
+async function showDashboard() {
+  document.getElementById('v-login').style.display = 'none';
+  document.getElementById('v-dashboard').classList.add('active');
+  document.getElementById('topbarSchool').textContent = STATE.ecole;
+
+  await loadData();
+  renderKPIs();
+  renderMatieres();
+  renderTopPerformers();
+  renderDecrocheurs();
+  renderTable();
+}
+
+async function loadData() {
+  var hdrs = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
+  var ecoleEnc = encodeURIComponent(STATE.ecole);
+
+  document.getElementById('pageSubInfo').textContent = 'Chargement des données de ' + STATE.ecole + '…';
+
+  try {
+    var [rJ, rS, rC] = await Promise.all([
+      fetch(SB_URL + '/rest/v1/joueurs?ecole=eq.' + ecoleEnc + '&order=pts_total.desc&limit=500', { headers: hdrs }),
+      fetch(SB_URL + '/rest/v1/sessions?ecole=eq.' + ecoleEnc + '&order=ts.desc&limit=5000', { headers: hdrs }),
+      fetch(SB_URL + '/rest/v1/connexions?order=ts.desc&limit=2000', { headers: hdrs }),
+    ]);
+    STATE.joueurs = rJ.ok ? await rJ.json() : [];
+    STATE.sessions = rS.ok ? await rS.json() : [];
+    var allConn = rC.ok ? await rC.json() : [];
+    // Filtrer connexions sur les élèves de l'école
+    var pseudos = new Set(STATE.joueurs.map(function(j){ return j.pseudo; }));
+    STATE.connexions = allConn.filter(function(c){ return pseudos.has(c.pseudo); });
+
+    document.getElementById('pageSubInfo').textContent =
+      STATE.joueurs.length + ' élèves · ' + STATE.sessions.length + ' quiz joués · données à jour';
+  } catch(e) {
+    console.error('[loadData]', e);
+    document.getElementById('pageSubInfo').textContent = '⚠️ Erreur de chargement des données';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// KPIs
+// ═══════════════════════════════════════════════════════════════
+function renderKPIs() {
+  var now = Date.now();
+  var sevenDays = 7 * 24 * 3600 * 1000;
+  var fourteenDays = 14 * 24 * 3600 * 1000;
+
+  var nbEleves = STATE.joueurs.length;
+  var actifs7j = STATE.joueurs.filter(function(j) {
+    // Actif si une session ou connexion dans les 7 derniers jours
+    return STATE.sessions.some(function(s){ return s.pseudo === j.pseudo && (now - new Date(s.ts).getTime()) < sevenDays; })
+        || STATE.connexions.some(function(c){ return c.pseudo === j.pseudo && (now - new Date(c.ts).getTime()) < sevenDays; });
+  }).length;
+  var inactifs14j = STATE.joueurs.filter(function(j) {
+    // Décrocheur si aucune activité depuis 14j
+    var last = lastActivity(j.pseudo);
+    return !last || (now - last) > fourteenDays;
+  }).length;
+  var topEleve = STATE.joueurs.length ? STATE.joueurs[0] : null;
+  var totalQuiz = STATE.sessions.length;
+
+  var kpis = [
+    { val: nbEleves, label: 'Élèves inscrits', sub: 'dans ton établissement', icon: '👥', color: '#6C5FE8' },
+    { val: actifs7j, label: 'Actifs cette semaine', sub: Math.round(100*actifs7j/Math.max(nbEleves,1)) + '% de tes élèves', icon: '🟢', color: '#22C9A0' },
+    { val: totalQuiz, label: 'Quiz joués', sub: 'depuis le début', icon: '📊', color: '#3B82F6' },
+    { val: inactifs14j, label: 'Décrocheurs', sub: '14 jours sans activité', icon: '⚠️', color: '#E84855' },
+  ];
+
+  var html = '';
+  kpis.forEach(function(k) {
+    html += '<div class="kpi-card">'
+      + '<div class="kpi-bar" style="background:' + k.color + '"></div>'
+      + '<div class="kpi-icon">' + k.icon + '</div>'
+      + '<div class="kpi-val">' + k.val + '</div>'
+      + '<div class="kpi-label">' + k.label + '</div>'
+      + '<div class="kpi-sub">' + k.sub + '</div>'
+      + '</div>';
+  });
+  document.getElementById('kpiGrid').innerHTML = html;
+}
+
+function lastActivity(pseudo) {
+  var sess = STATE.sessions.find(function(s){ return s.pseudo === pseudo; });
+  var conn = STATE.connexions.find(function(c){ return c.pseudo === pseudo; });
+  var s = sess ? new Date(sess.ts).getTime() : 0;
+  var c = conn ? new Date(conn.ts).getTime() : 0;
+  return Math.max(s, c) || null;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PERFORMANCE PAR MATIÈRE
+// ═══════════════════════════════════════════════════════════════
+function renderMatieres() {
+  var now = Date.now();
+  var thirtyDays = 30 * 24 * 3600 * 1000;
+  var recentSessions = STATE.sessions.filter(function(s){ return (now - new Date(s.ts).getTime()) < thirtyDays; });
+
+  // Calculer stats par matière
+  var matieres = ['hist','geo','emc','pse'];
+  var stats = {};
+  matieres.forEach(function(m){ stats[m] = { count:0, scoreSum:0, pseudos:new Set() }; });
+
+  recentSessions.forEach(function(s) {
+    var key = null;
+    var theme = (s.matiere || s.theme || '').toLowerCase();
+    if(theme.includes('hist')) key = 'hist';
+    else if(theme.includes('geo') || theme.includes('géo')) key = 'geo';
+    else if(theme.includes('emc')) key = 'emc';
+    else if(theme.includes('pse')) key = 'pse';
+    if(!key) return;
+    stats[key].count++;
+    stats[key].scoreSum += (s.score_pct || 0);
+    stats[key].pseudos.add(s.pseudo);
+  });
+
+  var html = '';
+  matieres.forEach(function(m) {
+    var conf = MATIERE_COLORS[m];
+    var st = stats[m];
+    var avgScore = st.count > 0 ? Math.round(st.scoreSum / st.count) : 0;
+    var nbEleves = st.pseudos.size;
+    html += '<div class="matiere-card" style="border-color:' + conf.bg + '">'
+      + '<div class="matiere-emoji">' + conf.emoji + '</div>'
+      + '<div class="matiere-name">' + conf.label + '</div>'
+      + '<div class="matiere-score">'
+        + '<span class="matiere-score-val" style="color:' + conf.c + '">' + avgScore + '</span>'
+        + '<span class="matiere-score-unit">% moyenne</span>'
+      + '</div>'
+      + '<div class="matiere-bar-track">'
+        + '<div class="matiere-bar-fill" style="width:' + avgScore + '%;background:' + conf.c + '"></div>'
+      + '</div>'
+      + '<div class="matiere-meta">'
+        + '<span>' + st.count + ' quiz</span>'
+        + '<span>' + nbEleves + ' élève' + (nbEleves > 1 ? 's' : '') + '</span>'
+      + '</div>'
+      + '</div>';
+  });
+  document.getElementById('matiereGrid').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TOP PERFORMERS / DÉCROCHEURS
+// ═══════════════════════════════════════════════════════════════
+function renderTopPerformers() {
+  var top = STATE.joueurs
+    .filter(function(j){ return (j.pts_total || 0) >= 500; })
+    .slice(0, 6);
+
+  if(!top.length) {
+    document.getElementById('topPerformersList').innerHTML = '<div class="empty"><div class="empty-icon">🌱</div>Aucun élève n\'a atteint 500 pts pour l\'instant. Encourage-les !</div>';
+    return;
+  }
+  var html = '';
+  top.forEach(function(j, i) {
+    var rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+    var name = (j.prenom || '') + ' ' + (j.nom || '');
+    if(!name.trim()) name = j.pseudo || '?';
+    var nbQuiz = STATE.sessions.filter(function(s){ return s.pseudo === j.pseudo; }).length;
+    html += '<div class="eleve-row">'
+      + '<div class="rank-badge ' + rankClass + '">' + (i+1) + '</div>'
+      + avatar(j.prenom || j.pseudo, i, 34)
+      + '<div class="eleve-info">'
+        + '<div class="eleve-name">' + name + '</div>'
+        + '<div class="eleve-meta">' + (j.classe || '—') + ' · ' + nbQuiz + ' quiz</div>'
+      + '</div>'
+      + '<div>'
+        + '<div class="eleve-pts">' + (j.pts_total || 0).toLocaleString('fr') + '</div>'
+        + '<div class="eleve-pts-sub">pts</div>'
+      + '</div>'
+      + '</div>';
+  });
+  document.getElementById('topPerformersList').innerHTML = html;
+}
+
+function renderDecrocheurs() {
+  var now = Date.now();
+  var fourteenDays = 14 * 24 * 3600 * 1000;
+  var decros = STATE.joueurs
+    .filter(function(j) {
+      var last = lastActivity(j.pseudo);
+      return !last || (now - last) > fourteenDays;
+    })
+    .sort(function(a, b) {
+      var la = lastActivity(a.pseudo) || 0;
+      var lb = lastActivity(b.pseudo) || 0;
+      return la - lb;  // les plus anciens en premier
+    })
+    .slice(0, 6);
+
+  if(!decros.length) {
+    document.getElementById('decrocheursList').innerHTML = '<div class="empty"><div class="empty-icon">🎉</div>Aucun décrocheur ! Tous tes élèves sont actifs.</div>';
+    return;
+  }
+  var html = '';
+  decros.forEach(function(j, i) {
+    var name = (j.prenom || '') + ' ' + (j.nom || '');
+    if(!name.trim()) name = j.pseudo || '?';
+    var last = lastActivity(j.pseudo);
+    html += '<div class="eleve-row">'
+      + '<div class="rank-badge danger">!</div>'
+      + avatar(j.prenom || j.pseudo, i + 10, 34)
+      + '<div class="eleve-info">'
+        + '<div class="eleve-name">' + name + '</div>'
+        + '<div class="eleve-meta">' + (j.classe || '—') + ' · ' + (last ? 'inactif depuis ' + ago(last) : 'jamais joué') + '</div>'
+      + '</div>'
+      + '<div>'
+        + '<div class="eleve-pts" style="color:var(--re)">' + (j.pts_total || 0).toLocaleString('fr') + '</div>'
+        + '<div class="eleve-pts-sub">pts</div>'
+      + '</div>'
+      + '</div>';
+  });
+  document.getElementById('decrocheursList').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TABLE COMPLÈTE
+// ═══════════════════════════════════════════════════════════════
+function renderTable() {
+  var search = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+  var filtered = STATE.joueurs.filter(function(j) {
+    if(!search) return true;
+    var hay = (j.pseudo + ' ' + (j.prenom || '') + ' ' + (j.nom || '') + ' ' + (j.classe || '')).toLowerCase();
+    return hay.includes(search);
+  });
+
+  document.getElementById('totalEleves').textContent = filtered.length + ' élève' + (filtered.length > 1 ? 's' : '');
+
+  if(!filtered.length) {
+    document.getElementById('elevesTable').innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">🔍</div>Aucun élève trouvé</div></td></tr>';
+    return;
+  }
+
+  var html = '';
+  filtered.forEach(function(j, idx) {
+    var name = (j.prenom || '') + ' ' + (j.nom || '');
+    if(!name.trim()) name = j.pseudo || '?';
+    var ligue = getLigue(j.pts_total || 0);
+    var nbQuiz = STATE.sessions.filter(function(s){ return s.pseudo === j.pseudo; }).length;
+    var last = lastActivity(j.pseudo);
+    var now = Date.now();
+    var actStatus = 'danger', actLabel = 'inactif';
+    if(last) {
+      var diff = now - last;
+      if(diff < 7 * 24 * 3600 * 1000) { actStatus = 'active'; actLabel = ago(last); }
+      else if(diff < 14 * 24 * 3600 * 1000) { actStatus = 'warning'; actLabel = ago(last); }
+      else { actStatus = 'danger'; actLabel = ago(last); }
+    } else {
+      actLabel = 'jamais';
+    }
+
+    html += '<tr>'
+      + '<td><div style="display:flex;align-items:center;gap:10px">'
+        + avatar(j.prenom || j.pseudo, idx, 32)
+        + '<div>'
+          + '<div style="font-weight:700;color:var(--t)">' + name + '</div>'
+          + '<div style="font-size:11px;color:var(--t3)">@' + (j.pseudo || '?') + '</div>'
+        + '</div>'
+      + '</div></td>'
+      + '<td style="color:var(--t2)">' + (j.classe || '—') + '</td>'
+      + '<td><span class="ligue-pill ligue-' + ligue.cls + '">' + ligue.nom + '</span></td>'
+      + '<td><strong style="font-family:Syne,sans-serif;font-size:15px;color:var(--ac)">' + (j.pts_total || 0).toLocaleString('fr') + '</strong></td>'
+      + '<td>' + nbQuiz + '</td>'
+      + '<td><span class="activity-dot activity-' + actStatus + '"></span><span style="color:var(--t2);font-size:12px">' + actLabel + '</span></td>'
+      + '</tr>';
+  });
+  document.getElementById('elevesTable').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// AUTO-LOGIN si session existante
+// ═══════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', async function() {
+  try {
+    var saved = sessionStorage.getItem('flowin_teacher_ecole');
+    if(saved) {
+      STATE.ecole = saved;
+      showDashboard();
+    }
+  } catch(e){}
+});
+
+</script>
+</body>
+</html>
