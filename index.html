@@ -9021,3 +9021,389 @@ document.addEventListener('click', function(e) {
 </script>
 </body>
 </html>
+
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- FLOWIN ADMIN — Module Ligue mensuelle (16/05/2026)                -->
+<!-- - Nouvel onglet sidebar "🏆 Ligue mensuelle"                      -->
+<!-- - Vue : top 10 actuel + historique + bouton clôture forcée        -->
+<!-- - Section config : mapping rang_1/2/3 → lot_id                    -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+
+<style>
+.ladm-section{background:var(--surf);border:1px solid var(--b);border-radius:14px;padding:20px;margin-bottom:16px}
+.ladm-section-title{font-size:13px;font-weight:800;color:var(--t1);text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.ladm-warn{background:var(--amBg);border:1px solid var(--amBorder);color:var(--am);padding:12px 16px;border-radius:10px;font-size:12px;font-weight:600;margin-bottom:16px}
+.ladm-warn-ok{background:var(--grBg);border:1px solid var(--grBorder);color:var(--gr)}
+.ladm-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--surf2);border:1px solid var(--b);border-radius:10px;margin-bottom:6px;font-size:12px}
+.ladm-row strong{font-weight:800;color:var(--t1)}
+.ladm-medal{font-size:18px;min-width:30px}
+.ladm-btn{padding:10px 18px;border:none;border-radius:10px;font-family:inherit;font-weight:700;font-size:12px;cursor:pointer;transition:transform .15s ease}
+.ladm-btn:active{transform:scale(.97)}
+.ladm-btn-primary{background:var(--ac);color:#fff}
+.ladm-btn-secondary{background:var(--surf2);color:var(--t2);border:1px solid var(--b)}
+.ladm-btn-danger{background:var(--re);color:#fff}
+.ladm-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+@media (max-width:768px){.ladm-grid3{grid-template-columns:1fr}}
+.ladm-rank-card{background:var(--surf2);border:1px solid var(--b);border-radius:12px;padding:14px}
+.ladm-rank-card label{display:block;font-size:10px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.ladm-rank-card select, .ladm-rank-card input{width:100%;padding:9px 11px;background:var(--surf);border:1px solid var(--b);border-radius:8px;color:var(--t1);font-family:inherit;font-size:12px;margin-bottom:8px}
+.ladm-stat{display:inline-block;padding:8px 14px;background:var(--surf2);border:1px solid var(--b);border-radius:8px;font-size:11px;font-weight:700;color:var(--t2);margin-right:6px}
+.ladm-stat strong{color:var(--ac);font-size:14px;margin-left:4px}
+.ladm-history-row{display:grid;grid-template-columns:80px 1fr 1fr 80px 80px;gap:12px;padding:10px 14px;background:var(--surf2);border:1px solid var(--b);border-radius:8px;margin-bottom:4px;font-size:11px;align-items:center}
+.ladm-history-head{font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);font-size:10px;background:transparent;border:none}
+</style>
+
+<script>
+(function(){
+  'use strict';
+
+  // Attendre que les globaux admin soient prêts
+  function _waitForAdmin(cb, retries){
+    retries = retries || 0;
+    if(typeof navTo === 'function' && typeof SB_URL !== 'undefined' && typeof SB_KEY !== 'undefined'){
+      cb();
+    } else if(retries < 50){
+      setTimeout(function(){ _waitForAdmin(cb, retries + 1); }, 100);
+    }
+  }
+
+  function _hdrs(){
+    return {apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY};
+  }
+
+  function _hdrsJson(){
+    return {apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json'};
+  }
+
+  function _toast(msg, type){
+    if(typeof showAdminToast === 'function'){
+      showAdminToast(msg, type || 'success');
+    } else {
+      alert(msg);
+    }
+  }
+
+  // ───── 1. INJECT ITEM SIDEBAR ─────
+  function _injectSidebarItem(){
+    if(document.getElementById('nav-ligue-mensuelle')) return;
+    var navParr = document.getElementById('nav-defis');
+    if(!navParr) return;
+    var item = document.createElement('div');
+    item.className = 'sb-item';
+    item.id = 'nav-ligue-mensuelle';
+    item.onclick = function(){ navTo('ligue-mensuelle'); };
+    item.innerHTML = '<span class="sb-item-icon">🏆</span><span>Ligue mensuelle</span>';
+    navParr.parentNode.insertBefore(item, navParr.nextSibling);
+  }
+
+  // ───── 2. INJECT VUE PRINCIPALE ─────
+  function _injectView(){
+    if(document.getElementById('v-ligue-mensuelle')) return;
+    var main = document.getElementById('main');
+    if(!main) return;
+    var view = document.createElement('div');
+    view.id = 'v-ligue-mensuelle';
+    view.className = 'view';
+    view.style.padding = '20px';
+    view.innerHTML =
+      '<div style="margin-bottom:18px">'
+      + '<div style="font-size:20px;font-weight:800;color:var(--t1);margin-bottom:4px">🏆 Ligue mensuelle</div>'
+      + '<div style="font-size:12px;color:var(--t3)">Compétition mensuelle automatique · Top 3 toutes écoles confondues</div>'
+      + '</div>'
+      + '<div id="ladm-lots-status" class="ladm-warn">Chargement du statut...</div>'
+      + '<div class="ladm-section">'
+      +   '<div class="ladm-section-title">⏳ Mois en cours</div>'
+      +   '<div id="ladm-current-stats" style="margin-bottom:14px">Chargement...</div>'
+      +   '<div id="ladm-current-top10"></div>'
+      + '</div>'
+      + '<div class="ladm-section">'
+      +   '<div class="ladm-section-title">🎁 Configuration des lots</div>'
+      +   '<div style="font-size:11px;color:var(--t3);margin-bottom:12px">Le 1er du mois, le top 3 reçoit automatiquement les lots ci-dessous (selon stock disponible).</div>'
+      +   '<div class="ladm-grid3">'
+      +     '<div class="ladm-rank-card">'
+      +       '<label>🥇 1er — gros lot</label>'
+      +       '<select id="ladm-lot1"></select>'
+      +       '<input id="ladm-label1" type="text" placeholder="Label affiché">'
+      +     '</div>'
+      +     '<div class="ladm-rank-card">'
+      +       '<label>🥈 2e — lot moyen</label>'
+      +       '<select id="ladm-lot2"></select>'
+      +       '<input id="ladm-label2" type="text" placeholder="Label affiché">'
+      +     '</div>'
+      +     '<div class="ladm-rank-card">'
+      +       '<label>🥉 3e — petit lot</label>'
+      +       '<select id="ladm-lot3"></select>'
+      +       '<input id="ladm-label3" type="text" placeholder="Label affiché">'
+      +     '</div>'
+      +   '</div>'
+      +   '<button class="ladm-btn ladm-btn-primary" onclick="ladmSaveConfig()">💾 Sauvegarder la configuration</button>'
+      + '</div>'
+      + '<div class="ladm-section">'
+      +   '<div class="ladm-section-title">⚡ Clôture manuelle</div>'
+      +   '<div style="font-size:11px;color:var(--t3);margin-bottom:14px;line-height:1.5">Normalement la clôture est automatique le 1er de chaque mois. Si tu veux forcer la clôture du mois précédent (test, bug du cron, événement spécial), utilise ce bouton.</div>'
+      +   '<button class="ladm-btn ladm-btn-danger" onclick="ladmForceClose()">⚡ Forcer la clôture du mois précédent</button>'
+      + '</div>'
+      + '<div class="ladm-section">'
+      +   '<div class="ladm-section-title">📚 Historique des ligues clôturées</div>'
+      +   '<div id="ladm-history"></div>'
+      + '</div>';
+    main.appendChild(view);
+  }
+
+  // ───── 3. RENDER : ligue en cours + config + historique ─────
+
+  function _renderLotsStatus(){
+    var el = document.getElementById('ladm-lots-status');
+    if(!el) return;
+    var lotsOn = (typeof LOTS_ON !== 'undefined') && LOTS_ON;
+    if(lotsOn){
+      el.className = 'ladm-warn ladm-warn-ok';
+      el.innerHTML = '✅ <strong>Système actif</strong> · Les lots seront attribués automatiquement à la prochaine clôture.';
+    } else {
+      el.className = 'ladm-warn';
+      el.innerHTML = '⚠️ <strong>Système désactivé</strong> · Le switch "Lots" est OFF dans Paramètres → Barème. La clôture archivera les scores mais n\'attribuera aucun lot.';
+    }
+  }
+
+  function _renderCurrentMonth(){
+    var statsEl = document.getElementById('ladm-current-stats');
+    var top10El = document.getElementById('ladm-current-top10');
+    if(!statsEl || !top10El) return;
+
+    var now = new Date();
+    var monthLabel = now.toLocaleDateString('fr-FR', {month: 'long', year: 'numeric'});
+    var finMois = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    var jLeft = Math.max(0, Math.ceil((finMois - now) / 86400000));
+
+    statsEl.innerHTML =
+      '<div class="ladm-stat">📅 <strong>' + monthLabel + '</strong></div>'
+      + '<div class="ladm-stat">⏳ <strong>' + jLeft + ' jours</strong> restants</div>'
+      + '<div class="ladm-stat">👥 <strong id="ladm-nb-eligible">…</strong> éligibles</div>';
+
+    top10El.innerHTML = '<div style="text-align:center;padding:14px;color:var(--t3);font-size:12px">Chargement...</div>';
+
+    fetch(SB_URL + '/rest/v1/joueurs?select=pseudo,prenom,ecole,pts_total&pts_total=gte.100&order=pts_total.desc&limit=10', {headers: _hdrs()})
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(rows){
+        var nbElig = document.getElementById('ladm-nb-eligible');
+        if(nbElig) nbElig.textContent = (rows && rows.length) || '0';
+        if(!Array.isArray(rows) || !rows.length){
+          top10El.innerHTML = '<div style="text-align:center;padding:14px;color:var(--t3);font-size:12px">Aucun joueur avec ≥ 100 pts ce mois-ci.</div>';
+          return;
+        }
+        var html = '';
+        for(var i = 0; i < rows.length; i++){
+          var r = rows[i];
+          var rank = i + 1;
+          var medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '#' + rank;
+          var ecoleStr = r.ecole ? ' · ' + r.ecole : '';
+          html += '<div class="ladm-row">';
+          html += '<div style="display:flex;align-items:center;gap:10px;flex:1">';
+          html += '<span class="ladm-medal">' + medal + '</span>';
+          html += '<div><div><strong>' + (r.prenom || r.pseudo) + '</strong></div>';
+          html += '<div style="font-size:10px;color:var(--t3);margin-top:2px">' + (r.pseudo || '') + ecoleStr + '</div></div>';
+          html += '</div>';
+          html += '<div style="font-weight:800;color:var(--ac);font-size:13px">' + (r.pts_total || 0) + ' pts</div>';
+          html += '</div>';
+        }
+        top10El.innerHTML = html;
+      })
+      .catch(function(){
+        top10El.innerHTML = '<div style="color:var(--re);padding:14px;font-size:12px">Erreur de chargement</div>';
+      });
+  }
+
+  function _renderConfig(){
+    // Récupère LOTS_DB pour peupler les selects + config ligue_lots_mensuel
+    var lotsDb = (typeof LOTS_DB !== 'undefined' && Array.isArray(LOTS_DB)) ? LOTS_DB : [];
+    function fillSelect(id, lots){
+      var sel = document.getElementById(id);
+      if(!sel) return;
+      sel.innerHTML = '<option value="">— Choisir un lot —</option>';
+      for(var i = 0; i < lots.length; i++){
+        var l = lots[i];
+        sel.innerHTML += '<option value="' + (l.id || '') + '">' + (l.emoji || '🎁') + ' ' + (l.titre || l.nom || l.id) + '</option>';
+      }
+    }
+    fillSelect('ladm-lot1', lotsDb);
+    fillSelect('ladm-lot2', lotsDb);
+    fillSelect('ladm-lot3', lotsDb);
+
+    // Charger config actuelle
+    fetch(SB_URL + '/rest/v1/config?key=eq.ligue_lots_mensuel&select=value', {headers: _hdrs()})
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(rows){
+        if(!rows || !rows.length) return;
+        var cfg = rows[0].value;
+        if(!cfg) return;
+        for(var rang = 1; rang <= 3; rang++){
+          var key = 'rang_' + rang;
+          if(cfg[key]){
+            var sel = document.getElementById('ladm-lot' + rang);
+            var inp = document.getElementById('ladm-label' + rang);
+            if(sel && cfg[key].lot_id) sel.value = cfg[key].lot_id;
+            if(inp && cfg[key].label) inp.value = cfg[key].label;
+          }
+        }
+      })
+      .catch(function(){});
+  }
+
+  function _renderHistory(){
+    var el = document.getElementById('ladm-history');
+    if(!el) return;
+    el.innerHTML = '<div style="text-align:center;padding:14px;color:var(--t3);font-size:12px">Chargement...</div>';
+
+    fetch(SB_URL + '/rest/v1/ligues_archives?rang=not.is.null&order=periode.desc,rang.asc&limit=30', {headers: _hdrs()})
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(rows){
+        if(!Array.isArray(rows) || !rows.length){
+          el.innerHTML = '<div style="text-align:center;padding:14px;color:var(--t3);font-size:12px">Aucune ligue clôturée pour le moment.</div>';
+          return;
+        }
+        // Grouper par période
+        var byPeriode = {};
+        for(var i = 0; i < rows.length; i++){
+          var r = rows[i];
+          if(!byPeriode[r.periode]) byPeriode[r.periode] = [];
+          byPeriode[r.periode].push(r);
+        }
+        var html = '';
+        html += '<div class="ladm-history-row ladm-history-head">';
+        html += '<div>Période</div><div>Pseudo</div><div>École</div><div style="text-align:right">Pts</div><div style="text-align:center">Code</div>';
+        html += '</div>';
+        var periodes = Object.keys(byPeriode).sort().reverse();
+        for(var p = 0; p < periodes.length; p++){
+          var per = periodes[p];
+          var list = byPeriode[per];
+          for(var j = 0; j < list.length; j++){
+            var w = list[j];
+            var medal = w.rang === 1 ? '🥇' : w.rang === 2 ? '🥈' : w.rang === 3 ? '🥉' : '#' + w.rang;
+            html += '<div class="ladm-history-row">';
+            html += '<div>' + (j === 0 ? '<strong>' + per + '</strong>' : '') + '</div>';
+            html += '<div>' + medal + ' ' + (w.pseudo || '?') + '</div>';
+            html += '<div style="color:var(--t3)">' + (w.ecole || '—') + '</div>';
+            html += '<div style="text-align:right;font-weight:700">' + (w.pts_periode || 0) + '</div>';
+            html += '<div style="text-align:center;font-family:monospace;font-size:10px">' + (w.lot_code || '—') + '</div>';
+            html += '</div>';
+          }
+        }
+        el.innerHTML = html;
+      })
+      .catch(function(){
+        el.innerHTML = '<div style="color:var(--re);padding:14px;font-size:12px">Erreur de chargement (table ligues_archives existe-t-elle ?)</div>';
+      });
+  }
+
+  // ───── 4. ACTIONS ─────
+
+  window.ladmSaveConfig = function(){
+    var lot1 = document.getElementById('ladm-lot1').value;
+    var lot2 = document.getElementById('ladm-lot2').value;
+    var lot3 = document.getElementById('ladm-lot3').value;
+    var lab1 = document.getElementById('ladm-label1').value;
+    var lab2 = document.getElementById('ladm-label2').value;
+    var lab3 = document.getElementById('ladm-label3').value;
+
+    if(!lot1 || !lot2 || !lot3){
+      _toast('⚠️ Sélectionne les 3 lots (1er, 2e, 3e)', 'error');
+      return;
+    }
+
+    var cfg = {
+      rang_1: {lot_id: lot1, label: lab1 || ''},
+      rang_2: {lot_id: lot2, label: lab2 || ''},
+      rang_3: {lot_id: lot3, label: lab3 || ''}
+    };
+
+    var hdrs = _hdrsJson();
+    hdrs.Prefer = 'resolution=merge-duplicates,return=minimal';
+
+    fetch(SB_URL + '/rest/v1/config', {
+      method: 'POST',
+      headers: hdrs,
+      body: JSON.stringify({key: 'ligue_lots_mensuel', value: cfg, updated_at: new Date().toISOString()})
+    })
+    .then(function(r){
+      if(r.ok){
+        _toast('✅ Configuration sauvegardée');
+      } else {
+        _toast('❌ Erreur ' + r.status, 'error');
+      }
+    })
+    .catch(function(){
+      _toast('❌ Erreur réseau', 'error');
+    });
+  };
+
+  window.ladmForceClose = function(){
+    var now = new Date();
+    var lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    var periode = lastMonth.getFullYear() + '-' + String(lastMonth.getMonth() + 1).padStart(2, '0');
+
+    if(!confirm('Forcer la clôture de la ligue ' + periode + ' ?\n\nCela va :\n- Archiver tous les scores de ' + periode + '\n- Attribuer les lots au top 3 (si LOTS_ON=true)\n- Reset pts_total de tous les joueurs à 0\n\nCette action est IRRÉVERSIBLE.')) return;
+
+    fetch(SB_URL + '/rest/v1/rpc/cloturer_ligue_mensuelle', {
+      method: 'POST',
+      headers: _hdrsJson(),
+      body: JSON.stringify({p_periode: periode})
+    })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(data){
+      if(!data){
+        _toast('❌ Erreur de clôture', 'error');
+        return;
+      }
+      if(data.status === 'ok'){
+        _toast('✅ Ligue ' + data.periode + ' clôturée — ' + data.eligibles + ' éligibles, ' + data.lots_attribues + ' lots attribués', 'success');
+        setTimeout(_renderHistory, 600);
+        setTimeout(_renderCurrentMonth, 800);
+      } else if(data.status === 'deja_cloturee'){
+        _toast('ℹ️ Cette ligue est déjà clôturée', 'info');
+      } else if(data.status === 'archive_seul'){
+        _toast('⚠️ Système désactivé — scores archivés mais pas d\'attribution', 'warning');
+        setTimeout(_renderHistory, 600);
+      } else {
+        _toast('❌ ' + (data.error || 'Erreur inconnue'), 'error');
+      }
+    })
+    .catch(function(e){
+      _toast('❌ Erreur réseau : ' + e.message, 'error');
+    });
+  };
+
+  // ───── 5. HOOK navTo + VIEW_LABELS + RUBRIQUE_MAP ─────
+
+  function _hookNavTo(){
+    if(typeof VIEW_LABELS === 'object' && VIEW_LABELS) {
+      VIEW_LABELS['ligue-mensuelle'] = '🏆 Ligue mensuelle';
+    }
+    if(typeof RUBRIQUE_MAP === 'object' && RUBRIQUE_MAP){
+      RUBRIQUE_MAP['ligue-mensuelle'] = function(){
+        _renderLotsStatus();
+        _renderCurrentMonth();
+        _renderConfig();
+        _renderHistory();
+      };
+    }
+  }
+
+  // ───── 6. INIT ─────
+
+  function _init(){
+    _waitForAdmin(function(){
+      _injectSidebarItem();
+      _injectView();
+      _hookNavTo();
+    });
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', _init);
+  } else {
+    _init();
+  }
+})();
+</script>
+
