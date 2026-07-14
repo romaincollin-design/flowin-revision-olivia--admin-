@@ -9406,4 +9406,96 @@ document.addEventListener('click', function(e) {
   }
 })();
 </script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   FLOWIN ADMIN — MODE PREVIEW NAVIGABLE  (activé UNIQUEMENT par ?preview=1)
+   - Bypass login, barre d'onglets pour les 13 vues
+   - Écritures Supabase neutralisées, lecture réelle conservée
+   - AUCUN effet si ?preview=1 est absent → zéro régression
+   ═══════════════════════════════════════════════════════════════════ */
+(function(){
+  var isPreview = false;
+  try { isPreview = new URLSearchParams(location.search).get('preview') === '1'; } catch(e){ return; }
+  if(!isPreview) return;
+
+  /* 1) Neutraliser toutes les écritures base */
+  var _origFetch = window.fetch;
+  window.fetch = function(url, opts){
+    try {
+      var u = (typeof url === 'string') ? url : (url && url.url) || '';
+      var m = ((opts && opts.method) || 'GET').toUpperCase();
+      if((m==='POST'||m==='PUT'||m==='PATCH'||m==='DELETE') && /supabase|\/rest\/v1\//i.test(u)) {
+        return Promise.resolve(new Response('[]', {status:200, headers:{'Content-Type':'application/json'}}));
+      }
+    } catch(e){}
+    return _origFetch.apply(this, arguments);
+  };
+
+  /* 2) Sections admin réelles */
+  var VIEWS = [
+    ['dashboard','Dashboard'], ['eleves','Joueurs'], ['analytics','Analytics'],
+    ['cours','Cours & Contenus'], ['partenaires','Partenaires & Lots'],
+    ['parametres','Paramètres'], ['bareme','Barème'], ['textes','Textes'],
+    ['envois','Envois & Push'], ['defis','Défis'], ['parrainage','Parrainage'],
+    ['etablissements','Établissements'], ['ligue-mensuelle','Ligue mensuelle']
+  ];
+  var chips = {};
+
+  function setActive(v){
+    for(var k in chips){
+      chips[k].style.background = (k===v) ? '#6C4FE0' : 'rgba(120,120,160,.12)';
+      chips[k].style.color      = (k===v) ? '#fff'    : '#555';
+    }
+  }
+
+  function go(v){
+    try {
+      if(typeof navTo === 'function'){ navTo(v); }
+      else {
+        document.querySelectorAll('.view').forEach(function(x){ x.classList.remove('active'); });
+        var t = document.getElementById('v-'+v); if(t) t.classList.add('active');
+      }
+    } catch(e){ console.warn('[preview] navTo', v, e); }
+    setActive(v);
+    try { window.scrollTo(0,0); } catch(e){}
+  }
+
+  function build(){
+    /* Bypass login-wall */
+    try {
+      var wall = document.getElementById('login-wall'); if(wall) wall.style.display = 'none';
+      sessionStorage.setItem('flowin_auth','1');
+      sessionStorage.setItem('flowin_auth_ts', Date.now().toString());
+      if(typeof loadData === 'function') loadData();
+    } catch(e){}
+
+    var bar = document.createElement('div');
+    bar.id = 'flowin-preview-bar';
+    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:2147483647;background:#fff;border-bottom:1px solid rgba(0,0,0,.12);padding:6px 8px;display:flex;gap:6px;overflow-x:auto;font-family:system-ui,-apple-system,sans-serif;-webkit-overflow-scrolling:touch;box-shadow:0 2px 12px rgba(0,0,0,.12)';
+
+    var tag = document.createElement('div');
+    tag.textContent = '👁 PREVIEW · écritures OFF';
+    tag.style.cssText = 'flex:0 0 auto;display:flex;align-items:center;font-size:11px;font-weight:800;color:#C4841A;padding:0 8px;white-space:nowrap';
+    bar.appendChild(tag);
+
+    VIEWS.forEach(function(pair){
+      var v = pair[0], label = pair[1];
+      var b = document.createElement('button');
+      b.textContent = label;
+      b.style.cssText = 'flex:0 0 auto;border:none;border-radius:8px;padding:7px 11px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;background:rgba(120,120,160,.12);color:#555;font-family:inherit';
+      b.addEventListener('click', function(){ go(v); });
+      chips[v] = b;
+      bar.appendChild(b);
+    });
+
+    document.body.appendChild(bar);
+    document.body.style.paddingTop = '46px';
+    go('dashboard');
+  }
+
+  if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', build); }
+  else { build(); }
+})();
+</script>
+
 
