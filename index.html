@@ -1748,8 +1748,15 @@ async function loadData() {
     if(Array.isArray(j)) {
       DB.joueurs     = j;
       DB.sessions    = Array.isArray(s) ? s : [];
-      DB.parrainage  = Array.isArray(p) ? p : [];
-      DB.connexions  = Array.isArray(c) ? c : [];
+      // Exclure le NDS (parrainage + connexions) — Révision only
+      var _revPseudos = new Set(j.map(function(x){ return x.pseudo; }));
+      var _isNds = function(v){ return /^j-nd-/i.test(v||''); };
+      DB.parrainage  = (Array.isArray(p) ? p : []).filter(function(pr){
+        return !_isNds(pr.sender) && !_isNds(pr.destinataire) && !/^ev-nds-/i.test(pr.sender_etab||'');
+      });
+      DB.connexions  = (Array.isArray(c) ? c : []).filter(function(cx){
+        return !cx.pseudo || _revPseudos.has(cx.pseudo);
+      });
       liveMode = true;
       dot.className = 'live-dot on';
       lbl.className = 'live-label on';
