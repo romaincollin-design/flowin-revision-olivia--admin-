@@ -1729,7 +1729,7 @@ async function loadData() {
     }
 
     const [j,s,p,c] = await Promise.all([
-      fetch(`${SB_URL}/rest/v1/joueurs?order=ts.desc&limit=500`,{headers:hdrs}).then(r=>r.ok?r.json():[]),
+      fetch(`${SB_URL}/rest/v1/joueurs?pseudo=not.is.null&order=ts.desc&limit=1000`,{headers:hdrs}).then(r=>r.ok?r.json():[]),
       fetch(`${SB_URL}/rest/v1/sessions?order=ts.desc&limit=1000`,{headers:hdrs}).then(r=>r.ok?r.json():[]),
       fetch(`${SB_URL}/rest/v1/parrainage?order=ts.desc&limit=500`,{headers:hdrs}).then(r=>r.ok?r.json():[]),
       fetch(`${SB_URL}/rest/v1/connexions?order=ts.desc&limit=2000`,{headers:hdrs}).then(r=>r.ok?r.json():[]),
