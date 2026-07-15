@@ -808,21 +808,23 @@ async function showDashboard() {
 
 async function loadData() {
   var hdrs = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
-  var ecoleEnc = encodeURIComponent(STATE.ecole);
 
   document.getElementById('pageSubInfo').textContent = 'Chargement des données de ' + STATE.ecole + '…';
 
   try {
+    // Pilote mono-école : on charge les élèves RÉVISION via le discriminant conçu
+    // (source + client_type vides). PAS de match sur le texte libre 'ecole' (18
+    // orthographes → cassé). Le scoping multi-école viendra avec ecole_id.
     var [rJ, rS, rC] = await Promise.all([
-      fetch(SB_URL + '/rest/v1/joueurs?ecole=eq.' + ecoleEnc + '&order=pts_total.desc&limit=500', { headers: hdrs }),
-      fetch(SB_URL + '/rest/v1/sessions?ecole=eq.' + ecoleEnc + '&order=ts.desc&limit=5000', { headers: hdrs }),
+      fetch(SB_URL + '/rest/v1/joueurs?source=is.null&client_type=is.null&order=pts_total.desc&limit=1000', { headers: hdrs }),
+      fetch(SB_URL + '/rest/v1/sessions?order=ts.desc&limit=5000', { headers: hdrs }),
       fetch(SB_URL + '/rest/v1/connexions?order=ts.desc&limit=2000', { headers: hdrs }),
     ]);
     STATE.joueurs = rJ.ok ? await rJ.json() : [];
-    STATE.sessions = rS.ok ? await rS.json() : [];
+    var allSess = rS.ok ? await rS.json() : [];
     var allConn = rC.ok ? await rC.json() : [];
-    // Filtrer connexions sur les élèves de l'école
     var pseudos = new Set(STATE.joueurs.map(function(j){ return j.pseudo; }));
+    STATE.sessions = allSess.filter(function(s){ return pseudos.has(s.pseudo); });
     STATE.connexions = allConn.filter(function(c){ return pseudos.has(c.pseudo); });
 
     document.getElementById('pageSubInfo').textContent =
