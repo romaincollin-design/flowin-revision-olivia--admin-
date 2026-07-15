@@ -1078,5 +1078,51 @@ window.addEventListener('DOMContentLoaded', async function() {
 });
 
 </script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   FLOWIN PROF — MODE PREVIEW NAVIGABLE (activé par ?preview=1)
+   Bypass login, affiche le dashboard réel, écritures neutralisées.
+   AUCUN effet si ?preview=1 absent → zéro régression.
+   ═══════════════════════════════════════════════════════════════════ */
+(function(){
+  var isPreview = false;
+  try { isPreview = new URLSearchParams(location.search).get('preview') === '1'; } catch(e){ return; }
+  if(!isPreview) return;
+
+  var _origFetch = window.fetch;
+  window.fetch = function(url, opts){
+    try {
+      var u = (typeof url === 'string') ? url : (url && url.url) || '';
+      var m = ((opts && opts.method) || 'GET').toUpperCase();
+      if((m==='POST'||m==='PUT'||m==='PATCH'||m==='DELETE') && /supabase|\/rest\/v1\//i.test(u)) {
+        return Promise.resolve(new Response('[]', {status:200, headers:{'Content-Type':'application/json'}}));
+      }
+    } catch(e){}
+    return _origFetch.apply(this, arguments);
+  };
+
+  function build(){
+    try {
+      if(typeof STATE === 'object' && STATE) STATE.ecole = 'Lycée de Vence (aperçu)';
+      var lw = document.getElementById('v-login'); if(lw) lw.style.display = 'none';
+      if(typeof showDashboard === 'function') showDashboard();
+    } catch(e){ console.warn('[preview prof]', e); }
+
+    var bar = document.createElement('div');
+    bar.id = 'flowin-preview-bar';
+    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:2147483647;background:#0a1020;border-bottom:1px solid rgba(255,255,255,.14);padding:8px 12px;display:flex;align-items:center;gap:10px;font-family:system-ui,-apple-system,sans-serif;box-shadow:0 2px 12px rgba(0,0,0,.4)';
+    var tag = document.createElement('div');
+    tag.textContent = '👁 PREVIEW PROF · écritures OFF';
+    tag.style.cssText = 'font-size:12px;font-weight:800;color:#F4B544;white-space:nowrap';
+    bar.appendChild(tag);
+    document.body.appendChild(bar);
+    document.body.style.paddingTop = '46px';
+  }
+
+  if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', build); }
+  else { build(); }
+})();
+</script>
+
 </body>
 </html>
