@@ -591,7 +591,7 @@
 <div class="v-dashboard" id="v-dashboard">
   <div class="topbar">
     <div class="topbar-left">
-      <div class="topbar-logo">🌊 Flowin</div>
+      <div class="topbar-logo">Flowin</div>
       <div class="topbar-divider"></div>
       <div class="topbar-school">
         <div class="topbar-school-label">Établissement</div>
@@ -611,6 +611,35 @@
 
     <!-- KPIs -->
     <div class="kpi-grid" id="kpiGrid"></div>
+
+    <!-- COCKPIT : CAGNOTTE + CREER UN CHALLENGE -->
+    <div id="cockpit" style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:18px 20px;margin:0 0 18px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+        <div style="font-size:15px;font-weight:600">Créer un challenge</div>
+        <div style="text-align:right">
+          <div style="font-size:22px;font-weight:700;color:#534AB7"><span id="cagnotteVal">—</span> <span style="font-size:13px;color:#888;font-weight:400">pts</span></div>
+          <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.05em">cagnotte à distribuer</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <button type="button" class=" chTarget chOn" data-t="classe" onclick="chSeg(this)" style="flex:1;padding:9px;border:1px solid #AFA9EC;border-radius:8px;background:#EEEDFE;color:#534AB7;font-weight:600;cursor:pointer">Toute la classe</button>
+        <button type="button" class="chTarget" data-t="eleves" onclick="chSeg(this)" style="flex:1;padding:9px;border:1px solid rgba(0,0,0,.12);border-radius:8px;background:#fff;color:#555;font-weight:600;cursor:pointer">Élèves choisis</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div><label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.05em">Sur le thème</label>
+          <select id="chTheme" style="width:100%;padding:9px;border:1px solid rgba(0,0,0,.12);border-radius:8px;margin-top:4px"></select></div>
+        <div><label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.05em">Durée</label>
+          <select id="chDuree" style="width:100%;padding:9px;border:1px solid rgba(0,0,0,.12);border-radius:8px;margin-top:4px">
+            <option value="semaine">Cette semaine</option><option value="mois">Ce mois</option><option value="semestre">Ce semestre</option><option value="annee">Cette année</option></select></div>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:14px">
+        <div style="flex:1"><label style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.05em">Récompense par élève qui réussit</label>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:6px"><input type="range" id="chReward" min="10" max="100" value="30" step="10" style="flex:1" oninput="var v=document.getElementById('chRewardVal');if(v)v.textContent=this.value">
+          <span style="font-weight:600;color:#534AB7;white-space:nowrap"><span id="chRewardVal">30</span> pts</span></div></div>
+        <button type="button" id="chLaunch" onclick="launchChallenge()" style="background:#534AB7;color:#fff;border:none;border-radius:8px;padding:11px 22px;font-weight:600;cursor:pointer;white-space:nowrap">Lancer le défi</button>
+      </div>
+      <div id="chResult" style="margin-top:14px;font-size:13px"></div>
+    </div>
 
     <!-- Performance par matière -->
     <div class="section">
@@ -804,6 +833,69 @@ async function showDashboard() {
   renderTopPerformers();
   renderDecrocheurs();
   renderTable();
+  try { initCockpit(); } catch(e){ console.warn('[cockpit]', e); }
+}
+
+// ═══ COCKPIT : cagnotte + création de challenge ═══
+var COCKPIT = { prof:null, themes:[], target:'classe' };
+async function initCockpit(){
+  var hdrs = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY };
+  try {
+    var rp = await fetch(SB_URL + '/rest/v1/professeurs?limit=1', { headers: hdrs });
+    var profs = rp.ok ? await rp.json() : [];
+    COCKPIT.prof = profs[0] || null;
+    var cv = document.getElementById('cagnotteVal');
+    if(cv) cv.textContent = COCKPIT.prof ? (COCKPIT.prof.pts_capital!=null?COCKPIT.prof.pts_capital:'—') : '—';
+  } catch(e){}
+  try {
+    var rt = await fetch(SB_URL + '/rest/v1/themes?select=id,title,mat&actif=eq.true&order=mat.asc', { headers: hdrs });
+    COCKPIT.themes = rt.ok ? await rt.json() : [];
+    var sel = document.getElementById('chTheme');
+    if(sel) sel.innerHTML = COCKPIT.themes.map(function(t){
+      return '<option value="'+t.id+'">'+ (t.title||t.id) + ' (' + (t.mat||'') + ')</option>';
+    }).join('');
+  } catch(e){}
+}
+function chSeg(el){
+  document.querySelectorAll('.chTarget').forEach(function(b){
+    b.style.background='#fff'; b.style.color='#555'; b.style.borderColor='rgba(0,0,0,.12)';
+  });
+  el.style.background='#EEEDFE'; el.style.color='#534AB7'; el.style.borderColor='#AFA9EC';
+  COCKPIT.target = el.getAttribute('data-t');
+}
+function launchChallenge(){
+  var res = document.getElementById('chResult');
+  var themeSel = document.getElementById('chTheme');
+  if(!themeSel || !themeSel.value){ if(res) res.textContent='Choisis un thème.'; return; }
+  var theme = COCKPIT.themes.find(function(t){ return t.id===themeSel.value; }) || {};
+  var duree = document.getElementById('chDuree').value;
+  var reward = parseInt(document.getElementById('chReward').value,10) || 30;
+  var jours = {semaine:7, mois:30, semestre:180, annee:365}[duree] || 7;
+  var fin = new Date(Date.now() + jours*24*3600*1000).toISOString().slice(0,10);
+  var titre = 'Défi ' + (theme.title||'') ;
+  var ch = {
+    id: 'ch-' + Date.now(),
+    professeur_id: COCKPIT.prof ? COCKPIT.prof.id : 'prof-olivia',
+    classe_id: 'cls-vence-tbp',
+    titre: titre, matiere: theme.mat||null, theme_id: theme.id,
+    cible: COCKPIT.target, recompense_pts: reward, duree: duree,
+    date_debut: new Date().toISOString().slice(0,10), date_fin: fin, statut: 'actif'
+  };
+  var hdrs = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type':'application/json', 'Prefer':'return=minimal' };
+  var btn = document.getElementById('chLaunch'); if(btn){ btn.disabled=true; btn.textContent='…'; }
+  fetch(SB_URL + '/rest/v1/challenges', { method:'POST', headers:hdrs, body: JSON.stringify(ch) })
+    .then(function(r){
+      if(btn){ btn.disabled=false; btn.textContent='Lancer le défi'; }
+      if(!r.ok){ if(res) res.textContent='Échec de création du défi.'; return; }
+      var msg = 'Défi de votre prof : réussissez le quiz « ' + (theme.title||'') + ' » et gagnez ' + reward + ' points ! Jouez ici : https://flowrevis.vercel.app';
+      var wa = 'https://wa.me/?text=' + encodeURIComponent(msg);
+      if(res) res.innerHTML =
+        '<div style="background:#E4F7F0;border:1px solid rgba(14,158,110,.25);border-radius:8px;padding:12px 14px;color:#0F6E56">'
+        + 'Défi créé et actif jusqu\'au ' + fin + '. '
+        + '<a href="'+wa+'" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:#25D366;color:#fff;text-decoration:none;padding:8px 14px;border-radius:8px;font-weight:600">Envoyer par WhatsApp</a>'
+        + '</div>';
+    })
+    .catch(function(){ if(btn){ btn.disabled=false; btn.textContent='Lancer le défi'; } if(res) res.textContent='Erreur réseau.'; });
 }
 
 async function loadData() {
