@@ -2151,8 +2151,8 @@ function renderPartenairesHub() {
   if(SB_ENABLED) {
     var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
     Promise.all([
-      fetch(SB_URL+'/rest/v1/partenaires?select=id,actif',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
-      fetch(SB_URL+'/rest/v1/lots_stock?select=statut',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];}),
+      fetch(SB_URL+'/rest/v1/partenaires?select=id,actif&super_event_id=is.null',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}),
+      fetch(SB_URL+'/rest/v1/lots_stock?select=statut,lot_id&lot_id=not.ilike.lot-nds-*',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];}),
       fetch(SB_URL+'/rest/v1/gains?select=id&limit=500',{headers:hdrs}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];})
     ]).then(function(res){
       var parts=res[0]||[], stock=res[1]||[], gains=res[2]||[];
@@ -2177,7 +2177,7 @@ function partenairesTab(tab, btn) {
 function loadPartenaires(cb) {
   if(!SB_ENABLED) { cb([]); return; }
   var hdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY};
-  fetch(SB_URL+'/rest/v1/partenaires?order=created_at.desc', {headers:hdrs})
+  fetch(SB_URL+'/rest/v1/partenaires?super_event_id=is.null&order=created_at.desc', {headers:hdrs})
     .then(function(r){ return r.ok?r.json():[]; })
     .then(function(rows){ DB_PARTENAIRES = rows||[]; cb(DB_PARTENAIRES); })
     .catch(function(){ cb([]); });
