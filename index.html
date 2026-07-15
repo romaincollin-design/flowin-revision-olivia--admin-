@@ -679,6 +679,17 @@ input[type=range]{accent-color:var(--ac);width:100%;height:4px;cursor:pointer}
       <!-- KPI CARDS -->
       <div class="kpi-grid" id="dash-kpis"></div>
 
+      <!-- ENTONNOIR + ENGAGEMENT (style Events) -->
+      <div class="panel" id="dash-funnel-panel" style="margin-bottom:16px">
+        <div class="panel-header"><span>🔻 Entonnoir — inscription → jeu</span></div>
+        <div id="dash-funnel" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:14px"></div>
+        <div id="dash-funnel-note" style="padding:0 14px 14px;font-size:12px;color:var(--t2);font-weight:600"></div>
+      </div>
+      <div class="panel" id="dash-eng-panel" style="margin-bottom:16px">
+        <div class="panel-header"><span>⚡ Engagement</span></div>
+        <div id="dash-eng" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:14px"></div>
+      </div>
+
       <!-- 3 COLONNES -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
         <div>
@@ -3041,6 +3052,33 @@ function renderDashboard() {
   try { renderChart(); } catch(e){}
   try { renderMatieres(); } catch(e){}
   try { renderTopEtabs(); } catch(e){}
+
+  // ENTONNOIR + ENGAGEMENT (calculés sur DB.*, mêmes 19 élèves)
+  try {
+    var jset = new Set(DB.joueurs.map(function(j){ return j.pseudo; }));
+    var joues = new Set(DB.sessions.filter(function(s){ return jset.has(s.pseudo); }).map(function(s){ return s.pseudo; }));
+    var actifs7 = new Set(DB.sessions.filter(function(s){ return jset.has(s.pseudo) && s.ts && (Date.now()-new Date(s.ts).getTime())<7*24*3600*1000; }).map(function(s){ return s.pseudo; }));
+    var profilComplet = DB.joueurs.filter(function(j){ return j.ecole && j.ecole!==''; }).length;
+    var nbInscrits = DB.joueurs.length;
+    var nbJoues = joues.size, nbActifs7 = actifs7.size;
+
+    function subCell(n, label){
+      return '<div style="background:var(--surf2);border:1px solid var(--b);border-radius:12px;padding:14px 16px">'
+        + '<div style="font-family:\'Syne\',sans-serif;font-size:26px;font-weight:800;color:var(--t);line-height:1">'+n+'</div>'
+        + '<div style="font-size:10px;letter-spacing:.06em;color:var(--t3);font-weight:800;text-transform:uppercase;margin-top:4px">'+label+'</div></div>';
+    }
+    var fEl = document.getElementById('dash-funnel');
+    if(fEl) fEl.innerHTML = subCell(nbInscrits,'Inscrits')+subCell(profilComplet,'Profil complet')+subCell(nbJoues,'Ont joué')+subCell(nbActifs7,'Actifs 7j');
+    var fnEl = document.getElementById('dash-funnel-note');
+    if(fnEl) fnEl.textContent = (nbInscrits-nbJoues)+' élève(s) inscrit(s) n\'ont jamais lancé de quiz.';
+
+    var sessMoy = nbInscrits ? Math.round((DB.sessions.filter(function(s){return jset.has(s.pseudo);}).length/nbInscrits)*10)/10 : 0;
+    var jamais = nbInscrits - nbJoues;
+    var streaks = DB.sessions.filter(function(s){return jset.has(s.pseudo);}).map(function(s){return s.streak||0;});
+    var streakMoy = streaks.length ? Math.round(streaks.reduce(function(a,b){return a+b;},0)/streaks.length) : 0;
+    var eEl = document.getElementById('dash-eng');
+    if(eEl) eEl.innerHTML = subCell(sessMoy,'Sessions / élève')+subCell(nbJoues,'Élèves actifs')+subCell(jamais,'Jamais joué')+subCell(streakMoy,'Streak moyen');
+  } catch(e){ console.warn('[dashboard funnel]', e); }
 }
 
 
