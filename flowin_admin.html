@@ -5394,6 +5394,37 @@ function saveCours(id) {
     COURS_DB.push(coursObj);
   }
 
+  // === PERSISTANCE SUPABASE (fix: avant, tout restait en mémoire → perdu au reload) ===
+  var wHdrs = {apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'};
+  // Payload limité aux colonnes RÉELLES de la table cours (pas source_file/visuel_html)
+  var coursRow = {
+    id: coursObj.id, type: coursObj.type, matiere: mat, theme: theme, titre: titre,
+    niveau: 'Terminale Bac Pro', auteur: 'Romain', date: coursObj.date,
+    resume: resume, points_cles: points, couleur: coursObj.couleur, emoji: emoji,
+    tags: tags, nb_questions: nbQ, nb_eleves_vus: 0, score_moy: 0, eleve_auteur: false
+  };
+  fetch(SB_URL+'/rest/v1/cours', {method:'POST',headers:wHdrs,body:JSON.stringify(coursRow)})
+    .then(function(r){
+      if(!r.ok) { showAdminToast('Cours en local, mais échec enregistrement base', 'error'); return; }
+      // Questions générées : best-effort, non bloquant, uniquement si le thème est résolu
+      if(generatedQs.length) {
+        var th = (SB_THEMES||[]).find(function(t){ return (t.title||'').trim().toLowerCase() === theme.trim().toLowerCase(); });
+        if(th && th.id) {
+          var qRows = generatedQs.map(function(q){
+            var bon = (typeof q.bonne === 'number') ? q.bonne : Math.max(0,(q.reponses||[]).indexOf(q.bonne));
+            return { theme_id: th.id, q: q.question, opts: q.reponses, bon: bon,
+                     expl: q.explication||null, difficulte: q.difficulte||'moyen',
+                     statut: 'en_attente', actif: false };
+          });
+          fetch(SB_URL+'/rest/v1/questions', {method:'POST',headers:{apikey:SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(qRows)})
+            .then(function(rq){ if(!rq.ok) showAdminToast('Cours enregistré · questions non liées', 'error'); });
+        } else if(nbQ>0) {
+          showAdminToast('Cours enregistré · thème introuvable, questions en local', 'error');
+        }
+      }
+    })
+    .catch(function(){ showAdminToast('Cours en local · erreur réseau', 'error'); });
+
   // Show confirmation
   const msg = nbQ>0 ? `✅ Cours sauvegardé avec ${nbQ} questions ajoutées à la banque (en attente de validation)` : '✅ Cours sauvegardé';
   closeCours();
