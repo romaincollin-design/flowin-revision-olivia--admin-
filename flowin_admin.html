@@ -6,7 +6,7 @@
   <meta http-equiv="Pragma" content="no-cache">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Flowin Admin CDC v1778599590</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -2598,7 +2598,7 @@ function renderPartenairesStock(el) {
     ].forEach(function(k){
       html += '<div style="background:'+k[4]+';border-radius:10px;padding:12px;text-align:center">'
         +'<div style="font-size:18px;margin-bottom:4px">'+k[0]+'</div>'
-        +'<div style="font-size:20px;font-weight:800;color:'+k[3]+';font-family:Syne,sans-serif">'+k[2]+'</div>'
+        +'<div style="font-size:20px;font-weight:800;color:'+k[3]+';">'+k[2]+'</div>'
         +'<div style="font-size:10px;color:var(--t3);text-transform:uppercase;margin-top:2px">'+k[1]+'</div></div>';
     });
     html += '</div>';
@@ -2995,7 +2995,7 @@ function renderDashboard() {
       return '<div onclick="navTo(\''+k.nav+'\')" style="background:var(--surf);border:1px solid var(--b);border-radius:14px;padding:20px 18px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden" onmouseenter="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 8px 24px rgba(0,0,0,.08)\'" onmouseleave="this.style.transform=\'\';this.style.boxShadow=\'\'">'
         + '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:'+k.color+'"></div>'
         + '<div style="font-size:10px;font-weight:800;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">'+k.label+'</div>'
-        + '<div style="font-family:\'Syne\',sans-serif;font-size:32px;font-weight:800;color:var(--t);line-height:1;margin-bottom:6px;letter-spacing:-.03em">'+k.val+'</div>'
+        + '<div style="font-family:\'DM Sans\',sans-serif;font-size:32px;font-weight:800;color:var(--t);line-height:1;margin-bottom:6px;letter-spacing:-.03em">'+k.val+'</div>'
         + '<div style="font-size:11px;color:var(--t3);font-weight:500">'+k.sub+'</div>'
         + '</div>';
     }).join('');
@@ -3095,7 +3095,7 @@ function renderDashboard() {
 
     function subCell(n, label){
       return '<div style="background:var(--surf2);border:1px solid var(--b);border-radius:12px;padding:14px 16px">'
-        + '<div style="font-family:\'Syne\',sans-serif;font-size:26px;font-weight:800;color:var(--t);line-height:1">'+n+'</div>'
+        + '<div style="font-family:\'DM Sans\',sans-serif;font-size:26px;font-weight:800;color:var(--t);line-height:1">'+n+'</div>'
         + '<div style="font-size:10px;letter-spacing:.06em;color:var(--t3);font-weight:800;text-transform:uppercase;margin-top:4px">'+label+'</div></div>';
     }
     var fEl = document.getElementById('dash-funnel');
@@ -4041,7 +4041,7 @@ function renderCoursHub() {
   if(!themeList.length) {
     el.innerHTML = '<div style="text-align:center;padding:60px 20px;background:var(--surf);border:1px dashed var(--b);border-radius:14px">'
       + '<div style="font-size:48px;margin-bottom:14px">📚</div>'
-      + '<div style="font-size:18px;font-weight:800;color:var(--t);margin-bottom:8px;font-family:Syne,sans-serif">Aucun contenu pédagogique</div>'
+      + '<div style="font-size:18px;font-weight:800;color:var(--t);margin-bottom:8px;">Aucun contenu pédagogique</div>'
       + '<div style="font-size:13px;color:var(--t3);margin-bottom:20px;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.6">'
       + 'La base Supabase ne contient pas encore les fiches et questions.<br>'
       + '<b>Exécute</b> les fichiers SQL <code style="background:var(--surf2);padding:2px 6px;border-radius:4px">flowin_schema_v2.sql</code> puis <code style="background:var(--surf2);padding:2px 6px;border-radius:4px">flowin_contenu_complet.sql</code> dans Supabase SQL Editor.</div>'
@@ -4095,7 +4095,7 @@ function renderCoursHub() {
     html += '<div style="margin-bottom:24px">';
     html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid ' + couleur + '">';
     html += '<span style="font-size:20px">' + emoji + '</span>';
-    html += '<span style="font-size:14px;font-weight:800;color:var(--t);font-family:\'Syne\',sans-serif">' + mat + '</span>';
+    html += '<span style="font-size:14px;font-weight:800;color:var(--t);font-family:\'DM Sans\',sans-serif">' + mat + '</span>';
     html += '<span style="font-size:10px;color:var(--t3);margin-left:auto">' + themed.length + ' thème' + (themed.length>1?'s':'') + ' · ' + totalQM + ' q.</span>';
     html += '</div>';
 
@@ -4145,7 +4145,7 @@ function renderCoursHub() {
 function coursKpi(icon, val, label, color, bg) {
   return '<div style="background:' + bg + ';border-radius:10px;padding:14px;text-align:center">'
     + '<div style="font-size:20px;margin-bottom:4px">' + icon + '</div>'
-    + '<div style="font-size:22px;font-weight:800;color:' + color + ';font-family:\'Syne\',sans-serif">' + val + '</div>'
+    + '<div style="font-size:22px;font-weight:800;color:' + color + ';font-family:\'DM Sans\',sans-serif">' + val + '</div>'
     + '<div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:2px">' + label + '</div>'
     + '</div>';
 }
@@ -4166,7 +4166,7 @@ function editFicheEssentiel(themeId) {
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
   modal.innerHTML = '<div style="background:var(--surf);border-radius:14px;width:100%;max-width:760px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">'
     + '<div style="padding:18px 22px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surf);z-index:1">'
-    + '<div style="font-size:15px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">✏️ Modifier — ' + (theme ? theme.title : themeId) + '</div>'
+    + '<div style="font-size:15px;font-weight:800;color:var(--t);">✏️ Modifier — ' + (theme ? theme.title : themeId) + '</div>'
     + '<button id="edit-close-btn" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px">✕</button>'
     + '</div>'
     + '<div style="padding:20px 22px;display:flex;flex-direction:column;gap:18px">'
@@ -4277,7 +4277,7 @@ function editFicheQuestions(themeId) {
   modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px';
   var html = '<div style="background:var(--surf);border-radius:14px;width:100%;max-width:760px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">'
     + '<div style="padding:18px 22px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surf);z-index:1">'
-    + '<div style="font-size:15px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">❓ Questions — ' + (theme ? theme.title : themeId) + '</div>'
+    + '<div style="font-size:15px;font-weight:800;color:var(--t);">❓ Questions — ' + (theme ? theme.title : themeId) + '</div>'
     + '<button id="edit-q-close" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px">✕</button>'
     + '</div>'
     + '<div style="padding:20px 22px"><div style="font-size:11px;color:var(--t3);margin-bottom:12px">' + questions.length + ' question(s). Clique sur une question pour la modifier.</div>'
@@ -4675,7 +4675,7 @@ function renderCoursThemeDetail(themeObj, el) {
   html += '<div class="panel" style="margin-bottom:14px;border-left:4px solid '+couleur+'">';
   html += '<div style="padding:18px;display:flex;align-items:center;gap:14px">';
   html += '<div style="width:56px;height:56px;border-radius:14px;background:'+couleur+'20;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0">'+(themeObj.emoji||'📄')+'</div>';
-  html += '<div style="flex:1"><div style="font-size:18px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">'+themeObj.theme+'</div>';
+  html += '<div style="flex:1"><div style="font-size:18px;font-weight:800;color:var(--t);">'+themeObj.theme+'</div>';
   html += '<div style="font-size:12px;color:var(--t3);margin-top:4px">'+mat+' · Bac Pro</div></div>';
   html += '<div style="display:flex;gap:8px">';
   html += '<div style="background:'+couleur+'15;border-radius:10px;padding:10px 14px;text-align:center;border:1px solid '+couleur+'30"><div style="font-size:20px;font-weight:800;color:'+couleur+'">'+(fiche?'✅':'—')+'</div><div style="font-size:10px;color:var(--t3);margin-top:2px">Fiche</div></div>';
@@ -5965,7 +5965,7 @@ function renderStockPanel() {
       // Nom + condition
       + '<div style="flex:1;min-width:0">'
       + '<input value="' + lot.titre.replace(/"/g,'&quot;') + '" oninput="LOTS_DB[' + li + '].titre=this.value"'
-      + ' style="font-size:14px;font-weight:800;font-family:\'Syne\',sans-serif;color:var(--t);border:none;background:transparent;outline:none;width:100%;border-bottom:1.5px solid transparent;padding:0 0 2px;transition:border-color .15s"'
+      + ' style="font-size:14px;font-weight:800;font-family:\'DM Sans\',sans-serif;color:var(--t);border:none;background:transparent;outline:none;width:100%;border-bottom:1.5px solid transparent;padding:0 0 2px;transition:border-color .15s"'
       + ' onfocus="this.style.borderBottomColor=\'var(--ac)\'" onblur="this.style.borderBottomColor=\'transparent\'">'
       + '<div style="margin-top:5px">'
       + '<select onchange="LOTS_DB[' + li + '].cond=this.value;LOTS_DB[' + li + '].condLbl=this.options[this.selectedIndex].text"'
@@ -5976,9 +5976,9 @@ function renderStockPanel() {
 
       // Compteurs
       + '<div style="display:flex;gap:20px;flex-shrink:0;text-align:center">'
-      + '<div><div style="font-family:\'Syne\',sans-serif;font-size:28px;font-weight:800;color:' + stockColor + ';line-height:1">' + st.dispo + '</div>'
+      + '<div><div style="font-family:\'DM Sans\',sans-serif;font-size:28px;font-weight:800;color:' + stockColor + ';line-height:1">' + st.dispo + '</div>'
       + '<div style="font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;margin-top:2px">Dispo</div></div>'
-      + '<div><div style="font-family:\'Syne\',sans-serif;font-size:28px;font-weight:800;color:var(--ac);line-height:1">' + st.attribue + '</div>'
+      + '<div><div style="font-family:\'DM Sans\',sans-serif;font-size:28px;font-weight:800;color:var(--ac);line-height:1">' + st.attribue + '</div>'
       + '<div style="font-size:9px;font-weight:600;color:var(--t3);text-transform:uppercase;margin-top:2px">Attribués</div></div>'
       + '</div>'
 
@@ -7725,7 +7725,7 @@ function openDefiDetail(defiId) {
 
   modal.innerHTML = '<div style="background:var(--surf);border-radius:14px;width:100%;max-width:680px;max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)">'
     + '<div style="padding:18px 22px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surf);z-index:1">'
-    + '<div><div style="font-size:15px;font-weight:800;color:var(--t);font-family:Syne,sans-serif">⚔️ Détail du défi</div>'
+    + '<div><div style="font-size:15px;font-weight:800;color:var(--t);">⚔️ Détail du défi</div>'
     + '<div style="font-size:11px;color:var(--t3);margin-top:2px">'+(d.is_private?'🔒 Défi privé':'🌐 Défi public')+'</div></div>'
     + '<button id="defi-close" style="width:30px;height:30px;border-radius:50%;border:1px solid var(--b);background:var(--surf2);cursor:pointer;font-size:14px">✕</button>'
     + '</div>'

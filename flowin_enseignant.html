@@ -6,7 +6,7 @@
 <title>Flowin — Espace Enseignant</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --ac:#6C5FE8; --ac2:#9B7BFF;
@@ -1148,7 +1148,7 @@ function renderTable() {
       + '</div></td>'
       + '<td style="color:var(--t2)">' + (j.classe || '—') + '</td>'
       + '<td><span class="ligue-pill ligue-' + ligue.cls + '">' + ligue.nom + '</span></td>'
-      + '<td><strong style="font-family:Syne,sans-serif;font-size:15px;color:var(--ac)">' + (j.pts_total || 0).toLocaleString('fr') + '</strong></td>'
+      + '<td><strong style="font-size:15px;color:var(--ac)">' + (j.pts_total || 0).toLocaleString('fr') + '</strong></td>'
       + '<td>' + nbQuiz + '</td>'
       + '<td><span class="activity-dot activity-' + actStatus + '"></span><span style="color:var(--t2);font-size:12px">' + actLabel + '</span></td>'
       + '</tr>';
