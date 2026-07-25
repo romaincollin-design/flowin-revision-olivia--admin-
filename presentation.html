@@ -26,12 +26,12 @@ svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke
 .hero h1{font-size:42px;font-weight:800;letter-spacing:-1px;line-height:1.07;margin-bottom:16px}
 .hero h1 em{color:var(--pp);font-style:normal}
 .hero p{font-size:17px;color:var(--ink2);max-width:600px;margin:0 auto}
-.act{padding:50px 0}
+.act{padding:46px 0}
 .act-head{display:flex;align-items:center;gap:14px;margin-bottom:6px}
 .act-badge{width:40px;height:40px;border-radius:11px;background:var(--pp);color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800}
 .act-kick{color:var(--pp);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase}
 .act h2{font-size:32px;font-weight:800;letter-spacing:-.6px;margin:2px 0 8px}
-.act .lead{font-size:16px;color:var(--ink2);max-width:660px;margin-bottom:30px}
+.act .lead{font-size:16px;color:var(--ink2);max-width:660px;margin-bottom:28px}
 .rail{display:flex;gap:20px;overflow-x:auto;padding:6px 2px 22px;scroll-snap-type:x mandatory}
 .rail::-webkit-scrollbar{height:8px}.rail::-webkit-scrollbar-thumb{background:var(--ppln);border-radius:4px}
 .col{flex:0 0 288px;scroll-snap-align:start}
@@ -50,6 +50,8 @@ svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke
 .pick.on{border-color:var(--ppln);background:var(--ppbg);color:var(--pp)}
 .pick .ic{width:30px;height:30px;border-radius:8px;background:var(--ppbg);color:var(--pp);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
 .pick.on .ic{background:#fff}
+.chip{display:inline-flex;align-items:center;gap:5px;border:1.5px solid var(--line);border-radius:20px;padding:6px 12px;font-weight:600;font-size:12px;margin:0 5px 5px 0}
+.chip.on{background:var(--ppbg);color:var(--pp);border-color:var(--ppln)}
 .pill{display:inline-flex;align-items:center;gap:5px;background:var(--ppbg);color:var(--pp);font-size:11px;font-weight:700;padding:4px 9px;border-radius:20px}
 .btn{background:var(--pp);color:#fff;border-radius:10px;padding:11px;text-align:center;font-weight:700;font-size:13px;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:7px}
 .lab{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
@@ -63,19 +65,35 @@ svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke
 .av{width:32px;height:32px;border-radius:50%;background:var(--pp);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
 .bar{height:7px;background:var(--ppbg);border-radius:4px;overflow:hidden;flex:1}.bar i{display:block;height:100%;background:var(--pp);border-radius:4px}
 .rank{width:18px;font-weight:800;color:var(--pp);text-align:center;font-size:13px}
-.gold{background:linear-gradient(135deg,#F4C430,var(--gold));color:#3a2c00}
-.wheel{width:150px;height:150px;border-radius:50%;margin:6px auto 12px;position:relative;
+.clscard{background:var(--surf);border:1px solid var(--line);border-radius:13px;padding:13px;margin-bottom:8px;position:relative;overflow:hidden}
+.clscard::before{content:"";position:absolute;top:0;left:0;bottom:0;width:4px;background:var(--pp)}
+.wheel{width:148px;height:148px;border-radius:50%;margin:6px auto 12px;position:relative;
   background:conic-gradient(var(--re) 0 20%,var(--bl) 20% 40%,var(--am) 40% 60%,var(--gr) 60% 80%,var(--pp) 80% 100%);
   box-shadow:inset 0 0 0 6px #fff,0 8px 20px -6px rgba(0,0,0,.3)}
 .wheel::after{content:"";position:absolute;top:-8px;left:50%;transform:translateX(-50%);border:8px solid transparent;border-top-color:var(--ink)}
 .wheel .hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--pp);font-size:11px}
-.flow{background:var(--pp);border-radius:22px;color:#fff;padding:44px 40px;text-align:center;margin:36px 0 70px}
-.flow h2{font-size:28px;font-weight:800;margin-bottom:22px}
-.loop{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:9px 5px;font-weight:700}
-.loop .st{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:11px;padding:11px 15px;font-size:13px}
-.loop .ar{opacity:.7}
+.tier{display:flex;gap:5px;margin-bottom:10px}
+.tier .t{flex:1;text-align:center;font-size:9px;font-weight:700;padding:6px 2px;border-radius:7px;color:#fff;text-transform:uppercase}
+.fiche .es{font-size:12px;line-height:1.55;color:var(--ink2)}
+.fiche .es b{color:var(--ink)}
+.dline{display:flex;gap:9px;font-size:12px;padding:5px 0;border-bottom:1px solid var(--line2)}
+.dline .y{font-weight:800;color:var(--pp);flex:0 0 60px}
+
+/* MONDRIAN */
+.mond{margin:36px 0 70px}
+.mond h2{font-size:30px;font-weight:800;text-align:center;margin-bottom:8px;letter-spacing:-.5px}
+.mond .sub{text-align:center;color:var(--ink2);margin-bottom:26px;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:#111;padding:6px;border-radius:14px}
+.blk{background:#fff;border-radius:6px;padding:20px 16px;min-height:120px;display:flex;flex-direction:column;justify-content:flex-end}
+.blk .step{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;opacity:.7;margin-bottom:6px}
+.blk .txt{font-size:16px;font-weight:800;line-height:1.15}
+.blk.red{background:#E53935;color:#fff}
+.blk.blue{background:#1E88E5;color:#fff}
+.blk.yellow{background:#FDD835;color:#111}
+.blk.wide{grid-column:span 2}
+.blk.tall{grid-row:span 2;justify-content:center}
 .foot{text-align:center;color:var(--ink3);font-size:13px;padding:0 0 50px}
-@media(max-width:640px){.hero h1{font-size:32px}.act h2{font-size:25px}}
+@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.blk.wide{grid-column:span 2}.hero h1{font-size:32px}.act h2{font-size:25px}}
 </style>
 </head>
 <body>
@@ -88,68 +106,82 @@ svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke
 
 <div class="wrap"><div class="act">
   <div class="act-head"><div class="act-badge">P</div><div class="act-kick">Le parcours du professeur</div></div>
-  <h2>Il pilote sa classe et lance des défis.</h2>
-  <p class="lead">Le prof se connecte à son espace, suit sa classe en un coup d'œil, et transforme un thème en défi doté de points — envoyé directement aux élèves.</p>
+  <h2>De sa première connexion au challenge lancé.</h2>
+  <p class="lead">Il renseigne son établissement et ses classes une fois, voit toutes ses classes d'un coup d'œil, construit un quiz façon Kahoot, et lance un challenge doté de points — sans une copie à corriger.</p>
   <div class="rail">
-    <div class="col"><div class="cap"><span class="n">1</span>Il se connecte à l'espace de son établissement.</div>
-      <div class="phone"><div class="scr"><div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
-        <div class="ahead"><div class="akick">Espace enseignant</div><div class="atitle">Connexion</div></div>
-        <div class="abody"><div class="card" style="margin-top:20px"><div class="lab">Établissement</div><div style="font-weight:700;margin-top:2px">Lycée de Vence</div></div>
-          <div class="card"><div class="lab">Code d'accès</div><div style="font-weight:700;margin-top:2px;letter-spacing:3px">••••••••</div></div>
-          <div class="btn" style="margin-top:12px">Entrer dans ma classe →</div></div></div></div></div>
 
-    <div class="col"><div class="cap"><span class="n">2</span>Il suit sa classe : élèves, activité, décrocheurs.</div>
+    <div class="col"><div class="cap"><span class="n">1</span>Première connexion : son lycée, ses matières, ses classes.</div>
       <div class="phone"><div class="scr"><div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
-        <div class="ahead"><div class="akick">Terminale Bac Pro</div><div class="atitle">Tableau de bord</div></div>
-        <div class="abody"><div class="stat3" style="margin-bottom:8px"><div class="s"><div class="v">19</div><div class="l">Élèves</div></div><div class="s"><div class="v">64</div><div class="l">Quiz joués</div></div><div class="s"><div class="v">70%</div><div class="l">Score moy.</div></div></div>
-          <div class="lab" style="margin:8px 0 6px">Progression par élève</div>
-          <div class="row"><div class="av">SB</div><div style="flex:1"><div style="font-weight:700;font-size:12px">Sophie B.</div><div class="bar" style="margin-top:3px"><i style="width:92%"></i></div></div><b style="color:var(--pp);font-size:13px">512</b></div>
-          <div class="row"><div class="av" style="background:var(--am)">M</div><div style="flex:1"><div style="font-weight:700;font-size:12px">Marie</div><div class="bar" style="margin-top:3px"><i style="width:78%"></i></div></div><b style="font-size:13px">400</b></div>
-          <div class="row" style="border:0"><div class="av" style="background:var(--re)">Ni</div><div style="flex:1"><div style="font-weight:700;font-size:12px">Nicolas</div><div class="bar" style="margin-top:3px"><i style="width:12%"></i></div></div><span class="pill" style="background:var(--ambg);color:var(--am)">décroche</span></div></div></div></div></div>
+        <div class="ahead"><div class="akick">Bienvenue</div><div class="atitle">Ma première connexion</div></div>
+        <div class="abody"><div class="card" style="padding:9px 12px"><div class="lab">Établissement</div><div style="font-weight:700;margin-top:1px">Lycée de Vence</div></div>
+          <div class="card" style="padding:9px 12px"><div class="lab">Email</div><div style="font-weight:600;margin-top:1px;font-size:12px">olivia.laurent@lycee-vence.fr</div></div>
+          <div class="lab" style="margin:4px 0 7px">Mes matières</div><div><span class="chip on">Histoire</span><span class="chip on">Géo</span><span class="chip on">EMC</span><span class="chip on">PSE</span></div>
+          <div class="lab" style="margin:8px 0 7px">Mes classes / niveaux</div><div><span class="chip on">Terminale Bac Pro</span><span class="chip on">1re Bac Pro</span><span class="chip">+ ajouter</span></div>
+          <div class="btn" style="margin-top:10px">Accéder à mes classes →</div></div></div></div></div>
 
-    <div class="col"><div class="cap"><span class="n">3</span>Il crée un défi doté de sa cagnotte de points.</div>
+    <div class="col"><div class="cap"><span class="n">2</span>Panorama : toutes ses classes, avec les chiffres clés.</div>
       <div class="phone"><div class="scr"><div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
-        <div class="ahead"><div class="akick">Créer un challenge</div><div class="atitle">Ma cagnotte</div></div>
+        <div class="ahead"><div class="akick">Mes classes</div><div class="atitle">Panorama</div></div>
+        <div class="abody">
+          <div class="clscard"><div style="font-size:10px;font-weight:700;color:var(--pp);text-transform:uppercase">Lycée de Vence</div><div style="font-weight:700;font-size:14px;margin:1px 0 8px">Terminale Bac Pro</div><div class="stat3"><div class="s"><div class="v">19</div><div class="l">Élèves</div></div><div class="s"><div class="v">13</div><div class="l">Ont joué</div></div><div class="s"><div class="v">70%</div><div class="l">Score</div></div></div></div>
+          <div class="clscard"><div style="font-size:10px;font-weight:700;color:var(--pp);text-transform:uppercase">Lycée de Vence</div><div style="font-weight:700;font-size:14px;margin:1px 0 8px">1re Bac Pro</div><div class="stat3"><div class="s"><div class="v">24</div><div class="l">Élèves</div></div><div class="s"><div class="v">9</div><div class="l">Ont joué</div></div><div class="s"><div class="v">62%</div><div class="l">Score</div></div></div></div>
+          <div class="clscard"><div style="font-size:10px;font-weight:700;color:var(--pp);text-transform:uppercase">Lycée Estienne d'Orves</div><div style="font-weight:700;font-size:14px;margin:1px 0 8px">Terminale Bac Pro</div><div class="stat3"><div class="s"><div class="v">28</div><div class="l">Élèves</div></div><div class="s"><div class="v">20</div><div class="l">Ont joué</div></div><div class="s"><div class="v">74%</div><div class="l">Score</div></div></div></div>
+        </div></div></div></div>
+
+    <div class="col"><div class="cap"><span class="n">3</span>Il construit son quiz façon Kahoot — image comprise.</div>
+      <div class="phone"><div class="scr"><div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
+        <div class="ahead"><div class="akick">Nouveau quiz · question 1</div><div class="atitle">Créer</div></div>
+        <div class="abody"><div class="card" style="padding:0;overflow:hidden;text-align:center"><div style="height:78px;background:linear-gradient(135deg,var(--pp),var(--pp2));display:flex;align-items:center;justify-content:center;color:#fff"><svg class="i" viewBox="0 0 24 24" style="font-size:26px"><path d="M3 5h18v14H3zM3 15l5-5 4 4 3-3 6 6"/><circle cx="9" cy="9" r="1.5"/></svg></div><div style="padding:6px;font-size:11px;color:var(--ink3)">mur-berlin.jpg · image ajoutée</div></div>
+          <div class="card" style="text-align:center;font-weight:600;font-size:13px;padding:11px">En quelle année tombe le mur de Berlin ?</div>
+          <div class="tiles"><div class="tile" style="background:var(--re)">1961</div><div class="tile" style="background:var(--gr)">1989</div><div class="tile" style="background:var(--bl)">1991</div><div class="tile" style="background:var(--am)">1975</div></div>
+          <div class="mut" style="text-align:center;margin-top:8px">Touche la bonne réponse · + Ajouter une question</div></div></div></div></div>
+
+    <div class="col"><div class="cap"><span class="n">4</span>Il lance le challenge, doté de sa cagnotte.</div>
+      <div class="phone"><div class="scr"><div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
+        <div class="ahead"><div class="akick">Lancer le challenge</div><div class="atitle">Ma cagnotte</div></div>
         <div class="abody"><div class="card" style="display:flex;justify-content:space-between;align-items:center"><div><div class="lab">À distribuer</div><div class="big" style="color:var(--pp)">480<span style="font-size:13px;color:var(--ink3)"> / 500</span></div></div><span class="pill">Année</span></div>
-          <div class="pick on"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/></svg></span>Toute la classe</div>
-          <div class="card" style="padding:10px 12px"><div class="lab" style="margin-bottom:5px">Sur le thème</div><div style="font-weight:700;font-size:13px">La guerre froide · Histoire</div></div>
-          <div class="card" style="padding:10px 12px"><div class="lab" style="margin-bottom:6px">Récompense par élève</div><div style="display:flex;align-items:center;gap:9px"><div class="bar"><i style="width:30%"></i></div><b style="color:var(--pp)">30 pts</b></div></div>
-          <div class="btn"><svg class="i" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>Lancer + envoyer par WhatsApp</div></div></div></div></div>
+          <div class="pick on"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/></svg></span>Terminale Bac Pro · toute la classe</div>
+          <div class="card" style="padding:10px 12px"><div class="lab" style="margin-bottom:6px">Récompense par élève qui réussit</div><div style="display:flex;align-items:center;gap:9px"><div class="bar"><i style="width:30%"></i></div><b style="color:var(--pp)">30 pts</b></div></div>
+          <div class="btn"><svg class="i" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>Lancer + envoyer par WhatsApp</div>
+          <div class="mut" style="text-align:center;margin-top:10px">Un contrôle ludique, à faire hors de la classe.</div></div></div></div></div>
+
   </div>
 </div></div>
 
 <div class="wrap"><div class="act">
   <div class="act-head"><div class="act-badge">É</div><div class="act-kick">Le parcours de l'élève</div></div>
-  <h2>Il s'inscrit, révise, défie, et grimpe en ligue.</h2>
-  <p class="lead">De l'inscription au classement : l'élève choisit son établissement et ses matières, fait tourner la roue pour réviser, défie d'autres joueurs en pariant ses points, et suit sa progression. Chaque jour d'affilée compte.</p>
+  <h2>Il s'inscrit, révise ses vraies fiches, défie, et grimpe en ligue.</h2>
+  <p class="lead">De l'inscription au lot gagné : il révise des fiches réelles (l'essentiel, les dates, le vocabulaire, des photos), fait tourner la roue, défie d'autres joueurs en pariant ses points, et vise la tête de ligue pour décrocher un lot partenaire.</p>
   <div class="rail">
 
-    <div class="col"><div class="cap"><span class="n">1</span>Il crée son compte.</div>
+    <div class="col"><div class="cap"><span class="n">1</span>Il crée son compte, puis son profil (école, classe, pseudo).</div>
       <div class="phone"><div class="scr"><div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
-        <div class="ahead"><div class="akick">Révise. Défie. Progresse.</div><div class="atitle">Créer mon compte</div></div>
-        <div class="abody"><div class="card" style="margin-top:14px"><div class="lab">Email</div><div style="font-weight:600;margin-top:2px;font-size:13px">sophie@email.com</div></div>
-          <div class="card"><div class="lab">Mot de passe</div><div style="font-weight:700;margin-top:2px;letter-spacing:3px">••••••</div></div>
-          <div class="card"><div class="lab">Confirmer</div><div style="font-weight:700;margin-top:2px;letter-spacing:3px">••••••</div></div>
-          <div class="btn" style="margin-top:10px">Créer mon compte</div><div class="mut" style="text-align:center;margin-top:10px">Vérifie tes emails pour activer.</div></div></div></div></div>
-
-    <div class="col"><div class="cap"><span class="n">2</span>Il complète son profil : école, classe, pseudo.</div>
-      <div class="phone"><div class="scr"><div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
-        <div class="ahead"><div class="akick">Crée ton profil</div><div class="atitle">Mes infos</div></div>
+        <div class="ahead"><div class="akick">Révise. Défie. Progresse.</div><div class="atitle">Mon profil</div></div>
         <div class="abody"><div class="card" style="padding:9px 12px"><div class="lab">Pseudo (affiché en ligue)</div><div style="font-weight:700;margin-top:1px">Soso</div></div>
           <div class="card" style="padding:9px 12px"><div class="lab">Mon école</div><div style="font-weight:700;margin-top:1px">Lycée de Vence</div></div>
           <div class="card" style="padding:9px 12px"><div class="lab">Ma classe</div><div style="font-weight:700;margin-top:1px">Terminale Bac Pro</div></div>
           <div style="display:flex;gap:7px"><div class="pick on" style="flex:1;justify-content:center;margin:0">Fille</div><div class="pick" style="flex:1;justify-content:center;margin:0">Garçon</div></div>
           <div class="btn" style="margin-top:12px">C'est parti →</div></div></div></div></div>
 
-    <div class="col"><div class="cap"><span class="n">3</span>Son accueil : points, jours d'affilée, révisions.</div>
+    <div class="col"><div class="cap"><span class="n">2</span>Son accueil : points, jours d'affilée, ses cours.</div>
       <div class="phone"><div class="scr"><div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
         <div class="ahead"><div class="akick">Salut Sophie</div><div class="atitle">Prête à réviser ?</div></div>
         <div class="abody"><div class="stat3" style="margin-bottom:12px"><div class="s"><div class="v">512</div><div class="l">Points</div></div><div class="s"><div class="v">7</div><div class="l">Jours d'affilée</div></div><div class="s"><div class="v">64</div><div class="l">Quiz faits</div></div></div>
-          <div class="card" style="background:var(--pp);color:#fff;border:0;display:flex;align-items:center;gap:11px"><span style="font-size:22px"><svg class="i" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg></span><div><div style="font-weight:700">Réviser mes cours</div><div style="opacity:.85;font-size:12px">23 fiches t'attendent</div></div></div>
+          <div class="card" style="background:var(--pp);color:#fff;border:0;display:flex;align-items:center;gap:11px"><span style="font-size:20px"><svg class="i" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg></span><div><div style="font-weight:700">Réviser mes cours</div><div style="opacity:.85;font-size:12px">23 fiches t'attendent</div></div></div>
           <div class="pick"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg></span>Quiz · Révise &amp; Gagne</div>
           <div class="pick"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M14.5 3.5 20 9m0 0-9 9-6 1 1-6 9-9zM3 21h18"/></svg></span>Défis multi-joueurs</div></div></div></div></div>
 
-    <div class="col"><div class="cap"><span class="n">4</span>Il fait tourner la roue pour choisir son thème.</div>
+    <div class="col"><div class="cap"><span class="n">3</span>La fiche de révision : l'essentiel, les dates, le vocabulaire.</div>
+      <div class="phone"><div class="scr"><div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
+        <div class="ahead"><div class="akick">Histoire · Fiche</div><div class="atitle">Le jeu des puissances</div></div>
+        <div class="abody fiche"><div class="card" style="padding:0;overflow:hidden"><div style="height:64px;background:linear-gradient(135deg,#3D4268,#6B7280);display:flex;align-items:center;justify-content:center;color:#fff"><svg class="i" viewBox="0 0 24 24" style="font-size:22px"><path d="M3 5h18v14H3zM3 15l5-5 4 4 3-3 6 6"/><circle cx="9" cy="9" r="1.5"/></svg></div></div>
+          <div class="card"><div class="lab" style="margin-bottom:5px">L'essentiel</div><div class="es">Depuis 1945, le monde connaît <b>trois périodes</b> : un monde <b>bipolaire</b> (USA / URSS, guerre froide 1947-1991), puis l'<b>hyperpuissance</b> américaine, puis un monde <b>multipolaire</b>.</div></div>
+          <div class="card" style="padding:9px 12px"><div class="lab" style="margin-bottom:4px">Dates clés</div>
+            <div class="dline"><span class="y">1945</span><span>Fin de la guerre · création de l'ONU</span></div>
+            <div class="dline"><span class="y">1949</span><span>Création de l'OTAN</span></div>
+            <div class="dline" style="border:0"><span class="y">1962</span><span>Crise de Cuba</span></div></div></div></div></div></div>
+
+    <div class="col"><div class="cap"><span class="n">4</span>Il fait tourner la roue et répond au quiz.</div>
       <div class="phone"><div class="scr"><div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
         <div class="ahead"><div class="akick">Quiz de révision</div><div class="atitle">Tourne la roue</div></div>
         <div class="abody"><div class="wheel"><div class="hub">FLOWIN</div></div>
@@ -157,15 +189,7 @@ svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke
           <div class="card" style="background:var(--ambg);border-color:transparent;text-align:center;color:var(--am);font-weight:700;font-size:13px">Banque rare · ×1,5 points !</div>
           <div class="btn">C'est parti !</div></div></div></div></div>
 
-    <div class="col"><div class="cap"><span class="n">5</span>Il répond au quiz et gagne des points.</div>
-      <div class="phone"><div class="scr"><div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
-        <div class="ahead"><div class="akick">Histoire · Question 3/5</div><div class="atitle">Le jeu des puissances</div></div>
-        <div class="abody"><div class="card" style="text-align:center;font-weight:600;padding:18px 14px;font-size:14px">En quelle année tombe le mur de Berlin ?</div>
-          <div class="tiles" style="margin-top:8px"><div class="tile" style="background:var(--re)">1961</div><div class="tile" style="background:var(--gr)">1989</div><div class="tile" style="background:var(--bl)">1991</div><div class="tile" style="background:var(--am)">1975</div></div>
-          <div class="card" style="margin-top:12px;text-align:center"><span class="pill">+10 pts par bonne réponse</span></div>
-          <div class="mut" style="text-align:center;margin-top:8px">Objectif : 6/8 par thème avant le Bac</div></div></div></div></div>
-
-    <div class="col"><div class="cap"><span class="n">6</span>Il défie d'autres joueurs en pariant ses points.</div>
+    <div class="col"><div class="cap"><span class="n">5</span>Il défie d'autres joueurs en pariant ses points.</div>
       <div class="phone"><div class="scr"><div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
         <div class="ahead"><div class="akick">Mode défi · le gagnant rafle</div><div class="atitle">Créer un défi</div></div>
         <div class="abody"><div class="lab" style="margin-bottom:6px">Ta mise (par joueur)</div>
@@ -174,23 +198,34 @@ svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke
           <div class="card" style="padding:10px 12px;display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600;font-size:13px">Room privée</span><span class="pill">lien uniquement</span></div>
           <div class="btn"><svg class="i" viewBox="0 0 24 24"><path d="M4 12v8h16v-8M12 16V4M8 8l4-4 4 4"/></svg>Lancer &amp; inviter</div></div></div></div></div>
 
-    <div class="col"><div class="cap"><span class="n">7</span>Il suit sa progression et vise la tête de ligue.</div>
+    <div class="col"><div class="cap"><span class="n">6</span>Il grimpe en ligue et décroche un vrai lot.</div>
       <div class="phone"><div class="scr"><div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
-        <div class="ahead"><div class="akick">Ligue globale</div><div class="atitle">Classement</div></div>
-        <div class="abody"><div class="row"><div class="rank">1</div><div class="av gold">S</div><div style="flex:1"><div style="font-weight:700;font-size:12px">Sophie</div><div class="mut">Vence</div></div><b style="color:var(--pp);font-size:13px">512</b></div>
-          <div class="row"><div class="rank">2</div><div class="av" style="background:var(--am)">M</div><div style="flex:1"><div style="font-weight:700;font-size:12px">Marie</div><div class="mut">Parc Impérial</div></div><b style="font-size:13px">400</b></div>
-          <div class="row"><div class="rank">3</div><div class="av" style="background:var(--bl)">L</div><div style="flex:1"><div style="font-weight:700;font-size:12px">Lilou</div><div class="mut">Vence</div></div><b style="font-size:13px">395</b></div>
-          <div class="card gold" style="margin-top:10px;display:flex;align-items:center;gap:10px"><span style="font-size:22px"><svg class="i" viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7"/></svg></span><div><div style="font-weight:800;font-size:13px">Lot en jeu — Utile Vence</div><div style="font-size:12px">réservé au top 3</div></div></div></div></div></div></div>
+        <div class="ahead"><div class="akick">Classement</div><div class="atitle">Ma ligue</div></div>
+        <div class="abody"><div class="tier"><div class="t" style="background:#9A6B3A">Bronze</div><div class="t" style="background:#6B7280">Argent</div><div class="t" style="background:#B87A10">Or</div><div class="t" style="background:#2478CC">Platine</div><div class="t" style="background:#7F77DD">Légende</div></div>
+          <div class="row"><div class="rank">1</div><div class="av" style="background:#B87A10">S</div><div style="flex:1"><div style="font-weight:700;font-size:12px">Sophie</div><div class="mut">Ligue Or</div></div><b style="color:var(--pp);font-size:13px">512</b></div>
+          <div class="row"><div class="rank">2</div><div class="av" style="background:var(--am)">M</div><div style="flex:1"><div style="font-weight:700;font-size:12px">Marie</div><div class="mut">Vence</div></div><b style="font-size:13px">400</b></div>
+          <div class="row" style="border:0"><div class="rank">3</div><div class="av" style="background:var(--bl)">L</div><div style="flex:1"><div style="font-weight:700;font-size:12px">Lilou</div><div class="mut">Vence</div></div><b style="font-size:13px">395</b></div>
+          <div class="lab" style="margin:12px 0 6px">Lots en jeu cette semaine</div>
+          <div class="card" style="padding:9px 11px;display:flex;align-items:center;gap:9px"><svg class="i" viewBox="0 0 24 24" style="color:var(--pp);font-size:17px"><path d="M6.5 6.5h11M6.5 17.5h11M9 4v16M15 4v16M4 9h4M4 15h4M16 9h4M16 15h4"/></svg><div><div style="font-weight:700;font-size:12px">1 semaine salle de sport</div><div class="mut">Ligue Or, 7 jours d'affilée</div></div></div>
+          <div class="card" style="padding:9px 11px;display:flex;align-items:center;gap:9px;margin:0"><svg class="i" viewBox="0 0 24 24" style="color:var(--pp);font-size:17px"><path d="M6 2 3 6v14h18V6l-3-4zM3 6h18M10 10h4"/></svg><div><div style="font-weight:700;font-size:12px">Bon d'achat 10 €</div><div class="mut">1er du classement hebdo</div></div></div></div></div></div></div>
 
   </div>
 </div></div>
 
-<div class="wrap"><div class="flow">
+<div class="wrap"><div class="mond">
   <h2>Le cercle vertueux</h2>
-  <div class="loop"><span class="st">Le prof lance un défi</span><span class="ar">→</span><span class="st">L'élève révise pour gagner</span><span class="ar">→</span><span class="st">Il accumule des points</span><span class="ar">→</span><span class="st">Il monte en ligue</span><span class="ar">→</span><span class="st">Il décroche un lot partenaire</span><span class="ar">↺</span></div>
-  <p style="margin-top:22px;opacity:.85;max-width:560px;margin-left:auto;margin-right:auto">Le prof motive sans corriger de copies. L'élève révise sans s'en apercevoir. Le partenaire gagne en visibilité.</p>
+  <div class="sub">Chacun y trouve son compte — et ça tourne tout seul.</div>
+  <div class="grid">
+    <div class="blk red wide"><div class="step">Le prof</div><div class="txt">Lance un défi à sa classe</div></div>
+    <div class="blk yellow tall"><div class="step">L'élève</div><div class="txt">Révise pour gagner des points</div></div>
+    <div class="blk"><div class="step">Streak</div><div class="txt">Jour après jour</div></div>
+    <div class="blk blue"><div class="step">Ligue</div><div class="txt">Il grimpe</div></div>
+    <div class="blk blue wide"><div class="step">Le partenaire</div><div class="txt">Offre un lot au top de la ligue</div></div>
+    <div class="blk"><div class="step">Résultat</div><div class="txt">Il révise sans s'en apercevoir</div></div>
+    <div class="blk red"><div class="step">Et ça</div><div class="txt">recommence ↺</div></div>
+  </div>
 </div>
-<div class="foot">Flowin Révision — écrans fidèles à la plateforme en ligne aujourd'hui.</div>
+<div class="foot">Flowin Révision — écrans et données fidèles à la plateforme en ligne aujourd'hui.</div>
 </div>
 </body>
 </html>
