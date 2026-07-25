@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowin Révision — Le parcours, en vrai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pp:#534AB7; --pp2:#7F77DD; --ppbg:#EEEDFE; --ppln:#AFA9EC;
+  --ink:#14162A; --ink2:#3D4268; --ink3:#8B90B8;
+  --bg:#F6F7FB; --surf:#fff; --line:rgba(0,0,0,.08); --line2:rgba(0,0,0,.05);
+  --gr:#0E9E6E; --am:#C27C0A; --re:#D63050; --bl:#1E6FCC;
+  --f:'DM Sans',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.12em}
+
+/* HERO */
+.hero{text-align:center;padding:80px 0 50px}
+.logo{display:inline-flex;align-items:center;gap:9px;font-weight:800;font-size:22px;margin-bottom:34px}
+.logo .dot{width:9px;height:9px;border-radius:50%;background:var(--pp2);box-shadow:0 0 12px var(--pp2)}
+.logo b{color:var(--pp)}
+.eyebrow{color:var(--pp);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-size:46px;font-weight:800;letter-spacing:-1.2px;line-height:1.06;margin-bottom:18px}
+.hero h1 em{color:var(--pp);font-style:normal}
+.hero p{font-size:18px;color:var(--ink2);max-width:620px;margin:0 auto}
+
+/* ACT */
+.act{padding:56px 0}
+.act-head{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.act-badge{width:40px;height:40px;border-radius:11px;background:var(--pp);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px}
+.act-kick{color:var(--pp);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+.act h2{font-size:34px;font-weight:800;letter-spacing:-.6px;margin:2px 0 10px}
+.act .lead{font-size:17px;color:var(--ink2);max-width:640px;margin-bottom:34px}
+
+.rail{display:flex;gap:22px;overflow-x:auto;padding:6px 2px 20px;scroll-snap-type:x mandatory}
+.rail::-webkit-scrollbar{height:8px}.rail::-webkit-scrollbar-thumb{background:var(--ppln);border-radius:4px}
+.col{flex:0 0 300px;scroll-snap-align:start}
+.cap{font-size:15px;color:var(--ink2);font-weight:600;margin-bottom:14px;min-height:44px;display:flex;align-items:flex-start;gap:8px}
+.cap .n{flex:0 0 24px;width:24px;height:24px;border-radius:50%;background:var(--ppbg);color:var(--pp);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+
+/* PHONE */
+.phone{width:300px;height:600px;background:#0B0D1A;border-radius:38px;padding:11px;box-shadow:0 30px 60px -20px rgba(83,74,183,.35),0 0 0 1px rgba(0,0,0,.06)}
+.scr{width:100%;height:100%;background:var(--surf);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.sbar{display:flex;justify-content:space-between;align-items:center;padding:12px 20px 4px;font-size:12px;font-weight:700;color:var(--ink)}
+.sbar .dd{display:flex;gap:3px}.sbar .dd i{width:4px;height:4px;border-radius:50%;background:var(--ink3);display:block}
+.ahead{padding:6px 20px 14px}
+.akick{font-size:11px;font-weight:700;color:var(--pp);letter-spacing:.08em;text-transform:uppercase}
+.atitle{font-size:20px;font-weight:800;letter-spacing:-.3px}
+.abody{flex:1;padding:4px 18px 18px;overflow:hidden}
+
+.card{background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+.pick{background:var(--surf);border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:9px;display:flex;align-items:center;gap:11px;font-weight:600;font-size:14px}
+.pick.on{border-color:var(--ppln);background:var(--ppbg);color:var(--pp)}
+.pick .ic{width:34px;height:34px;border-radius:9px;background:var(--ppbg);color:var(--pp);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.pick.on .ic{background:#fff}
+.pill{display:inline-flex;align-items:center;gap:5px;background:var(--ppbg);color:var(--pp);font-size:11px;font-weight:700;padding:4px 9px;border-radius:20px}
+.btn{background:var(--pp);color:#fff;border-radius:10px;padding:12px;text-align:center;font-weight:700;font-size:14px;margin-top:6px}
+.lab{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
+.big{font-size:30px;font-weight:800;letter-spacing:-.5px}
+.mut{color:var(--ink3);font-size:12px}
+
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{border-radius:11px;padding:13px 12px;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px}
+.row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--line2)}
+.av{width:34px;height:34px;border-radius:50%;background:var(--pp);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.bar{height:7px;background:var(--ppbg);border-radius:4px;overflow:hidden;flex:1}
+.bar i{display:block;height:100%;background:var(--pp);border-radius:4px}
+.rank{width:22px;font-weight:800;color:var(--pp);text-align:center}
+.gold{background:linear-gradient(135deg,#F4C430,#E0A800);color:#3a2c00}
+
+/* FLOW closing */
+.flow{background:var(--pp);border-radius:22px;color:#fff;padding:48px 40px;text-align:center;margin:40px 0 80px}
+.flow h2{font-size:30px;font-weight:800;margin-bottom:26px;letter-spacing:-.5px}
+.loop{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px 6px;font-weight:700}
+.loop .st{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:12px;padding:12px 16px;font-size:14px}
+.loop .ar{opacity:.7}
+.foot{text-align:center;color:var(--ink3);font-size:13px;padding:0 0 50px}
+
+@media(max-width:640px){.hero h1{font-size:34px}.act h2{font-size:26px}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="logo"><span class="dot"></span>Flow<b>in</b> <span style="color:var(--ink3);font-weight:600;font-size:15px">Révision</span></div>
+    <div class="eyebrow">Le parcours, en vrai</div>
+    <h1>Le prof lance le jeu.<br><em>L'élève révise sans s'en rendre compte.</em></h1>
+    <p>Une plateforme où réviser rapporte des points, où les points font gagner des lots, et où c'est le professeur qui tient la manette.</p>
+  </div>
+</div>
+
+<!-- ACT 1 — PROF -->
+<div class="wrap">
+  <div class="act">
+    <div class="act-head"><div class="act-badge">1</div><div><div class="act-kick">Le professeur</div></div></div>
+    <h2>Il prépare son cours. Il en fait un jeu.</h2>
+    <p class="lead">En quelques taps, le prof transforme un chapitre en défi. Il ne voit que ses matières et ses classes. Il distribue une cagnotte de points offerte en début d'année.</p>
+    <div class="rail">
+
+      <div class="col">
+        <div class="cap"><span class="n">1</span>Il choisit son établissement, ses matières et sa classe.</div>
+        <div class="phone"><div class="scr">
+          <div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
+          <div class="ahead"><div class="akick">Mon profil</div><div class="atitle">Mes matières</div></div>
+          <div class="abody">
+            <div class="card" style="display:flex;align-items:center;gap:11px;margin-bottom:14px">
+              <div class="av">OL</div><div><div style="font-weight:700">Olivia Laurent</div><div class="mut">Lycée de Vence · Terminale Bac Pro</div></div>
+            </div>
+            <div class="pick on"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M12 8v13M12 8 5 5v13l7 3M12 8l7-3v13"/></svg></span>Histoire</div>
+            <div class="pick on"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/></svg></span>Géographie</div>
+            <div class="pick"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M12 3v18M5 7h14M6 21h12M8 7l-3 7a3 3 0 0 0 6 0zM16 7l3 7a3 3 0 0 1-6 0z"/></svg></span>EMC</div>
+            <div class="pick"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M3 12h4l2 5 4-12 2 7h6"/></svg></span>PSE</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="col">
+        <div class="cap"><span class="n">2</span>Il crée son quiz : à la main, ou assisté par l'IA.</div>
+        <div class="phone"><div class="scr">
+          <div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
+          <div class="ahead"><div class="akick">Nouveau contrôle flash</div><div class="atitle">Comment créer ?</div></div>
+          <div class="abody">
+            <div class="card" style="border-color:var(--ppln);background:var(--ppbg)">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;color:var(--pp);font-weight:700"><svg class="i" viewBox="0 0 24 24" style="font-size:20px"><path d="M12 3l2 5 5 .5-4 3.5 1 5-4-2.5L8 20l1-5-4-3.5 5-.5z"/></svg>Générer depuis mon cours</div>
+              <div class="mut">Je dépose mon chapitre, l'IA propose les questions. Je relis, je corrige.</div>
+            </div>
+            <div class="card">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;font-weight:700"><svg class="i" viewBox="0 0 24 24" style="font-size:20px;color:var(--pp)"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Écrire mes questions</div>
+              <div class="mut">Comme sur Kahoot : ma question, 4 réponses, je coche la bonne.</div>
+            </div>
+            <div class="card" style="padding:11px 13px">
+              <div class="lab" style="margin-bottom:8px">Aperçu — question 1</div>
+              <div style="font-weight:600;font-size:13px;margin-bottom:10px">En quelle année tombe le mur de Berlin ?</div>
+              <div class="tiles">
+                <div class="tile" style="background:var(--re)">1961</div>
+                <div class="tile gold" style="background:var(--gr);color:#fff">1989 <svg class="i" viewBox="0 0 24 24" style="margin-left:auto"><path d="M20 6 9 17l-5-5"/></svg></div>
+                <div class="tile" style="background:var(--bl)">1991</div>
+                <div class="tile" style="background:var(--am)">1975</div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="col">
+        <div class="cap"><span class="n">3</span>Il lance le défi à sa classe et distribue ses points.</div>
+        <div class="phone"><div class="scr">
+          <div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
+          <div class="ahead"><div class="akick">Lancer le défi</div><div class="atitle">Ma cagnotte</div></div>
+          <div class="abody">
+            <div class="card" style="display:flex;justify-content:space-between;align-items:center">
+              <div><div class="lab">Cagnotte à distribuer</div><div class="big" style="color:var(--pp)">480<span style="font-size:14px;color:var(--ink3)"> / 500</span></div></div>
+              <div class="pill">Année scolaire</div>
+            </div>
+            <div class="pick on"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6M21 20v-2a4 4 0 0 0-3-3.8M16 4.2a4 4 0 0 1 0 7.6"/></svg></span>Toute la classe · Terminale</div>
+            <div class="card" style="padding:12px 13px"><div class="lab" style="margin-bottom:6px">Récompense par élève qui réussit</div>
+              <div style="display:flex;align-items:center;gap:10px"><div class="bar"><i style="width:30%"></i></div><b style="color:var(--pp)">30 pts</b></div>
+            </div>
+            <div class="btn" style="display:flex;align-items:center;justify-content:center;gap:8px"><svg class="i" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>Lancer + envoyer par WhatsApp</div>
+            <div class="mut" style="text-align:center;margin-top:10px">Les élèves reçoivent le défi. Les points comptent pour les ligues.</div>
+          </div>
+        </div></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ACT 2 — ELEVE -->
+<div class="wrap">
+  <div class="act">
+    <div class="act-head"><div class="act-badge">2</div><div><div class="act-kick">L'élève</div></div></div>
+    <h2>Il révise, il gagne, il monte en ligue.</h2>
+    <p class="lead">L'élève s'inscrit à son établissement et choisit ses matières. Trois façons de jouer : réviser en solo, relever les défis du prof, ou défier d'autres élèves. Plus il joue de jours d'affilée, plus il grimpe.</p>
+    <div class="rail">
+
+      <div class="col">
+        <div class="cap"><span class="n">1</span>Il s'inscrit : établissement, niveau, matières.</div>
+        <div class="phone"><div class="scr">
+          <div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
+          <div class="ahead"><div class="akick">Bienvenue</div><div class="atitle">Mon inscription</div></div>
+          <div class="abody">
+            <div class="card"><div class="lab">Établissement</div><div style="font-weight:700;margin-top:2px">Lycée de Vence</div></div>
+            <div class="card"><div class="lab">Classe</div><div style="font-weight:700;margin-top:2px">Terminale Bac Pro</div></div>
+            <div class="lab" style="margin:6px 0 8px">Mes matières</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <span class="pill">Histoire</span><span class="pill">Géo</span><span class="pill">EMC</span><span class="pill">PSE</span>
+            </div>
+            <div class="btn" style="margin-top:16px">Créer mon profil →</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="col">
+        <div class="cap"><span class="n">2</span>Trois phases de jeu, un seul objectif : des points.</div>
+        <div class="phone"><div class="scr">
+          <div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
+          <div class="ahead"><div class="akick">Salut Sophie</div><div class="atitle">On joue ?</div></div>
+          <div class="abody">
+            <div class="card" style="display:flex;justify-content:space-between;align-items:center;background:var(--pp);color:#fff;border:0">
+              <div><div style="opacity:.8;font-size:11px;text-transform:uppercase;letter-spacing:.05em">Mes points</div><div class="big">512</div></div>
+              <div style="text-align:right"><div style="font-weight:800;font-size:22px">7</div><div style="opacity:.8;font-size:11px">jours d'affilée</div></div>
+            </div>
+            <div class="pick on"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg></span>Réviser mes fiches</div>
+            <div class="pick"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg></span>Défis de ma prof</div>
+            <div class="pick"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></span>Défier d'autres élèves</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="col">
+        <div class="cap"><span class="n">3</span>Il défie une room — et parie ses points.</div>
+        <div class="phone"><div class="scr">
+          <div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
+          <div class="ahead"><div class="akick">Room · Guerre froide</div><div class="atitle">Le défi</div></div>
+          <div class="abody">
+            <div class="card" style="text-align:center"><div class="lab">Mise du défi</div><div class="big" style="color:var(--pp)">50 pts</div><div class="mut">le gagnant rafle la mise</div></div>
+            <div class="row"><div class="av">S</div><div style="flex:1"><div style="font-weight:700;font-size:13px">Sophie (toi)</div><div class="mut">Lycée de Vence</div></div><span class="pill">prêt</span></div>
+            <div class="row"><div class="av" style="background:var(--am)">M</div><div style="flex:1"><div style="font-weight:700;font-size:13px">Marc</div><div class="mut">Lycée Estienne d'Orves</div></div><span class="pill">prêt</span></div>
+            <div class="row" style="border:0"><div class="av" style="background:var(--bl)">L</div><div style="flex:1"><div style="font-weight:700;font-size:13px">Lilou</div><div class="mut">Lycée de Vence</div></div><span class="pill">prêt</span></div>
+            <div class="btn" style="margin-top:14px">Lancer la manche</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="col">
+        <div class="cap"><span class="n">4</span>En tête de ligue, il décroche les lots partenaires.</div>
+        <div class="phone"><div class="scr">
+          <div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
+          <div class="ahead"><div class="akick">Ligue globale</div><div class="atitle">Le classement</div></div>
+          <div class="abody">
+            <div class="row"><div class="rank">1</div><div class="av gold">S</div><div style="flex:1"><div style="font-weight:700;font-size:13px">Sophie</div><div class="mut">Vence</div></div><b style="color:var(--pp)">512</b></div>
+            <div class="row"><div class="rank">2</div><div class="av" style="background:var(--am)">M</div><div style="flex:1"><div style="font-weight:700;font-size:13px">Marie</div><div class="mut">Parc Impérial</div></div><b>400</b></div>
+            <div class="row"><div class="rank">3</div><div class="av" style="background:var(--bl)">L</div><div style="flex:1"><div style="font-weight:700;font-size:13px">Lilou</div><div class="mut">Vence</div></div><b>395</b></div>
+            <div class="card gold" style="margin-top:12px;display:flex;align-items:center;gap:11px">
+              <svg class="i" viewBox="0 0 24 24" style="font-size:26px"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7"/></svg>
+              <div><div style="font-weight:800;font-size:14px">Lot Utile Vence</div><div style="font-size:12px">réservé au top 3 de la semaine</div></div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ACT 3 — PARTENAIRE -->
+<div class="wrap">
+  <div class="act">
+    <div class="act-head"><div class="act-badge">3</div><div><div class="act-kick">Le partenaire</div></div></div>
+    <h2>Il dote les lots. Il fixe ses règles.</h2>
+    <p class="lead">Un commerçant local s'inscrit en deux minutes, dépose les lots qu'il veut offrir par établissement, et choisit qui gagne : les 3 premiers, le premier, chaque semaine ou chaque mois.</p>
+    <div class="rail">
+
+      <div class="col">
+        <div class="cap"><span class="n">1</span>Il dépose ses lots, par établissement.</div>
+        <div class="phone"><div class="scr">
+          <div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
+          <div class="ahead"><div class="akick">Espace partenaire</div><div class="atitle">Mes lots</div></div>
+          <div class="abody">
+            <div class="card" style="display:flex;align-items:center;gap:11px"><div class="av" style="border-radius:9px">U</div><div><div style="font-weight:700">Utile Vence</div><div class="mut">Commerce · Vence</div></div></div>
+            <div class="card"><div style="display:flex;justify-content:space-between"><div style="font-weight:700;font-size:14px">Bon d'achat 20 €</div><span class="pill">×10</span></div><div class="mut" style="margin-top:3px">Lycée de Vence</div></div>
+            <div class="card"><div style="display:flex;justify-content:space-between"><div style="font-weight:700;font-size:14px">Casque audio</div><span class="pill">×2</span></div><div class="mut" style="margin-top:3px">Tous établissements</div></div>
+            <div class="btn" style="display:flex;align-items:center;justify-content:center;gap:7px"><svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Ajouter un lot</div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="col">
+        <div class="cap"><span class="n">2</span>Il choisit qui gagne, et quand.</div>
+        <div class="phone"><div class="scr">
+          <div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
+          <div class="ahead"><div class="akick">Bon d'achat 20 €</div><div class="atitle">Ma règle de jeu</div></div>
+          <div class="abody">
+            <div class="lab" style="margin-bottom:8px">Qui gagne</div>
+            <div class="pick on"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 4H4v2a3 3 0 0 0 3 3M17 4h3v2a3 3 0 0 1-3 3"/></svg></span>Les 3 premiers</div>
+            <div class="pick"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M6 9 12 3l6 6M12 3v13"/></svg></span>Le premier seulement</div>
+            <div class="lab" style="margin:14px 0 8px">À quelle fréquence</div>
+            <div style="display:flex;gap:8px">
+              <div class="pick on" style="flex:1;justify-content:center;margin:0">Chaque semaine</div>
+              <div class="pick" style="flex:1;justify-content:center;margin:0">Chaque mois</div>
+            </div>
+            <div class="btn" style="margin-top:16px">Mettre mon lot en jeu</div>
+          </div>
+        </div></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- CLOSING -->
+<div class="wrap">
+  <div class="flow">
+    <h2>Le cercle vertueux</h2>
+    <div class="loop">
+      <span class="st">Le prof lance un défi</span>
+      <span class="ar">→</span>
+      <span class="st">L'élève révise pour gagner</span>
+      <span class="ar">→</span>
+      <span class="st">Il accumule des points</span>
+      <span class="ar">→</span>
+      <span class="st">Il monte en ligue</span>
+      <span class="ar">→</span>
+      <span class="st">Il décroche un lot partenaire</span>
+      <span class="ar">↺</span>
+    </div>
+    <p style="margin-top:24px;opacity:.85;max-width:560px;margin-left:auto;margin-right:auto">Le professeur motive sans corriger de copies. L'élève révise sans s'en apercevoir. Le partenaire gagne en visibilité locale. Tout le monde y trouve son compte.</p>
+  </div>
+  <div class="foot">Flowin Révision — démonstration. Écrans illustratifs de la plateforme réelle.</div>
+</div>
+
+</body>
+</html>
