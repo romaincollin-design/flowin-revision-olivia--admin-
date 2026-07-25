@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowin Révision — Prototype interactif</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pp:#534AB7;--pp2:#7F77DD;--ppbg:#EEEDFE;--ppln:#AFA9EC;
+  --ink:#14162A;--ink2:#3D4268;--ink3:#8B90B8;
+  --bg:#F1F1F7;--surf:#fff;--line:rgba(0,0,0,.08);--line2:rgba(0,0,0,.05);
+  --gr:#0E9E6E;--grbg:#E4F7F0;--am:#C27C0A;--ambg:#FEF4DC;--re:#D63050;--bl:#1E6FCC;
+  --f:'DM Sans',system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--f);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.12em}
+.top{text-align:center;padding:26px 20px 10px}
+.logo{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:19px}
+.logo .dot{width:8px;height:8px;border-radius:50%;background:var(--pp2);box-shadow:0 0 10px var(--pp2)}
+.logo b{color:var(--pp)}
+.logo .r{color:var(--ink3);font-weight:600;font-size:14px}
+.subtitle{color:var(--ink3);font-size:13px;margin-top:6px}
+.tabs{display:flex;justify-content:center;gap:8px;margin:22px 0 6px;flex-wrap:wrap}
+.tab{display:inline-flex;align-items:center;gap:9px;padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--surf);color:var(--ink2);font-weight:600;font-size:14px;cursor:pointer;transition:.15s}
+.tab .n{width:22px;height:22px;border-radius:50%;background:var(--ppbg);color:var(--pp);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.tab.on{background:var(--pp);color:#fff;border-color:var(--pp)}
+.tab.on .n{background:rgba(255,255,255,.22);color:#fff}
+
+.stage{display:flex;justify-content:center;align-items:flex-start;gap:44px;padding:24px 20px 60px;flex-wrap:wrap}
+.side{width:280px;padding-top:30px}
+@media(max-width:800px){.side{display:none}}
+.side .k{color:var(--pp);font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.side .t{font-size:24px;font-weight:800;letter-spacing:-.4px;line-height:1.1;margin-bottom:12px}
+.side .d{color:var(--ink2);font-size:15px;line-height:1.55}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:5px 11px;border-radius:20px;margin-top:18px}
+.badge.live{background:var(--grbg);color:var(--gr)}
+.badge.todo{background:var(--ambg);color:var(--am)}
+.badge .d2{width:7px;height:7px;border-radius:50%;background:currentColor}
+
+.phonecol{display:flex;flex-direction:column;align-items:center;gap:16px}
+.phone{width:300px;height:600px;background:#0B0D1A;border-radius:38px;padding:11px;box-shadow:0 30px 60px -20px rgba(83,74,183,.4),0 0 0 1px rgba(0,0,0,.06)}
+.scr{width:100%;height:100%;background:var(--surf);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.sbar{display:flex;justify-content:space-between;align-items:center;padding:12px 20px 4px;font-size:12px;font-weight:700}
+.sbar .dd{display:flex;gap:3px}.sbar .dd i{width:4px;height:4px;border-radius:50%;background:var(--ink3);display:block}
+.ahead{padding:6px 20px 12px}
+.akick{font-size:11px;font-weight:700;color:var(--pp);letter-spacing:.08em;text-transform:uppercase}
+.atitle{font-size:20px;font-weight:800;letter-spacing:-.3px}
+.abody{flex:1;padding:2px 18px 16px;overflow:hidden}
+
+.nav{display:flex;align-items:center;gap:16px}
+.navbtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surf);color:var(--pp);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:.15s}
+.navbtn:hover{background:var(--ppbg)}
+.navbtn:disabled{opacity:.3;cursor:default}
+.dots{display:flex;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ppln);opacity:.4;cursor:pointer}
+.dot.on{opacity:1;width:22px;border-radius:4px}
+
+/* UI atoms */
+.card{background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:9px}
+.pick{background:var(--surf);border:1.5px solid var(--line);border-radius:12px;padding:12px 13px;margin-bottom:8px;display:flex;align-items:center;gap:11px;font-weight:600;font-size:14px}
+.pick.on{border-color:var(--ppln);background:var(--ppbg);color:var(--pp)}
+.pick .ic{width:32px;height:32px;border-radius:9px;background:var(--ppbg);color:var(--pp);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.pick.on .ic{background:#fff}
+.pill{display:inline-flex;align-items:center;gap:5px;background:var(--ppbg);color:var(--pp);font-size:11px;font-weight:700;padding:4px 9px;border-radius:20px}
+.btn{background:var(--pp);color:#fff;border-radius:10px;padding:11px;text-align:center;font-weight:700;font-size:14px;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:7px}
+.lab{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
+.big{font-size:30px;font-weight:800;letter-spacing:-.5px}
+.mut{color:var(--ink3);font-size:12px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{border-radius:11px;padding:12px;color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;gap:7px}
+.row{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line2)}
+.av{width:34px;height:34px;border-radius:50%;background:var(--pp);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.bar{height:7px;background:var(--ppbg);border-radius:4px;overflow:hidden;flex:1}.bar i{display:block;height:100%;background:var(--pp);border-radius:4px}
+.rank{width:20px;font-weight:800;color:var(--pp);text-align:center}
+.gold{background:linear-gradient(135deg,#F4C430,#E0A800);color:#3a2c00}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="logo"><span class="dot"></span>Flow<b>in</b> <span class="r">Révision</span></div>
+  <div class="subtitle">Prototype interactif — clique pour naviguer. Chaque écran est marqué <b style="color:var(--gr)">en ligne</b> ou <b style="color:var(--am)">à construire</b>.</div>
+  <div class="tabs" id="tabs"></div>
+</div>
+<div class="stage">
+  <div class="side"><div class="k" id="sK"></div><div class="t" id="sT"></div><div class="d" id="sD"></div><div id="sB"></div></div>
+  <div class="phonecol">
+    <div class="phone"><div class="scr" id="scr"></div></div>
+    <div class="nav">
+      <button class="navbtn" id="prev">‹</button>
+      <div class="dots" id="dots"></div>
+      <button class="navbtn" id="next">›</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var SVG = {
+  book:'<svg class="i" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>',
+  star:'<svg class="i" viewBox="0 0 24 24"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg>',
+  bell:'<svg class="i" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>',
+  users:'<svg class="i" viewBox="0 0 24 24"><path d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M10 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6M21 20v-2a4 4 0 0 0-3-3.8"/></svg>',
+  wand:'<svg class="i" viewBox="0 0 24 24"><path d="M12 3l2 5 5 .5-4 3.5 1 5-4-2.5L8 20l1-5-4-3.5 5-.5z"/></svg>',
+  pen:'<svg class="i" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  send:'<svg class="i" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>',
+  gift:'<svg class="i" viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7"/></svg>',
+  plus:'<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  trophy:'<svg class="i" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 4H4v2a3 3 0 0 0 3 3M17 4h3v2a3 3 0 0 1-3 3"/></svg>'
+};
+function sb(){return '<div class="sbar"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>';}
+function head(k,t){return '<div class="ahead"><div class="akick">'+k+'</div><div class="atitle">'+t+'</div></div>';}
+
+var DATA = {
+  prof: {k:'Le professeur', t:'Il prépare, il lance, il suit.', d:'Il choisit ses matières et sa classe, crée un contrôle flash (à la main ou assisté IA), le lance et distribue sa cagnotte de points.',
+    screens:[
+      {badge:'live', b:head('Espace prof','Tableau de bord')+'<div class="abody"><div class="card" style="display:flex;justify-content:space-between;align-items:center"><div><div class="lab">Cagnotte à distribuer</div><div class="big" style="color:var(--pp)">480<span style="font-size:13px;color:var(--ink3)"> / 500</span></div></div><span class="pill">Année scolaire</span></div><div class="row"><div class="av">19</div><div style="flex:1"><div style="font-weight:700;font-size:13px">Élèves</div><div class="mut">Terminale Bac Pro</div></div></div><div class="row"><div class="av" style="background:var(--gr)">64</div><div style="flex:1"><div style="font-weight:700;font-size:13px">Quiz joués</div><div class="mut">depuis le début</div></div></div><div class="row" style="border:0"><div class="av" style="background:var(--am)">70</div><div style="flex:1"><div style="font-weight:700;font-size:13px">Score moyen %</div><div class="mut">toutes matières</div></div></div></div>'},
+      {badge:'live', b:head('Mon profil','Mes matières')+'<div class="abody"><div class="card" style="display:flex;align-items:center;gap:11px;margin-bottom:12px"><div class="av">OL</div><div><div style="font-weight:700">Olivia Laurent</div><div class="mut">Lycée de Vence</div></div></div><div class="pick on"><span class="ic">'+SVG.book+'</span>Histoire</div><div class="pick on"><span class="ic">'+SVG.book+'</span>Géographie</div><div class="pick"><span class="ic">'+SVG.book+'</span>EMC</div><div class="pick"><span class="ic">'+SVG.book+'</span>PSE</div></div>'},
+      {badge:'todo', b:head('Nouveau contrôle flash','Comment créer ?')+'<div class="abody"><div class="card" style="border-color:var(--ppln);background:var(--ppbg)"><div style="display:flex;align-items:center;gap:9px;margin-bottom:5px;color:var(--pp);font-weight:700;font-size:15px">'+SVG.wand+'Générer depuis mon cours</div><div class="mut">Je dépose mon chapitre, l\'IA propose les questions. Je relis.</div></div><div class="card"><div style="display:flex;align-items:center;gap:9px;margin-bottom:5px;font-weight:700;font-size:15px;color:var(--pp)">'+SVG.pen+'Écrire mes questions</div><div class="mut">Façon Kahoot : ma question, 4 réponses, je coche la bonne.</div></div></div>'},
+      {badge:'todo', b:head('Mon contrôle flash','J\'empile mes questions')+'<div class="abody"><div class="card" style="padding:11px 13px"><div style="font-weight:600;font-size:13px;margin-bottom:9px">En quelle année tombe le mur de Berlin ?</div><div class="tiles"><div class="tile" style="background:var(--re)">1961</div><div class="tile" style="background:var(--gr)">1989 ✓</div><div class="tile" style="background:var(--bl)">1991</div><div class="tile" style="background:var(--am)">1975</div></div></div><div class="card" style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600;font-size:13px">3 questions ajoutées</span><span class="pill">'+SVG.plus+' Ajouter</span></div></div>'},
+      {badge:'live', b:head('Lancer le défi','À ma classe')+'<div class="abody"><div class="pick on"><span class="ic">'+SVG.users+'</span>Toute la classe · Terminale</div><div class="card" style="padding:11px 13px"><div class="lab" style="margin-bottom:6px">Récompense par élève</div><div style="display:flex;align-items:center;gap:10px"><div class="bar"><i style="width:30%"></i></div><b style="color:var(--pp)">30 pts</b></div></div><div class="btn">'+SVG.send+'Lancer + WhatsApp</div><div class="mut" style="text-align:center;margin-top:10px">Les points comptent pour les ligues.</div></div>'}
+    ]},
+  eleve: {k:'L\'élève', t:'Il révise, il gagne, il monte.', d:'Il s\'inscrit à son établissement, choisit ses matières, et joue sur 3 phases : réviser, relever les défis du prof, défier d\'autres élèves. Le streak récompense la régularité.',
+    screens:[
+      {badge:'live', b:head('Bienvenue','Mon inscription')+'<div class="abody"><div class="card"><div class="lab">Établissement</div><div style="font-weight:700;margin-top:2px">Lycée de Vence</div></div><div class="card"><div class="lab">Classe</div><div style="font-weight:700;margin-top:2px">Terminale Bac Pro</div></div><div class="lab" style="margin:6px 0 8px">Mes matières</div><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="pill">Histoire</span><span class="pill">Géo</span><span class="pill">EMC</span><span class="pill">PSE</span></div><div class="btn" style="margin-top:16px">Créer mon profil →</div></div>'},
+      {badge:'live', b:head('Salut Sophie','On joue ?')+'<div class="abody"><div class="card" style="display:flex;justify-content:space-between;align-items:center;background:var(--pp);color:#fff;border:0"><div><div style="opacity:.8;font-size:11px;text-transform:uppercase">Mes points</div><div class="big">512</div></div><div style="text-align:right"><div style="font-weight:800;font-size:22px">7</div><div style="opacity:.8;font-size:11px">jours d\'affilée</div></div></div><div class="pick on"><span class="ic">'+SVG.book+'</span>Réviser mes fiches</div><div class="pick"><span class="ic">'+SVG.star+'</span>Défis de ma prof</div><div class="pick"><span class="ic">'+SVG.bell+'</span>Défier d\'autres élèves</div></div>'},
+      {badge:'live', b:head('Histoire','Quiz de révision')+'<div class="abody"><div class="mut" style="text-align:center;margin-bottom:8px">Question 3 / 10</div><div class="card" style="text-align:center;font-weight:600;padding:18px 14px">Qui prononce le discours du « rideau de fer » ?</div><div class="tiles" style="margin-top:8px"><div class="tile" style="background:var(--re)">Staline</div><div class="tile" style="background:var(--bl)">Churchill</div><div class="tile" style="background:var(--am)">Truman</div><div class="tile" style="background:var(--gr)">De Gaulle</div></div><div class="card" style="margin-top:10px;text-align:center"><span class="pill">+10 pts par bonne réponse</span></div></div>'},
+      {badge:'todo', b:head('Room · Guerre froide','Le défi')+'<div class="abody"><div class="card" style="text-align:center"><div class="lab">Mise du défi</div><div class="big" style="color:var(--pp)">50 pts</div><div class="mut">le gagnant rafle la mise</div></div><div class="row"><div class="av">S</div><div style="flex:1"><div style="font-weight:700;font-size:13px">Sophie (toi)</div><div class="mut">Lycée de Vence</div></div><span class="pill">prêt</span></div><div class="row" style="border:0"><div class="av" style="background:var(--am)">M</div><div style="flex:1"><div style="font-weight:700;font-size:13px">Marc</div><div class="mut">Estienne d\'Orves</div></div><span class="pill">prêt</span></div><div class="btn" style="margin-top:12px">Lancer la manche</div></div>'},
+      {badge:'live', b:head('Ligue globale','Le classement')+'<div class="abody"><div class="row"><div class="rank">1</div><div class="av gold">S</div><div style="flex:1"><div style="font-weight:700;font-size:13px">Sophie</div><div class="mut">Vence</div></div><b style="color:var(--pp)">512</b></div><div class="row"><div class="rank">2</div><div class="av" style="background:var(--am)">M</div><div style="flex:1"><div style="font-weight:700;font-size:13px">Marie</div><div class="mut">Parc Impérial</div></div><b>400</b></div><div class="row"><div class="rank">3</div><div class="av" style="background:var(--bl)">L</div><div style="flex:1"><div style="font-weight:700;font-size:13px">Lilou</div><div class="mut">Vence</div></div><b>395</b></div><div class="card gold" style="margin-top:10px;display:flex;align-items:center;gap:10px"><span style="font-size:24px">'+SVG.gift+'</span><div><div style="font-weight:800;font-size:13px">Lot Utile Vence</div><div style="font-size:12px">top 3 de la semaine</div></div></div></div>'}
+    ]},
+  partenaire: {k:'Le partenaire', t:'Il dote, il fixe ses règles.', d:'Un commerçant local dépose les lots qu\'il offre par établissement, et choisit qui gagne : top 3 ou premier, chaque semaine ou chaque mois.',
+    screens:[
+      {badge:'todo', b:head('Espace partenaire','Mes lots')+'<div class="abody"><div class="card" style="display:flex;align-items:center;gap:11px"><div class="av" style="border-radius:9px">U</div><div><div style="font-weight:700">Utile Vence</div><div class="mut">Commerce · Vence</div></div></div><div class="card"><div style="display:flex;justify-content:space-between"><div style="font-weight:700;font-size:14px">Bon d\'achat 20 €</div><span class="pill">×10</span></div><div class="mut" style="margin-top:3px">Lycée de Vence</div></div><div class="card"><div style="display:flex;justify-content:space-between"><div style="font-weight:700;font-size:14px">Casque audio</div><span class="pill">×2</span></div><div class="mut" style="margin-top:3px">Tous établissements</div></div><div class="btn">'+SVG.plus+'Ajouter un lot</div></div>'},
+      {badge:'todo', b:head('Bon d\'achat 20 €','Ma règle de jeu')+'<div class="abody"><div class="lab" style="margin-bottom:8px">Qui gagne</div><div class="pick on"><span class="ic">'+SVG.trophy+'</span>Les 3 premiers</div><div class="pick">Le premier seulement</div><div class="lab" style="margin:14px 0 8px">À quelle fréquence</div><div style="display:flex;gap:8px"><div class="pick on" style="flex:1;justify-content:center;margin:0">Chaque semaine</div><div class="pick" style="flex:1;justify-content:center;margin:0">Chaque mois</div></div><div class="btn" style="margin-top:16px">Mettre en jeu</div></div>'}
+    ]}
+};
+
+var order=['prof','eleve','partenaire'], curTab='prof', curScr=0;
+var tabsEl=document.getElementById('tabs');
+order.forEach(function(key,i){
+  var b=document.createElement('button'); b.className='tab'+(i===0?' on':'');
+  b.innerHTML='<span class="n">'+(i+1)+'</span>'+DATA[key].k.replace('Le ','').replace('L\'','').replace('professeur','Professeur');
+  b.onclick=function(){curTab=key;curScr=0;render();document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on')});b.classList.add('on');};
+  tabsEl.appendChild(b);
+});
+
+function render(){
+  var d=DATA[curTab], s=d.screens[curScr];
+  document.getElementById('scr').innerHTML=sb()+s.b;
+  document.getElementById('sK').textContent=d.k;
+  document.getElementById('sT').textContent=d.t;
+  document.getElementById('sD').textContent=d.d;
+  document.getElementById('sB').innerHTML = s.badge==='live'
+    ? '<div class="badge live"><span class="d2"></span>Déjà en ligne</div>'
+    : '<div class="badge todo"><span class="d2"></span>À construire</div>';
+  var dots=document.getElementById('dots'); dots.innerHTML='';
+  d.screens.forEach(function(_,i){var dd=document.createElement('div');dd.className='dot'+(i===curScr?' on':'');dd.onclick=function(){curScr=i;render();};dots.appendChild(dd);});
+  document.getElementById('prev').disabled=curScr===0;
+  document.getElementById('next').disabled=curScr===d.screens.length-1;
+}
+document.getElementById('prev').onclick=function(){if(curScr>0){curScr--;render();}};
+document.getElementById('next').onclick=function(){if(curScr<DATA[curTab].screens.length-1){curScr++;render();}};
+render();
+</script>
+</body>
+</html>
