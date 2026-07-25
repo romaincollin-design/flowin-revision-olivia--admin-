@@ -92,6 +92,7 @@ svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke
 .blk.yellow{background:#FDD835;color:#111}
 .blk.wide{grid-column:span 2}
 .blk.tall{grid-row:span 2;justify-content:center}
+.circuit{width:100%;max-width:520px;display:block;margin:6px auto 0}
 .foot{text-align:center;color:var(--ink3);font-size:13px;padding:0 0 50px}
 @media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.blk.wide{grid-column:span 2}.hero h1{font-size:32px}.act h2{font-size:25px}}
 </style>
@@ -215,15 +216,23 @@ svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke
 <div class="wrap"><div class="mond">
   <h2>Le cercle vertueux</h2>
   <div class="sub">Chacun y trouve son compte — et ça tourne tout seul.</div>
-  <div class="grid">
-    <div class="blk red wide"><div class="step">Le prof</div><div class="txt">Lance un défi à sa classe</div></div>
-    <div class="blk yellow tall"><div class="step">L'élève</div><div class="txt">Révise pour gagner des points</div></div>
-    <div class="blk"><div class="step">Streak</div><div class="txt">Jour après jour</div></div>
-    <div class="blk blue"><div class="step">Ligue</div><div class="txt">Il grimpe</div></div>
-    <div class="blk blue wide"><div class="step">Le partenaire</div><div class="txt">Offre un lot au top de la ligue</div></div>
-    <div class="blk"><div class="step">Résultat</div><div class="txt">Il révise sans s'en apercevoir</div></div>
-    <div class="blk red"><div class="step">Et ça</div><div class="txt">recommence ↺</div></div>
-  </div>
+  <svg viewBox="0 0 620 500" class="circuit" role="img" aria-label="Cercle vertueux : le prof lance un défi, l'élève révise, gagne des points, monte en ligue, décroche un lot, et ça recommence.">
+   <defs><marker id="ah" markerWidth="12" markerHeight="12" refX="8" refY="4" orient="auto"><path d="M0 0l8 4-8 4z" fill="#111"/></marker></defs>
+   <path d="M364 84 A175 175 0 0 1 452 147" fill="none" stroke="#111" stroke-width="4" marker-end="url(#ah)"/>
+   <path d="M485 250 A175 175 0 0 1 452 353" fill="none" stroke="#111" stroke-width="4" marker-end="url(#ah)"/>
+   <path d="M364 416 A175 175 0 0 1 256 416" fill="none" stroke="#111" stroke-width="4" marker-end="url(#ah)"/>
+   <path d="M168 353 A175 175 0 0 1 135 250" fill="none" stroke="#111" stroke-width="4" marker-end="url(#ah)"/>
+   <path d="M168 147 A175 175 0 0 1 256 84" fill="none" stroke="#111" stroke-width="4" marker-end="url(#ah)"/>
+   <g text-anchor="middle" font-family="DM Sans, sans-serif">
+     <circle cx="310" cy="75" r="54" fill="#E53935"/><text x="310" y="70" fill="#fff" font-size="14" font-weight="800">LE PROF</text><text x="310" y="89" fill="#fff" font-size="11">lance un défi</text>
+     <circle cx="476" cy="196" r="54" fill="#FDD835"/><text x="476" y="191" fill="#111" font-size="14" font-weight="800">L'ÉLÈVE</text><text x="476" y="210" fill="#111" font-size="11">révise</text>
+     <circle cx="413" cy="392" r="54" fill="#1E88E5"/><text x="413" y="387" fill="#fff" font-size="14" font-weight="800">POINTS</text><text x="413" y="406" fill="#fff" font-size="11">il en gagne</text>
+     <circle cx="207" cy="392" r="54" fill="#534AB7"/><text x="207" y="387" fill="#fff" font-size="14" font-weight="800">LIGUE</text><text x="207" y="406" fill="#fff" font-size="11">il grimpe</text>
+     <circle cx="144" cy="196" r="54" fill="#26890C"/><text x="144" y="191" fill="#fff" font-size="14" font-weight="800">LE LOT</text><text x="144" y="210" fill="#fff" font-size="11">partenaire</text>
+     <text x="310" y="244" fill="#111" font-size="14" font-weight="800" letter-spacing="1.5">CERCLE</text>
+     <text x="310" y="264" fill="#111" font-size="14" font-weight="800" letter-spacing="1.5">VERTUEUX</text>
+   </g>
+  </svg>
 </div>
 <div class="foot">Flowin Révision — écrans et données fidèles à la plateforme en ligne aujourd'hui.</div>
 </div>
