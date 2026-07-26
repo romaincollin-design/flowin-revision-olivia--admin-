@@ -80,7 +80,7 @@ var ICON={
  gift:'<svg class="i" viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7"/></svg>',
  link:'<svg class="i" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>',
  qr:'<svg class="i" viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/></svg>',
- defi:'<svg class="i" viewBox="0 0 24 24"><path d="M12 3 6 5v5.2c0 4.2 2.6 6.8 6 7.8 3.4-1 6-3.6 6-7.8V5z"/><path d="M8.7 8.7l6.6 6.6M15.3 8.7l-6.6 6.6"/></svg>' 
+ defi:'<svg class="i" viewBox="0 0 24 24"><path d="M12 2.5 5.5 4.8v5.4c0 4.4 2.8 7.2 6.5 8.3 3.7-1.1 6.5-3.9 6.5-8.3V4.8z"/><path d="M8 8l7 7M6.4 9.6 9.6 6.4M16 8l-7 7M14.4 6.4 17.6 9.6"/></svg>' 
 };
 function qrSvg(){var r='';for(var y=0;y<11;y++)for(var x=0;x<11;x++){if((x*y+x+y)%3===0||(x<3&&y<3)||(x>7&&y<3)||(x<3&&y>7))r+='<rect x="'+(x*10)+'" y="'+(y*10)+'" width="10" height="10" fill="#111"/>';}return '<svg viewBox="0 0 110 110" style="width:130px;height:130px">'+r+'</svg>';}
 var scr=document.getElementById('screen'), tb=document.getElementById('tabbar');
@@ -178,12 +178,20 @@ var SCREENS={
    '<div class="mut" style="text-align:center;margin-top:8px">Une fois valid\u00e9, les joueurs sont enregistr\u00e9s et les mises bloqu\u00e9es.</div>';
  },
  defilive:function(){return '<div class="top"><button class="back" onclick="nav(\'defiroom\')">'+ICON.back+'</button><div><div class="sub">Manche en cours \u00b7 Guerre froide</div><div class="h1" style="font-size:20px">Classement en direct</div></div></div>'+
-   '<div class="card" style="text-align:center;padding:12px"><div class="lab">Cagnotte</div><div style="font-size:24px;font-weight:800;color:var(--pp)">360 pts</div></div>'+
-   [['1','Sophie','4/5','var(--pp)'],['2','Marc','3/5','var(--am)'],['3','Lilou','3/5','var(--bl)'],['4','Tom','2/5','var(--gr)']].map(function(r){return '<div class="row"><div class="rank">'+r[0]+'</div><div class="av" style="background:'+r[3]+'">'+r[1][0]+'</div><div style="flex:1;font-weight:700;font-size:14px">'+r[1]+'</div><div style="font-weight:700;color:var(--pp)">'+r[2]+'</div></div>';}).join('')+
-   '<button class="btn" style="margin-top:14px" onclick="nav(\'defiresult\')">Valider la manche</button>'+
+   '<div class="card" style="text-align:center;padding:12px"><div class="lab">Cagnotte en jeu</div><div style="font-size:24px;font-weight:800;color:var(--pp)">360 pts</div></div>'+
+   [['Sophie','4','512','Or','#B87A10'],['Marc','3','400','Argent','#6B7280'],['Lilou','3','395','Argent','#6B7280'],['Tom','2','180','Bronze','#9A6B3A']].map(function(r,i){
+     var med=i===0?'#E0A800':(i===1?'#9AA0AE':(i===2?'#B87A5A':'var(--ppbg)'));var mc=i<3?'#fff':'var(--pp)';
+     return '<div class="card" style="display:flex;align-items:center;gap:10px;padding:10px 12px'+(i===0?';border:1.5px solid #E0A800;background:#FDF8EC':'')+'">'+
+       '<div style="width:26px;height:26px;border-radius:50%;background:'+med+';color:'+mc+';display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">'+(i+1)+'</div>'+
+       '<div class="av" style="background:var(--pp)">'+r[0][0]+'</div>'+
+       '<div style="flex:1"><div style="font-weight:700;font-size:14px">'+r[0]+'</div><div style="display:flex;align-items:center;gap:6px;margin-top:2px"><span style="font-size:9px;font-weight:800;color:#fff;background:'+r[4]+';padding:2px 7px;border-radius:10px;text-transform:uppercase">Ligue '+r[3]+'</span><span class="mut">'+r[2]+' pts</span></div></div>'+
+       '<div style="text-align:right"><div style="font-weight:800;color:var(--pp);font-size:16px">'+r[1]+'/5</div><div class="mut" style="font-size:10px">bonnes r\u00e9p.</div></div>'+
+     '</div>';
+   }).join('')+
+   '<button class="btn" style="margin-top:12px" onclick="nav(\'defiresult\')">Valider la manche</button>'+
    '<div class="mut" style="text-align:center;margin-top:8px">L\'organisateur valide quand tous ont r\u00e9pondu.</div>';
  },
- defiresult:function(){return '<div style="width:72px;height:72px;border-radius:50%;background:#FDF3D0;color:var(--gold);display:flex;align-items:center;justify-content:center;margin:20px auto 12px;font-size:34px">'+ICON.trophy+'</div><div class="h1" style="text-align:center">Sophie remporte !</div>'+
+  defiresult:function(){return '<div style="width:72px;height:72px;border-radius:50%;background:#FDF3D0;color:var(--gold);display:flex;align-items:center;justify-content:center;margin:20px auto 12px;font-size:34px">'+ICON.trophy+'</div><div class="h1" style="text-align:center">Sophie remporte !</div>'+
    '<div style="text-align:center;font-size:40px;font-weight:800;color:var(--pp);margin:6px 0">+360</div><div style="text-align:center;font-weight:600;margin-bottom:16px">la cagnotte enti\u00e8re</div>'+
    '<div class="card"><div class="lab" style="margin-bottom:8px">R\u00e9partition</div>'+
      '<div class="row"><div class="av" style="background:var(--pp)">S</div><div style="flex:1;font-weight:700;font-size:14px">Sophie</div><span style="font-weight:800;color:var(--gr)">+315</span></div>'+
