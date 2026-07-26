@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowin Révision — App élève (prototype navigable)</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--pp:#534AB7;--pp2:#7F77DD;--ppbg:#EEEDFE;--ppln:#AFA9EC;--ink:#14162A;--ink2:#3D4268;--ink3:#8B90B8;--surf:#fff;--bg:#F3F3F9;--line:rgba(0,0,0,.08);--gr:#0E9E6E;--grbg:#E4F7F0;--am:#C27C0A;--re:#D63050;--bl:#1E6FCC;--gold:#E0A800;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#E9E9F2;color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.12em}
+.device{width:390px;height:800px;max-height:94vh;background:#0B0D1A;border-radius:44px;padding:12px;box-shadow:0 40px 80px -24px rgba(83,74,183,.5)}
+.viewport{width:100%;height:100%;background:var(--bg);border-radius:33px;overflow:hidden;position:relative;display:flex;flex-direction:column}
+.status{display:flex;justify-content:space-between;padding:13px 24px 4px;font-size:13px;font-weight:700;flex-shrink:0}
+.status .dd{display:flex;gap:3px;align-items:center}.status .dd i{width:4px;height:4px;border-radius:50%;background:var(--ink3);display:block}
+.screen{flex:1;overflow-y:auto;padding:6px 20px 90px}
+.screen::-webkit-scrollbar{width:0}
+.tabbar{position:absolute;bottom:0;left:0;right:0;height:74px;background:var(--surf);border-top:1px solid var(--line);display:flex;padding:8px 12px 20px;z-index:20}
+.tabbar button{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--ink3);font-size:10px;font-weight:600;cursor:pointer}
+.tabbar button.on{color:var(--pp)}
+.tabbar button svg{font-size:22px}
+.top{display:flex;align-items:center;gap:12px;padding:10px 0 14px}
+.back{width:36px;height:36px;border-radius:50%;background:var(--surf);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink);flex-shrink:0}
+.h1{font-size:24px;font-weight:800;letter-spacing:-.5px}
+.h2{font-size:18px;font-weight:700;margin:14px 0 10px}
+.sub{color:var(--ink3);font-size:13px}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.stat3{display:flex;gap:9px;margin-bottom:14px}.stat3 .s{flex:1;background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
+.stat3 .v{font-size:22px;font-weight:800;color:var(--pp)}.stat3 .l{font-size:10px;color:var(--ink3);font-weight:700;text-transform:uppercase;margin-top:2px}
+.brick{display:flex;align-items:center;gap:14px;background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:11px;cursor:pointer;transition:.15s;width:100%;text-align:left}
+.brick:active{transform:scale(.98)}
+.brick .ic{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;flex-shrink:0}
+.brick .t{font-weight:700;font-size:16px}.brick .d{color:var(--ink3);font-size:12px}
+.brick .go{margin-left:auto;color:var(--ink3)}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:20px;padding:7px 13px;font-weight:600;font-size:13px;cursor:pointer;user-select:none}
+.chip.on{background:var(--ppbg);color:var(--pp);border-color:var(--ppln)}
+.chip .sw{width:11px;height:11px;border-radius:3px}
+.chip.off{opacity:.35}
+.btn{background:var(--pp);color:#fff;border:none;border-radius:13px;padding:15px;text-align:center;font-weight:700;font-size:15px;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn.sec{background:var(--surf);color:var(--pp);border:1.5px solid var(--ppln)}
+.pill{display:inline-flex;align-items:center;gap:5px;background:var(--ppbg);color:var(--pp);font-size:11px;font-weight:700;padding:5px 10px;border-radius:20px}
+.lab{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
+.mut{color:var(--ink3);font-size:12px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.tile{border-radius:13px;padding:16px 14px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;border:none}
+.row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(0,0,0,.05)}
+.av{width:36px;height:36px;border-radius:50%;background:var(--pp);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.rank{width:20px;font-weight:800;color:var(--pp);text-align:center}
+.gold{background:linear-gradient(135deg,#F4C430,var(--gold));color:#3a2c00}
+.tier{display:flex;gap:5px;margin-bottom:14px}.tier .t{flex:1;text-align:center;font-size:9px;font-weight:800;padding:7px 2px;border-radius:8px;color:#fff;text-transform:uppercase}
+.wheelwrap{position:relative;width:230px;height:230px;margin:8px auto 0}
+.needle{position:absolute;top:-3px;left:50%;transform:translateX(-50%);border:11px solid transparent;border-top-color:var(--ink);z-index:3}
+.wheel{width:230px;height:230px;border-radius:50%;box-shadow:inset 0 0 0 7px #fff,0 12px 26px -8px rgba(0,0,0,.35);transition:transform 3.4s cubic-bezier(.17,.67,.2,1)}
+.hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--pp);font-size:11px;z-index:2}
+.fiche b{color:var(--ink)}
+.dline{display:flex;gap:10px;font-size:13px;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.05)}.dline .y{font-weight:800;color:var(--pp);flex:0 0 56px}
+.done{width:72px;height:72px;border-radius:50%;background:var(--grbg);color:var(--gr);display:flex;align-items:center;justify-content:center;margin:20px auto 12px;font-size:34px}
+</style>
+</head>
+<body>
+<div class="device"><div class="viewport">
+  <div class="status"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
+  <div class="screen" id="screen"></div>
+  <div class="tabbar" id="tabbar"></div>
+</div></div>
+<script>
+var MAT=[{k:'histoire',n:'Histoire',c:'#D63050'},{k:'geo',n:'Géo',c:'#1E6FCC'},{k:'emc',n:'EMC',c:'#C27C0A'},{k:'pse',n:'PSE',c:'#0E9E6E'}];
+var wheelState={enabled:{histoire:true,geo:true,emc:true,pse:true},rot:0,spinning:false};
+var ICON={
+ book:'<svg class="i" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>',
+ star:'<svg class="i" viewBox="0 0 24 24"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg>',
+ sword:'<svg class="i" viewBox="0 0 24 24"><path d="M14.5 3.5 20 9m0 0-9 9-6 1 1-6 9-9zM3 21h18"/></svg>',
+ home:'<svg class="i" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
+ trophy:'<svg class="i" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 4H4v2a3 3 0 0 0 3 3M17 4h3v2a3 3 0 0 1-3 3"/></svg>',
+ user:'<svg class="i" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>',
+ chev:'<svg class="i" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>',
+ back:'<svg class="i" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>',
+ check:'<svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>',
+ gift:'<svg class="i" viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7"/></svg>'
+};
+var scr=document.getElementById('screen'), tb=document.getElementById('tabbar');
+var TABS=[['hub','Accueil','home'],['reviser','Réviser','book'],['quiz','Quiz','star'],['ligue','Ligue','trophy'],['profil','Profil','user']];
+function nav(s){ current=s; render(); scr.scrollTop=0; }
+var current='hub';
+
+function topbar(title){ return '<div class="top"><button class="back" onclick="nav(\'hub\')">'+ICON.back+'</button><div class="h1">'+title+'</div></div>'; }
+
+var SCREENS={
+ hub:function(){return '<div class="top" style="justify-content:space-between"><div><div class="sub">Salut Sophie</div><div class="h1">On joue ?</div></div><div class="av gold">S</div></div>'+
+   '<div class="stat3"><div class="s"><div class="v">512</div><div class="l">Points</div></div><div class="s"><div class="v">7</div><div class="l">Jours d\'affilée</div></div><div class="s"><div class="v">64</div><div class="l">Quiz faits</div></div></div>'+
+   '<div class="h2">Mes 3 façons de jouer</div>'+
+   '<button class="brick" onclick="nav(\'reviser\')"><div class="ic" style="background:var(--pp)">'+ICON.book+'</div><div><div class="t">Réviser mes cours</div><div class="d">23 fiches t\'attendent</div></div><div class="go">'+ICON.chev+'</div></button>'+
+   '<button class="brick" onclick="nav(\'quiz\')"><div class="ic" style="background:var(--am)">'+ICON.star+'</div><div><div class="t">Quiz · Révise &amp; Gagne</div><div class="d">Tourne la roue, gagne des points</div></div><div class="go">'+ICON.chev+'</div></button>'+
+   '<button class="brick" onclick="nav(\'defis\')"><div class="ic" style="background:var(--re)">'+ICON.sword+'</div><div><div class="t">Défis multi-joueurs</div><div class="d">Parie tes points, rafle la mise</div></div><div class="go">'+ICON.chev+'</div></button>'+
+   '<div class="card" style="display:flex;align-items:center;gap:12px;margin-top:6px"><span class="pill">Lot en jeu</span><div style="font-size:13px;font-weight:600">1 semaine salle de sport · Ligue Or</div></div>';
+ },
+ reviser:function(){return topbar('Réviser')+'<div class="sub" style="margin-bottom:12px">Choisis une fiche à réviser.</div>'+
+   [['Le jeu des puissances','Histoire','#D63050'],['La guerre froide','Histoire','#D63050'],['La mondialisation','Géo','#1E6FCC'],['La révolution numérique','EMC','#C27C0A'],['Prévention des risques','PSE','#0E9E6E']].map(function(f){
+     return '<button class="brick" onclick="nav(\'fiche\')"><div class="ic" style="background:'+f[2]+';font-size:15px;font-weight:800">'+f[1].slice(0,2)+'</div><div><div class="t" style="font-size:15px">'+f[0]+'</div><div class="d">'+f[1]+'</div></div><div class="go">'+ICON.chev+'</div></button>';
+   }).join('');
+ },
+ fiche:function(){return '<div class="top"><button class="back" onclick="nav(\'reviser\')">'+ICON.back+'</button><div><div class="sub">Histoire · Fiche</div><div class="h1" style="font-size:20px">Le jeu des puissances</div></div></div>'+
+   '<div class="card fiche"><div class="lab" style="margin-bottom:6px">L\'essentiel</div><div style="font-size:14px;line-height:1.6;color:var(--ink2)">Depuis 1945, le monde connaît <b>trois périodes</b> : un monde <b>bipolaire</b> (USA / URSS, guerre froide 1947-1991), puis l\'<b>hyperpuissance</b> américaine, puis un monde <b>multipolaire</b>.</div></div>'+
+   '<div class="card"><div class="lab" style="margin-bottom:4px">Dates clés</div><div class="dline"><span class="y">1945</span><span>Fin de la guerre · création de l\'ONU</span></div><div class="dline"><span class="y">1949</span><span>Création de l\'OTAN</span></div><div class="dline" style="border:0"><span class="y">1962</span><span>Crise de Cuba</span></div></div>'+
+   '<div class="card"><div class="lab" style="margin-bottom:6px">Vocabulaire</div><div style="font-size:13px;line-height:1.7"><b>Superpuissance</b> · <b>Bipolaire</b> · <b>Décolonisation</b></div></div>'+
+   '<button class="btn" onclick="nav(\'quiz\')">Me tester sur cette fiche '+ICON.star+'</button>';
+ },
+ quiz:function(){return topbar('Quiz')+'<div class="sub" style="text-align:center;margin-bottom:6px">Choisis tes matières, puis tourne la roue.</div>'+
+   '<div id="mchips" style="display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin:12px 0"></div>'+
+   '<div class="wheelwrap"><div class="needle"></div><div class="wheel" id="wheel"></div><div class="hub">SPIN</div></div>'+
+   '<button class="btn" style="margin-top:22px" id="spinBtn" onclick="spin()">Tourner la roue</button>'+
+   '<div id="spinRes" style="text-align:center;margin-top:12px;font-weight:600;min-height:22px"></div>';
+ },
+ quizplay:function(){return '<div class="top"><button class="back" onclick="nav(\'quiz\')">'+ICON.back+'</button><div><div class="sub">Histoire · Question 3/5</div><div class="h1" style="font-size:19px">Le jeu des puissances</div></div></div>'+
+   '<div class="card" style="text-align:center;font-weight:600;font-size:16px;padding:24px 16px">En quelle année tombe le mur de Berlin ?</div>'+
+   '<div class="tiles" style="margin-top:6px"><button class="tile" style="background:var(--re)" onclick="nav(\'quizresult\')">1961</button><button class="tile" style="background:var(--gr)" onclick="nav(\'quizresult\')">1989</button><button class="tile" style="background:var(--bl)" onclick="nav(\'quizresult\')">1991</button><button class="tile" style="background:var(--am)" onclick="nav(\'quizresult\')">1975</button></div>'+
+   '<div class="card" style="margin-top:14px;text-align:center"><span class="pill">Banque rare · ×1,5 points</span></div>';
+ },
+ quizresult:function(){return '<div class="done">'+ICON.check+'</div><div class="h1" style="text-align:center">Bien joué !</div>'+
+   '<div style="text-align:center;font-size:44px;font-weight:800;color:var(--pp);margin:8px 0">+60</div><div style="text-align:center;font-weight:600;margin-bottom:18px">points gagnés · 4/5 bonnes réponses</div>'+
+   '<div class="card" style="display:flex;justify-content:space-between;align-items:center"><span class="lab">Nouveau solde</span><b style="color:var(--pp);font-size:18px">572 pts</b></div>'+
+   '<button class="btn" style="margin-top:8px" onclick="nav(\'quiz\')">Rejouer</button><button class="btn sec" style="margin-top:10px" onclick="nav(\'hub\')">Retour à l\'accueil</button>';
+ },
+ defis:function(){return topbar('Défis')+'<div class="card" style="background:var(--pp);color:#fff;border:0"><div style="font-weight:700;font-size:16px;margin-bottom:4px">Mode défi</div><div style="opacity:.85;font-size:13px">Parie tes points · le gagnant rafle tout</div></div>'+
+   '<button class="btn" onclick="nav(\'deficreate\')">Créer un défi</button>'+
+   '<div class="h2">Joueurs actifs — défie-les</div>'+
+   '<div class="row"><div class="av" style="background:var(--am)">M</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Marc</div><div class="mut">Estienne d\'Orves</div></div><button class="chip on" onclick="nav(\'defiroom\')">Défier</button></div>'+
+   '<div class="row"><div class="av" style="background:var(--bl)">L</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Lilou</div><div class="mut">Lycée de Vence</div></div><button class="chip on" onclick="nav(\'defiroom\')">Défier</button></div>';
+ },
+ deficreate:function(){return '<div class="top"><button class="back" onclick="nav(\'defis\')">'+ICON.back+'</button><div class="h1">Créer un défi</div></div>'+
+   '<div class="lab" style="margin-bottom:7px">Ta mise (par joueur)</div><div style="display:flex;gap:7px;margin-bottom:16px"><div class="chip">25</div><div class="chip on">45 pts</div><div class="chip">75</div></div>'+
+   '<div class="card"><div class="lab" style="margin-bottom:4px">Thème</div><div style="font-weight:700">Roulette (aléatoire)</div></div>'+
+   '<div class="card" style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:600">Room privée</span><span class="pill">lien uniquement</span></div>'+
+   '<button class="btn" onclick="nav(\'defiroom\')">Lancer &amp; inviter</button>';
+ },
+ defiroom:function(){return '<div class="top"><button class="back" onclick="nav(\'defis\')">'+ICON.back+'</button><div><div class="sub">Room · Guerre froide</div><div class="h1" style="font-size:20px">Le défi</div></div></div>'+
+   '<div class="card" style="text-align:center"><div class="lab">Mise du défi</div><div style="font-size:30px;font-weight:800;color:var(--pp)">45 pts</div><div class="mut">le gagnant rafle la mise</div></div>'+
+   '<div class="row"><div class="av">S</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Sophie (toi)</div><div class="mut">Lycée de Vence</div></div><span class="pill">prêt</span></div>'+
+   '<div class="row" style="border:0"><div class="av" style="background:var(--am)">M</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Marc</div><div class="mut">Estienne d\'Orves</div></div><span class="pill">prêt</span></div>'+
+   '<button class="btn" style="margin-top:14px" onclick="nav(\'quizplay\')">Lancer la manche</button>';
+ },
+ ligue:function(){return topbar('Ligue')+'<div class="tier"><div class="t" style="background:#9A6B3A">Bronze</div><div class="t" style="background:#6B7280">Argent</div><div class="t" style="background:#B87A10">Or</div><div class="t" style="background:#2478CC">Platine</div><div class="t" style="background:#7F77DD">Légende</div></div>'+
+   '<div class="sub" style="margin-bottom:8px">Tu es en <b style="color:var(--pp)">Ligue Or</b> — reste dans le top 3 pour les lots.</div>'+
+   '<div class="row"><div class="rank">1</div><div class="av gold">S</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Sophie</div><div class="mut">Vence</div></div><b style="color:var(--pp)">512</b></div>'+
+   '<div class="row"><div class="rank">2</div><div class="av" style="background:var(--am)">M</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Marie</div><div class="mut">Parc Impérial</div></div><b>400</b></div>'+
+   '<div class="row"><div class="rank">3</div><div class="av" style="background:var(--bl)">L</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Lilou</div><div class="mut">Vence</div></div><b>395</b></div>'+
+   '<div class="h2">Lots en jeu</div>'+
+   '<div class="card" style="display:flex;align-items:center;gap:12px"><div class="ic" style="width:40px;height:40px;border-radius:11px;background:var(--ppbg);color:var(--pp);display:flex;align-items:center;justify-content:center">'+ICON.gift+'</div><div><div style="font-weight:700;font-size:14px">1 semaine salle de sport</div><div class="mut">Ligue Or, 7 jours d\'affilée</div></div></div>'+
+   '<div class="card" style="display:flex;align-items:center;gap:12px"><div class="ic" style="width:40px;height:40px;border-radius:11px;background:var(--ppbg);color:var(--pp);display:flex;align-items:center;justify-content:center">'+ICON.gift+'</div><div><div style="font-weight:700;font-size:14px">Bon d\'achat 10 €</div><div class="mut">1er du classement hebdo</div></div></div>';
+ },
+ profil:function(){return topbar('Profil')+'<div class="card" style="display:flex;align-items:center;gap:14px"><div class="av gold" style="width:52px;height:52px;font-size:18px">S</div><div><div style="font-weight:700;font-size:17px">Sophie</div><div class="mut">@Soso · Lycée de Vence</div></div></div>'+
+   '<div class="stat3"><div class="s"><div class="v">64</div><div class="l">Quiz faits</div></div><div class="s"><div class="v">7</div><div class="l">Streak</div></div><div class="s"><div class="v">12</div><div class="l">Défis gagnés</div></div></div>'+
+   '<div class="card"><div class="lab" style="margin-bottom:8px">Parraine tes amis · +100 pts par ami</div><div style="display:flex;gap:8px"><button class="chip on" style="flex:1;justify-content:center">WhatsApp</button><button class="chip" style="flex:1;justify-content:center">SMS</button><button class="chip" style="flex:1;justify-content:center">Copier</button></div></div>';
+ }
+};
+
+function render(){
+  scr.innerHTML = (SCREENS[current]||SCREENS.hub)();
+  // tabbar
+  tb.innerHTML='';
+  var map={reviser:'reviser',fiche:'reviser',quiz:'quiz',quizplay:'quiz',quizresult:'quiz',defis:'quiz',deficreate:'quiz',defiroom:'quiz',ligue:'ligue',profil:'profil',hub:'hub'};
+  TABS.forEach(function(t){var b=document.createElement('button');b.className=(map[current]===t[0])?'on':'';b.innerHTML=ICON[t[2]]+'<span>'+t[1]+'</span>';b.onclick=function(){nav(t[0]);};tb.appendChild(b);});
+  if(current==='quiz') mountWheel();
+}
+function mountWheel(){
+  var chips=document.getElementById('mchips');
+  MAT.forEach(function(m){var el=document.createElement('div');el.className='chip'+(wheelState.enabled[m.k]?' on':' off');el.innerHTML='<span class="sw" style="background:'+m.c+'"></span>'+m.n;el.onclick=function(){if(wheelState.spinning)return;var act=MAT.filter(function(x){return wheelState.enabled[x.k];});if(wheelState.enabled[m.k]&&act.length<=1)return;wheelState.enabled[m.k]=!wheelState.enabled[m.k];mountWheel();drawWheel();document.getElementById('spinRes').textContent='';};chips.appendChild(el);});
+  drawWheel();
+}
+function drawWheel(){var w=document.getElementById('wheel');if(!w)return;var act=MAT.filter(function(m){return wheelState.enabled[m.k];});if(!act.length){w.style.background='#EEEDFE';return;}var seg=100/act.length,acc=0,stops=[];act.forEach(function(m){stops.push(m.c+' '+acc+'% '+(acc+seg)+'%');acc+=seg;});w.style.background='conic-gradient('+stops.join(',')+')';w.style.transform='rotate('+wheelState.rot+'deg)';}
+function spin(){var act=MAT.filter(function(m){return wheelState.enabled[m.k];});if(wheelState.spinning||!act.length)return;wheelState.spinning=true;var btn=document.getElementById('spinBtn');btn.disabled=true;var pick=Math.floor(Math.random()*act.length);var seg=360/act.length;wheelState.rot+=360*5+(360-(pick*seg+seg/2));drawWheel();setTimeout(function(){wheelState.spinning=false;var r=document.getElementById('spinRes');if(r)r.innerHTML='Thème tiré dans <b style="color:'+act[pick].c+'">'+act[pick].n+'</b> !';setTimeout(function(){nav('quizplay');},700);},3500);}
+render();
+</script>
+</body>
+</html>
