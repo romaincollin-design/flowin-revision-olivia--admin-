@@ -79,11 +79,12 @@ var ICON={
  check:'<svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>',
  gift:'<svg class="i" viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7"/></svg>',
  link:'<svg class="i" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>',
- qr:'<svg class="i" viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/></svg>' 
+ qr:'<svg class="i" viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/></svg>',
+ defi:'<svg class="i" viewBox="0 0 24 24"><path d="M12 3 6 5v5.2c0 4.2 2.6 6.8 6 7.8 3.4-1 6-3.6 6-7.8V5z"/><path d="M8.7 8.7l6.6 6.6M15.3 8.7l-6.6 6.6"/></svg>' 
 };
 function qrSvg(){var r='';for(var y=0;y<11;y++)for(var x=0;x<11;x++){if((x*y+x+y)%3===0||(x<3&&y<3)||(x>7&&y<3)||(x<3&&y>7))r+='<rect x="'+(x*10)+'" y="'+(y*10)+'" width="10" height="10" fill="#111"/>';}return '<svg viewBox="0 0 110 110" style="width:130px;height:130px">'+r+'</svg>';}
 var scr=document.getElementById('screen'), tb=document.getElementById('tabbar');
-var TABS=[['hub','Accueil','home'],['reviser','Réviser','book'],['quiz','Quiz','star'],['defis','Défis','sword'],['ligue','Ligue','trophy'],['profil','Profil','user']];
+var TABS=[['hub','Accueil','home'],['reviser','Réviser','book'],['quiz','Quiz','star'],['defis','Défis','defi'],['ligue','Ligue','trophy'],['profil','Profil','user']];
 function nav(s){ current=s; render(); scr.scrollTop=0; }
 var current='hub';
 
@@ -95,7 +96,7 @@ var SCREENS={
    '<div class="h2">Mes 3 façons de jouer</div>'+
    '<button class="brick" onclick="nav(\'reviser\')"><div class="ic" style="background:var(--pp)">'+ICON.book+'</div><div><div class="t">Réviser mes cours</div><div class="d">23 fiches t\'attendent</div></div><div class="go">'+ICON.chev+'</div></button>'+
    '<button class="brick" onclick="nav(\'quiz\')"><div class="ic" style="background:var(--am)">'+ICON.star+'</div><div><div class="t">Quiz · Révise &amp; Gagne</div><div class="d">Tourne la roue, gagne des points</div></div><div class="go">'+ICON.chev+'</div></button>'+
-   '<button class="brick" onclick="nav(\'defis\')"><div class="ic" style="background:var(--re)">'+ICON.sword+'</div><div><div class="t">Défis multi-joueurs</div><div class="d">Parie tes points, rafle la mise</div></div><div class="go">'+ICON.chev+'</div></button>'+
+   '<button class="brick" onclick="nav(\'defis\')"><div class="ic" style="background:var(--re)">'+ICON.defi+'</div><div><div class="t">Défis multi-joueurs</div><div class="d">Parie tes points, rafle la mise</div></div><div class="go">'+ICON.chev+'</div></button>'+
    '<div class="card" style="display:flex;align-items:center;gap:12px;margin-top:6px"><span class="pill">Lot en jeu</span><div style="font-size:13px;font-weight:600">1 semaine salle de sport · Ligue Or</div></div>';
  },
  reviser:function(){return topbar('Réviser')+'<div class="sub" style="margin-bottom:12px">Choisis une fiche à réviser.</div>'+
@@ -141,12 +142,14 @@ var SCREENS={
  },
  defis:function(){return topbar('D\u00e9fis')+
    '<div class="card" style="border:1.5px solid var(--am);background:var(--ambg);display:flex;align-items:center;gap:12px;cursor:pointer" onclick="nav(\'defiinvit\')"><div class="av" style="background:var(--am)">M</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Marc t\'invite \u00e0 un d\u00e9fi</div><div class="mut">45 pts \u00b7 tape pour voir</div></div><span class="pill" style="background:var(--am);color:#fff">Nouveau</span></div>'+
-   '<div class="card" style="background:var(--pp);color:#fff;border:0"><div style="font-weight:700;font-size:16px;margin-bottom:4px">Mode d\u00e9fi</div><div style="opacity:.85;font-size:13px">Parie tes points \u00b7 le gagnant rafle tout</div></div>'+
    '<button class="btn" onclick="nav(\'deficreate\')">Cr\u00e9er un d\u00e9fi</button>'+
-   '<div class="h2">Rooms ouvertes \u00b7 rejoins et joue</div>'+
-   [['Sophie','45','2/4','Al\u00e9atoire','var(--pp)'],['Nadir','25','1/3','Histoire','var(--am)'],['In\u00e8s','100','6/8','G\u00e9o','var(--bl)']].map(function(r){return '<div class="card" style="display:flex;align-items:center;gap:12px;padding:12px 13px"><div class="av" style="background:'+r[4]+'">'+r[0][0]+'</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Room de '+r[0]+'</div><div class="mut">'+r[3]+' \u00b7 '+r[2]+' joueurs</div></div><div style="text-align:right"><div style="font-weight:800;color:var(--pp)">'+r[1]+' pts</div><button class="chip on" style="margin-top:5px" onclick="nav(\'defiinvit\')">Rejoindre</button></div></div>';}).join('');
+   '<div class="h2">Rooms en cours</div>'+
+   [['Sophie','45','2/4','Al\u00e9atoire','Publique','var(--pp)'],['Nadir','25','1/3','Histoire','Priv\u00e9e','var(--am)'],['In\u00e8s','100','6/8','G\u00e9o','Live','var(--gr)']].map(function(r){return '<div class="card" style="display:flex;align-items:center;gap:11px;padding:12px 13px"><div class="av" style="background:'+r[5]+'">'+r[0][0]+'</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Room de '+r[0]+' <span class="pill" style="font-size:9px;padding:2px 7px;margin-left:4px">'+r[4]+'</span></div><div class="mut">'+r[3]+' \u00b7 '+r[2]+' joueurs</div></div><div style="text-align:right"><div style="font-weight:800;color:var(--pp)">'+r[1]+'</div><button class="chip on" style="margin-top:4px" onclick="nav(\'defiinvit\')">Rejoindre</button></div></div>';}).join('')+
+   '<div class="mut" style="text-align:center;margin:2px 0 4px">On n\'affiche que les rooms les plus actives.</div>'+
+   '<div class="h2">D\u00e9fis gagn\u00e9s</div>'+
+   [['Sophie','Guerre froide','+360'],['Lilou','Mondialisation','+120']].map(function(w){return '<div class="row"><div class="av gold" style="font-size:15px">'+ICON.trophy+'</div><div style="flex:1"><div style="font-weight:700;font-size:14px">'+w[0]+' \u00b7 '+w[1]+'</div><div class="mut">a rafl\u00e9 la cagnotte</div></div><span style="font-weight:800;color:var(--gr)">'+w[2]+'</span></div>';}).join('');
  },
- defiinvit:function(){return '<div class="top"><button class="back" onclick="nav(\'defis\')">'+ICON.back+'</button><div class="h1">Invitation</div></div>'+
+  defiinvit:function(){return '<div class="top"><button class="back" onclick="nav(\'defis\')">'+ICON.back+'</button><div class="h1">Invitation</div></div>'+
    '<div class="card" style="text-align:center;padding:26px 18px;border:1.5px solid var(--ppln)"><div class="av" style="background:var(--am);width:60px;height:60px;font-size:22px;margin:0 auto 12px">M</div><div style="font-size:18px;font-weight:800">Marc te d\u00e9fie !</div><div class="mut" style="margin:6px 0 16px">Guerre froide \u00b7 room de 4 joueurs</div><div style="display:flex;justify-content:center;gap:26px"><div><div style="font-size:26px;font-weight:800;color:var(--pp)">45</div><div class="mut">ta mise</div></div><div><div style="font-size:26px;font-weight:800;color:var(--pp)">180</div><div class="mut">\u00e0 gagner</div></div></div></div>'+
    '<button class="btn" onclick="nav(\'defiwait\')">Accepter le d\u00e9fi</button>'+
    '<button class="btn sec" style="margin-top:10px" onclick="nav(\'defis\')">Refuser</button>'+
@@ -168,13 +171,28 @@ var SCREENS={
    '<button class="brick" onclick="nav(\'qrlive\')"><div class="ic" style="background:var(--gr)">'+ICON.qr+'</div><div><div class="t">Live en classe (QR)</div><div class="d">Tes amis flashent le QR pour jouer en direct</div></div></button>';
  },
   qrlive:function(){return '<div class="top"><button class="back" onclick="nav(\'deficreate\')">'+ICON.back+'</button><div><div class="sub">Room live \u00b7 45 pts</div><div class="h1" style="font-size:20px">Flashez pour jouer</div></div></div>'+
-   '<div class="card" style="text-align:center;padding:16px"><div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;display:inline-block">'+qrSvg()+'</div><div class="mut" style="margin-top:8px">Mise 45 pts \u00b7 tes amis flashent pour rejoindre</div></div>'+
-   '<div class="lab" style="margin:6px 0 6px">D\u00e9j\u00e0 dans la room (2/4)</div>'+
-   '<div class="row"><div class="av">S</div><div style="flex:1;font-weight:700;font-size:14px">Sophie (toi)</div><span class="pill">pr\u00eat</span></div>'+
-   '<div class="row" style="border:0"><div class="av" style="background:var(--bl)">L</div><div style="flex:1;font-weight:700;font-size:14px">Lilou</div><span class="pill">pr\u00eat</span></div>'+
-   '<button class="btn" style="margin-top:12px" onclick="nav(\'defiroom\')">D\u00e9marrer la manche</button>';
+   '<div class="card" style="text-align:center;padding:14px"><div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;display:inline-block">'+qrSvg()+'</div><div class="mut" style="margin-top:8px">Mise 45 pts \u00b7 tes amis flashent pour rejoindre</div></div>'+
+   '<div class="lab" style="margin:6px 0 6px">Ont flash\u00e9 (5)</div>'+
+   ['Sophie (toi)','Lilou','Marc','Tom','In\u00e8s'].map(function(n){return '<div class="row" style="padding:8px 0"><div class="av" style="background:var(--pp)">'+n[0]+'</div><div style="flex:1;font-weight:700;font-size:14px">'+n+'</div><span class="pill" style="background:var(--grbg);color:var(--gr)">flash\u00e9</span></div>';}).join('')+
+   '<button class="btn" style="margin-top:12px" onclick="nav(\'defilive\')">Tout le monde a flash\u00e9 \u2014 valider &amp; lancer</button>'+
+   '<div class="mut" style="text-align:center;margin-top:8px">Une fois valid\u00e9, les joueurs sont enregistr\u00e9s et les mises bloqu\u00e9es.</div>';
  },
- defiroom:function(){return '<div class="top"><button class="back" onclick="nav(\'defis\')">'+ICON.back+'</button><div><div class="sub">Room \u00b7 Guerre froide</div><div class="h1" style="font-size:20px">Ta room</div></div></div>'+
+ defilive:function(){return '<div class="top"><button class="back" onclick="nav(\'defiroom\')">'+ICON.back+'</button><div><div class="sub">Manche en cours \u00b7 Guerre froide</div><div class="h1" style="font-size:20px">Classement en direct</div></div></div>'+
+   '<div class="card" style="text-align:center;padding:12px"><div class="lab">Cagnotte</div><div style="font-size:24px;font-weight:800;color:var(--pp)">360 pts</div></div>'+
+   [['1','Sophie','4/5','var(--pp)'],['2','Marc','3/5','var(--am)'],['3','Lilou','3/5','var(--bl)'],['4','Tom','2/5','var(--gr)']].map(function(r){return '<div class="row"><div class="rank">'+r[0]+'</div><div class="av" style="background:'+r[3]+'">'+r[1][0]+'</div><div style="flex:1;font-weight:700;font-size:14px">'+r[1]+'</div><div style="font-weight:700;color:var(--pp)">'+r[2]+'</div></div>';}).join('')+
+   '<button class="btn" style="margin-top:14px" onclick="nav(\'defiresult\')">Valider la manche</button>'+
+   '<div class="mut" style="text-align:center;margin-top:8px">L\'organisateur valide quand tous ont r\u00e9pondu.</div>';
+ },
+ defiresult:function(){return '<div style="width:72px;height:72px;border-radius:50%;background:#FDF3D0;color:var(--gold);display:flex;align-items:center;justify-content:center;margin:20px auto 12px;font-size:34px">'+ICON.trophy+'</div><div class="h1" style="text-align:center">Sophie remporte !</div>'+
+   '<div style="text-align:center;font-size:40px;font-weight:800;color:var(--pp);margin:6px 0">+360</div><div style="text-align:center;font-weight:600;margin-bottom:16px">la cagnotte enti\u00e8re</div>'+
+   '<div class="card"><div class="lab" style="margin-bottom:8px">R\u00e9partition</div>'+
+     '<div class="row"><div class="av" style="background:var(--pp)">S</div><div style="flex:1;font-weight:700;font-size:14px">Sophie</div><span style="font-weight:800;color:var(--gr)">+315</span></div>'+
+     '<div class="row"><div class="av" style="background:var(--am)">M</div><div style="flex:1;font-weight:700;font-size:14px">Marc</div><span style="font-weight:700;color:var(--re)">-45</span></div>'+
+     '<div class="row" style="border:0"><div class="av" style="background:var(--bl)">L</div><div style="flex:1;font-weight:700;font-size:14px">Lilou</div><span style="font-weight:700;color:var(--re)">-45</span></div>'+
+   '</div><div class="mut" style="text-align:center">Mises d\u00e9bit\u00e9es \u00b7 cagnotte cr\u00e9dit\u00e9e au gagnant.</div>'+
+   '<button class="btn" style="margin-top:10px" onclick="nav(\'defis\')">Retour aux d\u00e9fis</button>';
+ },
+  defiroom:function(){return '<div class="top"><button class="back" onclick="nav(\'defis\')">'+ICON.back+'</button><div><div class="sub">Room \u00b7 Guerre froide</div><div class="h1" style="font-size:20px">Ta room</div></div></div>'+
    '<div class="card" style="text-align:center"><div class="lab">Cagnotte (grossit \u00e0 chaque joueur)</div><div style="font-size:30px;font-weight:800;color:var(--pp)">180 <span style="font-size:14px;color:var(--ink3)">/ 360 pts</span></div><div class="mut">4 / 8 joueurs \u00b7 45 pts chacun</div></div>'+
    '<div class="lab" style="margin:8px 0 6px">Demandes \u00e0 valider</div>'+
    '<div class="card" style="display:flex;align-items:center;gap:11px;padding:11px 13px"><div class="av" style="background:var(--gr)">T</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Tom</div><div class="mut">veut rejoindre</div></div><button class="chip on">Admettre</button></div>'+
@@ -182,7 +200,7 @@ var SCREENS={
    '<div class="row"><div class="av">S</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Sophie (toi)</div><div class="mut">organisatrice</div></div><span class="pill">pr\u00eat</span></div>'+
    '<div class="row"><div class="av" style="background:var(--am)">M</div><div style="flex:1;font-weight:700;font-size:14px">Marc</div><span class="pill">pr\u00eat</span></div>'+
    '<div class="row" style="border:0"><div class="av" style="background:var(--bl)">L</div><div style="flex:1;font-weight:700;font-size:14px">Lilou</div><span class="pill">pr\u00eat</span></div>'+
-   '<button class="btn" style="margin-top:14px" onclick="nav(\'quizplay\')">Lancer la manche</button>'+
+   '<button class="btn" style="margin-top:14px" onclick="nav(\'defilive\')">Lancer la manche</button>'+
    '<button class="btn sec" style="margin-top:10px" onclick="nav(\'defirules\')">R\u00e8gles du jeu</button>';
  },
   defirules:function(){return '<div class="top"><button class="back" onclick="nav(\'defiroom\')">'+ICON.back+'</button><div class="h1">R\u00e8gles du d\u00e9fi</div></div>'+
@@ -220,7 +238,7 @@ function render(){
   scr.innerHTML = (SCREENS[current]||SCREENS.hub)();
   // tabbar
   tb.innerHTML='';
-  var map={reviser:'reviser',fiche:'reviser',quizdiff:'quiz',quiz:'quiz',quizplay:'quiz',quizresult:'quiz',defis:'defis',deficreate:'defis',defiroom:'defis',qrlive:'defis',defirules:'defis',defiinvit:'defis',defiwait:'defis',ligue:'ligue',profil:'profil',mesinfos:'profil',hub:'hub'};
+  var map={reviser:'reviser',fiche:'reviser',quizdiff:'quiz',quiz:'quiz',quizplay:'quiz',quizresult:'quiz',defis:'defis',deficreate:'defis',defiroom:'defis',qrlive:'defis',defirules:'defis',defiinvit:'defis',defiwait:'defis',defilive:'defis',defiresult:'defis',ligue:'ligue',profil:'profil',mesinfos:'profil',hub:'hub'};
   TABS.forEach(function(t){var b=document.createElement('button');b.className=(map[current]===t[0])?'on':'';b.innerHTML=ICON[t[2]]+'<span>'+t[1]+'</span>';b.onclick=function(){nav(t[0]);};tb.appendChild(b);});
   if(current==='quiz') mountWheel();
 }
