@@ -45,6 +45,10 @@ svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke
 .bar{flex:1;background:var(--bg);border-radius:20px;overflow:hidden;height:16px}
 .bar i{display:block;height:100%;border-radius:20px}
 .big{font-size:30px;font-weight:800;color:var(--pp)}
+input[type=range]{accent-color:var(--pp);width:100%;height:22px}
+.brandmark{animation:bpulse 3s ease-in-out infinite}
+@keyframes bpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes ppspin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -85,15 +89,16 @@ var CLASSES=[['Terminale Bac Pro',19,1240],['1re Bac Pro Commerce',22,860],['2de
 var ELEVES=[['Soso',512,'#534AB7'],['Lilou',395,'#1E6FCC'],['MarcX',300,'#C27C0A'],['Nadir06',280,'#0E9E6E'],['Emma_V',255,'#D63050'],['Karim.T',210,'#7F77DD']];
 
 var SCREENS={
- welcome:function(){return '<div style="text-align:center;padding-top:56px">'+
-   '<div style="width:66px;height:66px;border-radius:18px;background:var(--pp);color:#fff;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 18px">'+ICON.school+'</div>'+
-   '<div class="h1" style="text-align:center">Espace professeur</div>'+
-   '<div class="sub" style="text-align:center;margin-top:8px">Lycée de Vence<br>Histoire · Géo · EMC · PSE</div>'+
-   '<div style="margin-top:34px"><button class="btn" onclick="nav(\'classes\')">Accéder à mes classes</button></div>'+
-   '<div class="anon" style="margin-top:22px;text-align:left">'+ICON.lock+'<div class="d">Tu ne vois que les pseudos de tes élèves. Aucune coordonnée, aucun message : anonymat total.</div></div>'+
+ welcome:function(){return '<div style="text-align:center;padding-top:44px">'+
+   '<div class="brandmark" style="width:76px;height:76px;border-radius:22px;background:linear-gradient(135deg,#534AB7,#7F77DD);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:#fff;font-size:32px;box-shadow:0 14px 30px -8px rgba(83,74,183,.55)">'+ICON.school+'</div>'+
+   '<div style="font-size:26px;font-weight:800;letter-spacing:-.5px">Flowin <span style="color:var(--pp)">R\u00e9vision</span></div>'+
+   '<div class="sub" style="margin-top:4px">Espace professeur</div>'+
+   '<div class="mut" style="margin:14px auto 0;max-width:280px;line-height:1.6">Anime tes cours, lance des quiz, distribue des points \u2014 sans jamais voir l\'identit\u00e9 de tes \u00e9l\u00e8ves.</div>'+
+   '<div style="margin-top:28px"><button class="btn" onclick="nav(\'classes\')">Acc\u00e9der \u00e0 mes classes</button></div>'+
+   '<div class="anon" style="margin-top:20px;text-align:left">'+ICON.lock+'<div class="d">Anonymat total : tu ne vois que les pseudos. Aucune coordonn\u00e9e, aucun message.</div></div>'+
    '</div>';
  },
- classes:function(){return '<div class="top" style="justify-content:space-between"><div class="h1">Mes classes</div><div class="av" style="background:var(--gold)">R</div></div>'+
+  classes:function(){return '<div class="top" style="justify-content:space-between"><div class="h1">Mes classes</div><div class="av" style="background:var(--gold)">R</div></div>'+
    '<div class="card" style="display:flex;align-items:center;gap:12px;background:var(--ppbg);border:0"><div style="width:40px;height:40px;border-radius:11px;background:var(--pp);color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px">'+ICON.coin+'</div><div style="flex:1"><div class="lab" style="color:var(--pp)">Cagnotte de l\'année</div><div style="font-weight:700;font-size:15px">1 500 pts à distribuer</div></div></div>'+
    CLASSES.map(function(c,i){return '<button class="tile" onclick="nav(\'classe\')"><div class="ic">'+ICON.users+'</div><div style="flex:1"><div style="font-weight:700;font-size:15px">'+c[0]+'</div><div class="mut">'+c[1]+' élèves · '+c[2]+' pts générés</div></div><div class="go">'+ICON.chev+'</div></button>';}).join('')+
    '<button class="btn sec" style="margin-top:4px" onclick="nav(\'classe\')">'+ICON.plus+' Créer une classe</button>';
@@ -159,9 +164,9 @@ var SCREENS={
    '<button class="btn" style="margin-top:12px" onclick="nav(\'classe\')">D\u00e9marrer le quiz</button>';
  },
  quizedit:function(){var qq=QUESTIONS[QEDIT]||QUESTIONS[0];var cols=['#D63050','#0E9E6E','#1E6FCC','#C27C0A'];return '<div class="top"><button class="back" onclick="nav(\'quizbuild\')">'+ICON.back+'</button><div class="h1">Modifier la question</div></div>'+
-   '<div class="field"><label>\u00c9nonc\u00e9</label><input value="'+qq.q+'"></div>'+
+   '<div class="field"><label>\u00c9nonc\u00e9</label><input value="'+qq.q+'" placeholder="\u00c9nonc\u00e9 de la question"></div>'+
    '<div class="lab" style="font-size:10px;margin-bottom:8px">R\u00e9ponses \u2014 coche la bonne</div>'+
-   qq.a.map(function(ans,j){return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="width:16px;height:16px;border-radius:50%;border:2px solid '+cols[j%4]+';background:'+(qq.c===j?cols[j%4]:'transparent')+';flex-shrink:0;cursor:pointer"></span><input value="'+ans+'" style="flex:1"></div>';}).join('')+
+   qq.a.map(function(ans,j){return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="width:16px;height:16px;border-radius:50%;border:2px solid '+cols[j%4]+';background:'+(qq.c===j?cols[j%4]:'transparent')+';flex-shrink:0;cursor:pointer"></span><input value="'+ans+'" placeholder="R\u00e9ponse" style="flex:1"></div>';}).join('')+
    '<button class="btn sec" style="margin-bottom:12px" onclick="QUESTIONS[QEDIT].a.push(\'Nouvelle r\\u00e9ponse\');nav(\'quizedit\')">'+ICON.plus+' Ajouter une r\u00e9ponse</button>'+
    '<div class="lab" style="font-size:10px;margin-bottom:6px">Difficult\u00e9</div><div style="display:flex;gap:6px;margin-bottom:14px"><div class="chip" onclick="chipPick(this)">Facile</div><div class="chip on" onclick="chipPick(this)">Moyen</div><div class="chip" onclick="chipPick(this)">Difficile</div></div>'+
    '<button class="btn sec" style="margin-bottom:10px">'+ICON.image+' Ajouter une image</button>'+
@@ -174,20 +179,30 @@ var SCREENS={
    BANK.map(function(b,i){return '<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 13px"><div style="flex:1"><div style="font-weight:600;font-size:14px">'+b.q+'</div><div class="mut">r\u00e9ponse : '+b.a[b.c]+'</div></div><button class="chip on" style="flex-shrink:0" onclick="qBank('+i+')">Ajouter</button></div>';}).join('')+
    '<button class="btn" style="margin-top:6px" onclick="nav(\'quizbuild\')">Retour au quiz</button>';
  },
-  quizpreview:function(){var qq=QUESTIONS[0]||{q:'',a:[]};var cols=['#D63050','#0E9E6E','#1E6FCC','#C27C0A'];return '<div class="top"><button class="back" onclick="nav(\'quizbuild\')">'+ICON.back+'</button><div><div class="sub">Aper\u00e7u \u00b7 vue \u00e9l\u00e8ve</div><div class="h1" style="font-size:20px">Ce que voit l\'\u00e9l\u00e8ve</div></div></div>'+
-   '<div class="card" style="text-align:center;padding:10px"><div class="lab">Question 1 / '+QUESTIONS.length+' \u00b7 20 s</div></div>'+
-   '<div class="card" style="text-align:center;font-weight:600;font-size:16px;padding:22px 14px">'+qq.q+'</div>'+
-   '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+qq.a.map(function(ans,j){return '<div style="background:'+cols[j%4]+';color:#fff;border-radius:10px;padding:16px 10px;font-size:14px;font-weight:700;text-align:center">'+ans+'</div>';}).join('')+'</div>'+
-   '<div class="mut" style="text-align:center;margin-top:14px">L\'\u00e9l\u00e8ve r\u00e9pond en tapant une tuile, sous son pseudo.</div>'+
-   '<button class="btn" style="margin-top:14px" onclick="nav(\'quizbuild\')">Retour \u00e0 l\'\u00e9dition</button>';
+  quizpreview:function(){var qq=QUESTIONS[0]||{q:'',a:[]};var cols=['#D63050','#0E9E6E','#1E6FCC','#C27C0A'];var head='<div class="top"><button class="back" onclick="nav(\'quizbuild\')">'+ICON.back+'</button><div><div class="sub">Aper\u00e7u \u00b7 vue \u00e9l\u00e8ve</div><div class="h1" style="font-size:20px">Ce que voit l\'\u00e9l\u00e8ve</div></div></div>';var dots='<div style="display:flex;gap:6px;justify-content:center;margin-bottom:16px">'+[0,1,2].map(function(k){return '<div style="width:8px;height:8px;border-radius:50%;background:'+(PREVSTEP===k?'var(--pp)':'var(--ppln)')+'"></div>';}).join('')+'</div>';var body;
+   if(PREVSTEP===0){body='<div class="card" style="text-align:center;padding:22px 16px"><div class="av" style="width:52px;height:52px;font-size:20px;margin:0 auto 12px">S</div><div style="font-weight:700;font-size:16px">Tu as rejoint la partie</div><div class="mut" style="margin-top:4px">sous ton pseudo \u00b7 Soso</div><div style="margin:16px auto 0;width:34px;height:34px;border:3px solid var(--ppbg);border-top-color:var(--pp);border-radius:50%;animation:ppspin 1s linear infinite"></div><div class="mut" style="margin-top:10px">En attente du lancement par le prof\u2026</div></div>'+
+     '<div class="card"><div class="lab" style="margin-bottom:6px">Les r\u00e8gles</div><div style="font-size:13px;color:var(--ink2);line-height:1.7">Le prof lance la partie quand la classe a rejoint. Chaque question s\'affiche pour tous en m\u00eame temps, avec un temps limit\u00e9. Tu r\u00e9ponds en tapant une tuile \u2014 pas besoin d\'attendre les autres.</div></div>'+
+     '<button class="btn" onclick="prevGo(1)">Voir la question</button>';}
+   else if(PREVSTEP===1){body='<div class="card" style="text-align:center;padding:10px"><div class="lab">Question 1 / '+QUESTIONS.length+' \u00b7 20 s</div></div>'+
+     '<div class="card" style="text-align:center;font-weight:600;font-size:16px;padding:22px 14px">'+qq.q+'</div>'+
+     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+qq.a.map(function(ans,j){return '<div style="background:'+cols[j%4]+';color:#fff;border-radius:10px;padding:16px 10px;font-size:14px;font-weight:700;text-align:center">'+ans+'</div>';}).join('')+'</div>'+
+     '<div style="display:flex;gap:8px;margin-top:14px"><button class="btn sec" style="flex:1" onclick="prevGo(0)">Pr\u00e9c\u00e9dent</button><button class="btn" style="flex:1" onclick="prevGo(2)">Le r\u00e9sultat</button></div>';}
+   else{body='<div style="width:72px;height:72px;border-radius:50%;background:var(--grbg);color:var(--gr);display:flex;align-items:center;justify-content:center;margin:16px auto 12px;font-size:32px">'+ICON.check+'</div>'+
+     '<div class="h1" style="text-align:center">Bonne r\u00e9ponse !</div>'+
+     '<div style="text-align:center;font-size:38px;font-weight:800;color:var(--pp);margin:6px 0">+12</div>'+
+     '<div class="mut" style="text-align:center;margin-bottom:16px">Ton pseudo grimpe dans le classement de la classe.</div>'+
+     '<button class="btn" onclick="prevGo(0)">Revoir l\'aper\u00e7u</button>'+
+     '<button class="btn sec" style="margin-top:10px" onclick="nav(\'quizbuild\')">Retour \u00e0 l\'\u00e9dition</button>';}
+   return head+dots+body;
  },
- cagnotte:function(){return '<div class="top"><div class="h1">Ma cagnotte</div></div>'+
-   '<div class="card" style="text-align:center"><div class="lab">Points restant à distribuer</div><div class="big" style="font-size:38px">1 500</div><div class="mut">quota de l\'année · réparti par classe</div></div>'+
-   '<div class="h2">Par classe</div>'+
-   [['Terminale Bac Pro',500,320],['1re Commerce',500,180],['2de ASSP',500,90]].map(function(c){var used=Math.round(c[2]/c[1]*100);return '<div class="card" style="cursor:pointer" onclick="nav(\'classe\')"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><div style="font-weight:700;font-size:14px">'+c[0]+'</div><div class="mut">'+c[2]+' / '+c[1]+' pts utilisés</div></div><div class="bar"><i style="width:'+used+'%;background:var(--pp)"></i></div></div>';}).join('')+
-   '<button class="btn" style="margin-top:6px" onclick="nav(\'classes\')">'+ICON.defi+' Lancer un challenge</button>';
+  cagnotte:function(){return '<div class="top"><div class="h1">Ma cagnotte</div></div>'+
+   '<div class="card" style="text-align:center"><div class="lab">Points restant \u00e0 distribuer</div><div class="big" style="font-size:38px">1 500</div><div class="mut">quota de l\'ann\u00e9e \u00b7 r\u00e9gule par classe</div></div>'+
+   '<div class="h2">R\u00e9gule par classe</div>'+
+   '<div class="mut" style="margin-bottom:12px">Monte ou descends les points allou\u00e9s \u00e0 chaque classe.</div>'+
+   [['Terminale Bac Pro',320],['1re Commerce',180],['2de ASSP',90]].map(function(c,i){return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-weight:700;font-size:14px">'+c[0]+'</div><div style="font-weight:800;color:var(--pp);font-size:14px" id="cg'+i+'">'+c[1]+' / 500</div></div><input type="range" min="0" max="500" step="10" value="'+c[1]+'" oninput="document.getElementById(\'cg'+i+'\').textContent=this.value+\' / 500\'"></div>';}).join('')+
+   '<button class="btn" style="margin-top:6px">Enregistrer la r\u00e9partition</button>';
  },
- profil:function(){return '<div class="top"><div class="h1">Profil</div></div>'+
+  profil:function(){return '<div class="top"><div class="h1">Profil</div></div>'+
    '<div class="card" style="display:flex;align-items:center;gap:14px"><div class="av" style="width:52px;height:52px;font-size:18px;background:var(--gold)">O</div><div><div style="font-weight:700;font-size:17px">Olivia Laurent</div><div class="mut">Professeure \u00b7 Lyc\u00e9e de Vence</div></div></div>'+
    '<button class="tile" onclick="nav(\'classes\')"><div class="ic">'+ICON.users+'</div><div style="flex:1"><div style="font-weight:700;font-size:15px">Mes classes</div><div class="mut">3 classes \u00b7 acc\u00e8s direct</div></div><div class="go">'+ICON.chev+'</div></button>'+
    '<button class="tile" onclick="nav(\'profinfos\')"><div class="ic">'+ICON.user+'</div><div style="flex:1"><div style="font-weight:700;font-size:15px">Mes informations</div><div class="mut">nom, email, mot de passe</div></div><div class="go">'+ICON.chev+'</div></button>'+
@@ -223,12 +238,14 @@ var QMETA={niveau:"Terminale Bac Pro",matiere:"Histoire",diff:"Moyen",theme:"Le 
 var QUESTIONS=[{q:"En quelle année tombe le mur de Berlin ?",a:["1961","1989","1991","1975"],c:1,valid:true},{q:"Qui dirige l'URSS pendant la crise de Cuba ?",a:["Khrouchtchev","Staline","Brejnev","Lénine"],c:0,valid:false}];
 var BANK=[{q:"En quelle année tombe le mur de Berlin ?",a:["1961","1989","1991","1975"],c:1},{q:"Que symbolise le rideau de fer ?",a:["Partition de l'Europe","L'ONU","La décolonisation","L'OTAN"],c:0},{q:"Qui lance le plan Marshall ?",a:["Les États-Unis","L'URSS","La France","L'ONU"],c:0},{q:"Quelle alliance regroupe le bloc de l'Est ?",a:["OTAN","Pacte de Varsovie","ONU","CEE"],c:1}];
 var QEDIT=0;
-function qAdd(){QUESTIONS.push({q:"Nouvelle question",a:["Réponse 1","Réponse 2","Réponse 3","Réponse 4"],c:0,valid:false});nav("quizbuild");}
+function qAdd(){QUESTIONS.push({q:"",a:["","","",""],c:0,valid:false});QEDIT=QUESTIONS.length-1;nav("quizedit");}
 function qDel(i){QUESTIONS.splice(i,1);nav("quizbuild");}
 function qValid(i){QUESTIONS[i].valid=!QUESTIONS[i].valid;nav("quizbuild");}
 function qEdit(i){QEDIT=i;nav("quizedit");}
 function qSel(i){QUESTIONS[i].sel=!QUESTIONS[i].sel;nav("quizbuild");}
 function delSel(){QUESTIONS=QUESTIONS.filter(function(q){return !q.sel;});nav("quizbuild");}
+var PREVSTEP=0;
+function prevGo(n){PREVSTEP=n;nav("quizpreview");}
 function qBank(i){var b=BANK[i];QUESTIONS.push({q:b.q,a:b.a.slice(),c:b.c,valid:false});nav("quizbuild");}
 function iaGen(){QUESTIONS=[{q:"Quel événement marque le début de la guerre froide ?",a:["Doctrine Truman","Chute du mur","Crise de Cuba","Plan Marshall"],c:0,valid:false},{q:"Que symbolise le rideau de fer ?",a:["La partition de l'Europe","L'ONU","La décolonisation","L'OTAN"],c:0,valid:false},{q:"En quelle année a lieu la crise de Cuba ?",a:["1949","1962","1975","1989"],c:1,valid:false},{q:"Quelle alliance regroupe le bloc de l'Est ?",a:["OTAN","Pacte de Varsovie","ONU","CEE"],c:1,valid:false},{q:"Que désigne la coexistence pacifique ?",a:["Une détente relative","Une guerre ouverte","La fin de l'URSS","Un traité de paix"],c:0,valid:false}];nav("quizbuild");}
 function chipPick(el){var pr=el.parentNode;pr.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on');});el.classList.add('on');}
