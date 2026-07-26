@@ -100,11 +100,25 @@ var SCREENS={
      return '<button class="brick" onclick="nav(\'fiche\')"><div class="ic" style="background:'+f[2]+';font-size:15px;font-weight:800">'+f[1].slice(0,2)+'</div><div><div class="t" style="font-size:15px">'+f[0]+'</div><div class="d">'+f[1]+'</div></div><div class="go">'+ICON.chev+'</div></button>';
    }).join('');
  },
- fiche:function(){return '<div class="top"><button class="back" onclick="nav(\'reviser\')">'+ICON.back+'</button><div><div class="sub">Histoire · Fiche</div><div class="h1" style="font-size:20px">Le jeu des puissances</div></div></div>'+
-   '<div class="card fiche"><div class="lab" style="margin-bottom:6px">L\'essentiel</div><div style="font-size:14px;line-height:1.6;color:var(--ink2)">Depuis 1945, le monde connaît <b>trois périodes</b> : un monde <b>bipolaire</b> (USA / URSS, guerre froide 1947-1991), puis l\'<b>hyperpuissance</b> américaine, puis un monde <b>multipolaire</b>.</div></div>'+
-   '<div class="card"><div class="lab" style="margin-bottom:4px">Dates clés</div><div class="dline"><span class="y">1945</span><span>Fin de la guerre · création de l\'ONU</span></div><div class="dline"><span class="y">1949</span><span>Création de l\'OTAN</span></div><div class="dline" style="border:0"><span class="y">1962</span><span>Crise de Cuba</span></div></div>'+
-   '<div class="card"><div class="lab" style="margin-bottom:6px">Vocabulaire</div><div style="font-size:13px;line-height:1.7"><b>Superpuissance</b> · <b>Bipolaire</b> · <b>Décolonisation</b></div></div>'+
-   '<button class="btn" onclick="nav(\'quiz\')">Me tester sur cette fiche '+ICON.star+'</button>';
+ fiche:function(){return '<div class="top"><button class="back" onclick="nav(\'reviser\')">'+ICON.back+'</button><div><div class="sub">Histoire \u00b7 Fiche</div><div class="h1" style="font-size:20px">Le jeu des puissances</div></div></div>'+
+   '<div class="card fiche"><div class="lab" style="margin-bottom:6px">L\'essentiel</div><div style="font-size:14px;line-height:1.6;color:var(--ink2)">Depuis 1945, le monde conna\u00eet <b>trois p\u00e9riodes</b> : un monde <b>bipolaire</b> (USA / URSS, guerre froide 1947-1991), puis l\'<b>hyperpuissance</b> am\u00e9ricaine, puis un monde <b>multipolaire</b>.</div></div>'+
+   '<div class="card"><div class="lab" style="margin-bottom:14px">Frise chronologique</div><div style="position:relative;padding-left:26px">'+
+     '<div style="position:absolute;left:7px;top:4px;bottom:8px;width:2px;background:var(--ppln)"></div>'+
+     ['1945|Fin de la guerre \u00b7 ONU','1949|Cr\u00e9ation de l\'OTAN','1955|Pacte de Varsovie','1962|Crise de Cuba','1991|Fin de l\'URSS'].map(function(d){var x=d.split('|');return '<div style="position:relative;margin-bottom:14px"><div style="position:absolute;left:-26px;top:1px;width:16px;height:16px;border-radius:50%;background:var(--pp);border:3px solid var(--surf);box-shadow:0 0 0 2px var(--ppln)"></div><div style="font-weight:800;color:var(--pp);font-size:14px">'+x[0]+'</div><div style="font-size:13px;color:var(--ink2)">'+x[1]+'</div></div>';}).join('')+
+   '</div></div>'+
+   '<div class="card"><div class="lab" style="margin-bottom:10px">Sch\u00e9ma</div><div style="display:flex;align-items:center;gap:8px;justify-content:center">'+
+     '<div style="flex:1;text-align:center;background:var(--bl);color:#fff;border-radius:12px;padding:14px 8px"><div style="font-weight:800;font-size:13px">BLOC OUEST</div><div style="font-size:11px;opacity:.85">USA \u00b7 OTAN</div></div>'+
+     '<div style="flex:0 0 50px;font-size:10px;font-weight:800;color:var(--re);text-align:center">RIDEAU<br>DE FER</div>'+
+     '<div style="flex:1;text-align:center;background:var(--re);color:#fff;border-radius:12px;padding:14px 8px"><div style="font-weight:800;font-size:13px">BLOC EST</div><div style="font-size:11px;opacity:.85">URSS \u00b7 Varsovie</div></div>'+
+   '</div></div>'+
+   '<div class="card"><div class="lab" style="margin-bottom:6px">Vocabulaire</div><div style="font-size:13px;line-height:1.8"><b>Superpuissance</b> \u00b7 <b>Bipolaire</b> \u00b7 <b>D\u00e9colonisation</b> \u00b7 <b>Rideau de fer</b></div></div>'+
+   '<button class="btn" onclick="nav(\'quizdiff\')">Quiz sur ce th\u00e8me '+ICON.star+'</button>';
+ },
+ quizdiff:function(){return '<div class="top"><button class="back" onclick="nav(\'fiche\')">'+ICON.back+'</button><div><div class="sub">Le jeu des puissances</div><div class="h1" style="font-size:20px">Choisis ta difficult\u00e9</div></div></div>'+
+   '<button class="brick" style="border-color:var(--ppln);background:var(--ppbg)" onclick="nav(\'quizplay\')"><div class="ic" style="background:var(--gr);font-weight:800">1</div><div><div class="t">Facile</div><div class="d">Restitution : dates, d\u00e9finitions</div></div></button>'+
+   '<button class="brick" onclick="nav(\'quizplay\')"><div class="ic" style="background:var(--am);font-weight:800">2</div><div><div class="t">Moyen</div><div class="d">Compr\u00e9hension et rep\u00e8res</div></div></button>'+
+   '<button class="brick" onclick="nav(\'quizplay\')"><div class="ic" style="background:var(--re);font-weight:800">3</div><div><div class="t">Difficile</div><div class="d">Analyse et mise en relation \u00b7 g\u00e9n\u00e9r\u00e9 par l\'IA</div></div></button>'+
+   '<div class="card" style="background:var(--ppbg);border:0;color:var(--pp);font-size:12px;line-height:1.6">Plus la difficult\u00e9 monte, plus les questions sont exigeantes \u2014 l\'IA g\u00e9n\u00e8re des questions d\'analyse \u00e0 partir du cours.</div>';
  },
  quiz:function(){return topbar('Quiz')+'<div class="sub" style="text-align:center;margin-bottom:6px">Choisis tes matières, puis tourne la roue.</div>'+
    '<div id="mchips" style="display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin:12px 0"></div>'+
@@ -159,7 +173,7 @@ function render(){
   scr.innerHTML = (SCREENS[current]||SCREENS.hub)();
   // tabbar
   tb.innerHTML='';
-  var map={reviser:'reviser',fiche:'reviser',quiz:'quiz',quizplay:'quiz',quizresult:'quiz',defis:'quiz',deficreate:'quiz',defiroom:'quiz',ligue:'ligue',profil:'profil',hub:'hub'};
+  var map={reviser:'reviser',fiche:'reviser',quizdiff:'quiz',quiz:'quiz',quizplay:'quiz',quizresult:'quiz',defis:'quiz',deficreate:'quiz',defiroom:'quiz',ligue:'ligue',profil:'profil',hub:'hub'};
   TABS.forEach(function(t){var b=document.createElement('button');b.className=(map[current]===t[0])?'on':'';b.innerHTML=ICON[t[2]]+'<span>'+t[1]+'</span>';b.onclick=function(){nav(t[0]);};tb.appendChild(b);});
   if(current==='quiz') mountWheel();
 }
@@ -169,7 +183,7 @@ function mountWheel(){
   drawWheel();
 }
 function drawWheel(){var w=document.getElementById('wheel');if(!w)return;var act=MAT.filter(function(m){return wheelState.enabled[m.k];});if(!act.length){w.style.background='#EEEDFE';return;}var seg=100/act.length,acc=0,stops=[];act.forEach(function(m){stops.push(m.c+' '+acc+'% '+(acc+seg)+'%');acc+=seg;});w.style.background='conic-gradient('+stops.join(',')+')';w.style.transform='rotate('+wheelState.rot+'deg)';}
-function spin(){var act=MAT.filter(function(m){return wheelState.enabled[m.k];});if(wheelState.spinning||!act.length)return;wheelState.spinning=true;var btn=document.getElementById('spinBtn');btn.disabled=true;var pick=Math.floor(Math.random()*act.length);var seg=360/act.length;wheelState.rot+=360*5+(360-(pick*seg+seg/2));drawWheel();setTimeout(function(){wheelState.spinning=false;var r=document.getElementById('spinRes');if(r)r.innerHTML='Thème tiré dans <b style="color:'+act[pick].c+'">'+act[pick].n+'</b> !';setTimeout(function(){nav('quizplay');},700);},3500);}
+function spin(){var act=MAT.filter(function(m){return wheelState.enabled[m.k];});if(wheelState.spinning||!act.length)return;wheelState.spinning=true;var btn=document.getElementById('spinBtn');btn.disabled=true;var pick=Math.floor(Math.random()*act.length);var seg=360/act.length;wheelState.rot+=360*5+(360-(pick*seg+seg/2));drawWheel();setTimeout(function(){wheelState.spinning=false;var r=document.getElementById('spinRes');if(r)r.innerHTML='Thème tiré dans <b style="color:'+act[pick].c+'">'+act[pick].n+'</b> !';setTimeout(function(){nav('quizdiff');},700);},3500);}
 render();
 </script>
 </body>
