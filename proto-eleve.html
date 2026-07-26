@@ -151,12 +151,19 @@ var SCREENS={
    [['Sophie','Guerre froide','+360'],['Lilou','Mondialisation','+120']].map(function(w){return '<div class="row"><div class="av gold" style="font-size:15px">'+ICON.trophy+'</div><div style="flex:1"><div style="font-weight:700;font-size:14px">'+w[0]+' \u00b7 '+w[1]+'</div><div class="mut">a rafl\u00e9 la cagnotte</div></div><span style="font-weight:800;color:var(--gr)">'+w[2]+'</span></div>';}).join('');
  },
   defiinvit:function(){return '<div class="top"><button class="back" onclick="nav(\'defis\')">'+ICON.back+'</button><div class="h1">Invitation</div></div>'+
-   '<div class="card" style="text-align:center;padding:26px 18px;border:1.5px solid var(--ppln)"><div class="av" style="background:var(--am);width:60px;height:60px;font-size:22px;margin:0 auto 12px">M</div><div style="font-size:18px;font-weight:800">Marc te d\u00e9fie !</div><div class="mut" style="margin:6px 0 16px">Guerre froide \u00b7 room de 4 joueurs</div><div style="display:flex;justify-content:center;gap:26px"><div><div style="font-size:26px;font-weight:800;color:var(--pp)">45</div><div class="mut">ta mise</div></div><div><div style="font-size:26px;font-weight:800;color:var(--pp)">180</div><div class="mut">\u00e0 gagner</div></div></div></div>'+
+   '<div class="card" style="padding:0;overflow:hidden;text-align:center;border:1.5px solid var(--ppln)">'+
+     '<div style="background:linear-gradient(135deg,#534AB7,#7F77DD);padding:22px 18px;color:#fff">'+
+       '<div style="width:62px;height:62px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:28px">'+ICON.defi+'</div>'+
+       '<div style="font-size:19px;font-weight:800">Marc te d\u00e9fie !</div>'+
+       '<div style="margin-top:9px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap"><span style="font-size:10px;font-weight:700;background:rgba(255,255,255,.22);padding:3px 9px;border-radius:12px">Guerre froide</span><span style="font-size:10px;font-weight:700;background:rgba(255,255,255,.22);padding:3px 9px;border-radius:12px">Difficile</span><span style="font-size:10px;font-weight:700;background:rgba(255,255,255,.22);padding:3px 9px;border-radius:12px">4 joueurs</span></div>'+
+     '</div>'+
+     '<div style="padding:16px;display:flex;justify-content:center;gap:34px"><div><div style="font-size:26px;font-weight:800;color:var(--pp)">45</div><div class="mut">ta mise</div></div><div><div style="font-size:26px;font-weight:800;color:var(--pp)">180</div><div class="mut">\u00e0 gagner</div></div></div>'+
+   '</div>'+
    '<button class="btn" onclick="nav(\'defiwait\')">Accepter le d\u00e9fi</button>'+
    '<button class="btn sec" style="margin-top:10px" onclick="nav(\'defis\')">Refuser</button>'+
    '<div class="mut" style="text-align:center;margin-top:10px">Tu dois accepter pour rejoindre la room.</div>';
  },
- defiwait:function(){return '<div class="top"><button class="back" onclick="nav(\'defis\')">'+ICON.back+'</button><div class="h1">En attente</div></div>'+
+  defiwait:function(){return '<div class="top"><button class="back" onclick="nav(\'defis\')">'+ICON.back+'</button><div class="h1">En attente</div></div>'+
    '<div class="card" style="text-align:center;padding:30px 18px"><div class="av" style="background:var(--am);width:56px;height:56px;font-size:20px;margin:0 auto 14px">M</div><div style="font-weight:700;font-size:16px">Marc doit te valider</div><div class="mut" style="margin-top:6px">L\'organisateur confirme ton entr\u00e9e dans la room\u2026</div><div style="margin:20px auto 0;width:40px;height:40px;border:3px solid var(--ppbg);border-top-color:var(--pp);border-radius:50%;animation:fwspin 1s linear infinite"></div></div>'+
    '<style>@keyframes fwspin{to{transform:rotate(360deg)}}</style>'+
    '<button class="btn" style="margin-top:8px" onclick="nav(\'defiroom\')">Marc t\'a admis \u2192 entrer</button>';
@@ -204,7 +211,7 @@ var SCREENS={
   defiroom:function(){return '<div class="top"><button class="back" onclick="nav(\'defis\')">'+ICON.back+'</button><div><div class="sub">Room \u00b7 Guerre froide</div><div class="h1" style="font-size:20px">Ta room</div></div></div>'+
    '<div class="card" style="text-align:center"><div class="lab">Cagnotte (grossit \u00e0 chaque joueur)</div><div style="font-size:30px;font-weight:800;color:var(--pp)">180 <span style="font-size:14px;color:var(--ink3)">/ 360 pts</span></div><div class="mut">4 / 8 joueurs \u00b7 45 pts chacun</div></div>'+
    '<div class="lab" style="margin:8px 0 6px">Demandes \u00e0 valider</div>'+
-   '<div class="card" style="display:flex;align-items:center;gap:11px;padding:11px 13px"><div class="av" style="background:var(--gr)">T</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Tom</div><div class="mut">veut rejoindre</div></div><button class="chip on">Admettre</button></div>'+
+   '<div class="card" style="display:flex;align-items:center;gap:11px;padding:11px 13px"><div class="av" style="background:var(--gr)">T</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Tom</div><div class="mut">veut rejoindre</div></div><button class="chip on" onclick="admit(this)">Admettre</button></div>'+
    '<div class="lab" style="margin:10px 0 6px">Dans la room (4/8)</div>'+
    '<div class="row"><div class="av">S</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Sophie (toi)</div><div class="mut">organisatrice</div></div><span class="pill">pr\u00eat</span></div>'+
    '<div class="row"><div class="av" style="background:var(--am)">M</div><div style="flex:1;font-weight:700;font-size:14px">Marc</div><span class="pill">pr\u00eat</span></div>'+
@@ -213,12 +220,9 @@ var SCREENS={
    '<button class="btn sec" style="margin-top:10px" onclick="nav(\'defirules\')">R\u00e8gles du jeu</button>';
  },
   defirules:function(){return '<div class="top"><button class="back" onclick="nav(\'defiroom\')">'+ICON.back+'</button><div class="h1">R\u00e8gles du d\u00e9fi</div></div>'+
-   '<div class="card"><div class="lab" style="margin-bottom:4px">Mise &amp; gain</div><div style="font-size:13px;color:var(--ink2);line-height:1.6">Chaque joueur mise le m\u00eame montant. Les points sont bloqu\u00e9s au d\u00e9part. Le gagnant rafle toute la cagnotte.</div></div>'+
-   '<div class="card"><div class="lab" style="margin-bottom:4px">Abandon</div><div style="font-size:13px;color:var(--ink2);line-height:1.6">Un joueur qui quitte en cours perd sa mise (elle reste dans la cagnotte).</div></div>'+
-   '<div class="card"><div class="lab" style="margin-bottom:4px">Coupure de connexion</div><div style="font-size:13px;color:var(--ink2);line-height:1.6">D\u00e9lai de reconnexion laiss\u00e9 ; pass\u00e9 ce d\u00e9lai, le joueur est consid\u00e9r\u00e9 abandonnaire.</div></div>'+
-   '<div class="card"><div class="lab" style="margin-bottom:4px">\u00c9galit\u00e9</div><div style="font-size:13px;color:var(--ink2);line-height:1.6">Cagnotte partag\u00e9e entre les premiers ex \u00e6quo.</div></div>';
+   [['#534AB7','Mise &amp; gain','Chaque joueur mise le m\u00eame montant. Les points sont bloqu\u00e9s au d\u00e9part. Le gagnant rafle toute la cagnotte.'],['#C27C0A','Abandon','Un joueur qui quitte en cours perd sa mise (elle reste dans la cagnotte).'],['#1E6FCC','Coupure de connexion','D\u00e9lai de reconnexion laiss\u00e9 ; pass\u00e9 ce d\u00e9lai, le joueur est consid\u00e9r\u00e9 abandonnaire.'],['#0E9E6E','\u00c9galit\u00e9','Cagnotte partag\u00e9e entre les premiers ex \u00e6quo.']].map(function(r){return '<div class="card" style="display:flex;gap:12px;align-items:flex-start"><div style="width:9px;height:9px;border-radius:50%;background:'+r[0]+';margin-top:6px;flex-shrink:0"></div><div><div style="font-weight:700;font-size:14px;margin-bottom:2px">'+r[1]+'</div><div style="font-size:13px;color:var(--ink2);line-height:1.6">'+r[2]+'</div></div></div>';}).join('');
  },
- ligue:function(){return topbar('Ligue')+
+  ligue:function(){return topbar('Ligue')+
    '<div class="tier"><div class="t" style="background:#9A6B3A">Bronze</div><div class="t" style="background:#6B7280">Argent</div><div class="t" style="background:#B87A10">Or</div><div class="t" style="background:#2478CC">Platine</div><div class="t" style="background:#7F77DD">L\u00e9gende</div></div>'+
    '<div class="card" style="display:flex;justify-content:space-between;align-items:center;background:var(--ppbg);border:0"><div><div style="font-weight:800;font-size:15px;color:var(--pp)">Ligue Or</div><div class="mut">Fin dans 3 jours</div></div><span class="pill">Top 5 montent</span></div>'+
    (function(){var R=[['Sophie','512','+2'],['Marie','400','+1'],['Lilou','395','-1'],['Karim','360','+3'],['Emma','340','='],['Tom','300','-2'],['Nadir','280','+1'],['L\u00e9a','250','-3']];
@@ -246,6 +250,8 @@ var SCREENS={
  }
 };
 
+function chipPick(el){var pr=el.parentNode;pr.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on');});el.classList.add('on');}
+function admit(el){el.textContent='Admis';el.style.background='#E4F7F0';el.style.color='#0E9E6E';el.style.borderColor='transparent';}
 function render(){
   scr.innerHTML = (SCREENS[current]||SCREENS.hub)();
   // tabbar
