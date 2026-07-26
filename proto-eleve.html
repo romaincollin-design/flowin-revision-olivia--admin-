@@ -81,11 +81,12 @@ var ICON={
  link:'<svg class="i" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>',
  qr:'<svg class="i" viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/></svg>',
  dumbbell:'<svg class="i" viewBox="0 0 24 24"><path d="M2 12h2M20 12h2M6 8v8M18 8v8M9 7v10M15 7v10M6 12h12"/></svg>',
+ school:'<svg class="i" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-4h6v4M9 12h.01M15 12h.01"/></svg>',
  defi:'<svg class="i" viewBox="0 0 24 24"><path d="M21 3v5l-11 9-4 4-3-3 4-4 9-11z"/><path d="M5 13l6 6"/><path d="M14.3 17.3l3.7 3.7 3-3-3.7-3.7"/><path d="M10 5.5 8 3H3v5l3 2.5"/></svg>' 
 };
 function qrSvg(){var r='';for(var y=0;y<11;y++)for(var x=0;x<11;x++){if((x*y+x+y)%3===0||(x<3&&y<3)||(x>7&&y<3)||(x<3&&y>7))r+='<rect x="'+(x*10)+'" y="'+(y*10)+'" width="10" height="10" fill="#111"/>';}return '<svg viewBox="0 0 110 110" style="width:130px;height:130px">'+r+'</svg>';}
 var scr=document.getElementById('screen'), tb=document.getElementById('tabbar');
-var TABS=[['hub','Accueil','home'],['reviser','Réviser','book'],['quiz','Quiz','star'],['defis','Défis','defi'],['ligue','Ligue','trophy'],['profil','Profil','user']];
+var TABS=[['hub','Accueil','home'],['reviser','Réviser','book'],['quiz','Quiz','star'],['defis','Défis','defi'],['maclasse','Classe','school'],['ligue','Ligue','trophy'],['profil','Profil','user']];
 function nav(s){ current=s; render(); scr.scrollTop=0; }
 var current='hub';
 
@@ -222,14 +223,22 @@ var SCREENS={
   defirules:function(){return '<div class="top"><button class="back" onclick="nav(\'defiroom\')">'+ICON.back+'</button><div class="h1">R\u00e8gles du d\u00e9fi</div></div>'+
    [['#534AB7','Mise &amp; gain','Chaque joueur mise le m\u00eame montant. Les points sont bloqu\u00e9s au d\u00e9part. Le gagnant rafle toute la cagnotte.'],['#C27C0A','Abandon','Un joueur qui quitte en cours perd sa mise (elle reste dans la cagnotte).'],['#1E6FCC','Coupure de connexion','D\u00e9lai de reconnexion laiss\u00e9 ; pass\u00e9 ce d\u00e9lai, le joueur est consid\u00e9r\u00e9 abandonnaire.'],['#0E9E6E','\u00c9galit\u00e9','Cagnotte partag\u00e9e entre les premiers ex \u00e6quo.']].map(function(r){return '<div class="card" style="display:flex;gap:12px;align-items:flex-start"><div style="width:9px;height:9px;border-radius:50%;background:'+r[0]+';margin-top:6px;flex-shrink:0"></div><div><div style="font-weight:700;font-size:14px;margin-bottom:2px">'+r[1]+'</div><div style="font-size:13px;color:var(--ink2);line-height:1.6">'+r[2]+'</div></div></div>';}).join('');
  },
-  ligue:function(){return topbar('Ligue')+
+  maclasse:function(){return topbar('Ma classe')+
+   '<div class="card" style="display:flex;justify-content:space-between;align-items:center;background:var(--ppbg);border:0"><div><div style="font-weight:800;font-size:15px;color:var(--pp)">Terminale Bac Pro</div><div class="mut">Lyc\u00e9e de Vence \u00b7 niveau Terminale</div></div><span class="pill">2e / 4 classes</span></div>'+
+   '<div class="h2">Classement des classes</div>'+
+   [['1','Terminale Commerce','76','#B87A10'],['2','Terminale Bac Pro','70','var(--pp)'],['3','Terminale ASSP','64','#6B7280'],['4','Terminale MELEC','58','#9A6B3A']].map(function(c){var mine=c[1]==='Terminale Bac Pro';return '<div class="card" style="display:flex;align-items:center;gap:11px;padding:11px 12px'+(mine?';border:1.5px solid var(--ppln);background:var(--ppbg)':'')+'"><div style="width:26px;height:26px;border-radius:50%;background:'+c[3]+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">'+c[0]+'</div><div style="flex:1"><div style="font-weight:700;font-size:14px">'+c[1]+(mine?' <span class="pill" style="font-size:9px;padding:2px 7px;margin-left:3px">ta classe</span>':'')+'</div></div><div style="font-weight:800;color:var(--pp)">'+c[2]+'%</div></div>';}).join('')+
+   '<div class="h2">Le niveau de ta classe par mati\u00e8re</div>'+
+   [['Histoire',78,'#D63050'],['G\u00e9o',66,'#1E6FCC'],['EMC',72,'#C27C0A'],['PSE',61,'#0E9E6E']].map(function(m){return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="width:66px;font-size:12px;font-weight:600">'+m[0]+'</div><div class="bar" style="height:16px"><i style="width:'+m[1]+'%;background:'+m[2]+';display:flex;align-items:center;justify-content:flex-end;padding-right:6px;color:#fff;font-size:10px;font-weight:700">'+m[1]+'%</i></div></div>';}).join('')+
+   '<div class="card" style="background:var(--ppbg);border:0;color:var(--pp);font-size:12.5px;margin-top:6px;line-height:1.5">Chaque quiz et chaque d\u00e9fi que tu gagnes fait grimper <b>toute ta classe</b> au classement.</div>';
+ },
+ ligue:function(){return topbar('Ligue')+
    '<div class="tier"><div class="t" style="background:#9A6B3A">Bronze</div><div class="t" style="background:#6B7280">Argent</div><div class="t" style="background:#B87A10">Or</div><div class="t" style="background:#2478CC">Platine</div><div class="t" style="background:#7F77DD">L\u00e9gende</div></div>'+
-   '<div class="card" style="display:flex;justify-content:space-between;align-items:center;background:var(--ppbg);border:0"><div><div style="font-weight:800;font-size:15px;color:var(--pp)">Ligue Or</div><div class="mut">Fin dans 3 jours</div></div><span class="pill">Top 5 montent</span></div>'+
+   '<div class="card" style="display:flex;justify-content:space-between;align-items:center;background:var(--ppbg);border:0"><div><div style="font-weight:800;font-size:15px;color:var(--pp)">Ligue Or</div><div class="mut">Fin dans 3 jours</div></div><span class="pill">Top 3 montent</span></div>'+
    (function(){var R=[['Sophie','512','+2'],['Marie','400','+1'],['Lilou','395','-1'],['Karim','360','+3'],['Emma','340','='],['Tom','300','-2'],['Nadir','280','+1'],['L\u00e9a','250','-3']];
      function sep(txt,col){return '<div style="display:flex;align-items:center;gap:8px;margin:10px 0 6px"><div style="flex:1;height:1.5px;background:'+col+';opacity:.5"></div><span style="font-size:9px;font-weight:800;color:'+col+';text-transform:uppercase;letter-spacing:.05em">'+txt+'</span><div style="flex:1;height:1.5px;background:'+col+';opacity:.5"></div></div>';}
      function row(r,i){var mv=r[2];var col=mv[0]==='+'?'var(--gr)':(mv[0]==='-'?'var(--re)':'var(--ink3)');var ar=mv[0]==='+'?'\u25b2':(mv[0]==='-'?'\u25bc':'\u2013');var n=mv.replace('+','').replace('-','').replace('=','');
        return '<div class="row"><div class="rank">'+(i+1)+'</div><div class="av" style="background:'+(i===0?'#B87A10':'var(--pp)')+'">'+r[0][0]+'</div><div style="flex:1"><div style="font-weight:700;font-size:14px">'+r[0]+'</div></div><span style="font-size:11px;font-weight:800;color:'+col+';margin-right:12px">'+ar+' '+n+'</span><b style="color:var(--pp)">'+r[1]+'</b></div>';}
-     var out='';R.forEach(function(r,i){if(i===5)out+=sep('Zone de promotion \u2191','var(--gr)');if(i===6)out+=sep('Zone de rel\u00e9gation \u2193','var(--re)');out+=row(r,i);});return out;})()+
+     var out='';R.forEach(function(r,i){if(i===3)out+=sep('Zone de promotion \u2191','var(--gr)');if(i===6)out+=sep('Zone de rel\u00e9gation \u2193','var(--re)');out+=row(r,i);});return out;})()+
    '<div class="h2">Lots en jeu</div>'+
    '<div class="card" style="padding:11px;display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#FFF9E9,var(--surf));border-color:#F0DFA8"><div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#FBBF24,#E0A800);display:flex;align-items:center;justify-content:center;color:#fff;font-size:19px">'+ICON.dumbbell+'</div><div><div style="font-weight:700;font-size:14px">1 semaine salle de sport</div><div class="mut">Ligue Or, 7 jours d\'affil\u00e9e</div></div></div>'+
    '<div class="card" style="padding:11px;display:flex;align-items:center;gap:12px"><div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#34D399,#0E9E6E);display:flex;align-items:center;justify-content:center;color:#fff;font-size:19px">'+ICON.gift+'</div><div><div style="font-weight:700;font-size:14px">Bon d\'achat 10 \u20ac</div><div class="mut">1er du classement hebdo</div></div></div>';
@@ -256,7 +265,7 @@ function render(){
   scr.innerHTML = (SCREENS[current]||SCREENS.hub)();
   // tabbar
   tb.innerHTML='';
-  var map={reviser:'reviser',fiche:'reviser',quizdiff:'quiz',quiz:'quiz',quizplay:'quiz',quizresult:'quiz',defis:'defis',deficreate:'defis',defiroom:'defis',qrlive:'defis',defirules:'defis',defiinvit:'defis',defiwait:'defis',defilive:'defis',defiresult:'defis',ligue:'ligue',profil:'profil',mesinfos:'profil',hub:'hub'};
+  var map={reviser:'reviser',fiche:'reviser',quizdiff:'quiz',quiz:'quiz',quizplay:'quiz',quizresult:'quiz',defis:'defis',deficreate:'defis',defiroom:'defis',qrlive:'defis',defirules:'defis',defiinvit:'defis',defiwait:'defis',defilive:'defis',defiresult:'defis',maclasse:'maclasse',ligue:'ligue',profil:'profil',mesinfos:'profil',hub:'hub'};
   TABS.forEach(function(t){var b=document.createElement('button');b.className=(map[current]===t[0])?'on':'';b.innerHTML=ICON[t[2]]+'<span>'+t[1]+'</span>';b.onclick=function(){nav(t[0]);};tb.appendChild(b);});
   if(current==='quiz') mountWheel();
 }
