@@ -28,6 +28,7 @@ svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke
 .card{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
 .stat3{display:flex;gap:9px;margin-bottom:14px}.stat3 .s{flex:1;background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
 .stat3 .v{font-size:22px;font-weight:800;color:var(--pp)}.stat3 .l{font-size:10px;color:var(--ink3);font-weight:700;text-transform:uppercase;margin-top:2px}
+.stat3 .si{display:flex;justify-content:center;font-size:19px;margin-bottom:2px;line-height:1}
 .brick{display:flex;align-items:center;gap:14px;background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:11px;cursor:pointer;transition:.15s;width:100%;text-align:left}
 .brick:active{transform:scale(.98)}
 .brick .ic{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;flex-shrink:0}
@@ -81,6 +82,8 @@ var ICON={
  link:'<svg class="i" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>',
  qr:'<svg class="i" viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/></svg>',
  dumbbell:'<svg class="i" viewBox="0 0 24 24"><path d="M2 12h2M20 12h2M6 8v8M18 8v8M9 7v10M15 7v10M6 12h12"/></svg>',
+ flame:'<svg class="i" viewBox="0 0 24 24"><path d="M12 12c2-2.96 0-7-1-8 0 3.038-1.773 4.741-3 6-1.226 1.26-2 3.24-2 5a6 6 0 1 0 12 0c0-1.532-1.056-3.94-2-5-1.786 3-2.791 3-4 2z"/></svg>',
+ coin:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5A2.5 2.5 0 0 0 12 8.5h-1.5a2 2 0 0 0 0 4H13a2 2 0 0 1 0 4h-1.5A2.5 2.5 0 0 1 9 15M12 7v1.5M12 15.5V17"/></svg>',
  school:'<svg class="i" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-4h6v4M9 12h.01M15 12h.01"/></svg>',
  defi:'<svg class="i" viewBox="0 0 24 24"><path d="M21 3v5l-11 9-4 4-3-3 4-4 9-11z"/><path d="M5 13l6 6"/><path d="M14.3 17.3l3.7 3.7 3-3-3.7-3.7"/><path d="M10 5.5 8 3H3v5l3 2.5"/></svg>' 
 };
@@ -94,7 +97,7 @@ function topbar(title){ return '<div class="top"><button class="back" onclick="n
 
 var SCREENS={
  hub:function(){return '<div class="top" style="justify-content:space-between"><div><div class="sub">Salut Sophie</div><div class="h1">On joue ?</div></div><div class="av gold">S</div></div>'+
-   '<div class="stat3"><div class="s"><div class="v">512</div><div class="l">Points</div></div><div class="s"><div class="v">7</div><div class="l">Jours d\'affilée</div></div><div class="s"><div class="v">64</div><div class="l">Quiz faits</div></div></div>'+
+   '<div class="stat3"><div class="s"><div class="si" style="color:#E0A800">'+ICON.coin+'</div><div class="v">512</div><div class="l">Points</div></div><div class="s"><div class="si" style="color:#F97316">'+ICON.flame+'</div><div class="v">7</div><div class="l">Streak</div></div><div class="s"><div class="si" style="color:var(--pp)">'+ICON.star+'</div><div class="v">64</div><div class="l">Quiz faits</div></div></div>'+
    '<div class="h2">Mes 3 façons de jouer</div>'+
    '<button class="brick" onclick="nav(\'reviser\')"><div class="ic" style="background:var(--pp)">'+ICON.book+'</div><div><div class="t">Réviser mes cours</div><div class="d">23 fiches t\'attendent</div></div><div class="go">'+ICON.chev+'</div></button>'+
    '<button class="brick" onclick="nav(\'quiz\')"><div class="ic" style="background:var(--am)">'+ICON.star+'</div><div><div class="t">Quiz · Révise &amp; Gagne</div><div class="d">Tourne la roue, gagne des points</div></div><div class="go">'+ICON.chev+'</div></button>'+
@@ -245,7 +248,7 @@ var SCREENS={
  },
   profil:function(){return topbar('Profil')+
    '<div class="card" style="display:flex;align-items:center;gap:14px"><div class="av gold" style="width:52px;height:52px;font-size:18px">S</div><div><div style="font-weight:700;font-size:17px">Sophie</div><div class="mut">@Soso \u00b7 Lyc\u00e9e de Vence</div></div></div>'+
-   '<div class="stat3"><div class="s"><div class="v">64</div><div class="l">Quiz faits</div></div><div class="s"><div class="v">7</div><div class="l">Streak</div></div><div class="s"><div class="v">12</div><div class="l">D\u00e9fis gagn\u00e9s</div></div></div>'+
+   '<div class="stat3"><div class="s"><div class="si" style="color:var(--pp)">'+ICON.star+'</div><div class="v">64</div><div class="l">Quiz faits</div></div><div class="s"><div class="si" style="color:#F97316">'+ICON.flame+'</div><div class="v">7</div><div class="l">Streak</div></div><div class="s"><div class="v">12</div><div class="l">D\u00e9fis gagn\u00e9s</div></div></div>'+
    '<button class="brick" onclick="nav(\'mesinfos\')"><div class="ic" style="background:var(--pp)">'+ICON.user+'</div><div><div class="t">Mes informations</div><div class="d">Coordonn\u00e9es, mot de passe\u2026</div></div><div class="go">'+ICON.chev+'</div></button>'+
    '<div class="card"><div class="lab" style="margin-bottom:8px">Parraine tes amis \u00b7 +100 pts par ami</div>'+
      '<div style="background:var(--bg);border:1px dashed var(--ppln);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--pp);font-weight:700;margin-bottom:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">flowrevis.app/i/soso-8f2a</div>'+
