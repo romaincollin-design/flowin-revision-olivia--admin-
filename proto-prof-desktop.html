@@ -127,6 +127,8 @@ var BANK=[{q:"Que symbolise le rideau de fer ?",a:["Partition de l'Europe","L'ON
 var DRAFTS=[{t:"La décolonisation",theme:"Histoire",d:"18 mars"}];
 var KBOPEN={asuivre:false,encours:true,passe:false};
 var CURPSEUDO=null, CURSTEP='list';
+var CUREQR=0;
+function openEleveQR(i){CUREQR=i;go('eleveqr');}
 var ETABS=['Lycée de Vence','Collège Estienne d\'Orves'];
 var CURETAB=0, ETABMENU=false;
 function toggleEtabMenu(){ETABMENU=!ETABMENU;render();}
@@ -150,7 +152,7 @@ function qAddBank(i){var b=BANK[i];QUESTIONS.push({q:b.q,a:b.a.slice(),c:b.c,dif
 function qAddIA(){var gen=[{q:"Quel événement marque le début de la guerre froide ?",a:["Doctrine Truman","Chute du mur","Crise de Cuba","Plan Marshall"],c:0},{q:"Que désigne la coexistence pacifique ?",a:["Une détente relative","Une guerre ouverte","La fin de l'URSS","Un traité de paix"],c:0},{q:"En quelle année a lieu la crise de Cuba ?",a:["1949","1962","1975","1989"],c:1}];
   gen.forEach(function(g){QUESTIONS.push({q:g.q,a:g.a,c:g.c,diff:'Difficile',valid:false});});toast("5 questions générées par l'IA — à relire");render();}
 function qDel(i){QUESTIONS.splice(i,1);render();}
-function publishQuiz(){CHALLENGES.unshift({t:'Le jeu des puissances',cl:'Terminale Bac Pro',d:"aujourd'hui",s:'encours',r:''});LOTQR.forEach(function(l){l.statut='attente';});toast('Quiz publié et lancé');go('chalqr');}
+function publishQuiz(){CHALLENGES.unshift({t:'Le jeu des puissances',cl:'Terminale Bac Pro',d:"aujourd'hui",s:'encours',r:''});LOTQR.forEach(function(l){l.statut='attente';});toast('Quiz publié et lancé');go('quizresult');}
 function saveDraft(){DRAFTS.unshift({t:'Le jeu des puissances',theme:'Histoire',d:"aujourd'hui"});toast('Brouillon enregistré');go('quizhub');}
 function kbToggle(g){KBOPEN[g]=!KBOPEN[g];render();}
 function openPseudo(ps){CURPSEUDO=ps;go('fiche');}
@@ -206,11 +208,13 @@ var PAGES={
       +'<div class="card" style="margin-bottom:14px"><h3>Réglages</h3>'
         +[['NIVEAU',['Terminale Bac Pro','1re Commerce','2de ASSP'],0],['MATIÈRE',['Histoire','Géo','EMC','PSE'],0],['THÈME (SELON LE PROGRAMME)',['Le jeu des puissances','La guerre froide','Mondialisation'],0],['DÉLAI PAR QUESTION',['10 s','20 s','30 s'],1]].map(function(g,gi){return '<div style="padding:12px 0;border-top:'+(gi===0?'0':'1px solid var(--line)')+'"><div style="font-size:10.5px;font-weight:700;color:var(--ink3);margin-bottom:8px;letter-spacing:.03em">'+g[0]+'</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+g[1].map(function(v,vi){return '<span class="chip'+(vi===g[2]?' on':'')+'" onclick="chipPick(this)">'+v+'</span>';}).join('')+'</div></div>';}).join('')
       +'</div>'
+      +'<div class="card" style="margin-bottom:14px"><h3>Points attribu\u00e9s</h3><div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)"><span style="font-size:12.5px;font-weight:600">Facile</span><span style="font-weight:800;color:var(--gr)">+5 pts</span></div><div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)"><span style="font-size:12.5px;font-weight:600">Moyen</span><span style="font-weight:800;color:var(--am)">+10 pts</span></div><div style="display:flex;justify-content:space-between;padding:7px 0"><span style="font-size:12.5px;font-weight:600">Difficile</span><span style="font-weight:800;color:var(--re)">+15 pts</span></div><div class="sub" style="margin-top:8px">R\u00e9glable dans Cagnotte \u2192 R\u00e9compenses par d\u00e9faut.</div></div>'
+      +'<div class="card" style="margin-bottom:14px"><h3>\u00c9l\u00e8ves inscrits<span class="pill">'+ELEVES.length+'</span></h3>'+ELEVES.map(function(e){return '<div class="row" style="padding:8px 0"><div class="av" style="width:26px;height:26px;font-size:11px">'+e[0][0]+'</div><div style="flex:1;font-weight:600;font-size:12.5px">'+e[0]+'</div><span class="pill">pr\u00eat</span></div>';}).join('')+'</div>'
       +'<div class="card"><h3>Ajouter des questions</h3><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">'
         +'<div class="chip" style="justify-content:center;padding:12px 6px;flex-direction:column;gap:4px" onclick="qAddManuel()">'+ICON.plus+'<span>Manuel</span></div>'
         +'<div class="chip" style="justify-content:center;padding:12px 6px;flex-direction:column;gap:4px" onclick="go(\'quizbank\')">'+ICON.list+'<span>Banque</span></div>'
         +'<div class="chip" style="justify-content:center;padding:12px 6px;flex-direction:column;gap:4px" onclick="qAddIA()">'+ICON.wand+'<span>IA</span></div>'
-      +'</div><div class="sub">La génération se fait depuis la banque (SQL du programme) ou via l\'API IA câblée ici.</div></div>'
+      +'</div><div class="sub">La g\u00e9n\u00e9ration se fait depuis la banque (SQL du programme) ou via l\'API IA c\u00e2bl\u00e9e ici.</div></div>'
     +'</div>'
     +'<div>'
       +'<div class="card"><h3>Questions ('+QUESTIONS.length+')</h3>'
@@ -267,20 +271,32 @@ var PAGES={
     +roster.map(function(e){return '<tr class="link" onclick="openPseudo(\''+e[0]+'\')"><td style="font-weight:700;color:var(--pp)">'+e[0]+'</td><td style="font-weight:700">'+e[1]+'</td><td>'+e[2]+'</td><td style="text-align:right;color:var(--ink3)">'+ICON.chev+'</td></tr>';}).join('')
   +'</table></div>';
  },
- chalqr:function(){return ''
+ quizresult:function(){var res=[['Soso',5,512,'A'],['MarcX',3,300,'B'],['Lilou',3,395,'C'],['Nadir06',2,280,'D']].sort(function(a,b){return b[1]-a[1];});
+  var moy=Math.round(res.reduce(function(a,r){return a+r[1];},0)/res.length/5*100);
+  var ecart=Math.round((res[0][1]-res[res.length-1][1])/5*100);
+  return ''
+  +'<div class="topbar"><div><div class="h1">R\xe9sultats</div><div class="sub">Le jeu des puissances \xb7 Terminale Bac Pro \xb7 envoy\xe9 \xe0 l\'instant</div></div></div>'
+  +'<div class="kpis" style="grid-template-columns:repeat(3,1fr)"><div class="kpi"><div class="lab">R\xe9pondants</div><div class="v">'+res.length+' / 19</div></div><div class="kpi"><div class="lab">R\xe9ussite moyenne</div><div class="v">'+moy+'%</div></div><div class="kpi"><div class="lab">\xc9cart best/worst</div><div class="v">'+ecart+'%</div></div></div>'
+  +'<div class="anon" style="margin-bottom:16px">'+ICON.lock+'<div>R\xe9sultats par pseudo uniquement.</div></div>'
+  +'<div class="card"><h3>Classement de la manche</h3><table><tr><th>Rang</th><th>Pseudo</th><th>Bonnes r\xe9ponses</th><th>Points totaux</th></tr>'
+    +res.map(function(r,idx){return '<tr><td style="font-weight:800;color:var(--pp)">'+(idx+1)+'</td><td style="font-weight:700">'+r[0]+'</td><td>'+r[1]+' / 5</td><td style="font-weight:700">'+r[2]+'</td></tr>';}).join('')
+  +'</table></div>'
+  +'<button class="btn" style="margin-top:6px" onclick="go(\'chalqr\')">'+ICON.qr+' Distribuer les points (QR)</button>';
+ },
+  chalqr:function(){return ''
   +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'quizhub\')">'+ICON.back+'</button><div><div class="h1">Distribution des points</div><div class="sub">Le jeu des puissances · Terminale Bac Pro</div></div></div></div>'
   +'<div class="anon" style="margin-bottom:18px">'+ICON.lock+'<div>Un QR par pseudo gagnant. Seul ce pseudo peut le flasher et créditer ses points — aucun vol possible.</div></div>'
   +'<div class="grid2" style="grid-template-columns:1fr 1fr">'+LOTQR.map(function(l,i){var done=l.statut==='encaissé';return '<div class="card" style="'+(done?'opacity:.55':'')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-weight:700;font-size:14.5px">'+l.ps+'</div><span class="pill" style="'+(done?'background:var(--grbg);color:var(--gr)':'')+'">'+(done?'Encaissé':'En attente')+'</span></div>'
-    +'<div style="display:flex;gap:16px;align-items:center"><div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px">'+qrSvg()+'</div><div><div class="lab">Points</div><div class="v" style="font-size:22px">+'+l.pts+'</div>'+(done?'':'<button class="btn sec" style="margin-top:10px" onclick="simulateScan('+i+')">Simuler le flash élève</button>')+'</div></div></div>';}).join('')+'</div>'
+    +'<div style="display:flex;gap:16px;align-items:center"><div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px">'+qrSvg()+'</div><div><div class="lab">Points</div><div class="v" style="font-size:22px">+'+l.pts+'</div>'+(done?'':'<div style="display:flex;flex-direction:column;gap:6px;margin-top:10px"><button class="btn sec" onclick="simulateScan('+i+')">Simuler le flash</button><button class="chip" style="justify-content:center" onclick="openEleveQR('+i+')">Voir son écran</button></div>')+'</div></div></div>';}).join('')+'</div>'
   +'<button class="btn" style="margin-top:18px" onclick="go(\'eleveqr\')">'+ICON.qr+' Aperçu — ce que voit l\'élève</button>';
  },
- eleveqr:function(){return ''
-  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'chalqr\')">'+ICON.back+'</button><div class="h1">Aperçu · vue élève</div></div></div>'
+ eleveqr:function(){var l=LOTQR[CUREQR]||LOTQR[0];return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'chalqr\')">'+ICON.back+'</button><div class="h1">Aper\u00e7u \u00b7 vue \u00e9l\u00e8ve</div></div></div>'
   +'<div class="card" style="max-width:380px;text-align:center;padding:30px 24px"><div style="width:60px;height:60px;border-radius:50%;background:var(--grbg);color:var(--gr);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:26px">'+ICON.check+'</div>'
-    +'<div style="font-weight:800;font-size:18px">QR flashé !</div>'
-    +'<div style="font-size:38px;font-weight:800;color:var(--pp);margin:10px 0 4px">+50</div>'
-    +'<div class="sub" style="margin-bottom:16px">points crédités sur ton pseudo Soso</div>'
-    +'<div class="anon" style="text-align:left">'+ICON.lock+'<div>Crédités directement sur ta plateforme. Ton prof ne voit jamais cette étape ni ton identité.</div></div>'
+    +'<div style="font-weight:800;font-size:18px">QR flash\u00e9 !</div>'
+    +'<div style="font-size:38px;font-weight:800;color:var(--pp);margin:10px 0 4px">+'+l.pts+'</div>'
+    +'<div class="sub" style="margin-bottom:16px">points cr\u00e9dit\u00e9s sur ton pseudo '+l.ps+'</div>'
+    +'<div class="anon" style="text-align:left">'+ICON.lock+'<div>Cr\u00e9dit\u00e9s directement sur ta plateforme. Ton prof ne voit jamais cette \u00e9tape ni ton identit\u00e9.</div></div>'
   +'</div>';
  },
   profil:function(){return ''
