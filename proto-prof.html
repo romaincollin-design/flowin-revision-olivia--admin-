@@ -106,7 +106,7 @@ var SCREENS={
  classes:function(){return '<div class="top" style="justify-content:space-between"><div class="h1">Mes classes</div><div class="av" style="background:var(--gold)">R</div></div>'+
    '<div class="card" style="display:flex;align-items:center;gap:12px;background:var(--ppbg);border:0"><div style="width:40px;height:40px;border-radius:11px;background:var(--pp);color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px">'+ICON.coin+'</div><div style="flex:1"><div class="lab" style="color:var(--pp)">Cagnotte de l\'année</div><div style="font-weight:700;font-size:15px">1 500 pts à distribuer</div></div></div>'+
    CLASSES.map(function(c,i){return '<button class="tile" onclick="nav(\'classe\')"><div class="ic">'+ICON.users+'</div><div style="flex:1"><div style="font-weight:700;font-size:15px">'+c[0]+'</div><div class="mut">'+c[1]+' élèves · '+c[2]+' pts générés</div></div><div class="go">'+ICON.chev+'</div></button>';}).join('')+
-   '<button class="btn sec" style="margin-top:4px" onclick="nav(\'classe\')">'+ICON.plus+' Créer une classe</button>';
+   '<button class="btn sec" style="margin-top:4px" onclick="nav(\'createclasse\')">'+ICON.plus+' Créer une classe</button>';
  },
  classe:function(){return '<div class="top"><button class="back" onclick="nav(\'classes\')">'+ICON.back+'</button><div><div class="sub">Terminale · Lycée de Vence</div><div class="h1" style="font-size:21px">Terminale Bac Pro</div></div></div>'+
    '<div class="card" style="display:flex;justify-content:space-between;align-items:center"><div><div class="lab">Points générés par la classe</div><div class="big">1 240</div></div><div style="text-align:right"><div class="lab">Élèves</div><div style="font-size:22px;font-weight:800">19</div></div></div>'+
@@ -118,9 +118,9 @@ var SCREENS={
  },
  addeleve:function(){return '<div class="top"><button class="back" onclick="nav(\'classe\')">'+ICON.back+'</button><div class="h1">Ajouter un élève</div></div>'+
    '<div class="anon">'+ICON.lock+'<div class="d">Le pseudo est choisi par l\'élève. Tu n\'enregistres aucune coordonnée, aucun nom réel.</div></div>'+
-   '<div class="field"><label>Pseudo de l\'élève</label><input placeholder="ex. Soso, NadirX, Emma_V"></div>'+
+   '<div class="field"><label>Pseudo de l\'élève</label><input id="newpseudo" placeholder="ex. Soso, NadirX, Emma_V"></div>'+
    '<div class="field"><label>Ou numéro (optionnel)</label><input placeholder="ex. 4B · Carlos"></div>'+
-   '<button class="btn" onclick="nav(\'classe\')">Ajouter à la classe</button>'+
+   '<button class="btn" onclick="addPseudo()">Ajouter à la classe</button>'+
    '<button class="btn sec" style="margin-top:10px" onclick="nav(\'classe\')">Annuler</button>';
  },
  eleve:function(){return '<div class="top"><button class="back" onclick="nav(\'classe\')">'+ICON.back+'</button><div><div class="sub">Terminale Bac Pro</div><div class="h1" style="font-size:22px">Soso</div></div></div>'+
@@ -200,7 +200,14 @@ var SCREENS={
      '<button class="btn sec" style="margin-top:10px" onclick="nav(\'quizbuild\')">Retour \u00e0 l\'\u00e9dition</button>';}
    return head+dots+body;
  },
-  cagnotte:function(){return '<div class="top"><div class="h1">Ma cagnotte</div></div>'+
+  createclasse:function(){return '<div class="top"><button class="back" onclick="nav(\'classes\')">'+ICON.back+'</button><div class="h1">Cr\u00e9er une classe</div></div>'+
+   '<div class="field"><label>Nom de la classe</label><input id="newclassnom" placeholder="ex. Terminale Bac Pro"></div>'+
+   '<div class="lab" style="font-size:10px;margin-bottom:6px">Niveau</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px"><div class="chip on" onclick="chipPick(this)">Terminale</div><div class="chip" onclick="chipPick(this)">1re</div><div class="chip" onclick="chipPick(this)">2de</div></div>'+
+   '<div class="lab" style="font-size:10px;margin-bottom:6px">Mati\u00e8re</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px"><div class="chip on" onclick="chipPick(this)">Histoire</div><div class="chip" onclick="chipPick(this)">G\u00e9o</div><div class="chip" onclick="chipPick(this)">EMC</div><div class="chip" onclick="chipPick(this)">PSE</div></div>'+
+   '<div class="anon">'+ICON.lock+'<div class="d">Tu cr\u00e9es la classe. Les \u00e9l\u00e8ves la rejoindront par pseudo (QR ou ajout manuel).</div></div>'+
+   '<button class="btn" onclick="addClasse()">Cr\u00e9er la classe</button>';
+ },
+ cagnotte:function(){return '<div class="top"><div class="h1">Ma cagnotte</div></div>'+
    '<div class="card" style="text-align:center"><div class="lab">Points restant \u00e0 distribuer</div><div class="big" style="font-size:38px">1 500</div><div class="mut">quota de l\'ann\u00e9e \u00b7 r\u00e9gule par classe</div></div>'+
    '<div class="h2">R\u00e9gule par classe</div>'+
    '<div class="mut" style="margin-bottom:12px">Monte ou descends les points allou\u00e9s \u00e0 chaque classe.</div>'+
@@ -275,13 +282,15 @@ function carouselHTML(S){
 function eqUpd(el){document.getElementById(el.dataset.tgt).textContent=el.value+el.dataset.unit;}
 
 function qBank(i){var b=BANK[i];QUESTIONS.push({q:b.q,a:b.a.slice(),c:b.c,valid:false});nav("quizbuild");}
+function addClasse(){var n=(document.getElementById("newclassnom")||{}).value||"Nouvelle classe";CLASSES.push([n,0,0]);nav("classes");}
+function addPseudo(){var ps=(document.getElementById("newpseudo")||{}).value||("\u00c9l\u00e8ve "+(ELEVES.length+1));ELEVES.push([ps,0,"#534AB7"]);nav("classe");}
 function iaGen(){QUESTIONS=[{q:"Quel événement marque le début de la guerre froide ?",a:["Doctrine Truman","Chute du mur","Crise de Cuba","Plan Marshall"],c:0,valid:false},{q:"Que symbolise le rideau de fer ?",a:["La partition de l'Europe","L'ONU","La décolonisation","L'OTAN"],c:0,valid:false},{q:"En quelle année a lieu la crise de Cuba ?",a:["1949","1962","1975","1989"],c:1,valid:false},{q:"Quelle alliance regroupe le bloc de l'Est ?",a:["OTAN","Pacte de Varsovie","ONU","CEE"],c:1,valid:false},{q:"Que désigne la coexistence pacifique ?",a:["Une détente relative","Une guerre ouverte","La fin de l'URSS","Un traité de paix"],c:0,valid:false}];nav("quizbuild");}
 function chipPick(el){var pr=el.parentNode;pr.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on');});el.classList.add('on');}
 function render(){
   scr.innerHTML=(SCREENS[current]||SCREENS.welcome)();
   tb.style.display = current==='welcome' ? 'none' : 'flex';
   tb.innerHTML='';
-  var map={classes:'classes',classe:'classes',addeleve:'classes',eleve:'classes',qrpoints:'classes',quizbuild:'classes',quizia:'classes',quizlaunch:'classes',quizedit:'classes',quizbanque:'classes',quizpreview:'classes',cagnotte:'cagnotte',profil:'profil',profinfos:'profil',etablissements:'profil',matieres:'profil',jeuparams:'profil'};
+  var map={classes:'classes',classe:'classes',addeleve:'classes',eleve:'classes',qrpoints:'classes',quizbuild:'classes',quizia:'classes',quizlaunch:'classes',quizedit:'classes',quizbanque:'classes',quizpreview:'classes',createclasse:'classes',cagnotte:'cagnotte',profil:'profil',profinfos:'profil',etablissements:'profil',matieres:'profil',jeuparams:'profil'};
   TABS.forEach(function(t){var b=document.createElement('button');b.className=(map[current]===t[0])?'on':'';b.innerHTML=ICON[t[2]]+'<span>'+t[1]+'</span>';b.onclick=function(){nav(t[0]);};tb.appendChild(b);});
 }
 render();
