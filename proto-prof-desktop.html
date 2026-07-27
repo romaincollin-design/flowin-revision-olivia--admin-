@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowin Révision — Espace professeur (desktop)</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--pp:#534AB7;--pp2:#7F77DD;--ppbg:#EEEDFE;--ppln:#AFA9EC;--ink:#14162A;--ink2:#3D4268;--ink3:#8B90B8;--surf:#fff;--bg:#F3F3F9;--line:rgba(0,0,0,.08);--gr:#0E9E6E;--grbg:#E4F7F0;--am:#C27C0A;--re:#D63050;--bl:#1E6FCC;--gold:#E0A800;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.12em}
+.app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+/* SIDEBAR */
+.side{background:var(--surf);border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:10px;padding:0 6px 22px}
+.brand .mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#5B52C9,#7F77DD);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+.brand .name{font-weight:800;font-size:15px}
+.nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:var(--ink2);text-decoration:none;font-weight:600;font-size:13.5px;margin-bottom:2px;cursor:pointer}
+.nav a.on{background:var(--ppbg);color:var(--pp)}
+.nav a:hover{background:var(--bg)}
+.nav .sec{font-size:10px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 12px}
+.side .foot{margin-top:auto;padding-top:16px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.av{width:34px;height:34px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+/* MAIN */
+.main{padding:26px 34px 60px;max-width:1280px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.h1{font-size:23px;font-weight:800;letter-spacing:-.4px}
+.sub{color:var(--ink3);font-size:13px;margin-top:2px}
+.btn{background:var(--pp);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:700;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.btn.sec{background:var(--surf);color:var(--pp);border:1.5px solid var(--ppln)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.kpi{background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.kpi .lab{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em}
+.kpi .v{font-size:26px;font-weight:800;color:var(--pp);margin-top:6px}
+.kpi .d{font-size:12px;margin-top:4px;font-weight:600}
+.grid2{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;align-items:start;margin-bottom:22px}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:20px}
+.card h3{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.chart{display:flex;align-items:flex-end;gap:10px;height:150px;padding-top:10px}
+.chart .bar{flex:1;text-align:center}
+.chart .bar i{display:block;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--pp2),var(--pp))}
+.chart .bar span{display:block;margin-top:6px;font-size:11px;color:var(--ink3);font-weight:600}
+.row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(0,0,0,.05)}
+.row:last-child{border:0}
+.pill{display:inline-flex;align-items:center;gap:5px;background:var(--ppbg);color:var(--pp);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.tabs button{background:none;border:none;padding:10px 4px;margin-right:18px;font-weight:700;font-size:13.5px;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent}
+.tabs button.on{color:var(--pp);border-color:var(--pp)}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;color:var(--ink3);text-transform:uppercase;font-weight:700;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:11px 10px;font-size:13.5px;border-bottom:1px solid rgba(0,0,0,.05)}
+tr:hover td{background:var(--bg)}
+.bar-mini{width:80px;height:8px;background:var(--bg);border-radius:6px;overflow:hidden;display:inline-block;vertical-align:middle}
+.bar-mini i{display:block;height:100%;background:var(--pp)}
+.chip{display:inline-flex;align-items:center;gap:5px;border:1.5px solid var(--line);border-radius:20px;padding:6px 12px;font-weight:600;font-size:12.5px;cursor:pointer}
+.chip.on{background:var(--ppbg);color:var(--pp);border-color:var(--ppln)}
+.editor{display:grid;grid-template-columns:1fr 1.15fr;gap:18px}
+.qcard{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
+.qcard.sel{border-color:var(--ppln);background:var(--ppbg)}
+.tile-ans{background:#D63050;color:#fff;border-radius:8px;padding:9px;font-size:12.5px;font-weight:700;display:flex;justify-content:space-between}
+.dz{border:1.5px dashed var(--ppln);border-radius:12px;padding:22px;text-align:center;color:var(--pp);font-weight:600;font-size:13px;cursor:pointer;background:var(--ppbg)}
+.anon{display:flex;gap:10px;background:var(--ppbg);border-radius:10px;padding:11px 13px;font-size:12.5px;color:var(--pp);font-weight:600;align-items:flex-start}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="mark"><svg class="i" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-4h6v4M9 12h.01M15 12h.01"/></svg></div><div class="name">Flowin Révision</div></div>
+    <nav class="nav" id="nav">
+      <a data-p="pilotage" class="on"><svg class="i" viewBox="0 0 24 24"><path d="M3 3v18h18M7 15l4-6 3 3 4-7"/></svg>Pilotage</a>
+      <a data-p="classes"><svg class="i" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Classes</a>
+      <a data-p="quiz"><svg class="i" viewBox="0 0 24 24"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg>Constructeur de quiz</a>
+      <a data-p="cours"><svg class="i" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>Mes cours</a>
+      <a data-p="cagnotte"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5A2.5 2.5 0 0 0 12 8.5h-1.5a2 2 0 0 0 0 4H13a2 2 0 0 1 0 4h-1.5A2.5 2.5 0 0 1 9 15"/></svg>Cagnotte</a>
+      <div class="sec">Compte</div>
+      <a data-p="profil"><svg class="i" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>Profil &amp; paramètres</a>
+    </nav>
+    <div class="foot"><div class="av">O</div><div><div style="font-weight:700;font-size:12.5px">Olivia Laurent</div><div style="color:var(--ink3);font-size:11px">Lycée de Vence</div></div></div>
+  </aside>
+
+  <main class="main" id="main"></main>
+</div>
+
+<script>
+var ICON={
+ wand:'<svg class="i" viewBox="0 0 24 24"><path d="M12 3l1.4 4.1L17.5 8l-4.1 1.4L12 13.5l-1.4-4.1L6.5 8l4.1-.9zM19 14l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg>',
+ list:'<svg class="i" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',
+ plus:'<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+ lock:'<svg class="i" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+ check:'<svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>',
+ doc:'<svg class="i" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>'
+};
+var PAGE='pilotage';
+function go(p){PAGE=p;render();document.querySelectorAll('#nav a').forEach(function(a){a.classList.toggle('on',a.dataset.p===p);});}
+document.getElementById('nav').addEventListener('click',function(e){var a=e.target.closest('a');if(a)go(a.dataset.p);});
+
+var CLASSES=[['Terminale Bac Pro',19,1240,'Terminale'],['1re Bac Pro Commerce',22,860,'1re'],['2de Bac Pro ASSP',18,540,'2de']];
+var COURS=[['Le jeu des puissances','Histoire',1,'23 fiches liées'],['La guerre froide','Histoire',1,'12 fiches liées'],['La mondialisation','Géo',0,'8 fiches liées'],['Prévention des risques','PSE',1,'6 fiches liées']];
+var ELEVES=[['Soso','Terminale Bac Pro',512,'82%','Or'],['Lilou','Terminale Bac Pro',395,'71%','Argent'],['MarcX','1re Bac Pro Commerce',300,'64%','Argent'],['Nadir06','Terminale Bac Pro',280,'58%','Bronze'],['Emma_V','2de Bac Pro ASSP',255,'55%','Bronze']];
+
+var PAGES={
+ pilotage:function(){return ''
+  +'<div class="topbar"><div><div class="h1">Pilotage</div><div class="sub">Lycée de Vence · Histoire, Géo, EMC, PSE</div></div><button class="btn" onclick="go(\'quiz\')">'+ICON.plus+' Nouveau quiz</button></div>'
+  +'<div class="kpis">'
+    +'<div class="kpi"><div class="lab">Élèves actifs</div><div class="v">59</div><div class="d" style="color:var(--gr)">+4 cette semaine</div></div>'
+    +'<div class="kpi"><div class="lab">Points distribués</div><div class="v">2 640</div><div class="d" style="color:var(--ink3)">sur 4 500 pts de quota</div></div>'
+    +'<div class="kpi"><div class="lab">Réussite moyenne</div><div class="v">68%</div><div class="d" style="color:var(--gr)">+5 pts vs mois dernier</div></div>'
+    +'<div class="kpi"><div class="lab">Écart best/worst</div><div class="v">18%</div><div class="d" style="color:var(--am)">bonus homogénéité actif</div></div>'
+  +'</div>'
+  +'<div class="grid2">'
+    +'<div class="card"><h3>Progression de la classe (Terminale Bac Pro)<span class="pill">Histoire</span></h3><div class="chart">'+['S,30','O,42','N,38','D,55','J,60','F,72','M,82'].map(function(m){var x=m.split(',');return '<div class="bar"><i style="height:'+(x[1]*1.5)+'px"></i><span>'+x[0]+'</span></div>';}).join('')+'</div></div>'
+    +'<div class="card"><h3>Challenges interclasse<span class="pill">en cours</span></h3>'+CLASSES.map(function(c,i){var w=Math.round(c[2]/1300*100);return '<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;margin-bottom:5px"><span>'+c[0]+'</span><span style="color:var(--pp)">'+c[2]+' pts</span></div><div class="bar-mini" style="width:100%"><i style="width:'+w+'%"></i></div></div>';}).join('')+'</div>'
+  +'</div>'
+  +'<div class="card"><h3>Élèves à suivre (par pseudo)<span class="pill">'+ELEVES.length+' affichés</span></h3><table><tr><th>Pseudo</th><th>Classe</th><th>Points</th><th>Réussite</th><th>Ligue</th></tr>'
+    +ELEVES.map(function(e){return '<tr><td style="font-weight:700">'+e[0]+'</td><td>'+e[1]+'</td><td style="color:var(--pp);font-weight:700">'+e[2]+'</td><td>'+e[3]+'</td><td><span class="pill">'+e[4]+'</span></td></tr>';}).join('')
+  +'</table></div>';
+ },
+ classes:function(){return ''
+  +'<div class="topbar"><div><div class="h1">Mes classes</div><div class="sub">3 classes · 59 élèves</div></div><button class="btn sec">'+ICON.plus+' Créer une classe</button></div>'
+  +'<div class="grid2" style="grid-template-columns:repeat(3,1fr)">'+CLASSES.map(function(c){return '<div class="card"><h3>'+c[0]+'<span class="pill">'+c[3]+'</span></h3><div style="font-size:12.5px;color:var(--ink3)">'+c[1]+' élèves · '+c[2]+' pts générés</div><button class="btn sec" style="margin-top:14px;width:100%;justify-content:center">Ouvrir</button></div>';}).join('')+'</div>';
+ },
+ quiz:function(){return ''
+  +'<div class="topbar"><div><div class="h1">Constructeur de quiz</div><div class="sub">Le jeu des puissances · Terminale Bac Pro · Histoire</div></div><div style="display:flex;gap:8px"><button class="btn sec">Enregistrer le brouillon</button><button class="btn">Publier &amp; lancer</button></div></div>'
+  +'<div class="editor">'
+    +'<div>'
+      +'<div class="card" style="margin-bottom:14px"><h3>Réglages</h3>'
+        +'<div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">NIVEAU</div><div style="display:flex;gap:6px;margin-bottom:12px"><span class="chip on">Terminale Bac Pro</span><span class="chip">1re Commerce</span><span class="chip">2de ASSP</span></div>'
+        +'<div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">MATIÈRE</div><div style="display:flex;gap:6px;margin-bottom:12px"><span class="chip on">Histoire</span><span class="chip">Géo</span><span class="chip">EMC</span><span class="chip">PSE</span></div>'
+        +'<div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">DIFFICULTÉ</div><div style="display:flex;gap:6px"><span class="chip">Facile</span><span class="chip on">Moyen</span><span class="chip">Difficile</span></div>'
+      +'</div>'
+      +'<div class="card"><h3>Ajouter des questions</h3><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'
+        +'<div class="chip on" style="justify-content:center;padding:12px 6px;flex-direction:column;gap:4px">'+ICON.plus+'<span>Manuel</span></div>'
+        +'<div class="chip" style="justify-content:center;padding:12px 6px;flex-direction:column;gap:4px">'+ICON.list+'<span>Banque</span></div>'
+        +'<div class="chip" style="justify-content:center;padding:12px 6px;flex-direction:column;gap:4px">'+ICON.wand+'<span>IA</span></div>'
+      +'</div></div>'
+    +'</div>'
+    +'<div>'
+      +'<div class="card"><h3>Questions (2)</h3>'
+        +'<div class="qcard sel"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span class="pill" style="background:var(--grbg);color:var(--gr)">Facile</span><span class="pill">Validée</span></div><div style="font-weight:600;font-size:14px;margin-bottom:10px">En quelle année tombe le mur de Berlin ?</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><div class="tile-ans" style="background:#D63050">1961</div><div class="tile-ans" style="background:#0E9E6E">1989 '+ICON.check+'</div><div class="tile-ans" style="background:#1E6FCC">1991</div><div class="tile-ans" style="background:#C27C0A">1975</div></div></div>'
+        +'<div class="qcard"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span class="pill" style="background:#FBEEDA;color:var(--am)">Moyen</span><span class="pill" style="background:#FBEEDA;color:var(--am)">À valider</span></div><div style="font-weight:600;font-size:14px">Qui dirige l\'URSS pendant la crise de Cuba ?</div></div>'
+      +'</div>'
+    +'</div>'
+  +'</div>';
+ },
+ cours:function(){return ''
+  +'<div class="topbar"><div><div class="h1">Mes cours</div><div class="sub">Contenus liés à tes fiches de révision</div></div><button class="btn">'+ICON.plus+' Ajouter un cours</button></div>'
+  +'<div class="grid2" style="grid-template-columns:1fr 1fr">'+COURS.map(function(c){return '<div class="card"><h3>'+c[0]+'<span class="pill">'+c[1]+'</span></h3><div style="font-size:12.5px;color:var(--ink3);margin-bottom:12px">'+c[3]+'</div><div class="dz">'+ICON.doc+' Glisser un document (PDF, image, schéma…)</div><button class="btn sec" style="margin-top:12px;width:100%;justify-content:center">'+ICON.wand+' Résumer avec l\'IA</button></div>';}).join('')+'</div>';
+ },
+ cagnotte:function(){return ''
+  +'<div class="topbar"><div><div class="h1">Ma cagnotte</div><div class="sub">1 500 pts restant sur le quota de l\'année</div></div></div>'
+  +'<div class="grid2" style="grid-template-columns:1fr 1fr">'
+   +'<div class="card"><h3>Quota par classe</h3>'+CLASSES.map(function(c){return '<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:6px"><span>'+c[0]+'</span><span style="color:var(--pp)">'+c[2]%500+' / 500</span></div><input type="range" min="0" max="500" value="'+(c[2]%500)+'" style="width:100%;accent-color:var(--pp)"></div>';}).join('')+'</div>'
+   +'<div class="card"><h3>Récompenses par défaut</h3><div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">POINTS PAR BONNE RÉPONSE</div><input type="range" min="5" max="20" value="10" style="width:100%;accent-color:var(--pp);margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">ÉCART MAX (HOMOGÉNÉITÉ)</div><input type="range" min="0" max="100" value="25" style="width:100%;accent-color:var(--pp)"></div>'
+  +'</div>';
+ },
+ profil:function(){return ''
+  +'<div class="topbar"><div class="h1">Profil &amp; paramètres</div></div>'
+  +'<div class="anon" style="margin-bottom:18px">'+ICON.lock+'<div>Anonymat total : tu ne vois que les pseudos de tes élèves, sur mobile comme sur ordinateur.</div></div>'
+  +'<div class="grid2" style="grid-template-columns:1fr 1fr">'
+   +'<div class="card"><h3>Mes informations</h3><div style="font-size:13.5px;color:var(--ink2);line-height:2.1">Olivia Laurent<br>o.laurent@ac-nice.fr<br>06 12 34 56 78</div></div>'
+   +'<div class="card"><h3>Mes établissements</h3><div class="row"><div style="flex:1;font-weight:700;font-size:13.5px">Lycée de Vence</div><span class="pill">principal</span></div><div class="row"><div style="flex:1;font-weight:700;font-size:13.5px">Collège Estienne d\'Orves</div></div></div>'
+  +'</div>';
+ }
+};
+function render(){document.getElementById('main').innerHTML=(PAGES[PAGE]||PAGES.pilotage)();}
+render();
+</script>
+</body>
+</html>
