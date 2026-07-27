@@ -6,13 +6,12 @@
 <title>Flowin Révision — Espace professeur (desktop)</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--pp:#534AB7;--pp2:#7F77DD;--ppbg:#EEEDFE;--ppln:#AFA9EC;--ink:#14162A;--ink2:#3D4268;--ink3:#8B90B8;--surf:#fff;--bg:#F3F3F9;--line:rgba(0,0,0,.08);--gr:#0E9E6E;--grbg:#E4F7F0;--am:#C27C0A;--re:#D63050;--bl:#1E6FCC;--gold:#E0A800;}
+:root{--pp:#534AB7;--pp2:#7F77DD;--ppbg:#EEEDFE;--ppln:#AFA9EC;--ink:#14162A;--ink2:#3D4268;--ink3:#8B90B8;--surf:#fff;--bg:#F3F3F9;--line:rgba(0,0,0,.08);--gr:#0E9E6E;--grbg:#E4F7F0;--am:#C27C0A;--ambg:#FBEEDA;--re:#D63050;--bl:#1E6FCC;--gold:#E0A800;}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
 svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.12em}
 .app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
-/* SIDEBAR */
-.side{background:var(--surf);border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column}
+.side{background:var(--surf);border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
 .brand{display:flex;align-items:center;gap:10px;padding:0 6px 22px}
 .brand .mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#5B52C9,#7F77DD);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
 .brand .name{font-weight:800;font-size:15px}
@@ -22,13 +21,13 @@ svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke
 .nav .sec{font-size:10px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 12px}
 .side .foot{margin-top:auto;padding-top:16px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px}
 .av{width:34px;height:34px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
-/* MAIN */
-.main{padding:26px 34px 60px;max-width:1280px}
-.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.main{padding:26px 34px 60px;max-width:1320px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;gap:16px}
 .h1{font-size:23px;font-weight:800;letter-spacing:-.4px}
 .sub{color:var(--ink3);font-size:13px;margin-top:2px}
 .btn{background:var(--pp);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:700;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
 .btn.sec{background:var(--surf);color:var(--pp);border:1.5px solid var(--ppln)}
+.back{width:34px;height:34px;border-radius:50%;background:var(--surf);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink);flex-shrink:0}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
 .kpi{background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
 .kpi .lab{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em}
@@ -44,13 +43,11 @@ svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke
 .row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(0,0,0,.05)}
 .row:last-child{border:0}
 .pill{display:inline-flex;align-items:center;gap:5px;background:var(--ppbg);color:var(--pp);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
-.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:18px}
-.tabs button{background:none;border:none;padding:10px 4px;margin-right:18px;font-weight:700;font-size:13.5px;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent}
-.tabs button.on{color:var(--pp);border-color:var(--pp)}
 table{width:100%;border-collapse:collapse}
 th{text-align:left;font-size:11px;color:var(--ink3);text-transform:uppercase;font-weight:700;padding:8px 10px;border-bottom:1px solid var(--line)}
 td{padding:11px 10px;font-size:13.5px;border-bottom:1px solid rgba(0,0,0,.05)}
-tr:hover td{background:var(--bg)}
+tr.link{cursor:pointer}
+tr.link:hover td{background:var(--bg)}
 .bar-mini{width:80px;height:8px;background:var(--bg);border-radius:6px;overflow:hidden;display:inline-block;vertical-align:middle}
 .bar-mini i{display:block;height:100%;background:var(--pp)}
 .chip{display:inline-flex;align-items:center;gap:5px;border:1.5px solid var(--line);border-radius:20px;padding:6px 12px;font-weight:600;font-size:12.5px;cursor:pointer}
@@ -58,9 +55,17 @@ tr:hover td{background:var(--bg)}
 .editor{display:grid;grid-template-columns:1fr 1.15fr;gap:18px}
 .qcard{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
 .qcard.sel{border-color:var(--ppln);background:var(--ppbg)}
-.tile-ans{background:#D63050;color:#fff;border-radius:8px;padding:9px;font-size:12.5px;font-weight:700;display:flex;justify-content:space-between}
+.tile-ans{border-radius:8px;padding:9px;font-size:12.5px;font-weight:700;display:flex;justify-content:space-between;color:#fff}
 .dz{border:1.5px dashed var(--ppln);border-radius:12px;padding:22px;text-align:center;color:var(--pp);font-weight:600;font-size:13px;cursor:pointer;background:var(--ppbg)}
 .anon{display:flex;gap:10px;background:var(--ppbg);border-radius:10px;padding:11px 13px;font-size:12.5px;color:var(--pp);font-weight:600;align-items:flex-start}
+.field label{font-size:12px;font-weight:600;color:var(--ink2);display:block;margin-bottom:6px}
+.field input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px;font-family:inherit;font-size:14px}
+.kb{display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:var(--surf);border:1px solid var(--line);border-radius:11px;margin-bottom:8px;cursor:pointer}
+.kbitem{display:flex;align-items:center;gap:11px;padding:11px 13px;margin:0 0 8px 10px;border:1px solid var(--line);border-radius:11px;cursor:pointer}
+.kbitem:hover{background:var(--bg)}
+.slider{width:100%;accent-color:var(--pp)}
+#toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:22px;font-size:13px;font-weight:600;opacity:0;transition:.25s;z-index:99;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
@@ -68,9 +73,9 @@ tr:hover td{background:var(--bg)}
   <aside class="side">
     <div class="brand"><div class="mark"><svg class="i" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-4h6v4M9 12h.01M15 12h.01"/></svg></div><div class="name">Flowin Révision</div></div>
     <nav class="nav" id="nav">
-      <a data-p="pilotage" class="on"><svg class="i" viewBox="0 0 24 24"><path d="M3 3v18h18M7 15l4-6 3 3 4-7"/></svg>Pilotage</a>
+      <a data-p="pilotage"><svg class="i" viewBox="0 0 24 24"><path d="M3 3v18h18M7 15l4-6 3 3 4-7"/></svg>Pilotage</a>
       <a data-p="classes"><svg class="i" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Classes</a>
-      <a data-p="quiz"><svg class="i" viewBox="0 0 24 24"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg>Constructeur de quiz</a>
+      <a data-p="quizhub"><svg class="i" viewBox="0 0 24 24"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg>Quiz &amp; challenges</a>
       <a data-p="cours"><svg class="i" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>Mes cours</a>
       <a data-p="cagnotte"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5A2.5 2.5 0 0 0 12 8.5h-1.5a2 2 0 0 0 0 4H13a2 2 0 0 1 0 4h-1.5A2.5 2.5 0 0 1 9 15"/></svg>Cagnotte</a>
       <div class="sec">Compte</div>
@@ -78,9 +83,9 @@ tr:hover td{background:var(--bg)}
     </nav>
     <div class="foot"><div class="av">O</div><div><div style="font-weight:700;font-size:12.5px">Olivia Laurent</div><div style="color:var(--ink3);font-size:11px">Lycée de Vence</div></div></div>
   </aside>
-
   <main class="main" id="main"></main>
 </div>
+<div id="toast"></div>
 
 <script>
 var ICON={
@@ -89,19 +94,45 @@ var ICON={
  plus:'<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
  lock:'<svg class="i" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
  check:'<svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>',
- doc:'<svg class="i" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>'
+ doc:'<svg class="i" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',
+ chev:'<svg class="i" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>',
+ back:'<svg class="i" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>',
+ qr:'<svg class="i" viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/></svg>'
 };
-var PAGE='pilotage';
-function go(p){PAGE=p;render();document.querySelectorAll('#nav a').forEach(function(a){a.classList.toggle('on',a.dataset.p===p);});}
-document.getElementById('nav').addEventListener('click',function(e){var a=e.target.closest('a');if(a)go(a.dataset.p);});
+function qrSvg(){var r='';for(var y=0;y<11;y++)for(var x=0;x<11;x++){if((x*y+x+y)%3===0||(x<3&&y<3)||(x>7&&y<3)||(x<3&&y>7))r+='<rect x="'+(x*10)+'" y="'+(y*10)+'" width="10" height="10" fill="#111"/>';}return '<svg viewBox="0 0 110 110" style="width:120px;height:120px">'+r+'</svg>';}
 
-var CLASSES=[['Terminale Bac Pro',19,1240,'Terminale'],['1re Bac Pro Commerce',22,860,'1re'],['2de Bac Pro ASSP',18,540,'2de']];
+/* ---- ÉTAT (partagé, cohérent avec le mobile) ---- */
+var CLASSES=[['Terminale Bac Pro',19,1240,'Terminale',320],['1re Bac Pro Commerce',22,860,'1re',180],['2de Bac Pro ASSP',18,540,'2de',90]];
 var COURS=[['Le jeu des puissances','Histoire',1,'23 fiches liées'],['La guerre froide','Histoire',1,'12 fiches liées'],['La mondialisation','Géo',0,'8 fiches liées'],['Prévention des risques','PSE',1,'6 fiches liées']];
-var ELEVES=[['Soso','Terminale Bac Pro',512,'82%','Or'],['Lilou','Terminale Bac Pro',395,'71%','Argent'],['MarcX','1re Bac Pro Commerce',300,'64%','Argent'],['Nadir06','Terminale Bac Pro',280,'58%','Bronze'],['Emma_V','2de Bac Pro ASSP',255,'55%','Bronze']];
+var ELEVES=[['Soso',512,'82%','Or','#D63050,82;#1E6FCC,64;#C27C0A,74;#0E9E6E,58'],['Lilou',395,'71%','Argent','#D63050,70;#1E6FCC,60;#C27C0A,65;#0E9E6E,55'],['MarcX',300,'64%','Argent','#D63050,60;#1E6FCC,55;#C27C0A,50;#0E9E6E,48'],['Nadir06',280,'58%','Bronze','#D63050,55;#1E6FCC,50;#C27C0A,48;#0E9E6E,45'],['Emma_V',255,'55%','Bronze','#D63050,52;#1E6FCC,48;#0E9E6E,45;#C27C0A,44']];
+var CHALLENGES=[{t:"La guerre froide",cl:"Terminale Bac Pro",d:"5 mars",s:"passe",r:"72% de réussite · écart 18"},{t:"Le jeu des puissances",cl:"Terminale Bac Pro",d:"12 mars",s:"encours",r:""},{t:"Mondialisation",cl:"Terminale Bac Pro",d:"20 mars",s:"asuivre",r:""}];
+var QUESTIONS=[{q:"En quelle année tombe le mur de Berlin ?",a:["1961","1989","1991","1975"],c:1,diff:"Facile",valid:true},{q:"Qui dirige l'URSS pendant la crise de Cuba ?",a:["Khrouchtchev","Staline","Brejnev","Lénine"],c:0,diff:"Moyen",valid:false}];
+var BANK=[{q:"Que symbolise le rideau de fer ?",a:["Partition de l'Europe","L'ONU","La décolonisation","L'OTAN"],c:0},{q:"Qui lance le plan Marshall ?",a:["Les États-Unis","L'URSS","La France","L'ONU"],c:0},{q:"Quelle alliance regroupe le bloc de l'Est ?",a:["OTAN","Pacte de Varsovie","ONU","CEE"],c:1}];
+var DRAFTS=[{t:"La décolonisation",theme:"Histoire",d:"18 mars"}];
+var KBOPEN={asuivre:false,encours:true,passe:false};
+var CURPSEUDO=null, CURSTEP='list';
+
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.className='show';clearTimeout(window._tt);window._tt=setTimeout(function(){t.className='';},1800);}
+function chipPick(el){var pr=el.parentNode;pr.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on');});el.classList.add('on');}
+function qValid(i){QUESTIONS[i].valid=true;toast('Question validée');render();}
+function qDiff(i){var d=QUESTIONS[i].diff;var nx={Facile:'Moyen',Moyen:'Difficile',Difficile:'Facile'}[d];QUESTIONS[i].diff=nx;render();}
+function qAddManuel(){QUESTIONS.push({q:'Nouvelle question — clique pour éditer',a:['Réponse 1','Réponse 2','Réponse 3','Réponse 4'],c:0,diff:'Moyen',valid:false});toast('Question ajoutée (manuel)');render();}
+function qAddBank(i){var b=BANK[i];QUESTIONS.push({q:b.q,a:b.a.slice(),c:b.c,diff:'Moyen',valid:false});toast('Question ajoutée depuis la banque');render();}
+function qAddIA(){var gen=[{q:"Quel événement marque le début de la guerre froide ?",a:["Doctrine Truman","Chute du mur","Crise de Cuba","Plan Marshall"],c:0},{q:"Que désigne la coexistence pacifique ?",a:["Une détente relative","Une guerre ouverte","La fin de l'URSS","Un traité de paix"],c:0},{q:"En quelle année a lieu la crise de Cuba ?",a:["1949","1962","1975","1989"],c:1}];
+  gen.forEach(function(g){QUESTIONS.push({q:g.q,a:g.a,c:g.c,diff:'Difficile',valid:false});});toast("5 questions générées par l'IA — à relire");render();}
+function qDel(i){QUESTIONS.splice(i,1);render();}
+function publishQuiz(){CHALLENGES.unshift({t:'Le jeu des puissances',cl:'Terminale Bac Pro',d:"aujourd'hui",s:'encours',r:''});toast('Quiz publié et lancé');go('quizhub');}
+function saveDraft(){DRAFTS.unshift({t:'Le jeu des puissances',theme:'Histoire',d:"aujourd'hui"});toast('Brouillon enregistré');go('quizhub');}
+function kbToggle(g){KBOPEN[g]=!KBOPEN[g];render();}
+function openPseudo(ps){CURPSEUDO=ps;go('fiche');}
+
+var PAGE='pilotage';
+function go(p){PAGE=p;render();document.querySelectorAll('#nav a').forEach(function(a){a.classList.toggle('on',a.dataset.p===p);});window.scrollTo(0,0);}
+document.getElementById('nav').addEventListener('click',function(e){var a=e.target.closest('a');if(a)go(a.dataset.p);});
 
 var PAGES={
  pilotage:function(){return ''
-  +'<div class="topbar"><div><div class="h1">Pilotage</div><div class="sub">Lycée de Vence · Histoire, Géo, EMC, PSE</div></div><button class="btn" onclick="go(\'quiz\')">'+ICON.plus+' Nouveau quiz</button></div>'
+  +'<div class="topbar"><div><div class="h1">Pilotage</div><div class="sub">Lycée de Vence · Histoire, Géo, EMC, PSE</div></div><button class="btn" onclick="go(\'quizbuild\')">'+ICON.plus+' Nouveau quiz</button></div>'
   +'<div class="kpis">'
     +'<div class="kpi"><div class="lab">Élèves actifs</div><div class="v">59</div><div class="d" style="color:var(--gr)">+4 cette semaine</div></div>'
     +'<div class="kpi"><div class="lab">Points distribués</div><div class="v">2 640</div><div class="d" style="color:var(--ink3)">sur 4 500 pts de quota</div></div>'
@@ -110,48 +141,82 @@ var PAGES={
   +'</div>'
   +'<div class="grid2">'
     +'<div class="card"><h3>Progression de la classe (Terminale Bac Pro)<span class="pill">Histoire</span></h3><div class="chart">'+['S,30','O,42','N,38','D,55','J,60','F,72','M,82'].map(function(m){var x=m.split(',');return '<div class="bar"><i style="height:'+(x[1]*1.5)+'px"></i><span>'+x[0]+'</span></div>';}).join('')+'</div></div>'
-    +'<div class="card"><h3>Challenges interclasse<span class="pill">en cours</span></h3>'+CLASSES.map(function(c,i){var w=Math.round(c[2]/1300*100);return '<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;margin-bottom:5px"><span>'+c[0]+'</span><span style="color:var(--pp)">'+c[2]+' pts</span></div><div class="bar-mini" style="width:100%"><i style="width:'+w+'%"></i></div></div>';}).join('')+'</div>'
+    +'<div class="card"><h3>Challenges interclasse<span class="pill">en cours</span></h3>'+CLASSES.map(function(c){var w=Math.round(c[2]/1300*100);return '<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;margin-bottom:5px"><span>'+c[0]+'</span><span style="color:var(--pp)">'+c[2]+' pts</span></div><div class="bar-mini" style="width:100%"><i style="width:'+w+'%"></i></div></div>';}).join('')+'</div>'
   +'</div>'
-  +'<div class="card"><h3>Élèves à suivre (par pseudo)<span class="pill">'+ELEVES.length+' affichés</span></h3><table><tr><th>Pseudo</th><th>Classe</th><th>Points</th><th>Réussite</th><th>Ligue</th></tr>'
-    +ELEVES.map(function(e){return '<tr><td style="font-weight:700">'+e[0]+'</td><td>'+e[1]+'</td><td style="color:var(--pp);font-weight:700">'+e[2]+'</td><td>'+e[3]+'</td><td><span class="pill">'+e[4]+'</span></td></tr>';}).join('')
+  +'<div class="card"><h3>Élèves à suivre (par pseudo)<span class="pill">'+ELEVES.length+' affichés</span></h3><div class="anon" style="margin-bottom:12px">'+ICON.lock+'<div>Clique sur un pseudo pour voir sa fiche de progression — jamais son identité.</div></div><table><tr><th>Pseudo</th><th>Points</th><th>Réussite</th><th>Ligue</th><th></th></tr>'
+    +ELEVES.map(function(e){return '<tr class="link" onclick="openPseudo(\''+e[0]+'\')"><td style="font-weight:700;color:var(--pp)">'+e[0]+'</td><td style="font-weight:700">'+e[1]+'</td><td>'+e[2]+'</td><td><span class="pill">'+e[3]+'</span></td><td style="text-align:right;color:var(--ink3)">'+ICON.chev+'</td></tr>';}).join('')
   +'</table></div>';
+ },
+ fiche:function(){var ps=CURPSEUDO||'Soso';var e=ELEVES.filter(function(x){return x[0]===ps;})[0]||ELEVES[0];var mats=e[4].split(';').map(function(m){var x=m.split(',');return [x[0],parseInt(x[1])];});
+  var names=['Histoire','Géo','EMC','PSE'];
+  return '<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'pilotage\')">'+ICON.back+'</button><div><div class="sub">Terminale Bac Pro</div><div class="h1">'+ps+'</div></div></div></div>'
+  +'<div class="anon" style="margin-bottom:18px">'+ICON.lock+'<div>Fiche par <b>pseudo</b> uniquement. Deux plateformes séparées : impossible de remonter à l\'identité réelle depuis ici.</div></div>'
+  +'<div class="kpis" style="grid-template-columns:repeat(3,1fr)">'
+   +'<div class="kpi"><div class="lab">Points</div><div class="v">'+e[1]+'</div></div>'
+   +'<div class="kpi"><div class="lab">Réussite moyenne</div><div class="v">'+e[2]+'</div></div>'
+   +'<div class="kpi"><div class="lab">Ligue</div><div class="v" style="font-size:20px">'+e[3]+'</div></div>'
+  +'</div>'
+  +'<div class="grid2">'
+   +'<div class="card"><h3>Progression sur l\'année</h3><div class="chart">'+['S,30','O,42','N,38','D,55','J,60','F,72','M,82'].map(function(m){var x=m.split(',');return '<div class="bar"><i style="height:'+(x[1]*1.5)+'px"></i><span>'+x[0]+'</span></div>';}).join('')+'</div></div>'
+   +'<div class="card"><h3>Points par matière (tes matières)</h3>'+mats.map(function(m,i){return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:11px"><div style="width:64px;font-size:12px;font-weight:600">'+names[i]+'</div><div class="bar-mini" style="width:100%"><i style="width:'+m[1]+'%;background:'+m[0]+'"></i></div><div style="width:34px;text-align:right;font-weight:700;font-size:12px;color:var(--pp)">'+m[1]+'%</div></div>';}).join('')+'</div>'
+  +'</div>';
  },
  classes:function(){return ''
   +'<div class="topbar"><div><div class="h1">Mes classes</div><div class="sub">3 classes · 59 élèves</div></div><button class="btn sec">'+ICON.plus+' Créer une classe</button></div>'
-  +'<div class="grid2" style="grid-template-columns:repeat(3,1fr)">'+CLASSES.map(function(c){return '<div class="card"><h3>'+c[0]+'<span class="pill">'+c[3]+'</span></h3><div style="font-size:12.5px;color:var(--ink3)">'+c[1]+' élèves · '+c[2]+' pts générés</div><button class="btn sec" style="margin-top:14px;width:100%;justify-content:center">Ouvrir</button></div>';}).join('')+'</div>';
+  +'<div class="grid2" style="grid-template-columns:repeat(3,1fr)">'+CLASSES.map(function(c){return '<div class="card"><h3>'+c[0]+'<span class="pill">'+c[3]+'</span></h3><div style="font-size:12.5px;color:var(--ink3)">'+c[1]+' élèves · '+c[2]+' pts générés</div><button class="btn sec" style="margin-top:14px;width:100%;justify-content:center" onclick="go(\'pilotage\')">Ouvrir</button></div>';}).join('')+'</div>';
  },
- quiz:function(){return ''
-  +'<div class="topbar"><div><div class="h1">Constructeur de quiz</div><div class="sub">Le jeu des puissances · Terminale Bac Pro · Histoire</div></div><div style="display:flex;gap:8px"><button class="btn sec">Enregistrer le brouillon</button><button class="btn">Publier &amp; lancer</button></div></div>'
+ quizhub:function(){return ''
+  +'<div class="topbar"><div><div class="h1">Quiz &amp; challenges</div><div class="sub">Tous tes challenges, toutes classes</div></div><button class="btn" onclick="go(\'quizbuild\')">'+ICON.plus+' Nouveau quiz</button></div>'
+  +(DRAFTS.length?'<div class="card" style="margin-bottom:16px"><h3>Brouillons ('+DRAFTS.length+')</h3>'+DRAFTS.map(function(d){return '<div class="kbitem" style="margin-left:0" onclick="go(\'quizbuild\')"><div style="width:36px;height:36px;border-radius:10px;background:var(--ppbg);color:var(--pp);display:flex;align-items:center;justify-content:center">'+ICON.doc+'</div><div style="flex:1"><div style="font-weight:700;font-size:13.5px">'+d.t+'</div><div class="sub" style="margin:0">'+d.theme+' · brouillon · '+d.d+'</div></div><span style="color:var(--ink3)">'+ICON.chev+'</span></div>';}).join('')+'</div>':'')
+  +'<div class="card">'+[['asuivre','À suivre'],['encours','En cours'],['passe','Passés']].map(function(g){var items=CHALLENGES.filter(function(c){return c.s===g[0];});var open=KBOPEN[g[0]];return '<div class="kb" onclick="kbToggle(\''+g[0]+'\')"><div style="font-weight:700;font-size:14px">'+g[1]+' <span class="sub" style="margin:0">('+items.length+')</span></div><span style="color:var(--ink3);transform:rotate('+(open?'90deg':'0deg')+');display:inline-flex;transition:.2s">'+ICON.chev+'</span></div>'+(open?(items.length?items.map(function(c){var col=c.s==='encours'?'var(--gr)':(c.s==='passe'?'var(--ink3)':'var(--am)');return '<div class="kbitem" onclick="go(\'quizbuild\')"><div style="width:9px;height:9px;border-radius:50%;background:'+col+'"></div><div style="flex:1"><div style="font-weight:700;font-size:13.5px">'+c.t+'</div><div class="sub" style="margin:0">'+c.cl+' · '+c.d+(c.r?' · '+c.r:'')+'</div></div>'+(c.s==='passe'?'<span class="chip">Résultats</span>':'')+'</div>';}).join(''):'<div class="sub" style="margin:0 0 10px 10px">Aucun challenge.</div>'):'');}).join('')+'</div>';
+ },
+ quizbuild:function(){var sel=QUESTIONS.length;return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'quizhub\')">'+ICON.back+'</button><div><div class="h1">Nouveau quiz</div><div class="sub">Le jeu des puissances · Terminale Bac Pro · Histoire</div></div></div><div style="display:flex;gap:8px"><button class="btn sec" onclick="saveDraft()">Enregistrer le brouillon</button><button class="btn" onclick="publishQuiz()">Publier &amp; lancer</button></div></div>'
   +'<div class="editor">'
     +'<div>'
       +'<div class="card" style="margin-bottom:14px"><h3>Réglages</h3>'
-        +'<div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">NIVEAU</div><div style="display:flex;gap:6px;margin-bottom:12px"><span class="chip on">Terminale Bac Pro</span><span class="chip">1re Commerce</span><span class="chip">2de ASSP</span></div>'
-        +'<div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">MATIÈRE</div><div style="display:flex;gap:6px;margin-bottom:12px"><span class="chip on">Histoire</span><span class="chip">Géo</span><span class="chip">EMC</span><span class="chip">PSE</span></div>'
-        +'<div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">DIFFICULTÉ</div><div style="display:flex;gap:6px"><span class="chip">Facile</span><span class="chip on">Moyen</span><span class="chip">Difficile</span></div>'
+        +'<div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">NIVEAU</div><div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap"><span class="chip on" onclick="chipPick(this)">Terminale Bac Pro</span><span class="chip" onclick="chipPick(this)">1re Commerce</span><span class="chip" onclick="chipPick(this)">2de ASSP</span></div>'
+        +'<div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">MATIÈRE</div><div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap"><span class="chip on" onclick="chipPick(this)">Histoire</span><span class="chip" onclick="chipPick(this)">Géo</span><span class="chip" onclick="chipPick(this)">EMC</span><span class="chip" onclick="chipPick(this)">PSE</span></div>'
+        +'<div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">THÈME (SELON LE PROGRAMME)</div><div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap"><span class="chip on" onclick="chipPick(this)">Le jeu des puissances</span><span class="chip" onclick="chipPick(this)">La guerre froide</span><span class="chip" onclick="chipPick(this)">Mondialisation</span></div>'
+        +'<div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">DÉLAI PAR QUESTION</div><div style="display:flex;gap:6px"><span class="chip" onclick="chipPick(this)">10 s</span><span class="chip on" onclick="chipPick(this)">20 s</span><span class="chip" onclick="chipPick(this)">30 s</span></div>'
       +'</div>'
-      +'<div class="card"><h3>Ajouter des questions</h3><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">'
-        +'<div class="chip on" style="justify-content:center;padding:12px 6px;flex-direction:column;gap:4px">'+ICON.plus+'<span>Manuel</span></div>'
-        +'<div class="chip" style="justify-content:center;padding:12px 6px;flex-direction:column;gap:4px">'+ICON.list+'<span>Banque</span></div>'
-        +'<div class="chip" style="justify-content:center;padding:12px 6px;flex-direction:column;gap:4px">'+ICON.wand+'<span>IA</span></div>'
-      +'</div></div>'
+      +'<div class="card"><h3>Ajouter des questions</h3><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">'
+        +'<div class="chip" style="justify-content:center;padding:12px 6px;flex-direction:column;gap:4px" onclick="qAddManuel()">'+ICON.plus+'<span>Manuel</span></div>'
+        +'<div class="chip" style="justify-content:center;padding:12px 6px;flex-direction:column;gap:4px" onclick="go(\'quizbank\')">'+ICON.list+'<span>Banque</span></div>'
+        +'<div class="chip" style="justify-content:center;padding:12px 6px;flex-direction:column;gap:4px" onclick="qAddIA()">'+ICON.wand+'<span>IA</span></div>'
+      +'</div><div class="sub">La génération se fait depuis la banque (SQL du programme) ou via l\'API IA câblée ici.</div></div>'
     +'</div>'
     +'<div>'
-      +'<div class="card"><h3>Questions (2)</h3>'
-        +'<div class="qcard sel"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span class="pill" style="background:var(--grbg);color:var(--gr)">Facile</span><span class="pill">Validée</span></div><div style="font-weight:600;font-size:14px;margin-bottom:10px">En quelle année tombe le mur de Berlin ?</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><div class="tile-ans" style="background:#D63050">1961</div><div class="tile-ans" style="background:#0E9E6E">1989 '+ICON.check+'</div><div class="tile-ans" style="background:#1E6FCC">1991</div><div class="tile-ans" style="background:#C27C0A">1975</div></div></div>'
-        +'<div class="qcard"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span class="pill" style="background:#FBEEDA;color:var(--am)">Moyen</span><span class="pill" style="background:#FBEEDA;color:var(--am)">À valider</span></div><div style="font-weight:600;font-size:14px">Qui dirige l\'URSS pendant la crise de Cuba ?</div></div>'
+      +'<div class="card"><h3>Questions ('+QUESTIONS.length+')</h3>'
+        +QUESTIONS.map(function(qq,i){var cols=['#D63050','#0E9E6E','#1E6FCC','#C27C0A'];var dc=qq.diff==='Facile'?['var(--grbg)','var(--gr)']:(qq.diff==='Difficile'?['#FBE0E4','var(--re)']:['var(--ambg)','var(--am)']);
+          return '<div class="qcard'+(qq.valid?'':' sel')+'"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span class="pill" style="background:'+dc[0]+';color:'+dc[1]+';cursor:pointer" onclick="qDiff('+i+')">'+qq.diff+'</span>'+(qq.valid?'<span class="pill" style="background:var(--grbg);color:var(--gr)">Validée</span>':'<span class="pill" style="background:var(--ambg);color:var(--am)">À valider</span>')+'</div><div style="font-weight:600;font-size:14px;margin-bottom:10px">'+qq.q+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">'+qq.a.map(function(ans,j){return '<div class="tile-ans" style="background:'+cols[j%4]+'">'+ans+(qq.c===j?' '+ICON.check:'')+'</div>';}).join('')+'</div><div style="display:flex;gap:7px"><button class="chip'+(qq.valid?' on':'')+'" style="flex:1;justify-content:center" onclick="qValid('+i+')">'+(qq.valid?'Validée':'Valider')+'</button><button class="chip" style="color:var(--re)" onclick="qDel('+i+')">Supprimer</button></div></div>';}).join('')
       +'</div>'
     +'</div>'
   +'</div>';
  },
+ quizbank:function(){return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'quizbuild\')">'+ICON.back+'</button><div class="h1">Banque de questions</div></div></div>'
+  +'<div style="display:flex;gap:6px;margin-bottom:16px"><span class="chip on" onclick="chipPick(this)">Histoire</span><span class="chip" onclick="chipPick(this)">Géo</span><span class="chip" onclick="chipPick(this)">EMC</span><span class="chip" onclick="chipPick(this)">PSE</span></div>'
+  +'<div class="card">'+BANK.map(function(b,i){return '<div class="row"><div style="flex:1"><div style="font-weight:600;font-size:13.5px">'+b.q+'</div><div class="sub" style="margin:2px 0 0">réponse : '+b.a[b.c]+'</div></div><button class="chip on" onclick="qAddBank('+i+')">Ajouter</button></div>';}).join('')+'</div>';
+ },
  cours:function(){return ''
   +'<div class="topbar"><div><div class="h1">Mes cours</div><div class="sub">Contenus liés à tes fiches de révision</div></div><button class="btn">'+ICON.plus+' Ajouter un cours</button></div>'
-  +'<div class="grid2" style="grid-template-columns:1fr 1fr">'+COURS.map(function(c){return '<div class="card"><h3>'+c[0]+'<span class="pill">'+c[1]+'</span></h3><div style="font-size:12.5px;color:var(--ink3);margin-bottom:12px">'+c[3]+'</div><div class="dz">'+ICON.doc+' Glisser un document (PDF, image, schéma…)</div><button class="btn sec" style="margin-top:12px;width:100%;justify-content:center">'+ICON.wand+' Résumer avec l\'IA</button></div>';}).join('')+'</div>';
+  +'<div class="grid2" style="grid-template-columns:1fr 1fr">'+COURS.map(function(c){return '<div class="card"><h3>'+c[0]+'<span class="pill">'+c[1]+'</span></h3><div style="font-size:12.5px;color:var(--ink3);margin-bottom:12px">'+c[3]+'</div><div class="dz">'+ICON.doc+' Glisser un document (PDF, image, schéma…)</div><button class="btn sec" style="margin-top:12px;width:100%;justify-content:center" onclick="toast(\'Résumé IA généré\')">'+ICON.wand+' Résumer avec l\'IA</button></div>';}).join('')+'</div>';
  },
  cagnotte:function(){return ''
   +'<div class="topbar"><div><div class="h1">Ma cagnotte</div><div class="sub">1 500 pts restant sur le quota de l\'année</div></div></div>'
   +'<div class="grid2" style="grid-template-columns:1fr 1fr">'
-   +'<div class="card"><h3>Quota par classe</h3>'+CLASSES.map(function(c){return '<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:6px"><span>'+c[0]+'</span><span style="color:var(--pp)">'+c[2]%500+' / 500</span></div><input type="range" min="0" max="500" value="'+(c[2]%500)+'" style="width:100%;accent-color:var(--pp)"></div>';}).join('')+'</div>'
-   +'<div class="card"><h3>Récompenses par défaut</h3><div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">POINTS PAR BONNE RÉPONSE</div><input type="range" min="5" max="20" value="10" style="width:100%;accent-color:var(--pp);margin-bottom:14px"><div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">ÉCART MAX (HOMOGÉNÉITÉ)</div><input type="range" min="0" max="100" value="25" style="width:100%;accent-color:var(--pp)"></div>'
+   +'<div class="card"><h3>Quota par classe</h3>'+CLASSES.map(function(c,i){return '<div style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:6px"><span>'+c[0]+'</span><span style="color:var(--pp)" id="cgv'+i+'">'+c[4]+' / 500</span></div><input class="slider" type="range" min="0" max="500" step="10" value="'+c[4]+'" oninput="document.getElementById(\'cgv'+i+'\').textContent=this.value+\' / 500\'"></div>';}).join('')+'</div>'
+   +'<div class="card"><h3>Récompenses par défaut</h3>'
+     +'<div style="font-size:12px;font-weight:600;margin-bottom:2px">Élève · par question</div>'
+     +'<div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;margin:8px 0 4px"><span>Points par bonne réponse</span><span style="color:var(--pp)" id="rv1">10 pts</span></div><input class="slider" type="range" min="5" max="20" step="5" value="10" oninput="document.getElementById(\'rv1\').textContent=this.value+\' pts\'">'
+     +'<div style="display:flex;gap:6px;margin:10px 0 16px"><span class="chip on" onclick="chipPick(this)">Réussite globale</span><span class="chip" onclick="chipPick(this)">Réussite partielle</span></div>'
+     +'<div style="font-size:12px;font-weight:600;margin-bottom:2px">Classe · homogénéité &amp; progression</div>'
+     +'<div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;margin:8px 0 4px"><span>Écart max (homogénéité)</span><span style="color:var(--pp)" id="rv2">25 %</span></div><input class="slider" type="range" min="0" max="100" step="5" value="25" oninput="document.getElementById(\'rv2\').textContent=this.value+\' %\'">'
+     +'<div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;margin:10px 0 4px"><span>Bonus progression</span><span style="color:var(--pp)" id="rv3">15 %</span></div><input class="slider" type="range" min="0" max="50" step="5" value="15" oninput="document.getElementById(\'rv3\').textContent=this.value+\' %\'">'
+     +'<div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;margin:10px 0 4px"><span>Malus régression</span><span style="color:var(--pp)" id="rv4">10 %</span></div><input class="slider" type="range" min="0" max="50" step="5" value="10" oninput="document.getElementById(\'rv4\').textContent=this.value+\' %\'">'
+     +'<button class="btn" style="margin-top:16px" onclick="toast(\'Récompenses enregistrées\')">Enregistrer</button>'
+   +'</div>'
   +'</div>';
  },
  profil:function(){return ''
@@ -164,7 +229,7 @@ var PAGES={
  }
 };
 function render(){document.getElementById('main').innerHTML=(PAGES[PAGE]||PAGES.pilotage)();}
-render();
+go('pilotage');
 </script>
 </body>
 </html>
