@@ -85,7 +85,7 @@ var ICON={
 function qrSvg(){var r='';for(var y=0;y<11;y++)for(var x=0;x<11;x++){if((x*y+x+y)%3===0||(x<3&&y<3)||(x>7&&y<3)||(x<3&&y>7))r+='<rect x="'+(x*10)+'" y="'+(y*10)+'" width="10" height="10" fill="#111"/>';}return '<svg viewBox="0 0 110 110" style="width:120px;height:120px">'+r+'</svg>';}
 
 var scr=document.getElementById('screen'), tb=document.getElementById('tabbar');
-var TABS=[['classes','Classes','school'],['cagnotte','Cagnotte','coin'],['profil','Profil','user']];
+var TABS=[['classes','Classes','school'],['challenges','Challenges','defi'],['cagnotte','Cagnotte','coin'],['profil','Profil','user']];
 var current='welcome';
 function nav(s){current=s;render();scr.scrollTop=0;}
 
@@ -114,7 +114,7 @@ var SCREENS={
    '<div class="card" style="display:flex;justify-content:space-between;align-items:center"><div><div class="lab">Points générés par la classe</div><div class="big">1 240</div></div><div style="text-align:right"><div class="lab">Élèves</div><div style="font-size:22px;font-weight:800">19</div></div></div>'+
    '<button class="btn" style="margin:2px 0 4px" onclick="nav(\'quizbuild\')">'+ICON.plus+' Créer un quiz pour la classe</button>'+
       '<div class="h2">Challenges de la classe</div>'+
-   [['asuivre','\u00c0 suivre'],['encours','En cours'],['passe','Pass\u00e9s']].map(function(g){var items=CHALLENGES.filter(function(c){return c.s===g[0];});var open=KBOPEN[g[0]];return '<div onclick="kbToggle(\''+g[0]+'\')" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--surf);border:1px solid var(--line);border-radius:12px;margin-bottom:8px;cursor:pointer"><div style="font-weight:700;font-size:14px">'+g[1]+' <span class="mut" style="font-weight:600">('+items.length+')</span></div><span style="color:var(--ink3);display:inline-flex;transition:.2s;transform:rotate('+(open?'90deg':'0deg')+')">'+ICON.chev+'</span></div>'+(open?(items.length?items.map(function(c){var col=c.s==='encours'?'var(--gr)':(c.s==='passe'?'var(--ink3)':'var(--am)');return '<div class="card" style="display:flex;align-items:center;gap:11px;padding:12px 13px;margin:0 0 8px 8px"><div style="width:8px;height:8px;border-radius:50%;background:'+col+';flex-shrink:0"></div><div style="flex:1"><div style="font-weight:700;font-size:14px">'+c.t+'</div><div class="mut">'+c.d+(c.r?' \u00b7 '+c.r:'')+'</div></div>'+(c.s==='passe'?'<button class="chip">R\u00e9sultats</button>':'')+'</div>';}).join(''):'<div class="mut" style="margin:0 0 10px 8px">Aucun challenge.</div>'):'');}).join('')+
+   [['asuivre','\u00c0 suivre'],['encours','En cours'],['passe','Pass\u00e9s']].map(function(g){var items=CHALLENGES.filter(function(c){return c.s===g[0];});var open=KBOPEN[g[0]];return '<div onclick="kbToggle(\''+g[0]+'\')" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--surf);border:1px solid var(--line);border-radius:12px;margin-bottom:8px;cursor:pointer"><div style="font-weight:700;font-size:14px">'+g[1]+' <span class="mut" style="font-weight:600">('+items.length+')</span></div><span style="color:var(--ink3);display:inline-flex;transition:.2s;transform:rotate('+(open?'90deg':'0deg')+')">'+ICON.chev+'</span></div>'+(open?(items.length?items.map(function(c){var col=c.s==='encours'?'var(--gr)':(c.s==='passe'?'var(--ink3)':'var(--am)');return '<div class="card" data-t="'+c.t+'" onclick="openChalEl(this)" style="display:flex;align-items:center;gap:11px;padding:12px 13px;margin:0 0 8px 8px;cursor:pointer"><div style="width:8px;height:8px;border-radius:50%;background:'+col+';flex-shrink:0"></div><div style="flex:1"><div style="font-weight:700;font-size:14px">'+c.t+'</div><div class="mut">'+c.d+(c.r?' \u00b7 '+c.r:'')+'</div></div>'+(c.s==='passe'?'<button class="chip">R\u00e9sultats</button>':'')+'</div>';}).join(''):'<div class="mut" style="margin:0 0 10px 8px">Aucun challenge.</div>'):'');}).join('')+
    '<div class="h2" style="margin-top:6px">Élèves &amp; points individuels</div>'+
    ELEVES.map(function(e){return '<div class="row" style="cursor:pointer" onclick="nav(\'eleve\')"><div class="av" style="background:'+e[2]+'">'+e[0][0].toUpperCase()+'</div><div style="flex:1"><div style="font-weight:700;font-size:15px">'+e[0]+'</div><div class="mut">pseudo choisi par l\'élève</div></div><div style="font-weight:800;color:var(--pp);margin-right:8px">'+e[1]+'</div><span class="go">'+ICON.chev+'</span></div>';}).join('')+
    '<button class="btn" style="margin-top:14px" onclick="nav(\'addeleve\')">'+ICON.plus+' Ajouter un élève (pseudo)</button>';
@@ -127,11 +127,12 @@ var SCREENS={
    '<button class="btn sec" style="margin-top:10px" onclick="nav(\'classe\')">Annuler</button>';
  },
  eleve:function(){return '<div class="top"><button class="back" onclick="nav(\'classe\')">'+ICON.back+'</button><div><div class="sub">Terminale Bac Pro</div><div class="h1" style="font-size:22px">Soso</div></div></div>'+
-   '<div class="card" style="text-align:center"><div class="lab">Points de cet élève</div><div class="big" style="font-size:38px">512</div><div class="mut">2e de la classe</div></div>'+
-   '<div class="anon">'+ICON.lock+'<div class="d">Aucune identité, aucune coordonnée — seulement ce pseudo.</div></div>'+
-   '<div class="h2">Points par matière</div>'+
-   [['Histoire',82,'#D63050'],['Géo',64,'#1E6FCC'],['EMC',74,'#C27C0A'],['PSE',58,'#0E9E6E']].map(function(m){return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="width:64px;font-size:12px;font-weight:600">'+m[0]+'</div><div class="bar"><i style="width:'+m[1]+'%;background:'+m[2]+'"></i></div><div style="width:34px;text-align:right;font-weight:700;font-size:12px;color:var(--pp)">'+m[1]+'%</div></div>';}).join('')+
-   '<button class="btn" style="margin-top:14px" onclick="nav(\'qrpoints\')">'+ICON.qr+' Remettre des points (QR)</button>';
+   '<div class="card" style="text-align:center"><div class="lab">Points de cet \u00e9l\u00e8ve</div><div class="big" style="font-size:38px">512</div><div class="mut">2e de la classe</div></div>'+
+   '<div class="anon">'+ICON.lock+'<div class="d">Points attribu\u00e9s <b>automatiquement par pseudo</b>. Tu ne vois cet \u00e9l\u00e8ve que dans <b>ta classe</b> et <b>tes mati\u00e8res</b> \u2014 jamais son identit\u00e9.</div></div>'+
+   '<div class="h2">Progression sur l\'ann\u00e9e</div>'+
+   '<div class="card"><div style="display:flex;align-items:flex-end;gap:8px;height:80px">'+[['S',30],['O',42],['N',38],['D',55],['J',60],['F',72],['M',82]].map(function(m){return '<div style="flex:1;text-align:center"><div style="height:'+m[1]+'px;background:linear-gradient(180deg,var(--pp2),var(--pp));border-radius:6px 6px 0 0"></div><div class="mut" style="margin-top:4px;font-size:10px">'+m[0]+'</div></div>';}).join('')+'</div><div class="mut" style="text-align:center;margin-top:8px">En progression continue \u2014 tire la classe vers le haut.</div></div>'+
+   '<div class="h2">Points par mati\u00e8re</div>'+
+   [['Histoire',82,'#D63050'],['G\u00e9o',64,'#1E6FCC'],['EMC',74,'#C27C0A'],['PSE',58,'#0E9E6E']].map(function(m){return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><div style="width:64px;font-size:12px;font-weight:600">'+m[0]+'</div><div class="bar"><i style="width:'+m[1]+'%;background:'+m[2]+'"></i></div><div style="width:34px;text-align:right;font-weight:700;font-size:12px;color:var(--pp)">'+m[1]+'%</div></div>';}).join('');
  },
  qrpoints:function(){return '<div class="top"><button class="back" onclick="nav(\'eleve\')">'+ICON.back+'</button><div class="h1">Remise de points</div></div>'+
    '<div class="card" style="text-align:center;padding:20px"><div class="lab">À remettre au pseudo Soso</div><div class="big" style="margin:6px 0 14px">+50 pts</div><div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;display:inline-block">'+qrSvg()+'</div><div class="mut" style="margin-top:10px">L\'élève scanne ce QR pour créditer ses points.</div></div>'+
@@ -232,6 +233,30 @@ var SCREENS={
    '<div class="anon">'+ICON.lock+'<div class="d">L\'\u00e9l\u00e8ve choisit son pseudo lui-m\u00eame. Toi, tu ne vois que les pseudos \u2014 jamais son identit\u00e9.</div></div>'+
    '<button class="btn sec" onclick="nav(\'createclasse\')">Termin\u00e9</button>';
  },
+ challenges:function(){return '<div class="top"><div class="h1">Mes challenges</div></div>'+
+   '<div class="mut" style="margin-bottom:12px">Tous tes challenges, toutes classes. Clique pour entrer.</div>'+
+   [['asuivre','\u00c0 suivre'],['encours','En cours'],['passe','Pass\u00e9s']].map(function(g){var items=CHALLENGES.filter(function(c){return c.s===g[0];});if(!items.length)return '';return '<div class="lab" style="margin:8px 0 6px">'+g[1]+'</div>'+items.map(function(c){var col=c.s==='encours'?'var(--gr)':(c.s==='passe'?'var(--ink3)':'var(--am)');return '<div class="card" data-t="'+c.t+'" onclick="openChalEl(this)" style="display:flex;align-items:center;gap:11px;padding:12px 13px;cursor:pointer"><div style="width:9px;height:9px;border-radius:50%;background:'+col+';flex-shrink:0"></div><div style="flex:1"><div style="font-weight:700;font-size:14px">'+c.t+'</div><div class="mut">'+c.cl+' \u00b7 '+c.d+(c.r?' \u00b7 '+c.r:'')+'</div></div><span class="go">'+ICON.chev+'</span></div>';}).join('');}).join('');
+ },
+ chaldetail:function(){var c=CHALLENGES.filter(function(x){return x.t===CURCHAL;})[0]||CHALLENGES[0];var cols=['#B87A10','#6B7280','#B87A5A'];return '<div class="top"><button class="back" onclick="nav(\'challenges\')">'+ICON.back+'</button><div><div class="sub">'+c.cl+' \u00b7 '+c.d+'</div><div class="h1" style="font-size:20px">'+c.t+'</div></div></div>'+
+   (c.s==='passe'?
+     '<div class="card" style="display:flex;justify-content:space-between;text-align:center"><div style="flex:1"><div class="lab">R\u00e9ussite</div><div class="big" style="font-size:26px">72%</div></div><div style="flex:1"><div class="lab">\u00c9cart</div><div class="big" style="font-size:26px">18</div></div></div>'+
+     '<div class="h2">Classement (par pseudo)</div>'+
+     [['Soso','4/5','512'],['MarcX','3/5','300'],['Lilou','3/5','395'],['Nadir06','2/5','280']].map(function(r,idx){var med=idx<3?cols[idx]:'var(--ppbg)';return '<div class="row"><div style="width:26px;height:26px;border-radius:50%;background:'+med+';color:'+(idx<3?'#fff':'var(--pp)')+';display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">'+(idx+1)+'</div><div class="av">'+r[0][0]+'</div><div style="flex:1"><div style="font-weight:700;font-size:14px">'+r[0]+'</div><div class="mut">'+r[1]+' bonnes r\u00e9ponses</div></div><b style="color:var(--pp)">'+r[2]+'</b></div>';}).join('')+
+     '<div class="anon" style="margin-top:12px">'+ICON.lock+'<div class="d">Les points sont attribu\u00e9s <b>automatiquement par pseudo</b> selon les r\u00e9sultats \u2014 pas de remise individuelle.</div></div>'+
+     '<button class="btn" style="margin-top:2px" onclick="nav(\'chalqr\')">'+ICON.qr+' Distribuer les points (QR)</button>'
+   :c.s==='encours'?
+     '<div class="card" style="text-align:center"><span class="pill" style="background:var(--grbg);color:var(--gr)">En cours</span><div class="mut" style="margin-top:8px">La partie est lanc\u00e9e. Suis le classement en direct.</div></div>'+
+     '<button class="btn" onclick="nav(\'quizlaunch\')">Voir en direct</button>'
+   :
+     '<div class="card" style="text-align:center"><span class="pill" style="background:#FBEEDA;color:var(--am)">\u00c0 suivre</span><div class="mut" style="margin-top:8px">Ce challenge est pr\u00eat, pas encore lanc\u00e9.</div></div>'+
+     '<button class="btn" onclick="nav(\'quizlaunch\')">Lancer maintenant</button>');
+ },
+ chalqr:function(){return '<div class="top"><button class="back" onclick="nav(\'chaldetail\')">'+ICON.back+'</button><div class="h1">Distribution des points</div></div>'+
+   '<div class="mut" style="margin-bottom:12px">Un QR par pseudo gagnant. Seul le pseudo concern\u00e9 peut cr\u00e9diter ses points \u2014 aucun vol possible.</div>'+
+   '<div class="card" style="text-align:center;padding:14px"><div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;display:inline-block">'+qrSvg()+'</div><div class="mut" style="margin-top:8px">Affiche ces QR : chaque \u00e9l\u00e8ve flashe le sien.</div></div>'+
+   [['Soso','+50'],['MarcX','+30'],['Lilou','+30'],['Nadir06','+20']].map(function(r){return '<div class="row" style="padding:9px 0"><div class="av">'+r[0][0]+'</div><div style="flex:1;font-weight:700;font-size:14px">'+r[0]+'</div><b style="color:var(--gr)">'+r[1]+'</b></div>';}).join('')+
+   '<button class="btn" style="margin-top:10px" onclick="toast(\'QR de distribution g\\u00e9n\\u00e9r\\u00e9s\');nav(\'chaldetail\')">Terminer</button>';
+ },
  cagnotte:function(){return '<div class="top"><div class="h1">Ma cagnotte</div></div>'+
    '<div class="card" style="text-align:center"><div class="lab">Points restant \u00e0 distribuer</div><div class="big" style="font-size:38px">1 500</div><div class="mut">quota de l\'ann\u00e9e \u00b7 r\u00e9gule par classe</div></div>'+
    '<div class="h2">R\u00e9gule par classe</div>'+
@@ -316,8 +341,11 @@ function eqUpd(el){document.getElementById(el.dataset.tgt).textContent=el.value+
 
 function qBank(i){var b=BANK[i];QUESTIONS.push({q:b.q,a:b.a.slice(),c:b.c,valid:false});nav("quizbuild");}
 function addClasse(){var n=(document.getElementById("newclassnom")||{}).value||"Nouvelle classe";CLASSES.push([n,0,0]);nav("classes");}
-var CHALLENGES=[{t:"La guerre froide",d:"5 mars",s:"passe",r:"72% de réussite · écart 18"},{t:"Le jeu des puissances",d:"12 mars",s:"encours",r:""},{t:"Mondialisation",d:"20 mars",s:"asuivre",r:""}];
-function publishQuiz(){CHALLENGES.unshift({t:"Le jeu des puissances",d:"aujourd'hui",s:"encours",r:""});nav("quizlaunch");}
+var CHALLENGES=[{t:"La guerre froide",cl:"Terminale Bac Pro",d:"5 mars",s:"passe",r:"72% de réussite · écart 18"},{t:"Le jeu des puissances",cl:"Terminale Bac Pro",d:"12 mars",s:"encours",r:""},{t:"Mondialisation",cl:"Terminale Bac Pro",d:"20 mars",s:"asuivre",r:""}];
+var CURCHAL=null;
+function openChal(t){CURCHAL=t;nav("chaldetail");}
+function openChalEl(el){openChal(el.dataset.t);}
+function publishQuiz(){CHALLENGES.unshift({t:"Le jeu des puissances",cl:"Terminale Bac Pro",d:"aujourd'hui",s:"encours",r:""});nav("quizlaunch");}
 function addPseudo(){var ps=(document.getElementById("newpseudo")||{}).value||("\u00c9l\u00e8ve "+(ELEVES.length+1));ELEVES.push([ps,0,"#534AB7"]);nav("classe");}
 function iaGen(){QUESTIONS=[{q:"Quel événement marque le début de la guerre froide ?",a:["Doctrine Truman","Chute du mur","Crise de Cuba","Plan Marshall"],c:0,valid:false},{q:"Que symbolise le rideau de fer ?",a:["La partition de l'Europe","L'ONU","La décolonisation","L'OTAN"],c:0,valid:false},{q:"En quelle année a lieu la crise de Cuba ?",a:["1949","1962","1975","1989"],c:1,valid:false},{q:"Quelle alliance regroupe le bloc de l'Est ?",a:["OTAN","Pacte de Varsovie","ONU","CEE"],c:1,valid:false},{q:"Que désigne la coexistence pacifique ?",a:["Une détente relative","Une guerre ouverte","La fin de l'URSS","Un traité de paix"],c:0,valid:false}];nav("quizbuild");}
 function chipPick(el){var pr=el.parentNode;pr.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on');});el.classList.add('on');}
@@ -325,7 +353,7 @@ function render(){
   scr.innerHTML=(SCREENS[current]||SCREENS.welcome)();
   tb.style.display = current==='welcome' ? 'none' : 'flex';
   tb.innerHTML='';
-  var map={classes:'classes',classe:'classes',addeleve:'classes',eleve:'classes',qrpoints:'classes',quizbuild:'classes',quizia:'classes',quizlaunch:'classes',quizedit:'classes',quizbanque:'classes',quizpreview:'classes',createclasse:'classes',qrinscription:'classes',addmethod:'classes',cagnotte:'cagnotte',profil:'profil',profinfos:'profil',etablissements:'profil',matieres:'profil',jeuparams:'profil'};
+  var map={classes:'classes',classe:'classes',addeleve:'classes',eleve:'classes',qrpoints:'classes',challenges:'challenges',chaldetail:'challenges',chalqr:'challenges',quizbuild:'classes',quizia:'classes',quizlaunch:'classes',quizedit:'classes',quizbanque:'classes',quizpreview:'classes',createclasse:'classes',qrinscription:'classes',addmethod:'classes',cagnotte:'cagnotte',profil:'profil',profinfos:'profil',etablissements:'profil',matieres:'profil',jeuparams:'profil'};
   TABS.forEach(function(t){var b=document.createElement('button');b.className=(map[current]===t[0])?'on':'';b.innerHTML=ICON[t[2]]+'<span>'+t[1]+'</span>';b.onclick=function(){nav(t[0]);};tb.appendChild(b);});
 }
 render();
