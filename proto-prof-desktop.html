@@ -10,18 +10,18 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
 svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.12em}
-.app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
-.side{background:var(--surf);border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
-.brand{display:flex;align-items:center;gap:10px;padding:0 6px 22px}
-.brand .mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#5B52C9,#7F77DD);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
-.brand .name{font-weight:800;font-size:15px}
-.etabsel{display:flex;align-items:center;justify-content:space-between;background:var(--ppbg);border:1px solid var(--ppln);border-radius:10px;padding:9px 11px;margin:0 6px 16px;cursor:pointer}
+.app{display:grid;grid-template-columns:216px 1fr;min-height:100vh}
+.side{background:var(--surf);border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:8px;padding:0 4px 16px}
+.brand .mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#5B52C9,#7F77DD);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;font-size:15px}
+.brand .name{font-weight:800;font-size:13.5px}
+.etabsel{display:flex;align-items:center;justify-content:space-between;background:var(--ppbg);border:1px solid var(--ppln);border-radius:9px;padding:7px 10px;margin:0 4px 12px;cursor:pointer;font-size:12px}
 .etabsel .n{font-weight:700;font-size:12.5px;color:var(--pp)}
 .etabmenu{position:absolute;left:16px;top:120px;width:216px;background:var(--surf);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 30px -10px rgba(0,0,0,.2);z-index:40;padding:8px}
 .etabmenu .it{padding:9px 10px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between}
 .etabmenu .it:hover{background:var(--bg)}
 .etabmenu hr{border:0;border-top:1px solid var(--line);margin:6px 0}
-.nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:var(--ink2);text-decoration:none;font-weight:600;font-size:13.5px;margin-bottom:2px;cursor:pointer}
+.nav a{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;color:var(--ink2);text-decoration:none;font-weight:600;font-size:12.5px;margin-bottom:1px;cursor:pointer}
 .nav a.on{background:var(--ppbg);color:var(--pp)}
 .nav a:hover{background:var(--bg)}
 .nav .sec{font-size:10px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px 12px}
@@ -71,6 +71,16 @@ tr.link:hover td{background:var(--bg)}
 .clist .ic{width:38px;height:38px;border-radius:10px;background:var(--ppbg);color:var(--pp);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
 .kbd{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--surf);border:1px solid var(--line);border-radius:11px;margin-bottom:8px;cursor:pointer}
 .kbd .it{display:flex;align-items:center;gap:11px;padding:11px 13px;margin:0 0 8px 12px;border:1px solid var(--line);border-radius:11px;cursor:pointer}
+.kbd .it:hover{background:var(--bg)}
+.reglagesgrp{padding:9px 0;border-top:1px solid var(--line)}
+.reglagesgrp:first-child{border-top:0;padding-top:0}
+.reglagesgrp .lab2{font-size:10px;font-weight:700;color:var(--ink3);letter-spacing:.03em;margin-bottom:7px}
+.chipsm{padding:5px 11px!important;font-size:12px!important}
+.eqmini{margin-bottom:10px}
+.eqmini .hd{display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin-bottom:4px}
+.eqmini .hd b{color:var(--pp)}
+.tl{display:flex;gap:10px;align-items:flex-start;padding:9px 0}
+.tl .dot{width:9px;height:9px;border-radius:50%;margin-top:4px;flex-shrink:0}
 .kbd .it:hover{background:var(--bg)}
 .field label{font-size:12px;font-weight:600;color:var(--ink2);display:block;margin-bottom:6px}
 .field input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px;font-family:inherit;font-size:14px}
@@ -205,11 +215,15 @@ var PAGES={
   +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'quizhub\')">'+ICON.back+'</button><div><div class="h1">Nouveau quiz</div><div class="sub">Le jeu des puissances · Terminale Bac Pro · Histoire</div></div></div><div style="display:flex;gap:8px"><button class="btn sec" onclick="saveDraft()">Enregistrer le brouillon</button><button class="btn" onclick="publishQuiz()">Publier &amp; lancer</button></div></div>'
   +'<div class="editor">'
     +'<div>'
-      +'<div class="card" style="margin-bottom:14px"><h3>Réglages</h3>'
-        +[['NIVEAU',['Terminale Bac Pro','1re Commerce','2de ASSP'],0],['MATIÈRE',['Histoire','Géo','EMC','PSE'],0],['THÈME (SELON LE PROGRAMME)',['Le jeu des puissances','La guerre froide','Mondialisation'],0],['DÉLAI PAR QUESTION',['10 s','20 s','30 s'],1]].map(function(g,gi){return '<div style="padding:12px 0;border-top:'+(gi===0?'0':'1px solid var(--line)')+'"><div style="font-size:10.5px;font-weight:700;color:var(--ink3);margin-bottom:8px;letter-spacing:.03em">'+g[0]+'</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+g[1].map(function(v,vi){return '<span class="chip'+(vi===g[2]?' on':'')+'" onclick="chipPick(this)">'+v+'</span>';}).join('')+'</div></div>';}).join('')
+      +'<div class="card" style="margin-bottom:14px;padding:16px 18px"><h3 style="margin-bottom:4px">Réglages</h3>'
+        +[['Niveau',['Terminale Bac Pro','1re Commerce','2de ASSP'],0],['Matière',['Histoire','Géo','EMC','PSE'],0],['Thème',['Le jeu des puissances','La guerre froide','Mondialisation'],0],['Délai / question',['10 s','20 s','30 s'],1]].map(function(g){return '<div class="reglagesgrp"><div class="lab2">'+g[0]+'</div><div style="display:flex;gap:5px;flex-wrap:wrap">'+g[1].map(function(v,vi){return '<span class="chip chipsm'+(vi===g[2]?' on':'')+'" onclick="chipPick(this)">'+v+'</span>';}).join('')+'</div></div>';}).join('')
       +'</div>'
-      +'<div class="card" style="margin-bottom:14px"><h3>Points attribu\u00e9s</h3><div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)"><span style="font-size:12.5px;font-weight:600">Facile</span><span style="font-weight:800;color:var(--gr)">+5 pts</span></div><div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)"><span style="font-size:12.5px;font-weight:600">Moyen</span><span style="font-weight:800;color:var(--am)">+10 pts</span></div><div style="display:flex;justify-content:space-between;padding:7px 0"><span style="font-size:12.5px;font-weight:600">Difficile</span><span style="font-weight:800;color:var(--re)">+15 pts</span></div><div class="sub" style="margin-top:8px">R\u00e9glable dans Cagnotte \u2192 R\u00e9compenses par d\u00e9faut.</div></div>'
-      +'<div class="card" style="margin-bottom:14px"><h3>\u00c9l\u00e8ves inscrits<span class="pill">'+ELEVES.length+'</span></h3>'+ELEVES.map(function(e){return '<div class="row" style="padding:8px 0"><div class="av" style="width:26px;height:26px;font-size:11px">'+e[0][0]+'</div><div style="flex:1;font-weight:600;font-size:12.5px">'+e[0]+'</div><span class="pill">pr\u00eat</span></div>';}).join('')+'</div>'
+      +'<div class="card" style="margin-bottom:14px;padding:16px 18px"><h3>Points de ce quiz<span class="chip" style="font-size:10.5px;padding:4px 9px" onclick="toast(\'Bascul\u00e9 sur les valeurs par d\u00e9faut\')">R\u00e9initialiser</span></h3>'
+        +[['Facile',5,'var(--gr)'],['Moyen',10,'var(--am)'],['Difficile',15,'var(--re)']].map(function(d,i){return '<div class="eqmini"><div class="hd"><span>'+d[0]+'</span><b id="qpv'+i+'" style="color:'+d[2]+'">+'+d[1]+' pts</b></div><input class="slider" type="range" min="0" max="30" step="1" value="'+d[1]+'" oninput="document.getElementById(\'qpv'+i+'\').textContent=\'+\'+this.value+\' pts\'"></div>';}).join('')
+        +'<div class="sub">Sp\u00e9cifique \u00e0 ce quiz \u2014 n\u2019affecte pas les autres.</div></div>'
+      +'<div class="card" style="margin-bottom:14px;padding:16px 18px"><h3>Suivi de ce quiz</h3>'
+        +[['Brouillon enregistr\u00e9','18 mars','var(--am)',true],['Publi\u00e9 &amp; lanc\u00e9','\u2014','var(--gr)',false],['Cl\u00f4tur\u00e9 (r\u00e9sultats)','\u2014','var(--ink3)',false]].map(function(t){return '<div class="tl"><div class="dot" style="background:'+t[2]+';opacity:'+(t[3]?1:.35)+'"></div><div><div style="font-weight:600;font-size:12.5px;opacity:'+(t[3]?1:.5)+'">'+t[0]+'</div><div class="sub" style="margin:0">'+t[1]+'</div></div></div>';}).join('')+'</div>'
+      +'<div class="card" style="padding:16px 18px"><h3>\u00c9l\u00e8ves inscrits<span class="pill">'+ELEVES.length+'</span></h3>'+ELEVES.map(function(e){return '<div class="row" style="padding:7px 0"><div class="av" style="width:24px;height:24px;font-size:10.5px">'+e[0][0]+'</div><div style="flex:1;font-weight:600;font-size:12px">'+e[0]+'</div><span class="pill" style="font-size:10px;padding:3px 8px">pr\u00eat</span></div>';}).join('')+'</div>'
       +'<div class="card"><h3>Ajouter des questions</h3><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">'
         +'<div class="chip" style="justify-content:center;padding:12px 6px;flex-direction:column;gap:4px" onclick="qAddManuel()">'+ICON.plus+'<span>Manuel</span></div>'
         +'<div class="chip" style="justify-content:center;padding:12px 6px;flex-direction:column;gap:4px" onclick="go(\'quizbank\')">'+ICON.list+'<span>Banque</span></div>'
