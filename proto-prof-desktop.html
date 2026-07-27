@@ -64,6 +64,14 @@ tr.link:hover td{background:var(--bg)}
 .tile-ans{border-radius:8px;padding:9px;font-size:12.5px;font-weight:700;display:flex;justify-content:space-between;color:#fff}
 .dz{border:1.5px dashed var(--ppln);border-radius:12px;padding:22px;text-align:center;color:var(--pp);font-weight:600;font-size:13px;cursor:pointer;background:var(--ppbg)}
 .anon{display:flex;gap:10px;background:var(--ppbg);border-radius:10px;padding:11px 13px;font-size:12.5px;color:var(--pp);font-weight:600;align-items:flex-start}
+.clist{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surf)}
+.clist .grp{padding:10px 16px;background:var(--bg);font-size:11px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
+.clist .it{display:flex;align-items:center;gap:14px;padding:14px 16px;border-top:1px solid var(--line);cursor:pointer}
+.clist .it:hover{background:var(--bg)}
+.clist .ic{width:38px;height:38px;border-radius:10px;background:var(--ppbg);color:var(--pp);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.kbd{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--surf);border:1px solid var(--line);border-radius:11px;margin-bottom:8px;cursor:pointer}
+.kbd .it{display:flex;align-items:center;gap:11px;padding:11px 13px;margin:0 0 8px 12px;border:1px solid var(--line);border-radius:11px;cursor:pointer}
+.kbd .it:hover{background:var(--bg)}
 .field label{font-size:12px;font-weight:600;color:var(--ink2);display:block;margin-bottom:6px}
 .field input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px;font-family:inherit;font-size:14px}
 .kb{display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:var(--surf);border:1px solid var(--line);border-radius:11px;margin-bottom:8px;cursor:pointer}
@@ -104,7 +112,8 @@ var ICON={
  doc:'<svg class="i" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',
  chev:'<svg class="i" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>',
  back:'<svg class="i" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>',
- qr:'<svg class="i" viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/></svg>'
+ qr:'<svg class="i" viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/></svg>',
+ school:'<svg class="i" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-4h6v4M9 12h.01M15 12h.01"/></svg>'
 };
 function qrSvg(){var r='';for(var y=0;y<11;y++)for(var x=0;x<11;x++){if((x*y+x+y)%3===0||(x<3&&y<3)||(x>7&&y<3)||(x<3&&y>7))r+='<rect x="'+(x*10)+'" y="'+(y*10)+'" width="10" height="10" fill="#111"/>';}return '<svg viewBox="0 0 110 110" style="width:120px;height:120px">'+r+'</svg>';}
 
@@ -125,6 +134,10 @@ function setEtab(i){CURETAB=i;ETABMENU=false;toast('Établissement : '+ETABS[i])
 function newEtab(){var n=prompt('Nom du nouvel établissement à créer ou rejoindre :');if(n){ETABS.push(n);CURETAB=ETABS.length-1;}ETABMENU=false;render();}
 var CURCLASSE=0;
 function openClasse(i){CURCLASSE=i;go('classedetail');}
+var CURCOURS=null;
+function openCours(t){CURCOURS=t;go('coursdetail');}
+var CLASSPERIOD='trimestre';
+function setPeriod(p){CLASSPERIOD=p;render();}
 var LOTQR=[{ps:'Soso',pts:50,statut:'attente'},{ps:'MarcX',pts:30,statut:'attente'},{ps:'Lilou',pts:30,statut:'attente'},{ps:'Nadir06',pts:20,statut:'attente'}];
 function simulateScan(i){LOTQR[i].statut='encaissé';toast(LOTQR[i].ps+' a flashé — '+LOTQR[i].pts+' pts crédités, déstocké');render();}
 
@@ -159,8 +172,8 @@ var PAGES={
     +'<div class="card"><h3>Progression de la classe (Terminale Bac Pro)<span class="pill">Histoire</span></h3><div class="chart">'+['S,30','O,42','N,38','D,55','J,60','F,72','M,82'].map(function(m){var x=m.split(',');return '<div class="bar"><i style="height:'+(x[1]*1.5)+'px"></i><span>'+x[0]+'</span></div>';}).join('')+'</div></div>'
     +'<div class="card"><h3>Challenges interclasse<span class="pill">en cours</span></h3>'+CLASSES.map(function(c){var w=Math.round(c[2]/1300*100);return '<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;margin-bottom:5px"><span>'+c[0]+'</span><span style="color:var(--pp)">'+c[2]+' pts</span></div><div class="bar-mini" style="width:100%"><i style="width:'+w+'%"></i></div></div>';}).join('')+'</div>'
   +'</div>'
-  +'<div class="card"><h3>Élèves à suivre (par pseudo)<span class="pill">'+ELEVES.length+' affichés</span></h3><div class="anon" style="margin-bottom:12px">'+ICON.lock+'<div>Clique sur un pseudo pour voir sa fiche de progression — jamais son identité.</div></div><table><tr><th>Pseudo</th><th>Points</th><th>Réussite</th><th>Ligue</th><th></th></tr>'
-    +ELEVES.map(function(e){return '<tr class="link" onclick="openPseudo(\''+e[0]+'\')"><td style="font-weight:700;color:var(--pp)">'+e[0]+'</td><td style="font-weight:700">'+e[1]+'</td><td>'+e[2]+'</td><td><span class="pill">'+e[3]+'</span></td><td style="text-align:right;color:var(--ink3)">'+ICON.chev+'</td></tr>';}).join('')
+  +'<div class="card"><h3>Classement des classes<span class="pill">interclasse</span></h3><table><tr><th>Rang</th><th>Classe</th><th>Points</th><th>R\u00e9ussite moy.</th><th>Progression</th></tr>'
+    +CLASSES.slice().sort(function(a,b){return b[2]-a[2];}).map(function(c,i){var prog=[+9,+4,-2][i]||0;var col=prog>0?'var(--gr)':(prog<0?'var(--re)':'var(--ink3)');var ar=prog>0?'\u25b2':(prog<0?'\u25bc':'\u2013');return '<tr><td style="font-weight:800;color:var(--pp)">'+(i+1)+'</td><td style="font-weight:700">'+c[0]+'</td><td style="font-weight:700">'+c[2]+'</td><td>'+(72-i*8)+'%</td><td style="color:'+col+';font-weight:700">'+ar+' '+Math.abs(prog)+'%</td></tr>';}).join('')
   +'</table></div>';
  },
  fiche:function(){var ps=CURPSEUDO||'Soso';var e=ELEVES.filter(function(x){return x[0]===ps;})[0]||ELEVES[0];var mats=e[4].split(';').map(function(m){var x=m.split(',');return [x[0],parseInt(x[1])];});
@@ -178,8 +191,8 @@ var PAGES={
   +'</div>';
  },
  classes:function(){return ''
-  +'<div class="topbar"><div><div class="h1">Mes classes</div><div class="sub">3 classes · 59 élèves</div></div><button class="btn sec">'+ICON.plus+' Créer une classe</button></div>'
-  +'<div class="grid2" style="grid-template-columns:repeat(3,1fr)">'+CLASSES.map(function(c,i){return '<div class="card"><h3>'+c[0]+'<span class="pill">'+c[3]+'</span></h3><div style="font-size:12.5px;color:var(--ink3)">'+c[1]+' élèves · '+c[2]+' pts générés</div><button class="btn sec" style="margin-top:14px;width:100%;justify-content:center" onclick="openClasse('+i+')">Ouvrir la liste des élèves</button></div>';}).join('')+'</div>';
+  +'<div class="topbar"><div><div class="h1">Mes classes</div><div class="sub">'+ETABS[CURETAB]+' \u00b7 3 classes \u00b7 59 \u00e9l\u00e8ves</div></div><button class="btn sec">'+ICON.plus+' Cr\u00e9er une classe</button></div>'
+  +'<div class="clist"><div class="grp">'+ETABS[CURETAB]+'</div>'+CLASSES.map(function(c,i){return '<div class="it" onclick="openClasse('+i+')"><div class="ic">'+ICON.school+'</div><div style="flex:1"><div style="font-weight:700;font-size:14.5px">'+c[0]+' <span class="pill" style="margin-left:4px">'+c[3]+'</span></div><div class="sub" style="margin:2px 0 0">'+c[1]+' \u00e9l\u00e8ves \u00b7 '+c[2]+' pts g\u00e9n\u00e9r\u00e9s</div></div><span style="color:var(--ink3)">'+ICON.chev+'</span></div>';}).join('')+'</div>';
  },
  quizhub:function(){return ''
   +'<div class="topbar"><div><div class="h1">Quiz &amp; challenges</div><div class="sub">Tous tes challenges, toutes classes</div></div><button class="btn" onclick="go(\'quizbuild\')">'+ICON.plus+' Nouveau quiz</button></div>'
@@ -191,10 +204,7 @@ var PAGES={
   +'<div class="editor">'
     +'<div>'
       +'<div class="card" style="margin-bottom:14px"><h3>Réglages</h3>'
-        +'<div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">NIVEAU</div><div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap"><span class="chip on" onclick="chipPick(this)">Terminale Bac Pro</span><span class="chip" onclick="chipPick(this)">1re Commerce</span><span class="chip" onclick="chipPick(this)">2de ASSP</span></div>'
-        +'<div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">MATIÈRE</div><div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap"><span class="chip on" onclick="chipPick(this)">Histoire</span><span class="chip" onclick="chipPick(this)">Géo</span><span class="chip" onclick="chipPick(this)">EMC</span><span class="chip" onclick="chipPick(this)">PSE</span></div>'
-        +'<div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">THÈME (SELON LE PROGRAMME)</div><div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap"><span class="chip on" onclick="chipPick(this)">Le jeu des puissances</span><span class="chip" onclick="chipPick(this)">La guerre froide</span><span class="chip" onclick="chipPick(this)">Mondialisation</span></div>'
-        +'<div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px">DÉLAI PAR QUESTION</div><div style="display:flex;gap:6px"><span class="chip" onclick="chipPick(this)">10 s</span><span class="chip on" onclick="chipPick(this)">20 s</span><span class="chip" onclick="chipPick(this)">30 s</span></div>'
+        +[['NIVEAU',['Terminale Bac Pro','1re Commerce','2de ASSP'],0],['MATIÈRE',['Histoire','Géo','EMC','PSE'],0],['THÈME (SELON LE PROGRAMME)',['Le jeu des puissances','La guerre froide','Mondialisation'],0],['DÉLAI PAR QUESTION',['10 s','20 s','30 s'],1]].map(function(g,gi){return '<div style="padding:12px 0;border-top:'+(gi===0?'0':'1px solid var(--line)')+'"><div style="font-size:10.5px;font-weight:700;color:var(--ink3);margin-bottom:8px;letter-spacing:.03em">'+g[0]+'</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+g[1].map(function(v,vi){return '<span class="chip'+(vi===g[2]?' on':'')+'" onclick="chipPick(this)">'+v+'</span>';}).join('')+'</div></div>';}).join('')
       +'</div>'
       +'<div class="card"><h3>Ajouter des questions</h3><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">'
         +'<div class="chip" style="justify-content:center;padding:12px 6px;flex-direction:column;gap:4px" onclick="qAddManuel()">'+ICON.plus+'<span>Manuel</span></div>'
@@ -205,7 +215,7 @@ var PAGES={
     +'<div>'
       +'<div class="card"><h3>Questions ('+QUESTIONS.length+')</h3>'
         +QUESTIONS.map(function(qq,i){var cols=['#D63050','#0E9E6E','#1E6FCC','#C27C0A'];var dc=qq.diff==='Facile'?['var(--grbg)','var(--gr)']:(qq.diff==='Difficile'?['#FBE0E4','var(--re)']:['var(--ambg)','var(--am)']);
-          return '<div class="qcard'+(qq.valid?'':' sel')+'"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span class="pill" style="background:'+dc[0]+';color:'+dc[1]+';cursor:pointer" onclick="qDiff('+i+')">'+qq.diff+'</span>'+(qq.valid?'<span class="pill" style="background:var(--grbg);color:var(--gr)">Validée</span>':'<span class="pill" style="background:var(--ambg);color:var(--am)">À valider</span>')+'</div><div style="font-weight:600;font-size:14px;margin-bottom:10px">'+qq.q+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">'+qq.a.map(function(ans,j){return '<div class="tile-ans" style="background:'+cols[j%4]+'">'+ans+(qq.c===j?' '+ICON.check:'')+'</div>';}).join('')+'</div><div style="display:flex;gap:7px"><button class="chip'+(qq.valid?' on':'')+'" style="flex:1;justify-content:center" onclick="qValid('+i+')">'+(qq.valid?'Validée':'Valider')+'</button><button class="chip" style="color:var(--re)" onclick="qDel('+i+')">Supprimer</button></div></div>';}).join('')
+          return '<div class="qcard'+(qq.valid?'':' sel')+'" style="padding:16px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="display:flex;align-items:center;gap:8px"><span style="font-size:10.5px;font-weight:800;color:var(--ink3)">Q'+(i+1)+'</span><span class="pill" style="background:'+dc[0]+';color:'+dc[1]+';cursor:pointer" onclick="qDiff('+i+')">'+qq.diff+'</span></div>'+(qq.valid?'<span class="pill" style="background:var(--grbg);color:var(--gr)">'+ICON.check+' Validée</span>':'<span class="pill" style="background:var(--ambg);color:var(--am)">À valider</span>')+'</div><div style="font-weight:700;font-size:14.5px;margin-bottom:12px;line-height:1.4">'+qq.q+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">'+qq.a.map(function(ans,j){return '<div class="tile-ans" style="background:'+cols[j%4]+'">'+ans+(qq.c===j?' '+ICON.check:'')+'</div>';}).join('')+'</div><div style="display:flex;gap:8px;padding-top:10px;border-top:1px solid rgba(0,0,0,.06)"><button class="chip'+(qq.valid?' on':'')+'" style="flex:1;justify-content:center" onclick="qValid('+i+')">'+(qq.valid?'Validée':'Valider')+'</button><button class="chip" style="flex:1;justify-content:center;color:var(--re)" onclick="qDel('+i+')">Supprimer</button></div></div>';}).join('')
       +'</div>'
     +'</div>'
   +'</div>';
@@ -215,11 +225,18 @@ var PAGES={
   +'<div style="display:flex;gap:6px;margin-bottom:16px"><span class="chip on" onclick="chipPick(this)">Histoire</span><span class="chip" onclick="chipPick(this)">Géo</span><span class="chip" onclick="chipPick(this)">EMC</span><span class="chip" onclick="chipPick(this)">PSE</span></div>'
   +'<div class="card">'+BANK.map(function(b,i){return '<div class="row"><div style="flex:1"><div style="font-weight:600;font-size:13.5px">'+b.q+'</div><div class="sub" style="margin:2px 0 0">réponse : '+b.a[b.c]+'</div></div><button class="chip on" onclick="qAddBank('+i+')">Ajouter</button></div>';}).join('')+'</div>';
  },
- cours:function(){return ''
-  +'<div class="topbar"><div><div class="h1">Mes cours</div><div class="sub">Contenus liés à tes fiches de révision</div></div><button class="btn">'+ICON.plus+' Ajouter un cours</button></div>'
-  +'<div class="grid2" style="grid-template-columns:1fr 1fr">'+COURS.map(function(c){return '<div class="card"><h3>'+c[0]+'<span class="pill">'+c[1]+'</span></h3><div style="font-size:12.5px;color:var(--ink3);margin-bottom:12px">'+c[3]+'</div><div class="dz">'+ICON.doc+' Glisser un document (PDF, image, schéma…)</div><button class="btn sec" style="margin-top:12px;width:100%;justify-content:center" onclick="toast(\'Résumé IA généré\')">'+ICON.wand+' Résumer avec l\'IA</button></div>';}).join('')+'</div>';
+ cours:function(){var groups={};COURS.forEach(function(c){(groups[c[1]]=groups[c[1]]||[]).push(c);});return ''
+  +'<div class="topbar"><div><div class="h1">Mes cours</div><div class="sub">Rang\xe9s par mati\xe8re \xb7 clique pour ouvrir</div></div><button class="btn">'+ICON.plus+' Ajouter un cours</button></div>'
+  +'<div class="clist">'+Object.keys(groups).map(function(m){return '<div class="grp">'+m+'</div>'+groups[m].map(function(c){return '<div class="it" onclick="openCours(\''+c[0]+'\')"><div class="ic">'+ICON.doc+'</div><div style="flex:1"><div style="font-weight:700;font-size:14px">'+c[0]+'</div><div class="sub" style="margin:0">'+c[3]+(c[2]?' \xb7 document li\xe9':'')+'</div></div><span style="color:var(--ink3)">'+ICON.chev+'</span></div>';}).join('');}).join('')+'</div>';
  },
- cagnotte:function(){return ''
+ coursdetail:function(){var c=COURS.filter(function(x){return x[0]===CURCOURS;})[0]||COURS[0];return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'cours\')">'+ICON.back+'</button><div><div class="sub">'+c[1]+'</div><div class="h1">'+c[0]+'</div></div></div></div>'
+  +'<div class="grid2" style="grid-template-columns:1fr 1fr">'
+   +'<div class="card"><h3>Documents du cours<span class="pill">'+c[3]+'</span></h3><div class="dz">'+ICON.doc+' Glisser un document (PDF, image, sch\xe9ma\u2026)</div><button class="btn sec" style="margin-top:12px;width:100%;justify-content:center" onclick="toast(\'R\xe9sum\xe9 IA g\xe9n\xe9r\xe9\')">'+ICON.wand+' R\xe9sumer avec l\'IA</button></div>'
+   +'<div class="card"><h3>Quiz issus de ce cours</h3>'+CHALLENGES.filter(function(ch){return ch.t===c[0];}).map(function(ch){var col=ch.s==='encours'?'var(--gr)':(ch.s==='passe'?'var(--ink3)':'var(--am)');return '<div class="row"><div style="width:8px;height:8px;border-radius:50%;background:'+col+'"></div><div style="flex:1;font-weight:600;font-size:13.5px">'+ch.cl+' \xb7 '+ch.d+'</div></div>';}).join('')+'<button class="btn sec" style="margin-top:10px;width:100%;justify-content:center" onclick="go(\'quizbuild\')">'+ICON.plus+' Cr\xe9er un quiz depuis ce cours</button></div>'
+  +'</div>';
+ },
+  cagnotte:function(){return ''
   +'<div class="topbar"><div><div class="h1">Ma cagnotte</div><div class="sub">1 500 pts restant sur le quota de l\'année</div></div></div>'
   +'<div class="grid2" style="grid-template-columns:1fr 1fr">'
    +'<div class="card"><h3>Quota par classe</h3>'+CLASSES.map(function(c,i){return '<div style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:6px"><span>'+c[0]+'</span><span style="color:var(--pp)" id="cgv'+i+'">'+c[4]+' / 500</span></div><input class="slider" type="range" min="0" max="500" step="10" value="'+c[4]+'" oninput="document.getElementById(\'cgv'+i+'\').textContent=this.value+\' / 500\'"></div>';}).join('')+'</div>'
@@ -235,11 +252,18 @@ var PAGES={
    +'</div>'
   +'</div>';
  },
- classedetail:function(){var c=CLASSES[CURCLASSE];var roster=ELEVES.slice();return ''
-  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'classes\')">'+ICON.back+'</button><div><div class="sub">'+c[3]+' · '+ETABS[CURETAB]+'</div><div class="h1">'+c[0]+'</div></div></div><button class="btn" onclick="go(\'quizbuild\')">'+ICON.plus+' Créer un quiz pour la classe</button></div>'
-  +'<div class="kpis" style="grid-template-columns:repeat(2,1fr)"><div class="kpi"><div class="lab">Points générés</div><div class="v">'+c[2]+'</div></div><div class="kpi"><div class="lab">Élèves</div><div class="v">'+c[1]+'</div></div></div>'
+ classedetail:function(){var c=CLASSES[CURCLASSE];var roster=ELEVES.slice();var period=CLASSPERIOD||'trimestre';
+  var data={trimestre:[30,42,38,55,60,72,82],mois:[58,63,60,68,72,76,82],annee:[20,28,35,42,50,64,82]};
+  var chl=CHALLENGES.filter(function(ch){return ch.cl===c[0];});
+  return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'classes\')">'+ICON.back+'</button><div><div class="sub">'+c[3]+' \u00b7 '+ETABS[CURETAB]+'</div><div class="h1">'+c[0]+'</div></div></div><button class="btn" onclick="go(\'quizbuild\')">'+ICON.plus+' Cr\u00e9er un quiz pour la classe</button></div>'
+  +'<div class="kpis" style="grid-template-columns:repeat(2,1fr)"><div class="kpi"><div class="lab">Points g\u00e9n\u00e9r\u00e9s</div><div class="v">'+c[2]+'</div></div><div class="kpi"><div class="lab">\u00c9l\u00e8ves</div><div class="v">'+c[1]+'</div></div></div>'
+  +'<div class="grid2">'
+    +'<div class="card"><h3>\u00c9volution de la classe<div style="display:flex;gap:5px">'+['trimestre','mois','annee'].map(function(pp){return '<span class="chip'+(pp===period?' on':'')+'" style="padding:5px 10px;font-size:11px" onclick="setPeriod(\''+pp+'\')">'+pp.charAt(0).toUpperCase()+pp.slice(1)+'</span>';}).join('')+'</div></h3><div class="chart">'+data[period].map(function(v,i){var labs={trimestre:['S1','S2','S3','S4','S5','S6','S7'],mois:['J1','J2','J3','J4','S1','S2','S3'],annee:['S','O','N','D','J','F','M']};return '<div class="bar"><i style="height:'+(v*1.5)+'px"></i><span>'+labs[period][i]+'</span></div>';}).join('')+'</div><div class="sub" style="margin-top:6px">Th\u00e8mes trait\u00e9s : Le jeu des puissances, La guerre froide, Mondialisation.</div></div>'
+    +'<div class="card"><h3>Quiz \u00e9mis pour cette classe</h3>'+[['asuivre','\u00c0 suivre'],['encours','En cours'],['passe','Pass\u00e9s']].map(function(g){var items=chl.filter(function(ch){return ch.s===g[0];});var open=KBOPEN[g[0]];return '<div class="kbd" onclick="kbToggle(\''+g[0]+'\')"><div style="font-weight:700;font-size:13.5px">'+g[1]+' <span class="sub" style="margin:0">('+items.length+')</span></div><span style="color:var(--ink3);transform:rotate('+(open?'90deg':'0deg')+');display:inline-flex;transition:.2s">'+ICON.chev+'</span></div>'+(open?(items.length?items.map(function(ch){var col=ch.s==='encours'?'var(--gr)':(ch.s==='passe'?'var(--ink3)':'var(--am)');return '<div class="kbd it" onclick="go(\'quizbuild\')"><div style="width:8px;height:8px;border-radius:50%;background:'+col+'"></div><div style="flex:1;font-weight:600;font-size:13px">'+ch.t+'</div><div class="sub" style="margin:0">'+ch.d+(ch.r?' \u00b7 '+ch.r:'')+'</div></div>';}).join(''):'<div class="sub" style="margin:0 0 8px 12px">Aucun quiz.</div>'):'');}).join('')+'</div>'
+  +'</div>'
   +'<div class="anon" style="margin-bottom:16px">'+ICON.lock+'<div>Liste par pseudo. Clique sur un pseudo pour voir sa fiche de progression.</div></div>'
-  +'<div class="card"><h3>Élèves &amp; points individuels</h3><table><tr><th>Pseudo</th><th>Points</th><th>Réussite</th><th></th></tr>'
+  +'<div class="card"><h3>\u00c9l\u00e8ves &amp; points individuels</h3><table><tr><th>Pseudo</th><th>Points</th><th>R\u00e9ussite</th><th></th></tr>'
     +roster.map(function(e){return '<tr class="link" onclick="openPseudo(\''+e[0]+'\')"><td style="font-weight:700;color:var(--pp)">'+e[0]+'</td><td style="font-weight:700">'+e[1]+'</td><td>'+e[2]+'</td><td style="text-align:right;color:var(--ink3)">'+ICON.chev+'</td></tr>';}).join('')
   +'</table></div>';
  },
