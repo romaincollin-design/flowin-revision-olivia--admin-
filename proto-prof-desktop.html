@@ -15,6 +15,12 @@ svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke
 .brand{display:flex;align-items:center;gap:10px;padding:0 6px 22px}
 .brand .mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#5B52C9,#7F77DD);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
 .brand .name{font-weight:800;font-size:15px}
+.etabsel{display:flex;align-items:center;justify-content:space-between;background:var(--ppbg);border:1px solid var(--ppln);border-radius:10px;padding:9px 11px;margin:0 6px 16px;cursor:pointer}
+.etabsel .n{font-weight:700;font-size:12.5px;color:var(--pp)}
+.etabmenu{position:absolute;left:16px;top:120px;width:216px;background:var(--surf);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 30px -10px rgba(0,0,0,.2);z-index:40;padding:8px}
+.etabmenu .it{padding:9px 10px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between}
+.etabmenu .it:hover{background:var(--bg)}
+.etabmenu hr{border:0;border-top:1px solid var(--line);margin:6px 0}
 .nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;color:var(--ink2);text-decoration:none;font-weight:600;font-size:13.5px;margin-bottom:2px;cursor:pointer}
 .nav a.on{background:var(--ppbg);color:var(--pp)}
 .nav a:hover{background:var(--bg)}
@@ -72,6 +78,7 @@ tr.link:hover td{background:var(--bg)}
 <div class="app">
   <aside class="side">
     <div class="brand"><div class="mark"><svg class="i" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-4h6v4M9 12h.01M15 12h.01"/></svg></div><div class="name">Flowin Révision</div></div>
+    <div id="etabzone"></div>
     <nav class="nav" id="nav">
       <a data-p="pilotage"><svg class="i" viewBox="0 0 24 24"><path d="M3 3v18h18M7 15l4-6 3 3 4-7"/></svg>Pilotage</a>
       <a data-p="classes"><svg class="i" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Classes</a>
@@ -111,6 +118,15 @@ var BANK=[{q:"Que symbolise le rideau de fer ?",a:["Partition de l'Europe","L'ON
 var DRAFTS=[{t:"La décolonisation",theme:"Histoire",d:"18 mars"}];
 var KBOPEN={asuivre:false,encours:true,passe:false};
 var CURPSEUDO=null, CURSTEP='list';
+var ETABS=['Lycée de Vence','Collège Estienne d\'Orves'];
+var CURETAB=0, ETABMENU=false;
+function toggleEtabMenu(){ETABMENU=!ETABMENU;render();}
+function setEtab(i){CURETAB=i;ETABMENU=false;toast('Établissement : '+ETABS[i]);render();}
+function newEtab(){var n=prompt('Nom du nouvel établissement à créer ou rejoindre :');if(n){ETABS.push(n);CURETAB=ETABS.length-1;}ETABMENU=false;render();}
+var CURCLASSE=0;
+function openClasse(i){CURCLASSE=i;go('classedetail');}
+var LOTQR=[{ps:'Soso',pts:50,statut:'attente'},{ps:'MarcX',pts:30,statut:'attente'},{ps:'Lilou',pts:30,statut:'attente'},{ps:'Nadir06',pts:20,statut:'attente'}];
+function simulateScan(i){LOTQR[i].statut='encaissé';toast(LOTQR[i].ps+' a flashé — '+LOTQR[i].pts+' pts crédités, déstocké');render();}
 
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.className='show';clearTimeout(window._tt);window._tt=setTimeout(function(){t.className='';},1800);}
 function chipPick(el){var pr=el.parentNode;pr.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on');});el.classList.add('on');}
@@ -121,7 +137,7 @@ function qAddBank(i){var b=BANK[i];QUESTIONS.push({q:b.q,a:b.a.slice(),c:b.c,dif
 function qAddIA(){var gen=[{q:"Quel événement marque le début de la guerre froide ?",a:["Doctrine Truman","Chute du mur","Crise de Cuba","Plan Marshall"],c:0},{q:"Que désigne la coexistence pacifique ?",a:["Une détente relative","Une guerre ouverte","La fin de l'URSS","Un traité de paix"],c:0},{q:"En quelle année a lieu la crise de Cuba ?",a:["1949","1962","1975","1989"],c:1}];
   gen.forEach(function(g){QUESTIONS.push({q:g.q,a:g.a,c:g.c,diff:'Difficile',valid:false});});toast("5 questions générées par l'IA — à relire");render();}
 function qDel(i){QUESTIONS.splice(i,1);render();}
-function publishQuiz(){CHALLENGES.unshift({t:'Le jeu des puissances',cl:'Terminale Bac Pro',d:"aujourd'hui",s:'encours',r:''});toast('Quiz publié et lancé');go('quizhub');}
+function publishQuiz(){CHALLENGES.unshift({t:'Le jeu des puissances',cl:'Terminale Bac Pro',d:"aujourd'hui",s:'encours',r:''});LOTQR.forEach(function(l){l.statut='attente';});toast('Quiz publié et lancé');go('chalqr');}
 function saveDraft(){DRAFTS.unshift({t:'Le jeu des puissances',theme:'Histoire',d:"aujourd'hui"});toast('Brouillon enregistré');go('quizhub');}
 function kbToggle(g){KBOPEN[g]=!KBOPEN[g];render();}
 function openPseudo(ps){CURPSEUDO=ps;go('fiche');}
@@ -151,11 +167,11 @@ var PAGES={
   var names=['Histoire','Géo','EMC','PSE'];
   return '<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'pilotage\')">'+ICON.back+'</button><div><div class="sub">Terminale Bac Pro</div><div class="h1">'+ps+'</div></div></div></div>'
   +'<div class="anon" style="margin-bottom:18px">'+ICON.lock+'<div>Fiche par <b>pseudo</b> uniquement. Deux plateformes séparées : impossible de remonter à l\'identité réelle depuis ici.</div></div>'
-  +'<div class="kpis" style="grid-template-columns:repeat(3,1fr)">'
+  +'<div class="kpis" style="grid-template-columns:repeat(2,1fr)">'
    +'<div class="kpi"><div class="lab">Points</div><div class="v">'+e[1]+'</div></div>'
    +'<div class="kpi"><div class="lab">Réussite moyenne</div><div class="v">'+e[2]+'</div></div>'
-   +'<div class="kpi"><div class="lab">Ligue</div><div class="v" style="font-size:20px">'+e[3]+'</div></div>'
   +'</div>'
+  +'<div class="sub" style="margin-bottom:16px">Le statut de ligue est personnel à l\'élève — non visible côté professeur.</div>'
   +'<div class="grid2">'
    +'<div class="card"><h3>Progression sur l\'année</h3><div class="chart">'+['S,30','O,42','N,38','D,55','J,60','F,72','M,82'].map(function(m){var x=m.split(',');return '<div class="bar"><i style="height:'+(x[1]*1.5)+'px"></i><span>'+x[0]+'</span></div>';}).join('')+'</div></div>'
    +'<div class="card"><h3>Points par matière (tes matières)</h3>'+mats.map(function(m,i){return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:11px"><div style="width:64px;font-size:12px;font-weight:600">'+names[i]+'</div><div class="bar-mini" style="width:100%"><i style="width:'+m[1]+'%;background:'+m[0]+'"></i></div><div style="width:34px;text-align:right;font-weight:700;font-size:12px;color:var(--pp)">'+m[1]+'%</div></div>';}).join('')+'</div>'
@@ -163,7 +179,7 @@ var PAGES={
  },
  classes:function(){return ''
   +'<div class="topbar"><div><div class="h1">Mes classes</div><div class="sub">3 classes · 59 élèves</div></div><button class="btn sec">'+ICON.plus+' Créer une classe</button></div>'
-  +'<div class="grid2" style="grid-template-columns:repeat(3,1fr)">'+CLASSES.map(function(c){return '<div class="card"><h3>'+c[0]+'<span class="pill">'+c[3]+'</span></h3><div style="font-size:12.5px;color:var(--ink3)">'+c[1]+' élèves · '+c[2]+' pts générés</div><button class="btn sec" style="margin-top:14px;width:100%;justify-content:center" onclick="go(\'pilotage\')">Ouvrir</button></div>';}).join('')+'</div>';
+  +'<div class="grid2" style="grid-template-columns:repeat(3,1fr)">'+CLASSES.map(function(c,i){return '<div class="card"><h3>'+c[0]+'<span class="pill">'+c[3]+'</span></h3><div style="font-size:12.5px;color:var(--ink3)">'+c[1]+' élèves · '+c[2]+' pts générés</div><button class="btn sec" style="margin-top:14px;width:100%;justify-content:center" onclick="openClasse('+i+')">Ouvrir la liste des élèves</button></div>';}).join('')+'</div>';
  },
  quizhub:function(){return ''
   +'<div class="topbar"><div><div class="h1">Quiz &amp; challenges</div><div class="sub">Tous tes challenges, toutes classes</div></div><button class="btn" onclick="go(\'quizbuild\')">'+ICON.plus+' Nouveau quiz</button></div>'
@@ -219,7 +235,31 @@ var PAGES={
    +'</div>'
   +'</div>';
  },
- profil:function(){return ''
+ classedetail:function(){var c=CLASSES[CURCLASSE];var roster=ELEVES.slice();return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'classes\')">'+ICON.back+'</button><div><div class="sub">'+c[3]+' · '+ETABS[CURETAB]+'</div><div class="h1">'+c[0]+'</div></div></div><button class="btn" onclick="go(\'quizbuild\')">'+ICON.plus+' Créer un quiz pour la classe</button></div>'
+  +'<div class="kpis" style="grid-template-columns:repeat(2,1fr)"><div class="kpi"><div class="lab">Points générés</div><div class="v">'+c[2]+'</div></div><div class="kpi"><div class="lab">Élèves</div><div class="v">'+c[1]+'</div></div></div>'
+  +'<div class="anon" style="margin-bottom:16px">'+ICON.lock+'<div>Liste par pseudo. Clique sur un pseudo pour voir sa fiche de progression.</div></div>'
+  +'<div class="card"><h3>Élèves &amp; points individuels</h3><table><tr><th>Pseudo</th><th>Points</th><th>Réussite</th><th></th></tr>'
+    +roster.map(function(e){return '<tr class="link" onclick="openPseudo(\''+e[0]+'\')"><td style="font-weight:700;color:var(--pp)">'+e[0]+'</td><td style="font-weight:700">'+e[1]+'</td><td>'+e[2]+'</td><td style="text-align:right;color:var(--ink3)">'+ICON.chev+'</td></tr>';}).join('')
+  +'</table></div>';
+ },
+ chalqr:function(){return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'quizhub\')">'+ICON.back+'</button><div><div class="h1">Distribution des points</div><div class="sub">Le jeu des puissances · Terminale Bac Pro</div></div></div></div>'
+  +'<div class="anon" style="margin-bottom:18px">'+ICON.lock+'<div>Un QR par pseudo gagnant. Seul ce pseudo peut le flasher et créditer ses points — aucun vol possible.</div></div>'
+  +'<div class="grid2" style="grid-template-columns:1fr 1fr">'+LOTQR.map(function(l,i){var done=l.statut==='encaissé';return '<div class="card" style="'+(done?'opacity:.55':'')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-weight:700;font-size:14.5px">'+l.ps+'</div><span class="pill" style="'+(done?'background:var(--grbg);color:var(--gr)':'')+'">'+(done?'Encaissé':'En attente')+'</span></div>'
+    +'<div style="display:flex;gap:16px;align-items:center"><div style="background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px">'+qrSvg()+'</div><div><div class="lab">Points</div><div class="v" style="font-size:22px">+'+l.pts+'</div>'+(done?'':'<button class="btn sec" style="margin-top:10px" onclick="simulateScan('+i+')">Simuler le flash élève</button>')+'</div></div></div>';}).join('')+'</div>'
+  +'<button class="btn" style="margin-top:18px" onclick="go(\'eleveqr\')">'+ICON.qr+' Aperçu — ce que voit l\'élève</button>';
+ },
+ eleveqr:function(){return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'chalqr\')">'+ICON.back+'</button><div class="h1">Aperçu · vue élève</div></div></div>'
+  +'<div class="card" style="max-width:380px;text-align:center;padding:30px 24px"><div style="width:60px;height:60px;border-radius:50%;background:var(--grbg);color:var(--gr);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:26px">'+ICON.check+'</div>'
+    +'<div style="font-weight:800;font-size:18px">QR flashé !</div>'
+    +'<div style="font-size:38px;font-weight:800;color:var(--pp);margin:10px 0 4px">+50</div>'
+    +'<div class="sub" style="margin-bottom:16px">points crédités sur ton pseudo Soso</div>'
+    +'<div class="anon" style="text-align:left">'+ICON.lock+'<div>Crédités directement sur ta plateforme. Ton prof ne voit jamais cette étape ni ton identité.</div></div>'
+  +'</div>';
+ },
+  profil:function(){return ''
   +'<div class="topbar"><div class="h1">Profil &amp; paramètres</div></div>'
   +'<div class="anon" style="margin-bottom:18px">'+ICON.lock+'<div>Anonymat total : tu ne vois que les pseudos de tes élèves, sur mobile comme sur ordinateur.</div></div>'
   +'<div class="grid2" style="grid-template-columns:1fr 1fr">'
@@ -228,7 +268,10 @@ var PAGES={
   +'</div>';
  }
 };
-function render(){document.getElementById('main').innerHTML=(PAGES[PAGE]||PAGES.pilotage)();}
+function renderEtab(){var z=document.getElementById('etabzone');if(!z)return;var html='<div class="etabsel" onclick="toggleEtabMenu()"><span class="n">'+ETABS[CURETAB]+'</span><span style="color:var(--pp)">'+ICON.chev+'</span></div>';
+  if(ETABMENU){html+='<div class="etabmenu">'+ETABS.map(function(e,i){return '<div class="it" onclick="setEtab('+i+')">'+e+(i===CURETAB?' <span style="color:var(--pp)">'+ICON.check+'</span>':'')+'</div>';}).join('')+'<hr><div class="it" style="color:var(--pp)" onclick="newEtab()">'+ICON.plus+' Créer ou rejoindre…</div></div>';}
+  z.innerHTML=html;}
+function render(){document.getElementById('main').innerHTML=(PAGES[PAGE]||PAGES.pilotage)();renderEtab();}
 go('pilotage');
 </script>
 </body>
