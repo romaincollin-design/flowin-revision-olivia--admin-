@@ -45,6 +45,7 @@ svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke
 .bar{flex:1;background:var(--bg);border-radius:20px;overflow:hidden;height:16px}
 .bar i{display:block;height:100%;border-radius:20px}
 .big{font-size:30px;font-weight:800;color:var(--pp)}
+#toast{position:absolute;bottom:88px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:22px;font-size:13px;font-weight:600;opacity:0;transition:.25s;z-index:50;pointer-events:none;white-space:nowrap;display:flex;align-items:center;gap:7px}#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 input[type=range]{accent-color:var(--pp);width:100%;height:22px}
 .brandmark{animation:bpulse 3s ease-in-out infinite}
 @keyframes bpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
@@ -58,6 +59,7 @@ input[type=range]{accent-color:var(--pp);width:100%;height:22px}
   <div class="status"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
   <div class="screen" id="screen"></div>
   <div class="tabbar" id="tabbar"></div>
+  <div id="toast"></div>
 </div></div>
 <script>
 var ICON={
@@ -111,10 +113,8 @@ var SCREENS={
  classe:function(){return '<div class="top"><button class="back" onclick="nav(\'classes\')">'+ICON.back+'</button><div><div class="sub">Terminale · Lycée de Vence</div><div class="h1" style="font-size:21px">Terminale Bac Pro</div></div></div>'+
    '<div class="card" style="display:flex;justify-content:space-between;align-items:center"><div><div class="lab">Points générés par la classe</div><div class="big">1 240</div></div><div style="text-align:right"><div class="lab">Élèves</div><div style="font-size:22px;font-weight:800">19</div></div></div>'+
    '<button class="btn" style="margin:2px 0 4px" onclick="nav(\'quizbuild\')">'+ICON.plus+' Créer un quiz pour la classe</button>'+
-   '<div class="h2">Challenges de la classe</div>'+
-   [['asuivre','\u00c0 suivre'],['encours','En cours'],['passe','Pass\u00e9s']].map(function(g){var items=CHALLENGES.filter(function(c){return c.s===g[0];});if(!items.length)return '';return '<div class="lab" style="margin:8px 0 6px">'+g[1]+'</div>'+items.map(function(c){var col=c.s==='encours'?'var(--gr)':(c.s==='passe'?'var(--ink3)':'var(--am)');return '<div class="card" style="display:flex;align-items:center;gap:11px;padding:12px 13px"><div style="width:9px;height:9px;border-radius:50%;background:'+col+';flex-shrink:0"></div><div style="flex:1"><div style="font-weight:700;font-size:14px">'+c.t+'</div><div class="mut">'+c.d+(c.r?' \u00b7 '+c.r:'')+'</div></div>'+(c.s==='passe'?'<button class="chip">R\u00e9sultats</button>':'')+'</div>';}).join('');}).join('')+
-   
-   '<div class="anon">'+ICON.lock+'<div class="d">Tu ne vois que les pseudos — aucune coordonnée d\'élève.</div></div>'+
+      '<div class="h2">Challenges de la classe</div>'+
+   [['asuivre','\u00c0 suivre'],['encours','En cours'],['passe','Pass\u00e9s']].map(function(g){var items=CHALLENGES.filter(function(c){return c.s===g[0];});var open=KBOPEN[g[0]];return '<div onclick="kbToggle(\''+g[0]+'\')" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--surf);border:1px solid var(--line);border-radius:12px;margin-bottom:8px;cursor:pointer"><div style="font-weight:700;font-size:14px">'+g[1]+' <span class="mut" style="font-weight:600">('+items.length+')</span></div><span style="color:var(--ink3);display:inline-flex;transition:.2s;transform:rotate('+(open?'90deg':'0deg')+')">'+ICON.chev+'</span></div>'+(open?(items.length?items.map(function(c){var col=c.s==='encours'?'var(--gr)':(c.s==='passe'?'var(--ink3)':'var(--am)');return '<div class="card" style="display:flex;align-items:center;gap:11px;padding:12px 13px;margin:0 0 8px 8px"><div style="width:8px;height:8px;border-radius:50%;background:'+col+';flex-shrink:0"></div><div style="flex:1"><div style="font-weight:700;font-size:14px">'+c.t+'</div><div class="mut">'+c.d+(c.r?' \u00b7 '+c.r:'')+'</div></div>'+(c.s==='passe'?'<button class="chip">R\u00e9sultats</button>':'')+'</div>';}).join(''):'<div class="mut" style="margin:0 0 10px 8px">Aucun challenge.</div>'):'');}).join('')+
    '<div class="h2" style="margin-top:6px">Élèves &amp; points individuels</div>'+
    ELEVES.map(function(e){return '<div class="row" style="cursor:pointer" onclick="nav(\'eleve\')"><div class="av" style="background:'+e[2]+'">'+e[0][0].toUpperCase()+'</div><div style="flex:1"><div style="font-weight:700;font-size:15px">'+e[0]+'</div><div class="mut">pseudo choisi par l\'élève</div></div><div style="font-weight:800;color:var(--pp);margin-right:8px">'+e[1]+'</div><span class="go">'+ICON.chev+'</span></div>';}).join('')+
    '<button class="btn" style="margin-top:14px" onclick="nav(\'addeleve\')">'+ICON.plus+' Ajouter un élève (pseudo)</button>';
@@ -184,7 +184,7 @@ var SCREENS={
    '<button class="btn sec" style="margin-bottom:12px" onclick="QUESTIONS[QEDIT].a.push(\'Nouvelle r\\u00e9ponse\');nav(\'quizedit\')">'+ICON.plus+' Ajouter une r\u00e9ponse</button>'+
    '<div class="lab" style="font-size:10px;margin-bottom:6px">Difficult\u00e9</div><div style="display:flex;gap:6px;margin-bottom:14px"><div class="chip" onclick="chipPick(this)">Facile</div><div class="chip on" onclick="chipPick(this)">Moyen</div><div class="chip" onclick="chipPick(this)">Difficile</div></div>'+
    '<button class="btn sec" style="margin-bottom:10px">'+ICON.image+' Ajouter une image</button>'+
-   '<button class="btn" onclick="QUESTIONS[QEDIT].valid=true;nav(\'quizbuild\')">Valider la question</button>';
+   '<button class="btn" onclick="QUESTIONS[QEDIT].valid=true;toast(\'Question enregistr\u00e9e\');nav(\'quizbuild\')">Valider la question</button>';
  },
  quizbanque:function(){return '<div class="top"><button class="back" onclick="nav(\'quizbuild\')">'+ICON.back+'</button><div class="h1">Banque de questions</div></div>'+
    '<div class="lab" style="font-size:10px;margin-bottom:6px">Mati\u00e8re</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"><div class="chip on" onclick="chipPick(this)">Histoire</div><div class="chip" onclick="chipPick(this)">G\u00e9o</div><div class="chip" onclick="chipPick(this)">EMC</div><div class="chip" onclick="chipPick(this)">PSE</div></div>'+
@@ -210,18 +210,21 @@ var SCREENS={
    return head+dots+body;
  },
   createclasse:function(){return '<div class="top"><button class="back" onclick="nav(\'classes\')">'+ICON.back+'</button><div class="h1">Cr\u00e9er une classe</div></div>'+
-   '<div class="field"><label>Nom de la classe</label><input id="newclassnom" placeholder="ex. Terminale Bac Pro"></div>'+
-   '<div class="lab" style="font-size:10px;margin-bottom:6px">Niveau</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px"><div class="chip on" onclick="chipPick(this)">Terminale</div><div class="chip" onclick="chipPick(this)">1re</div><div class="chip" onclick="chipPick(this)">2de</div></div>'+
-   '<div class="lab" style="font-size:10px;margin-bottom:6px">Mati\u00e8re</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px"><div class="chip on" onclick="chipPick(this)">Histoire</div><div class="chip" onclick="chipPick(this)">G\u00e9o</div><div class="chip" onclick="chipPick(this)">EMC</div><div class="chip" onclick="chipPick(this)">PSE</div></div>'+
-   '<div class="anon">'+ICON.lock+'<div class="d">Tu cr\u00e9es la classe. Les \u00e9l\u00e8ves la rejoindront par pseudo (QR ou ajout manuel).</div></div>'+
-   '<button class="btn" onclick="addClasse()">Cr\u00e9er la classe</button>';
+   '<div class="field"><label>Nom de la classe</label><input value="'+NEWCLASSE.nom+'" oninput="NEWCLASSE.nom=this.value" placeholder="ex. Terminale Bac Pro"></div>'+
+   '<div class="lab" style="font-size:10px;margin-bottom:6px">Niveau</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"><div class="chip on" onclick="chipPick(this)">Terminale</div><div class="chip" onclick="chipPick(this)">1re</div><div class="chip" onclick="chipPick(this)">2de</div></div>'+
+   '<div class="lab" style="font-size:10px;margin-bottom:6px">Mati\u00e8re</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"><div class="chip on" onclick="chipPick(this)">Histoire</div><div class="chip" onclick="chipPick(this)">G\u00e9o</div><div class="chip" onclick="chipPick(this)">EMC</div><div class="chip" onclick="chipPick(this)">PSE</div></div>'+
+   '<div class="anon">'+ICON.lock+'<div class="d">Ajoute tes \u00e9l\u00e8ves par pseudo. Aucune coordonn\u00e9e, aucun nom r\u00e9el.</div></div>'+
+   '<div class="lab" style="margin-bottom:6px">\u00c9l\u00e8ves de la classe ('+NEWCLASSE.eleves.length+')</div>'+
+   '<div style="display:flex;gap:8px;margin-bottom:12px"><input id="ncp" placeholder="ex. Soso, NadirX" style="flex:1;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-family:inherit;font-size:15px"><button class="chip on" style="flex-shrink:0" onclick="addNewPseudo()">Ajouter</button></div>'+
+   (NEWCLASSE.eleves.length?NEWCLASSE.eleves.map(function(ps){return '<div class="row" style="padding:9px 0"><div class="av">'+ps[0].toUpperCase()+'</div><div style="flex:1;font-weight:700;font-size:14px">'+ps+'</div></div>';}).join(''):'<div class="mut" style="margin-bottom:8px">Aucun \u00e9l\u00e8ve pour l\'instant \u2014 ajoute des pseudos, ou ils rejoindront par QR.</div>')+
+   '<button class="btn" style="margin-top:12px" onclick="createClasseFinal()">Cr\u00e9er la classe</button>';
  },
  cagnotte:function(){return '<div class="top"><div class="h1">Ma cagnotte</div></div>'+
    '<div class="card" style="text-align:center"><div class="lab">Points restant \u00e0 distribuer</div><div class="big" style="font-size:38px">1 500</div><div class="mut">quota de l\'ann\u00e9e \u00b7 r\u00e9gule par classe</div></div>'+
    '<div class="h2">R\u00e9gule par classe</div>'+
    '<div class="mut" style="margin-bottom:12px">Monte ou descends les points allou\u00e9s \u00e0 chaque classe.</div>'+
    [['Terminale Bac Pro',320],['1re Commerce',180],['2de ASSP',90]].map(function(c,i){return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-weight:700;font-size:14px">'+c[0]+'</div><div style="font-weight:800;color:var(--pp);font-size:14px" id="cg'+i+'">'+c[1]+' / 500</div></div><input type="range" min="0" max="500" step="10" value="'+c[1]+'" oninput="document.getElementById(\'cg'+i+'\').textContent=this.value+\' / 500\'"></div>';}).join('')+
-   '<button class="btn" style="margin-top:6px">Enregistrer la r\u00e9partition</button>';
+   '<button class="btn sec" style="margin-bottom:10px" onclick="nav(\'jeuparams\')">R\u00e9gler les r\u00e9compenses (points, homog\u00e9n\u00e9it\u00e9\u2026)</button>'+'<button class="btn" style="margin-top:0" onclick="toast(\'R\u00e9partition enregistr\u00e9e\')">Enregistrer la r\u00e9partition</button>';
  },
   profil:function(){return '<div class="top"><div class="h1">Profil</div></div>'+
    '<div class="card" style="display:flex;align-items:center;gap:14px"><div class="av" style="width:52px;height:52px;font-size:18px;background:var(--gold)">O</div><div><div style="font-weight:700;font-size:17px">Olivia Laurent</div><div class="mut">Professeure \u00b7 Lyc\u00e9e de Vence</div></div></div>'+
@@ -234,7 +237,7 @@ var SCREENS={
  },
  profinfos:function(){return '<div class="top"><button class="back" onclick="nav(\'profil\')">'+ICON.back+'</button><div class="h1">Mes informations</div></div>'+
    [['Nom','Laurent'],['Pr\u00e9nom','Olivia'],['Email','o.laurent@ac-nice.fr'],['T\u00e9l\u00e9phone','06 12 34 56 78'],['Mot de passe','\u2022\u2022\u2022\u2022\u2022\u2022']].map(function(f){return '<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px"><div><div class="lab">'+f[0]+'</div><div style="font-weight:600;font-size:14px;margin-top:1px">'+f[1]+'</div></div><span style="color:var(--ink3)">'+ICON.chev+'</span></div>';}).join('')+
-   '<button class="btn" style="margin-top:6px">Enregistrer</button>';
+   '<button class="btn" style="margin-top:6px" onclick="toast(\'Enregistr\u00e9\')">Enregistrer</button>';
  },
  etablissements:function(){return '<div class="top"><button class="back" onclick="nav(\'profil\')">'+ICON.back+'</button><div class="h1">Mes \u00e9tablissements</div></div>'+
    '<div class="mut" style="margin-bottom:12px">Tu peux enseigner dans plusieurs \u00e9tablissements.</div>'+
@@ -244,7 +247,7 @@ var SCREENS={
  matieres:function(){return '<div class="top"><button class="back" onclick="nav(\'profil\')">'+ICON.back+'</button><div class="h1">Mes mati\u00e8res</div></div>'+
    '<div class="mut" style="margin-bottom:14px">S\u00e9lectionne les mati\u00e8res que tu enseignes.</div>'+
    '<div style="display:flex;gap:8px;flex-wrap:wrap">'+['Histoire','G\u00e9o','EMC','PSE','Fran\u00e7ais','Maths','SVT','Anglais'].map(function(m,i){return '<div class="chip'+(i<4?' on':'')+'" onclick="this.classList.toggle(\'on\')">'+m+'</div>';}).join('')+'</div>'+
-   '<button class="btn" style="margin-top:18px">Enregistrer</button>';
+   '<button class="btn" style="margin-top:18px" onclick="toast(\'Enregistr\u00e9\')">Enregistrer</button>';
  },
  jeuparams:function(){return '<div class="top"><button class="back" onclick="nav(\'profil\')">'+ICON.back+'</button><div class="h1">Param\u00e8tres du jeu</div></div>'+
    '<div class="mut" style="margin-bottom:16px">R\u00e8gle chaque r\u00e9compense comme un equalizer. Ces r\u00e9glages sont globaux, et modifiables sur chaque quiz.</div>'+
@@ -256,7 +259,7 @@ var SCREENS={
      '<div class="mut" style="margin-top:-8px">Si l\'\u00e9cart entre le meilleur et le dernier est sous ce seuil, la classe touche le bonus d\'homog\u00e9n\u00e9it\u00e9.</div>'+
    '</div>'+
    '<div class="card" style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:700;font-size:14px">Banque rare \u00d71,5</div><div class="mut">les questions rares valent plus</div></div><span class="pill">activ\u00e9</span></div>'+
-   '<button class="btn" style="margin-top:6px">Enregistrer</button>';
+   '<button class="btn" style="margin-top:6px" onclick="toast(\'Enregistr\u00e9\')">Enregistrer</button>';
  }
 };
 
@@ -266,8 +269,14 @@ var BANK=[{q:"En quelle année tombe le mur de Berlin ?",a:["1961","1989","1991"
 var QEDIT=0;
 function qAdd(){QUESTIONS.push({q:"",a:["","","",""],c:0,valid:false});QEDIT=QUESTIONS.length-1;nav("quizedit");}
 function qDel(i){QUESTIONS.splice(i,1);refresh();}
-function qValid(i){QUESTIONS[i].valid=!QUESTIONS[i].valid;refresh();}
+function qValid(i){QUESTIONS[i].valid=!QUESTIONS[i].valid;if(QUESTIONS[i].valid)toast("Question valid\u00e9e");refresh();}
 function qEdit(i){QEDIT=i;nav("quizedit");}
+var NEWCLASSE={nom:"",eleves:[]};
+var KBOPEN={asuivre:false,encours:true,passe:false};
+function addNewPseudo(){var el=document.getElementById("ncp");var ps=el&&el.value;if(!ps)return;NEWCLASSE.eleves.push(ps);refresh();}
+function createClasseFinal(){var n=NEWCLASSE.nom||"Nouvelle classe";CLASSES.push([n,NEWCLASSE.eleves.length,0]);NEWCLASSE={nom:"",eleves:[]};toast("Classe créée");setTimeout(function(){nav("classes");},700);}
+function kbToggle(g){KBOPEN[g]=!KBOPEN[g];refresh();}
+function toast(msg){var t=document.getElementById("toast");if(!t)return;t.textContent=msg;t.className="show";clearTimeout(window._tt);window._tt=setTimeout(function(){t.className="";},1900);}
 function refresh(){var y=scr.scrollTop;scr.innerHTML=(SCREENS[current]||SCREENS.welcome)();scr.scrollTop=y;}
 function qSel(i){QUESTIONS[i].sel=!QUESTIONS[i].sel;refresh();}
 function delSel(){QUESTIONS=QUESTIONS.filter(function(q){return !q.sel;});refresh();}
