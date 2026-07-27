@@ -111,6 +111,9 @@ var SCREENS={
  classe:function(){return '<div class="top"><button class="back" onclick="nav(\'classes\')">'+ICON.back+'</button><div><div class="sub">Terminale · Lycée de Vence</div><div class="h1" style="font-size:21px">Terminale Bac Pro</div></div></div>'+
    '<div class="card" style="display:flex;justify-content:space-between;align-items:center"><div><div class="lab">Points générés par la classe</div><div class="big">1 240</div></div><div style="text-align:right"><div class="lab">Élèves</div><div style="font-size:22px;font-weight:800">19</div></div></div>'+
    '<button class="btn" style="margin:2px 0 4px" onclick="nav(\'quizbuild\')">'+ICON.plus+' Créer un quiz pour la classe</button>'+
+   '<div class="h2">Challenges de la classe</div>'+
+   [['asuivre','\u00c0 suivre'],['encours','En cours'],['passe','Pass\u00e9s']].map(function(g){var items=CHALLENGES.filter(function(c){return c.s===g[0];});if(!items.length)return '';return '<div class="lab" style="margin:8px 0 6px">'+g[1]+'</div>'+items.map(function(c){var col=c.s==='encours'?'var(--gr)':(c.s==='passe'?'var(--ink3)':'var(--am)');return '<div class="card" style="display:flex;align-items:center;gap:11px;padding:12px 13px"><div style="width:9px;height:9px;border-radius:50%;background:'+col+';flex-shrink:0"></div><div style="flex:1"><div style="font-weight:700;font-size:14px">'+c.t+'</div><div class="mut">'+c.d+(c.r?' \u00b7 '+c.r:'')+'</div></div>'+(c.s==='passe'?'<button class="chip">R\u00e9sultats</button>':'')+'</div>';}).join('');}).join('')+
+   
    '<div class="anon">'+ICON.lock+'<div class="d">Tu ne vois que les pseudos — aucune coordonnée d\'élève.</div></div>'+
    '<div class="h2" style="margin-top:6px">Élèves &amp; points individuels</div>'+
    ELEVES.map(function(e){return '<div class="row" style="cursor:pointer" onclick="nav(\'eleve\')"><div class="av" style="background:'+e[2]+'">'+e[0][0].toUpperCase()+'</div><div style="flex:1"><div style="font-weight:700;font-size:15px">'+e[0]+'</div><div class="mut">pseudo choisi par l\'élève</div></div><div style="font-weight:800;color:var(--pp);margin-right:8px">'+e[1]+'</div><span class="go">'+ICON.chev+'</span></div>';}).join('')+
@@ -135,25 +138,31 @@ var SCREENS={
    '<div class="anon">'+ICON.lock+'<div class="d">Le QR porte un jeton à usage unique, pas une identité. Tu déclenches, l\'élève réclame.</div></div>'+
    '<button class="btn" onclick="nav(\'eleve\')">Terminé</button>';
  },
- quizbuild:function(){return '<div class="top"><button class="back" onclick="nav(\'classe\')">'+ICON.back+'</button><div class="h1">Nouveau quiz</div></div>'+
+ quizbuild:function(){var sel=QUESTIONS.filter(function(q){return q.sel;}).length;return '<div class="top"><button class="back" onclick="nav(\'classe\')">'+ICON.back+'</button><div class="h1">Nouveau quiz</div></div>'+
    '<div class="card"><div class="lab" style="margin-bottom:10px">R\u00e9glages</div>'+
      '<div class="field" style="margin-bottom:12px"><label>Titre</label><input value="Le jeu des puissances"></div>'+
      '<div class="lab" style="font-size:10px;margin-bottom:6px">Niveau / classe</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"><div class="chip on" onclick="chipPick(this)">Terminale Bac Pro</div><div class="chip" onclick="chipPick(this)">1re Commerce</div><div class="chip" onclick="chipPick(this)">2de ASSP</div></div>'+
      '<div class="lab" style="font-size:10px;margin-bottom:6px">Mati\u00e8re</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"><div class="chip on" onclick="chipPick(this)">Histoire</div><div class="chip" onclick="chipPick(this)">G\u00e9o</div><div class="chip" onclick="chipPick(this)">EMC</div><div class="chip" onclick="chipPick(this)">PSE</div></div>'+
      '<div class="lab" style="font-size:10px;margin-bottom:6px">Difficult\u00e9</div><div style="display:flex;gap:6px;margin-bottom:12px"><div class="chip" onclick="chipPick(this)">Facile</div><div class="chip on" onclick="chipPick(this)">Moyen</div><div class="chip" onclick="chipPick(this)">Difficile</div></div>'+
-     '<div class="lab" style="font-size:10px;margin-bottom:6px">Th\u00e8me (selon le programme)</div><div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px">'+['Le jeu des puissances','La guerre froide','La d\u00e9colonisation','Mondialisation','La Ve R\u00e9publique'].map(function(t,i){return '<div class="chip'+(i===0?' on':'')+'" style="white-space:nowrap;flex-shrink:0" onclick="chipPick(this)">'+t+'</div>';}).join('')+'</div>'+
+     '<div class="lab" style="font-size:10px;margin-bottom:6px">Th\u00e8me (selon le programme)</div><div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px">'+['Le jeu des puissances','La guerre froide','La d\u00e9colonisation','Mondialisation','La Ve R\u00e9publique'].map(function(t,k){return '<div class="chip'+(k===0?' on':'')+'" style="white-space:nowrap;flex-shrink:0" onclick="chipPick(this)">'+t+'</div>';}).join('')+'</div>'+
      '<div class="lab" style="font-size:10px;margin-bottom:6px">D\u00e9lai par question</div><div style="display:flex;gap:6px"><div class="chip" onclick="chipPick(this)">10 s</div><div class="chip on" onclick="chipPick(this)">20 s</div><div class="chip" onclick="chipPick(this)">30 s</div><div class="chip" onclick="chipPick(this)">45 s</div></div>'+
    '</div>'+
+   '<button class="btn sec" style="margin-bottom:16px" onclick="nav(\'jeuparams\')">R\u00e9compenses de ce quiz</button>'+
    '<div class="h2">Questions ('+QUESTIONS.length+')</div>'+
-   QUESTIONS.map(function(qq,i){var cols=['#D63050','#0E9E6E','#1E6FCC','#C27C0A'];return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="lab">Question '+(i+1)+'</div>'+(qq.valid?'<span class="pill" style="background:var(--grbg);color:var(--gr)">Valid\u00e9e</span>':'<span class="pill" style="background:#FBEEDA;color:var(--am)">\u00c0 valider</span>')+'</div><div style="font-weight:600;font-size:15px;margin-bottom:10px">'+qq.q+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">'+qq.a.map(function(ans,j){return '<div style="background:'+cols[j%4]+';color:#fff;border-radius:8px;padding:9px;font-size:12.5px;font-weight:700;display:flex;justify-content:space-between;align-items:center">'+ans+(qq.c===j?' '+ICON.check:'')+'</div>';}).join('')+'</div><div style="display:flex;gap:7px"><button class="chip'+(qq.valid?' on':'')+'" style="flex:1;justify-content:center" onclick="qValid('+i+')">'+(qq.valid?'Valid\u00e9e':'Valider')+'</button><button class="chip" style="flex:1;justify-content:center" onclick="qEdit('+i+')">Modifier</button><button class="chip" style="justify-content:center;color:var(--re);border-color:#F0C0C0" onclick="qDel('+i+')">Supprimer</button></div></div>';}).join('')+
-   '<button class="btn sec" style="margin-bottom:14px" onclick="qAdd()">'+ICON.plus+' Ajouter une question</button>'+
-   '<div class="lab" style="margin-bottom:8px">Ou g\u00e9n\u00e9rer plusieurs questions</div>'+
-   '<button class="tile" style="padding:13px;margin-bottom:9px" onclick="nav(\'quizbanque\')"><div class="ic" style="width:42px;height:42px;font-size:19px;background:var(--am)">'+ICON.list+'</div><div><div style="font-weight:700;font-size:14px">Banque de questions</div><div class="mut">pioche par th\u00e8me et difficult\u00e9</div></div></button>'+
-   '<button class="tile" style="padding:13px" onclick="nav(\'quizia\')"><div class="ic" style="width:42px;height:42px;font-size:19px;background:var(--gr)">'+ICON.wand+'</div><div><div style="font-weight:700;font-size:14px">Assist\u00e9 par IA</div><div class="mut">g\u00e9n\u00e8re selon le niveau voulu</div></div></button>'+
-   '<button class="btn" style="margin-top:14px" onclick="nav(\'quizlaunch\')">Publier &amp; lancer</button>'+
+   QUESTIONS.map(function(qq,i){var cols=['#D63050','#0E9E6E','#1E6FCC','#C27C0A'];return '<div class="card" style="'+(qq.sel?'border:1.5px solid var(--ppln);background:var(--ppbg)':'')+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="display:flex;align-items:center;gap:9px"><span onclick="qSel('+i+')" style="width:20px;height:20px;border-radius:6px;border:2px solid '+(qq.sel?'var(--pp)':'var(--ppln)')+';background:'+(qq.sel?'var(--pp)':'transparent')+';cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px">'+(qq.sel?ICON.check:'')+'</span><div class="lab">Question '+(i+1)+'</div></div>'+(qq.valid?'<span class="pill" style="background:var(--grbg);color:var(--gr)">Valid\u00e9e</span>':'<span class="pill" style="background:#FBEEDA;color:var(--am)">\u00c0 valider</span>')+'</div><div style="font-weight:600;font-size:15px;margin-bottom:10px">'+qq.q+'</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">'+qq.a.map(function(ans,j){return '<div style="background:'+cols[j%4]+';color:#fff;border-radius:8px;padding:9px;font-size:12.5px;font-weight:700;display:flex;justify-content:space-between;align-items:center">'+ans+(qq.c===j?' '+ICON.check:'')+'</div>';}).join('')+'</div><div style="display:flex;gap:7px"><button class="chip'+(qq.valid?' on':'')+'" style="flex:1;justify-content:center" onclick="qValid('+i+')">'+(qq.valid?'Valid\u00e9e':'Valider')+'</button><button class="chip" style="flex:1;justify-content:center" onclick="qEdit('+i+')">Modifier</button></div></div>';}).join('')+
+   (sel>0?'<button class="btn sec" style="margin-bottom:14px;color:var(--re);border-color:#F0C0C0" onclick="delSel()">Supprimer la s\u00e9lection ('+sel+')</button>':'')+
+   '<button class="btn sec" style="margin-bottom:10px" onclick="nav(\'addmethod\')">'+ICON.plus+' Ajouter une question</button>'+
+   '<button class="btn sec" style="margin-bottom:10px" onclick="nav(\'quizpreview\')">'+ICON.eye+' Pr\u00e9visualiser (vue \u00e9l\u00e8ve)</button>'+
+   '<button class="btn" onclick="publishQuiz()">Publier &amp; lancer</button>'+
    '<button class="btn sec" style="margin-top:10px" onclick="nav(\'classe\')">Enregistrer le brouillon</button>';
  },
-  quizia:function(){return '<div class="top"><button class="back" onclick="nav(\'quizbuild\')">'+ICON.back+'</button><div class="h1">G\u00e9n\u00e9rer par IA</div></div>'+
+ addmethod:function(){return '<div class="top"><button class="back" onclick="nav(\'quizbuild\')">'+ICON.back+'</button><div class="h1">Ajouter une question</div></div>'+
+   '<button class="tile" onclick="qAdd()"><div class="ic">'+ICON.plus+'</div><div style="flex:1"><div style="font-weight:700;font-size:15px">Manuel</div><div class="mut">\u00e9cris ta question et 4 r\u00e9ponses</div></div></button>'+
+   '<button class="tile" onclick="nav(\'quizbanque\')"><div class="ic" style="background:var(--am)">'+ICON.list+'</div><div style="flex:1"><div style="font-weight:700;font-size:15px">Banque de questions</div><div class="mut">pioche dans la banque du programme</div></div></button>'+
+   '<button class="tile" onclick="nav(\'quizia\')"><div class="ic" style="background:var(--gr)">'+ICON.wand+'</div><div style="flex:1"><div style="font-weight:700;font-size:15px">Assist\u00e9 par IA</div><div class="mut">g\u00e9n\u00e8re selon le niveau voulu</div></div></button>'+
+   '<div class="mut" style="text-align:center;margin-top:8px">La g\u00e9n\u00e9ration se fait depuis la banque (SQL) ou via l\'API IA c\u00e2bl\u00e9e.</div>';
+ },
+ quizia:function(){return '<div class="top"><button class="back" onclick="nav(\'quizbuild\')">'+ICON.back+'</button><div class="h1">G\u00e9n\u00e9rer par IA</div></div>'+
    '<div class="field"><label>Th\u00e8me ou cours</label><input value="La guerre froide (1947-1991)"></div>'+
    '<div class="lab" style="font-size:10px;margin-bottom:6px">Difficult\u00e9</div><div style="display:flex;gap:6px;margin-bottom:10px"><div class="chip" onclick="chipPick(this)">Facile</div><div class="chip" onclick="chipPick(this)">Moyen</div><div class="chip on" onclick="chipPick(this)">Difficile</div></div>'+
    '<div class="lab" style="font-size:10px;margin-bottom:6px">Nombre de questions</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">'+[3,5,8,10,12].map(function(n){return '<div class="chip'+(n===5?' on':'')+'" onclick="chipPick(this)">'+n+'</div>';}).join('')+'</div>'+
@@ -256,11 +265,12 @@ var QUESTIONS=[{q:"En quelle année tombe le mur de Berlin ?",a:["1961","1989","
 var BANK=[{q:"En quelle année tombe le mur de Berlin ?",a:["1961","1989","1991","1975"],c:1},{q:"Que symbolise le rideau de fer ?",a:["Partition de l'Europe","L'ONU","La décolonisation","L'OTAN"],c:0},{q:"Qui lance le plan Marshall ?",a:["Les États-Unis","L'URSS","La France","L'ONU"],c:0},{q:"Quelle alliance regroupe le bloc de l'Est ?",a:["OTAN","Pacte de Varsovie","ONU","CEE"],c:1}];
 var QEDIT=0;
 function qAdd(){QUESTIONS.push({q:"",a:["","","",""],c:0,valid:false});QEDIT=QUESTIONS.length-1;nav("quizedit");}
-function qDel(i){QUESTIONS.splice(i,1);nav("quizbuild");}
-function qValid(i){QUESTIONS[i].valid=!QUESTIONS[i].valid;nav("quizbuild");}
+function qDel(i){QUESTIONS.splice(i,1);refresh();}
+function qValid(i){QUESTIONS[i].valid=!QUESTIONS[i].valid;refresh();}
 function qEdit(i){QEDIT=i;nav("quizedit");}
-function qSel(i){QUESTIONS[i].sel=!QUESTIONS[i].sel;nav("quizbuild");}
-function delSel(){QUESTIONS=QUESTIONS.filter(function(q){return !q.sel;});nav("quizbuild");}
+function refresh(){var y=scr.scrollTop;scr.innerHTML=(SCREENS[current]||SCREENS.welcome)();scr.scrollTop=y;}
+function qSel(i){QUESTIONS[i].sel=!QUESTIONS[i].sel;refresh();}
+function delSel(){QUESTIONS=QUESTIONS.filter(function(q){return !q.sel;});refresh();}
 var PREVSTEP=0;
 function prevGo(n){PREVSTEP=n;nav("quizpreview");}
 var SLIDE=0;
@@ -283,6 +293,8 @@ function eqUpd(el){document.getElementById(el.dataset.tgt).textContent=el.value+
 
 function qBank(i){var b=BANK[i];QUESTIONS.push({q:b.q,a:b.a.slice(),c:b.c,valid:false});nav("quizbuild");}
 function addClasse(){var n=(document.getElementById("newclassnom")||{}).value||"Nouvelle classe";CLASSES.push([n,0,0]);nav("classes");}
+var CHALLENGES=[{t:"La guerre froide",d:"5 mars",s:"passe",r:"72% de réussite · écart 18"},{t:"Le jeu des puissances",d:"12 mars",s:"encours",r:""},{t:"Mondialisation",d:"20 mars",s:"asuivre",r:""}];
+function publishQuiz(){CHALLENGES.unshift({t:"Le jeu des puissances",d:"aujourd'hui",s:"encours",r:""});nav("quizlaunch");}
 function addPseudo(){var ps=(document.getElementById("newpseudo")||{}).value||("\u00c9l\u00e8ve "+(ELEVES.length+1));ELEVES.push([ps,0,"#534AB7"]);nav("classe");}
 function iaGen(){QUESTIONS=[{q:"Quel événement marque le début de la guerre froide ?",a:["Doctrine Truman","Chute du mur","Crise de Cuba","Plan Marshall"],c:0,valid:false},{q:"Que symbolise le rideau de fer ?",a:["La partition de l'Europe","L'ONU","La décolonisation","L'OTAN"],c:0,valid:false},{q:"En quelle année a lieu la crise de Cuba ?",a:["1949","1962","1975","1989"],c:1,valid:false},{q:"Quelle alliance regroupe le bloc de l'Est ?",a:["OTAN","Pacte de Varsovie","ONU","CEE"],c:1,valid:false},{q:"Que désigne la coexistence pacifique ?",a:["Une détente relative","Une guerre ouverte","La fin de l'URSS","Un traité de paix"],c:0,valid:false}];nav("quizbuild");}
 function chipPick(el){var pr=el.parentNode;pr.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on');});el.classList.add('on');}
@@ -290,7 +302,7 @@ function render(){
   scr.innerHTML=(SCREENS[current]||SCREENS.welcome)();
   tb.style.display = current==='welcome' ? 'none' : 'flex';
   tb.innerHTML='';
-  var map={classes:'classes',classe:'classes',addeleve:'classes',eleve:'classes',qrpoints:'classes',quizbuild:'classes',quizia:'classes',quizlaunch:'classes',quizedit:'classes',quizbanque:'classes',quizpreview:'classes',createclasse:'classes',cagnotte:'cagnotte',profil:'profil',profinfos:'profil',etablissements:'profil',matieres:'profil',jeuparams:'profil'};
+  var map={classes:'classes',classe:'classes',addeleve:'classes',eleve:'classes',qrpoints:'classes',quizbuild:'classes',quizia:'classes',quizlaunch:'classes',quizedit:'classes',quizbanque:'classes',quizpreview:'classes',createclasse:'classes',addmethod:'classes',cagnotte:'cagnotte',profil:'profil',profinfos:'profil',etablissements:'profil',matieres:'profil',jeuparams:'profil'};
   TABS.forEach(function(t){var b=document.createElement('button');b.className=(map[current]===t[0])?'on':'';b.innerHTML=ICON[t[2]]+'<span>'+t[1]+'</span>';b.onclick=function(){nav(t[0]);};tb.appendChild(b);});
 }
 render();
