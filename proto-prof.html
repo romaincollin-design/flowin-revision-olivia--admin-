@@ -209,15 +209,28 @@ var SCREENS={
      '<button class="btn sec" style="margin-top:10px" onclick="nav(\'quizbuild\')">Retour \u00e0 l\'\u00e9dition</button>';}
    return head+dots+body;
  },
-  createclasse:function(){return '<div class="top"><button class="back" onclick="nav(\'classes\')">'+ICON.back+'</button><div class="h1">Cr\u00e9er une classe</div></div>'+
-   '<div class="field"><label>Nom de la classe</label><input value="'+NEWCLASSE.nom+'" oninput="NEWCLASSE.nom=this.value" placeholder="ex. Terminale Bac Pro"></div>'+
-   '<div class="lab" style="font-size:10px;margin-bottom:6px">Niveau</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"><div class="chip on" onclick="chipPick(this)">Terminale</div><div class="chip" onclick="chipPick(this)">1re</div><div class="chip" onclick="chipPick(this)">2de</div></div>'+
-   '<div class="lab" style="font-size:10px;margin-bottom:6px">Mati\u00e8re</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"><div class="chip on" onclick="chipPick(this)">Histoire</div><div class="chip" onclick="chipPick(this)">G\u00e9o</div><div class="chip" onclick="chipPick(this)">EMC</div><div class="chip" onclick="chipPick(this)">PSE</div></div>'+
-   '<div class="anon">'+ICON.lock+'<div class="d">Ajoute tes \u00e9l\u00e8ves par pseudo. Aucune coordonn\u00e9e, aucun nom r\u00e9el.</div></div>'+
-   '<div class="lab" style="margin-bottom:6px">\u00c9l\u00e8ves de la classe ('+NEWCLASSE.eleves.length+')</div>'+
-   '<div style="display:flex;gap:8px;margin-bottom:12px"><input id="ncp" placeholder="ex. Soso, NadirX" style="flex:1;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-family:inherit;font-size:15px"><button class="chip on" style="flex-shrink:0" onclick="addNewPseudo()">Ajouter</button></div>'+
-   (NEWCLASSE.eleves.length?NEWCLASSE.eleves.map(function(ps){return '<div class="row" style="padding:9px 0"><div class="av">'+ps[0].toUpperCase()+'</div><div style="flex:1;font-weight:700;font-size:14px">'+ps+'</div></div>';}).join(''):'<div class="mut" style="margin-bottom:8px">Aucun \u00e9l\u00e8ve pour l\'instant \u2014 ajoute des pseudos, ou ils rejoindront par QR.</div>')+
-   '<button class="btn" style="margin-top:12px" onclick="createClasseFinal()">Cr\u00e9er la classe</button>';
+  createclasse:function(){if(!NEWCLASSE.created){return '<div class="top"><button class="back" onclick="nav(\'classes\')">'+ICON.back+'</button><div class="h1">Cr\u00e9er une classe</div></div>'+
+     '<div class="field"><label>Nom de la classe</label><input value="'+NEWCLASSE.nom+'" oninput="NEWCLASSE.nom=this.value" placeholder="ex. Terminale Bac Pro"></div>'+
+     '<div class="lab" style="font-size:10px;margin-bottom:6px">Niveau</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px"><div class="chip on" onclick="chipPick(this)">Terminale</div><div class="chip" onclick="chipPick(this)">1re</div><div class="chip" onclick="chipPick(this)">2de</div></div>'+
+     '<div class="lab" style="font-size:10px;margin-bottom:6px">Mati\u00e8re</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"><div class="chip on" onclick="chipPick(this)">Histoire</div><div class="chip" onclick="chipPick(this)">G\u00e9o</div><div class="chip" onclick="chipPick(this)">EMC</div><div class="chip" onclick="chipPick(this)">PSE</div></div>'+
+     '<div class="anon">'+ICON.lock+'<div class="d">Tu cr\u00e9es la classe, puis tu ajoutes les \u00e9l\u00e8ves par pseudo (manuel ou QR). Aucune coordonn\u00e9e.</div></div>'+
+     '<button class="btn" onclick="createClasseFinal()">Cr\u00e9er la classe</button>';}
+   return '<div class="top"><button class="back" onclick="finishClasse()">'+ICON.back+'</button><div><div class="sub">Classe cr\u00e9\u00e9e</div><div class="h1" style="font-size:20px">'+NEWCLASSE.nom+'</div></div></div>'+
+     '<div class="card" style="display:flex;align-items:center;gap:11px;background:var(--grbg);border:0"><div style="color:var(--gr);font-size:20px">'+ICON.check+'</div><div style="font-weight:600;font-size:14px;color:#0a6b52">C\'est cr\u00e9\u00e9. Ajoute maintenant tes \u00e9l\u00e8ves.</div></div>'+
+     '<div class="h2">Inscrire les \u00e9l\u00e8ves</div>'+
+     '<button class="tile" onclick="nav(\'qrinscription\')"><div class="ic" style="background:var(--gr)">'+ICON.qr+'</div><div style="flex:1"><div style="font-weight:700;font-size:15px">Par QR (recommand\u00e9)</div><div class="mut">les \u00e9l\u00e8ves s\'inscrivent eux-m\u00eames</div></div><div class="go">'+ICON.chev+'</div></button>'+
+     '<div class="lab" style="margin:10px 0 6px">Ou ajout manuel</div>'+
+     '<div style="display:flex;gap:8px;margin-bottom:12px"><input id="ncp" placeholder="pseudo de l\'\u00e9l\u00e8ve" style="flex:1;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-family:inherit;font-size:15px"><button class="chip on" style="flex-shrink:0" onclick="addNewPseudo()">Ajouter</button></div>'+
+     '<div class="lab" style="margin-bottom:6px">\u00c9l\u00e8ves inscrits ('+NEWCLASSE.eleves.length+')</div>'+
+     (NEWCLASSE.eleves.length?NEWCLASSE.eleves.map(function(ps){return '<div class="row" style="padding:9px 0"><div class="av">'+ps[0].toUpperCase()+'</div><div style="flex:1;font-weight:700;font-size:14px">'+ps+'</div></div>';}).join(''):'<div class="mut" style="margin-bottom:8px">Personne encore \u2014 ouvre le QR ou ajoute un pseudo.</div>')+
+     '<button class="btn" style="margin-top:12px" onclick="finishClasse()">Terminer</button>';
+ },
+ qrinscription:function(){return '<div class="top"><button class="back" onclick="nav(\'createclasse\')">'+ICON.back+'</button><div><div class="sub">'+NEWCLASSE.nom+'</div><div class="h1" style="font-size:20px">QR d\'inscription</div></div></div>'+
+   '<div class="card" style="text-align:center;padding:16px"><div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;display:inline-block">'+qrSvg()+'</div><div class="mut" style="margin-top:10px">Affiche ce QR en classe : les \u00e9l\u00e8ves le flashent pour s\'inscrire eux-m\u00eames.</div></div>'+
+   '<div class="lab" style="margin-bottom:8px">Ce que voit l\'\u00e9l\u00e8ve</div>'+
+   '<div class="card" style="border:1.5px solid var(--ppln)"><div style="font-weight:700;font-size:15px;text-align:center">Rejoins '+NEWCLASSE.nom+'</div><div class="mut" style="text-align:center;margin:4px 0 12px">choisis ton pseudo</div><input placeholder="ton pseudo" style="width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-family:inherit;font-size:15px;margin-bottom:10px;box-sizing:border-box"><button class="btn" style="pointer-events:none">Rejoindre la classe</button></div>'+
+   '<div class="anon">'+ICON.lock+'<div class="d">L\'\u00e9l\u00e8ve choisit son pseudo lui-m\u00eame. Toi, tu ne vois que les pseudos \u2014 jamais son identit\u00e9.</div></div>'+
+   '<button class="btn sec" onclick="nav(\'createclasse\')">Termin\u00e9</button>';
  },
  cagnotte:function(){return '<div class="top"><div class="h1">Ma cagnotte</div></div>'+
    '<div class="card" style="text-align:center"><div class="lab">Points restant \u00e0 distribuer</div><div class="big" style="font-size:38px">1 500</div><div class="mut">quota de l\'ann\u00e9e \u00b7 r\u00e9gule par classe</div></div>'+
@@ -271,10 +284,11 @@ function qAdd(){QUESTIONS.push({q:"",a:["","","",""],c:0,valid:false});QEDIT=QUE
 function qDel(i){QUESTIONS.splice(i,1);refresh();}
 function qValid(i){QUESTIONS[i].valid=!QUESTIONS[i].valid;if(QUESTIONS[i].valid)toast("Question valid\u00e9e");refresh();}
 function qEdit(i){QEDIT=i;nav("quizedit");}
-var NEWCLASSE={nom:"",eleves:[]};
+var NEWCLASSE={nom:"",eleves:[],created:false};
 var KBOPEN={asuivre:false,encours:true,passe:false};
-function addNewPseudo(){var el=document.getElementById("ncp");var ps=el&&el.value;if(!ps)return;NEWCLASSE.eleves.push(ps);refresh();}
-function createClasseFinal(){var n=NEWCLASSE.nom||"Nouvelle classe";CLASSES.push([n,NEWCLASSE.eleves.length,0]);NEWCLASSE={nom:"",eleves:[]};toast("Classe créée");setTimeout(function(){nav("classes");},700);}
+function addNewPseudo(){var el=document.getElementById("ncp");var ps=el&&el.value;if(!ps)return;NEWCLASSE.eleves.push(ps);if(NEWCLASSE.created&&CLASSES.length){CLASSES[CLASSES.length-1][1]=NEWCLASSE.eleves.length;}toast("Élève ajouté");refresh();}
+function createClasseFinal(){if(!NEWCLASSE.nom){toast("Donne un nom à la classe");return;}CLASSES.push([NEWCLASSE.nom,NEWCLASSE.eleves.length,0]);NEWCLASSE.created=true;toast("Classe créée");refresh();}
+function finishClasse(){NEWCLASSE={nom:"",eleves:[],created:false};nav("classes");}
 function kbToggle(g){KBOPEN[g]=!KBOPEN[g];refresh();}
 function toast(msg){var t=document.getElementById("toast");if(!t)return;t.textContent=msg;t.className="show";clearTimeout(window._tt);window._tt=setTimeout(function(){t.className="";},1900);}
 function refresh(){var y=scr.scrollTop;scr.innerHTML=(SCREENS[current]||SCREENS.welcome)();scr.scrollTop=y;}
@@ -311,7 +325,7 @@ function render(){
   scr.innerHTML=(SCREENS[current]||SCREENS.welcome)();
   tb.style.display = current==='welcome' ? 'none' : 'flex';
   tb.innerHTML='';
-  var map={classes:'classes',classe:'classes',addeleve:'classes',eleve:'classes',qrpoints:'classes',quizbuild:'classes',quizia:'classes',quizlaunch:'classes',quizedit:'classes',quizbanque:'classes',quizpreview:'classes',createclasse:'classes',addmethod:'classes',cagnotte:'cagnotte',profil:'profil',profinfos:'profil',etablissements:'profil',matieres:'profil',jeuparams:'profil'};
+  var map={classes:'classes',classe:'classes',addeleve:'classes',eleve:'classes',qrpoints:'classes',quizbuild:'classes',quizia:'classes',quizlaunch:'classes',quizedit:'classes',quizbanque:'classes',quizpreview:'classes',createclasse:'classes',qrinscription:'classes',addmethod:'classes',cagnotte:'cagnotte',profil:'profil',profinfos:'profil',etablissements:'profil',matieres:'profil',jeuparams:'profil'};
   TABS.forEach(function(t){var b=document.createElement('button');b.className=(map[current]===t[0])?'on':'';b.innerHTML=ICON[t[2]]+'<span>'+t[1]+'</span>';b.onclick=function(){nav(t[0]);};tb.appendChild(b);});
 }
 render();
