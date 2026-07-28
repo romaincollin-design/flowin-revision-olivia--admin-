@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowin Révision — Super Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--pp:#534AB7;--pp2:#7F77DD;--ppbg:#EEEDFE;--ppln:#AFA9EC;--ink:#14162A;--ink2:#3D4268;--ink3:#8B90B8;--surf:#fff;--bg:#F3F3F9;--line:rgba(0,0,0,.08);--gr:#0E9E6E;--grbg:#E4F7F0;--am:#C27C0A;--ambg:#FBEEDA;--re:#D63050;--bl:#1E6FCC;--gold:#E0A800;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.12em}
+.app{display:grid;grid-template-columns:216px 1fr;min-height:100vh}
+.side{background:var(--surf);border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:8px;padding:0 4px 16px}
+.brand .mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#14162A,#3D4268);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;font-size:14px}
+.brand .name{font-weight:800;font-size:13px}
+.brand .tag{font-size:9px;font-weight:800;color:var(--pp);background:var(--ppbg);padding:2px 7px;border-radius:8px;margin-left:4px}
+.nav a{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;color:var(--ink2);text-decoration:none;font-weight:600;font-size:12.5px;margin-bottom:1px;cursor:pointer}
+.nav a.on{background:var(--ppbg);color:var(--pp)}
+.nav a:hover{background:var(--bg)}
+.nav .sec{font-size:10px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 6px 10px}
+.side .foot{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);display:flex;align-items:center;gap:9px}
+.av{width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+.main{padding:26px 34px 60px;max-width:1320px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;gap:16px}
+.h1{font-size:23px;font-weight:800;letter-spacing:-.4px}
+.sub{color:var(--ink3);font-size:13px;margin-top:2px}
+.btn{background:var(--pp);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:700;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.btn.sec{background:var(--surf);color:var(--pp);border:1.5px solid var(--ppln)}
+.back{width:34px;height:34px;border-radius:50%;background:var(--surf);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink);flex-shrink:0}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.kpi{background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.kpi .lab{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em}
+.kpi .v{font-size:26px;font-weight:800;color:var(--pp);margin-top:6px}
+.kpi .d{font-size:12px;margin-top:4px;font-weight:600}
+.grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;align-items:start;margin-bottom:22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:20px}
+.card h3{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:5px;background:var(--ppbg);color:var(--pp);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
+.row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(0,0,0,.05)}
+.row:last-child{border:0}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;color:var(--ink3);text-transform:uppercase;font-weight:700;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:11px 10px;font-size:13.5px;border-bottom:1px solid rgba(0,0,0,.05)}
+tr.link{cursor:pointer}
+tr.link:hover td{background:var(--bg)}
+.bar-mini{width:80px;height:8px;background:var(--bg);border-radius:6px;overflow:hidden;display:inline-block;vertical-align:middle}
+.bar-mini i{display:block;height:100%;background:var(--pp)}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:20px;padding:6px 12px;font-weight:600;font-size:12.5px;cursor:pointer}
+.chip.on{background:var(--ppbg);color:var(--pp);border-color:var(--ppln)}
+.chart{display:flex;align-items:flex-end;gap:10px;height:140px;padding-top:10px}
+.chart .bar{flex:1;text-align:center}
+.chart .bar i{display:block;border-radius:6px 6px 0 0;background:linear-gradient(180deg,var(--pp2),var(--pp))}
+.chart .bar span{display:block;margin-top:6px;font-size:11px;color:var(--ink3);font-weight:600}
+.clist{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surf)}
+.clist .grp{padding:10px 16px;background:var(--bg);font-size:11px;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
+.clist .it{display:flex;align-items:center;gap:14px;padding:14px 16px;border-top:1px solid var(--line);cursor:pointer}
+.clist .it:hover{background:var(--bg)}
+.clist .ic{width:38px;height:38px;border-radius:10px;background:var(--ppbg);color:var(--pp);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.map{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:6px}
+.map .cell{aspect-ratio:1;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+.tier{display:flex;gap:5px;margin-bottom:14px}.tier .t{flex:1;text-align:center;font-size:9px;font-weight:800;padding:7px 2px;border-radius:8px;color:#fff;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="mark"><svg class="i" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-4h6v4M9 12h.01M15 12h.01"/></svg></div><div class="name">Flowin<span class="tag">SUPER ADMIN</span></div></div>
+    <nav class="nav" id="nav">
+      <a data-p="overview"><svg class="i" viewBox="0 0 24 24"><path d="M3 3v18h18M7 15l4-6 3 3 4-7"/></svg>Vue d'ensemble</a>
+      <a data-p="etabs"><svg class="i" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-4h6v4M9 12h.01M15 12h.01"/></svg>Établissements</a>
+      <a data-p="eleves"><svg class="i" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>Élèves (CRM)</a>
+      <a data-p="profs"><svg class="i" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5zM6 12v5c3 3 9 3 12 0v-5"/></svg>Professeurs</a>
+      <a data-p="ligues"><svg class="i" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 4H4v2a3 3 0 0 0 3 3M17 4h3v2a3 3 0 0 1-3 3"/></svg>Classements &amp; ligues</a>
+      <a data-p="partenaires"><svg class="i" viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7"/></svg>Partenaires &amp; lots</a>
+      <div class="sec">Compte</div>
+      <a data-p="params"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Paramètres</a>
+    </nav>
+    <div class="foot"><div class="av">A</div><div><div style="font-weight:700;font-size:12px">Admin Flowin</div><div style="color:var(--ink3);font-size:10.5px">Accès total</div></div></div>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+<script>
+var ICON={
+ chev:'<svg class="i" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>',
+ back:'<svg class="i" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>',
+ check:'<svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>',
+ gift:'<svg class="i" viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7"/></svg>',
+ school:'<svg class="i" viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-4h6v4M9 12h.01M15 12h.01"/></svg>',
+ user:'<svg class="i" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>',
+ prof:'<svg class="i" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5zM6 12v5c3 3 9 3 12 0v-5"/></svg>',
+ plus:'<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>'
+};
+function toast(m){}
+
+var ETABS=[
+ {nom:'Lycée de Vence',ville:'Vence',eleves:59,profs:4,classes:3,pts:2640},
+ {nom:'Collège Estienne d\'Orves',ville:'Nice',eleves:180,profs:9,classes:8,pts:9200},
+ {nom:'Lycée Parc Impérial',ville:'Nice',eleves:240,profs:12,classes:10,pts:14300}
+];
+var ELEVES=[
+ {ps:'Soso',etab:'Lycée de Vence',classe:'Terminale Bac Pro',pts:512,ligue:'Or',streak:7,defis:12,parr:3,derniere:'Aujourd\'hui',lieu:'Vence, FR'},
+ {ps:'Lilou',etab:'Lycée de Vence',classe:'Terminale Bac Pro',pts:395,ligue:'Argent',streak:4,defis:8,parr:1,derniere:'Hier',lieu:'Vence, FR'},
+ {ps:'MarcX',etab:'Lycée de Vence',classe:'1re Bac Pro Commerce',pts:300,ligue:'Argent',streak:2,defis:5,parr:0,derniere:'Il y a 3j',lieu:'Vence, FR'},
+ {ps:'Nadir06',etab:'Lycée de Vence',classe:'Terminale Bac Pro',pts:280,ligue:'Bronze',streak:1,defis:3,parr:0,derniere:'Il y a 5j',lieu:'Vence, FR'},
+ {ps:'LucaP',etab:'Collège Estienne d\'Orves',classe:'3e B',pts:610,ligue:'Or',streak:9,defis:15,parr:5,derniere:'Aujourd\'hui',lieu:'Nice, FR'},
+ {ps:'Emma_V',etab:'Lycée Parc Impérial',classe:'Terminale STMG',pts:255,ligue:'Bronze',streak:1,defis:2,parr:0,derniere:'Il y a 8j',lieu:'Nice, FR'}
+];
+var PROFS=[
+ {nom:'Olivia Laurent',etab:'Lycée de Vence',matieres:'Histoire, Géo, EMC, PSE',classes:3,quiz:18,pts:2640,derniere:'Aujourd\'hui'},
+ {nom:'Karim Belaïd',etab:'Collège Estienne d\'Orves',matieres:'Maths',classes:5,quiz:32,pts:9200,derniere:'Hier'},
+ {nom:'Julie Marchand',etab:'Lycée Parc Impérial',matieres:'Français, Histoire',classes:6,quiz:41,pts:14300,derniere:'Aujourd\'hui'}
+];
+var LOTS=[
+ {nom:'1 semaine salle de sport',partenaire:'FitClub Vence',statut:'validé',qte:20,restant:14,etab:'Lycée de Vence'},
+ {nom:'Bon d\'achat 10€',partenaire:'SuperMarket Vence',statut:'validé',qte:50,restant:31,etab:'Lycée de Vence'},
+ {nom:'Place de cinéma',partenaire:'Ciné Nice',statut:'en attente',qte:30,restant:30,etab:'Lycée Parc Impérial'}
+];
+
+var CURETAB=0, CURELEVE=0, CURPROF=0;
+function openEtab(i){CURETAB=i;go('etabdetail');}
+function openEleve(i){CURELEVE=i;go('elevedetail');}
+function openProf(i){CURPROF=i;go('profdetail');}
+
+var PAGE='overview';
+function go(p){PAGE=p;render();document.querySelectorAll('#nav a').forEach(function(a){a.classList.toggle('on',a.dataset.p===p);});window.scrollTo(0,0);}
+document.getElementById('nav').addEventListener('click',function(e){var a=e.target.closest('a');if(a)go(a.dataset.p);});
+
+var PAGES={
+ overview:function(){var totE=ETABS.reduce(function(a,e){return a+e.eleves;},0);var totP=ETABS.reduce(function(a,e){return a+e.pts;},0);
+  return ''
+  +'<div class="topbar"><div><div class="h1">Vue d\'ensemble</div><div class="sub">Tous établissements · accès total</div></div></div>'
+  +'<div class="kpis">'
+   +'<div class="kpi"><div class="lab">Établissements</div><div class="v">'+ETABS.length+'</div><div class="d" style="color:var(--gr)">+1 ce trimestre</div></div>'
+   +'<div class="kpi"><div class="lab">Élèves actifs</div><div class="v">'+totE+'</div><div class="d" style="color:var(--gr)">+22 ce mois</div></div>'
+   +'<div class="kpi"><div class="lab">Points cumulés</div><div class="v">'+totP.toLocaleString()+'</div><div class="d" style="color:var(--ink3)">tous établissements</div></div>'
+   +'<div class="kpi"><div class="lab">Lots en stock</div><div class="v">'+LOTS.reduce(function(a,l){return a+l.restant;},0)+'</div><div class="d" style="color:var(--am)">'+LOTS.filter(function(l){return l.statut==='en attente';}).length+' partenaire(s) à valider</div></div>'
+  +'</div>'
+  +'<div class="grid2">'
+   +'<div class="card"><h3>Activité globale (7 derniers mois)</h3><div class="chart">'+[38,52,61,74,80,95,112].map(function(v,i){var labs=['S','O','N','D','J','F','M'];return '<div class="bar"><i style="height:'+v+'px"></i><span>'+labs[i]+'</span></div>';}).join('')+'</div></div>'
+   +'<div class="card"><h3>Classement des établissements</h3>'+ETABS.slice().sort(function(a,b){return b.pts-a.pts;}).map(function(e,i){return '<div class="row"><div class="pill" style="width:22px;height:22px;padding:0;justify-content:center;border-radius:50%">'+(i+1)+'</div><div style="flex:1;font-weight:700;font-size:13px">'+e.nom+'</div><b style="color:var(--pp)">'+e.pts.toLocaleString()+'</b></div>';}).join('')+'</div>'
+  +'</div>'
+  +'<div class="card"><h3>Mapping d\'activité récente<span class="pill">clique pour ouvrir la fiche</span></h3><div class="map">'+ELEVES.concat(PROFS.map(function(p){return {ps:p.nom,pts:p.pts};})).map(function(e,i){var v=Math.min(100,Math.round((e.pts||0)/150));var col='hsl('+(250-v*1.3)+',55%,'+(70-v*0.25)+'%)';var isP=i>=ELEVES.length;return '<div class="cell" style="background:'+col+'" title="'+e.ps+'" onclick="'+(isP?'openProf('+(i-ELEVES.length)+')':'openEleve('+i+')')+'">'+e.ps.slice(0,2)+'</div>';}).join('')+'</div></div>';
+ },
+ etabs:function(){return ''
+  +'<div class="topbar"><div><div class="h1">Établissements</div><div class="sub">'+ETABS.length+' établissements enregistrés</div></div><button class="btn">'+ICON.plus+' Ajouter un établissement</button></div>'
+  +'<div class="clist">'+ETABS.map(function(e,i){return '<div class="it" onclick="openEtab('+i+')"><div class="ic">'+ICON.school+'</div><div style="flex:1"><div style="font-weight:700;font-size:14.5px">'+e.nom+'</div><div class="sub" style="margin:2px 0 0">'+e.ville+' · '+e.eleves+' élèves · '+e.profs+' profs · '+e.classes+' classes</div></div><span style="color:var(--ink3)">'+ICON.chev+'</span></div>';}).join('')+'</div>';
+ },
+ etabdetail:function(){var e=ETABS[CURETAB];var roster=ELEVES.filter(function(x){return x.etab===e.nom;});
+  return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'etabs\')">'+ICON.back+'</button><div><div class="sub">'+e.ville+'</div><div class="h1">'+e.nom+'</div></div></div></div>'
+  +'<div class="kpis">'
+   +'<div class="kpi"><div class="lab">Élèves</div><div class="v">'+e.eleves+'</div></div>'
+   +'<div class="kpi"><div class="lab">Professeurs</div><div class="v">'+e.profs+'</div></div>'
+   +'<div class="kpi"><div class="lab">Classes</div><div class="v">'+e.classes+'</div></div>'
+   +'<div class="kpi"><div class="lab">Points cumulés</div><div class="v">'+e.pts.toLocaleString()+'</div></div>'
+  +'</div>'
+  +'<div class="card"><h3>Élèves de cet établissement (échantillon)</h3><table><tr><th>Pseudo</th><th>Classe</th><th>Points</th><th>Ligue</th><th></th></tr>'
+    +roster.map(function(x){var i=ELEVES.indexOf(x);return '<tr class="link" onclick="openEleve('+i+')"><td style="font-weight:700;color:var(--pp)">'+x.ps+'</td><td>'+x.classe+'</td><td style="font-weight:700">'+x.pts+'</td><td><span class="pill">'+x.ligue+'</span></td><td style="text-align:right;color:var(--ink3)">'+ICON.chev+'</td></tr>';}).join('')
+  +'</table></div>';
+ },
+ eleves:function(){return ''
+  +'<div class="topbar"><div><div class="h1">Élèves</div><div class="sub">CRM · '+ELEVES.length+' profils (échantillon)</div></div></div>'
+  +'<div class="card"><table><tr><th>Pseudo</th><th>Établissement</th><th>Classe</th><th>Points</th><th>Ligue</th><th>Dernière activité</th><th></th></tr>'
+    +ELEVES.map(function(x,i){return '<tr class="link" onclick="openEleve('+i+')"><td style="font-weight:700;color:var(--pp)">'+x.ps+'</td><td>'+x.etab+'</td><td>'+x.classe+'</td><td style="font-weight:700">'+x.pts+'</td><td><span class="pill">'+x.ligue+'</span></td><td class="sub">'+x.derniere+'</td><td style="text-align:right;color:var(--ink3)">'+ICON.chev+'</td></tr>';}).join('')
+  +'</table></div>';
+ },
+ elevedetail:function(){var e=ELEVES[CURELEVE];return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'eleves\')">'+ICON.back+'</button><div><div class="sub">'+e.etab+' · '+e.classe+'</div><div class="h1">'+e.ps+'</div></div></div></div>'
+  +'<div class="kpis">'
+   +'<div class="kpi"><div class="lab">Points</div><div class="v">'+e.pts+'</div></div>'
+   +'<div class="kpi"><div class="lab">Ligue</div><div class="v" style="font-size:19px">'+e.ligue+'</div></div>'
+   +'<div class="kpi"><div class="lab">Streak</div><div class="v">'+e.streak+' j</div></div>'
+   +'<div class="kpi"><div class="lab">Défis joués</div><div class="v">'+e.defis+'</div></div>'
+  +'</div>'
+  +'<div class="grid2">'
+   +'<div class="card"><h3>Progression sur l\'année</h3><div class="chart">'+[30,42,38,55,60,72,82].map(function(v,i){var labs=['S','O','N','D','J','F','M'];return '<div class="bar"><i style="height:'+(v*1.3)+'px"></i><span>'+labs[i]+'</span></div>';}).join('')+'</div></div>'
+   +'<div class="card"><h3>Profil &amp; activité</h3>'
+     +[['Temps de connexion','4h12 / semaine'],['Lieu de connexion',e.lieu],['Parrainages',e.parr+' inscrits'],['Dernière activité',e.derniere]].map(function(r){return '<div class="row"><span class="sub" style="flex:1">'+r[0]+'</span><b style="font-size:13px">'+r[1]+'</b></div>';}).join('')+'</div>'
+  +'</div>'
+  +'<div class="card"><h3>Résultats par matière</h3>'+[['Histoire',82,'#D63050'],['Géo',64,'#1E6FCC'],['EMC',74,'#C27C0A'],['PSE',58,'#0E9E6E']].map(function(m){return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:11px"><div style="width:64px;font-size:12px;font-weight:600">'+m[0]+'</div><div class="bar-mini" style="width:100%"><i style="width:'+m[1]+'%;background:'+m[2]+'"></i></div><div style="width:32px;text-align:right;font-weight:700;font-size:12px;color:var(--pp)">'+m[1]+'%</div></div>';}).join('')+'</div>';
+ },
+ profs:function(){return ''
+  +'<div class="topbar"><div><div class="h1">Professeurs</div><div class="sub">'+PROFS.length+' profils (échantillon)</div></div></div>'
+  +'<div class="card"><table><tr><th>Nom</th><th>Établissement</th><th>Matières</th><th>Classes</th><th>Quiz créés</th><th></th></tr>'
+    +PROFS.map(function(p,i){return '<tr class="link" onclick="openProf('+i+')"><td style="font-weight:700;color:var(--pp)">'+p.nom+'</td><td>'+p.etab+'</td><td>'+p.matieres+'</td><td>'+p.classes+'</td><td style="font-weight:700">'+p.quiz+'</td><td style="text-align:right;color:var(--ink3)">'+ICON.chev+'</td></tr>';}).join('')
+  +'</table></div>';
+ },
+ profdetail:function(){var p=PROFS[CURPROF];return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'profs\')">'+ICON.back+'</button><div><div class="sub">'+p.etab+'</div><div class="h1">'+p.nom+'</div></div></div></div>'
+  +'<div class="kpis">'
+   +'<div class="kpi"><div class="lab">Classes</div><div class="v">'+p.classes+'</div></div>'
+   +'<div class="kpi"><div class="lab">Quiz créés</div><div class="v">'+p.quiz+'</div></div>'
+   +'<div class="kpi"><div class="lab">Points distribués</div><div class="v">'+p.pts.toLocaleString()+'</div></div>'
+   +'<div class="kpi"><div class="lab">Dernière activité</div><div class="v" style="font-size:16px">'+p.derniere+'</div></div>'
+  +'</div>'
+  +'<div class="card"><h3>Matières enseignées</h3><div style="font-size:13.5px;color:var(--ink2)">'+p.matieres+'</div></div>';
+ },
+ ligues:function(){return ''
+  +'<div class="topbar"><div class="h1">Classements &amp; ligues</div></div>'
+  +'<div class="grid2">'
+   +'<div class="card"><h3>Classement des établissements</h3>'+ETABS.slice().sort(function(a,b){return b.pts-a.pts;}).map(function(e,i){return '<div class="row"><div class="pill" style="width:22px;height:22px;padding:0;justify-content:center;border-radius:50%">'+(i+1)+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+e.nom+'</div><b style="color:var(--pp)">'+e.pts.toLocaleString()+'</b></div>';}).join('')+'</div>'
+   +'<div class="card"><h3>Répartition par ligue (tous établ.)</h3>'+[['Légende','var(--pp2)',2],['Platine','#2478CC',8],['Or','#B87A10',24],['Argent','#6B7280',61],['Bronze','#9A6B3A',94]].map(function(l){var pct=Math.round(l[2]/189*100);return '<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;margin-bottom:5px"><span>'+l[0]+'</span><span>'+l[2]+' élèves</span></div><div class="bar-mini" style="width:100%"><i style="width:'+pct+'%;background:'+l[1]+'"></i></div></div>';}).join('')+'</div>'
+  +'</div>'
+  +'<div class="card"><h3>Classement des classes (interclasse)</h3><table><tr><th>Rang</th><th>Classe</th><th>Établissement</th><th>Points</th></tr>'+[['1','3e B',180],['2','Terminale Bac Pro',59],['3','Terminale STMG',72]].map(function(r,i){return '<tr><td style="font-weight:800;color:var(--pp)">'+(i+1)+'</td><td style="font-weight:700">'+r[1]+'</td><td class="sub">'+ETABS[i%3].nom+'</td><td style="font-weight:700">'+(1240-i*300)+'</td></tr>';}).join('')+'</table></div>';
+ },
+ partenaires:function(){return ''
+  +'<div class="topbar"><div><div class="h1">Partenaires &amp; lots</div><div class="sub">Gestion du stock, validation, distribution</div></div><button class="btn">'+ICON.plus+' Ajouter un partenaire</button></div>'
+  +'<div class="kpis" style="grid-template-columns:repeat(3,1fr)">'
+   +'<div class="kpi"><div class="lab">Lots actifs</div><div class="v">'+LOTS.length+'</div></div>'
+   +'<div class="kpi"><div class="lab">Unités en stock</div><div class="v">'+LOTS.reduce(function(a,l){return a+l.restant;},0)+'</div></div>'
+   +'<div class="kpi"><div class="lab">En attente de validation</div><div class="v" style="color:var(--am)">'+LOTS.filter(function(l){return l.statut==='en attente';}).length+'</div></div>'
+  +'</div>'
+  +'<div class="card"><h3>Lots des partenaires</h3>'+LOTS.map(function(l,i){var pct=Math.round(l.restant/l.qte*100);return '<div class="row" style="align-items:flex-start"><div style="width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#FBBF24,#E0A800);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ICON.gift+'</div><div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:700;font-size:14px">'+l.nom+'</div>'+(l.statut==='en attente'?'<span class="pill" style="background:var(--ambg);color:var(--am)">En attente</span>':'<span class="pill" style="background:var(--grbg);color:var(--gr)">Validé</span>')+'</div><div class="sub">'+l.partenaire+' · '+l.etab+'</div><div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin:6px 0 4px"><span>Stock</span><span style="color:var(--pp)">'+l.restant+' / '+l.qte+'</span></div><div class="bar-mini" style="width:200px"><i style="width:'+pct+'%"></i></div>'+(l.statut==='en attente'?'<div style="margin-top:8px"><button class="btn sec" style="padding:7px 12px;font-size:12px" onclick="LOTS['+i+'].statut=\'validé\';go(\'partenaires\')">Valider ce partenaire</button></div>':'')+'</div></div>';}).join('')+'</div>';
+ },
+ params:function(){return ''
+  +'<div class="topbar"><div class="h1">Paramètres</div></div>'
+  +'<div class="card"><h3>Accès</h3><div class="sub">Compte Super Admin — accès total, sans restriction, à tous les établissements, élèves, professeurs et partenaires.</div></div>';
+ }
+};
+function render(){document.getElementById('main').innerHTML=(PAGES[PAGE]||PAGES.overview)();}
+go('overview');
+</script>
+</body>
+</html>
