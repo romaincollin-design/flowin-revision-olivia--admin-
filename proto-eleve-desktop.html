@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowin Révision — Espace élève (desktop)</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--pp:#534AB7;--pp2:#7F77DD;--ppbg:#EEEDFE;--ppln:#AFA9EC;--ink:#14162A;--ink2:#3D4268;--ink3:#8B90B8;--surf:#fff;--bg:#F3F3F9;--line:rgba(0,0,0,.08);--gr:#0E9E6E;--grbg:#E4F7F0;--am:#C27C0A;--ambg:#FBEEDA;--re:#D63050;--bl:#1E6FCC;--gold:#E0A800;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.12em}
+.app{display:grid;grid-template-columns:216px 1fr;min-height:100vh}
+.side{background:var(--surf);border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:8px;padding:0 4px 16px}
+.brand .mark{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#5B52C9,#7F77DD);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;font-size:15px}
+.brand .name{font-weight:800;font-size:13.5px}
+.nav a{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;color:var(--ink2);text-decoration:none;font-weight:600;font-size:12.5px;margin-bottom:1px;cursor:pointer}
+.nav a.on{background:var(--ppbg);color:var(--pp)}
+.nav a:hover{background:var(--bg)}
+.side .foot{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);display:flex;align-items:center;gap:9px}
+.av{width:32px;height:32px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0}
+.main{padding:26px 34px 60px;max-width:1280px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;gap:16px}
+.h1{font-size:23px;font-weight:800;letter-spacing:-.4px}
+.sub{color:var(--ink3);font-size:13px;margin-top:2px}
+.btn{background:var(--pp);color:#fff;border:none;border-radius:10px;padding:10px 16px;font-weight:700;font-size:13.5px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.btn.sec{background:var(--surf);color:var(--pp);border:1.5px solid var(--ppln)}
+.back{width:34px;height:34px;border-radius:50%;background:var(--surf);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink);flex-shrink:0}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.kpi{background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:12px}
+.kpi .ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;flex-shrink:0}
+.kpi .v{font-size:22px;font-weight:800}
+.kpi .l{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase}
+.grid2{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;align-items:start;margin-bottom:22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:20px}
+.card h3{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.tile{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:14px;padding:16px;cursor:pointer;margin-bottom:11px}
+.tile:hover{background:var(--bg)}
+.tile .ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;flex-shrink:0}
+.pill{display:inline-flex;align-items:center;gap:5px;background:var(--ppbg);color:var(--pp);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
+.row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(0,0,0,.05)}
+.row:last-child{border:0}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:20px;padding:7px 13px;font-weight:600;font-size:12.5px;cursor:pointer}
+.chip.on{background:var(--ppbg);color:var(--pp);border-color:var(--ppln)}
+.chip .sw{width:11px;height:11px;border-radius:3px}
+.wheelwrap{position:relative;width:210px;height:210px;margin:0 auto}
+.needle{position:absolute;top:-3px;left:50%;transform:translateX(-50%);border:10px solid transparent;border-top-color:var(--ink);z-index:3}
+.wheel{width:210px;height:210px;border-radius:50%;box-shadow:inset 0 0 0 6px #fff,0 12px 26px -8px rgba(0,0,0,.35);transition:transform 3.4s cubic-bezier(.17,.67,.2,1)}
+.hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--pp);font-size:11px;z-index:2}
+.dline{display:flex;gap:10px;font-size:13px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,.05)}
+.dline .y{font-weight:800;color:var(--pp);flex:0 0 50px}
+.tier{display:flex;gap:5px;margin-bottom:14px}.tier .t{flex:1;text-align:center;font-size:9px;font-weight:800;padding:7px 2px;border-radius:8px;color:#fff;text-transform:uppercase}
+.rank{width:22px;font-weight:800;color:var(--pp);text-align:center}
+
+@keyframes coinFall{0%{transform:translateY(-40px) rotate(0deg);opacity:0}10%{opacity:1}70%{transform:translateY(70vh) rotate(360deg)}100%{transform:translateY(90vh) rotate(420deg);opacity:0}}
+@keyframes coinWobble{0%,100%{transform:translateX(0)}50%{transform:translateX(14px)}}
+@keyframes burstPop{0%{transform:scale(.3);opacity:0}55%{transform:scale(1.12);opacity:1}75%{transform:scale(.97)}100%{transform:scale(1);opacity:1}}
+@keyframes burstOut{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.3)}}
+@keyframes ringPulse{0%{box-shadow:0 0 0 0 rgba(83,74,183,.45)}100%{box-shadow:0 0 0 26px rgba(83,74,183,0)}}
+.gcoin{position:fixed;top:-40px;font-size:22px;z-index:9998;animation:coinFall 1.6s cubic-bezier(.4,0,.6,1) forwards,coinWobble 0.5s ease-in-out infinite alternate}
+.gburst{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.gcard{background:#fff;border-radius:22px;padding:30px 46px;text-align:center;box-shadow:0 30px 70px -20px rgba(83,74,183,.5);animation:burstPop .55s cubic-bezier(.2,1.4,.4,1) forwards;pointer-events:auto}
+.gmedal{width:74px;height:74px;border-radius:50%;background:linear-gradient(135deg,#FBBF24,#E0A800);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;color:#fff;font-size:32px;animation:ringPulse 1.3s ease-out infinite}
+.gpts{font-size:44px;font-weight:800;color:var(--pp);margin:4px 0}
+.gout{animation:burstOut .35s ease forwards}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="mark"><svg class="i" viewBox="0 0 24 24"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg></div><div class="name">Flowin Révision</div></div>
+    <nav class="nav" id="nav">
+      <a data-p="hub"><svg class="i" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Accueil</a>
+      <a data-p="reviser"><svg class="i" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>Réviser</a>
+      <a data-p="quiz"><svg class="i" viewBox="0 0 24 24"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg>Quiz</a>
+      <a data-p="defis"><svg class="i" viewBox="0 0 24 24"><path d="M21 3v5l-11 9-4 4-3-3 4-4 9-11z"/><path d="M5 13l6 6"/><path d="M14.3 17.3l3.7 3.7 3-3-3.7-3.7"/><path d="M10 5.5 8 3H3v5l3 2.5"/></svg>Défis</a>
+      <a data-p="classe"><svg class="i" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Ma classe</a>
+      <a data-p="ligue"><svg class="i" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 4H4v2a3 3 0 0 0 3 3M17 4h3v2a3 3 0 0 1-3 3"/></svg>Ligue</a>
+      <a data-p="profil"><svg class="i" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>Profil</a>
+    </nav>
+    <div class="foot"><div class="av">S</div><div><div style="font-weight:700;font-size:12px">Soso</div><div style="color:var(--ink3);font-size:10.5px">Lycée de Vence</div></div></div>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+<div id="toast" style="position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--ink);color:#fff;padding:11px 20px;border-radius:22px;font-size:13px;font-weight:600;opacity:0;transition:.25s;z-index:99;pointer-events:none"></div>
+<div id="gainlayer"></div>
+
+<script>
+var ICON={
+ star:'<svg class="i" viewBox="0 0 24 24"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg>',
+ book:'<svg class="i" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>',
+ defi:'<svg class="i" viewBox="0 0 24 24"><path d="M21 3v5l-11 9-4 4-3-3 4-4 9-11z"/><path d="M5 13l6 6"/><path d="M14.3 17.3l3.7 3.7 3-3-3.7-3.7"/><path d="M10 5.5 8 3H3v5l3 2.5"/></svg>',
+ coin:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5A2.5 2.5 0 0 0 12 8.5h-1.5a2 2 0 0 0 0 4H13a2 2 0 0 1 0 4h-1.5A2.5 2.5 0 0 1 9 15"/></svg>',
+ flame:'<svg class="i" viewBox="0 0 24 24"><path d="M12 12c2-2.96 0-7-1-8 0 3.038-1.773 4.741-3 6-1.226 1.26-2 3.24-2 5a6 6 0 1 0 12 0c0-1.532-1.056-3.94-2-5-1.786 3-2.791 3-4 2z"/></svg>',
+ trophy:'<svg class="i" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 4H4v2a3 3 0 0 0 3 3M17 4h3v2a3 3 0 0 1-3 3"/></svg>',
+ chev:'<svg class="i" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>',
+ back:'<svg class="i" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>',
+ gift:'<svg class="i" viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7"/></svg>'
+};
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.className='show';t.style.opacity=1;t.style.transform='translateX(-50%) translateY(0)';clearTimeout(window._tt);window._tt=setTimeout(function(){t.style.opacity=0;t.style.transform='translateX(-50%) translateY(10px)';},1900);}
+
+var MAT=[{k:'histoire',n:'Histoire',c:'#D63050'},{k:'geo',n:'Géo',c:'#1E6FCC'},{k:'emc',n:'EMC',c:'#C27C0A'},{k:'pse',n:'PSE',c:'#0E9E6E'}];
+var wheelState={enabled:{histoire:true,geo:true,emc:true,pse:true},rot:0,spinning:false};
+
+var PAGE='hub';
+function go(p){PAGE=p;render();document.querySelectorAll('#nav a').forEach(function(a){a.classList.toggle('on',a.dataset.p===p);});window.scrollTo(0,0);}
+document.getElementById('nav').addEventListener('click',function(e){var a=e.target.closest('a');if(a)go(a.dataset.p);});
+
+var PAGES={
+ hub:function(){return ''
+  +'<div class="topbar"><div><div class="h1">Salut Sophie</div><div class="sub">On joue ?</div></div><button class="btn sec" onclick="triggerGain(60)">Tester l\'animation de gain</button></div>'
+  +'<div class="kpis">'
+   +'<div class="kpi"><div class="ic" style="background:#E0A800">'+ICON.coin+'</div><div><div class="v">512</div><div class="l">Points</div></div></div>'
+   +'<div class="kpi"><div class="ic" style="background:#F97316">'+ICON.flame+'</div><div><div class="v">7</div><div class="l">Streak</div></div></div>'
+   +'<div class="kpi"><div class="ic" style="background:var(--pp)">'+ICON.star+'</div><div><div class="v">64</div><div class="l">Quiz faits</div></div></div>'
+  +'</div>'
+  +'<div class="grid2">'
+   +'<div><div class="card"><h3>Tes 3 fa\u00e7ons de jouer</h3>'
+     +'<div class="tile" onclick="go(\'reviser\')"><div class="ic" style="background:var(--pp)">'+ICON.book+'</div><div style="flex:1"><div style="font-weight:700;font-size:14.5px">R\u00e9viser mes cours</div><div class="sub" style="margin:0">23 fiches t\'attendent</div></div><span style="color:var(--ink3)">'+ICON.chev+'</span></div>'
+     +'<div class="tile" onclick="go(\'quiz\')"><div class="ic" style="background:var(--am)">'+ICON.star+'</div><div style="flex:1"><div style="font-weight:700;font-size:14.5px">Quiz \u00b7 R\u00e9vise &amp; Gagne</div><div class="sub" style="margin:0">Tourne la roue, gagne des points</div></div><span style="color:var(--ink3)">'+ICON.chev+'</span></div>'
+     +'<div class="tile" onclick="go(\'defis\')" style="margin-bottom:0"><div class="ic" style="background:var(--re)">'+ICON.defi+'</div><div style="flex:1"><div style="font-weight:700;font-size:14.5px">D\u00e9fis multi-joueurs</div><div class="sub" style="margin:0">Parie tes points, rafle la mise</div></div><span style="color:var(--ink3)">'+ICON.chev+'</span></div>'
+   +'</div></div>'
+   +'<div class="card" style="background:linear-gradient(135deg,#FFF9E9,var(--surf));border-color:#F0DFA8"><h3>Lot en jeu</h3><div style="display:flex;align-items:center;gap:13px"><div style="width:48px;height:48px;border-radius:13px;background:linear-gradient(135deg,#FBBF24,#E0A800);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px">'+ICON.gift+'</div><div><div style="font-weight:700;font-size:14px">1 semaine salle de sport</div><div class="sub" style="margin:2px 0 0">Ligue Or \u00b7 7 jours d\'affil\u00e9e</div></div></div><button class="btn sec" style="margin-top:16px;width:100%;justify-content:center" onclick="go(\'ligue\')">Voir la ligue</button></div>'
+  +'</div>';
+ },
+ reviser:function(){return ''
+  +'<div class="topbar"><div class="h1">R\u00e9viser</div></div>'
+  +'<div class="grid3">'+[['Le jeu des puissances','Histoire','#D63050'],['La guerre froide','Histoire','#D63050'],['La mondialisation','G\u00e9o','#1E6FCC'],['La r\u00e9volution num\u00e9rique','EMC','#C27C0A'],['Pr\u00e9vention des risques','PSE','#0E9E6E']].map(function(f){return '<div class="tile" style="margin-bottom:0" onclick="go(\'fiche\')"><div class="ic" style="background:'+f[2]+';font-weight:800;font-size:14px">'+f[1].slice(0,2)+'</div><div><div style="font-weight:700;font-size:14px">'+f[0]+'</div><div class="sub" style="margin:0">'+f[1]+'</div></div></div>';}).join('')+'</div>';
+ },
+ fiche:function(){return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'reviser\')">'+ICON.back+'</button><div><div class="sub">Histoire \u00b7 Fiche</div><div class="h1">Le jeu des puissances</div></div></div></div>'
+  +'<div class="grid2">'
+   +'<div><div class="card" style="margin-bottom:16px"><h3>L\'essentiel</h3><div style="font-size:14px;line-height:1.7;color:var(--ink2)">Depuis 1945, le monde conna\u00eet <b>trois p\u00e9riodes</b> : un monde <b>bipolaire</b> (USA / URSS, guerre froide 1947-1991), puis l\'<b>hyperpuissance</b> am\u00e9ricaine, puis un monde <b>multipolaire</b>.</div></div>'
+     +'<div class="card"><h3>Vocabulaire</h3><div style="font-size:13.5px;line-height:1.9"><b>Superpuissance</b> \u00b7 <b>Bipolaire</b> \u00b7 <b>D\u00e9colonisation</b> \u00b7 <b>Rideau de fer</b></div></div></div>'
+   +'<div class="card"><h3>Frise chronologique</h3><div style="position:relative;padding-left:24px"><div style="position:absolute;left:6px;top:4px;bottom:8px;width:2px;background:var(--ppln)"></div>'
+     +['1945|Fin de la guerre \u00b7 ONU','1949|Cr\u00e9ation de l\'OTAN','1962|Crise de Cuba','1991|Fin de l\'URSS'].map(function(d){var x=d.split('|');return '<div style="position:relative;margin-bottom:14px"><div style="position:absolute;left:-24px;top:1px;width:14px;height:14px;border-radius:50%;background:var(--pp);border:3px solid #fff;box-shadow:0 0 0 2px var(--ppln)"></div><div style="font-weight:800;color:var(--pp);font-size:13.5px">'+x[0]+'</div><div style="font-size:12.5px;color:var(--ink2)">'+x[1]+'</div></div>';}).join('')+'</div></div>'
+  +'</div>'
+  +'<button class="btn" style="margin-top:16px" onclick="go(\'quiz\')">Quiz sur ce th\u00e8me '+ICON.star+'</button>';
+ },
+ quiz:function(){return ''
+  +'<div class="topbar"><div class="h1">Quiz</div></div>'
+  +'<div class="card" style="max-width:420px;margin:0 auto;text-align:center">'
+   +'<div class="sub" style="margin-bottom:10px">Choisis tes mati\u00e8res, puis tourne la roue.</div>'
+   +'<div id="mchips" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:14px"></div>'
+   +'<div class="wheelwrap"><div class="needle"></div><div class="wheel" id="wheel"></div><div class="hub">SPIN</div></div>'
+   +'<button class="btn" style="margin-top:20px;width:100%;justify-content:center" id="spinBtn" onclick="spin()">Tourner la roue</button>'
+   +'<div id="spinRes" style="margin-top:10px;font-weight:600;min-height:20px"></div>'
+  +'</div>';
+ },
+ defis:function(){return ''
+  +'<div class="topbar"><div class="h1">D\u00e9fis</div><button class="btn" onclick="toast(\'Cr\u00e9ation de d\u00e9fi \u2014 m\u00eame flux que sur mobile\')">'+ICON.defi+' Cr\u00e9er un d\u00e9fi</button></div>'
+  +'<div class="grid3">'+[['Sophie','45','2/4','Publique','var(--pp)'],['Nadir','25','1/3','Priv\u00e9e','var(--am)'],['In\u00e8s','100','6/8','Live','var(--gr)']].map(function(r){return '<div class="card"><div style="display:flex;align-items:center;gap:11px;margin-bottom:10px"><div class="av" style="background:'+r[4]+'">'+r[0][0]+'</div><div><div style="font-weight:700;font-size:14px">Room de '+r[0]+'<span class="pill" style="margin-left:6px;font-size:9px">'+r[3]+'</span></div><div class="sub" style="margin:0">'+r[2]+' joueurs</div></div></div><div style="font-weight:800;color:var(--pp);font-size:20px;margin-bottom:10px">'+r[1]+' pts</div><button class="btn sec" style="width:100%;justify-content:center" onclick="triggerGain(\''+r[1]+'\')">Rejoindre</button></div>';}).join('')+'</div>';
+ },
+ classe:function(){return ''
+  +'<div class="topbar"><div class="h1">Ma classe</div></div>'
+  +'<div class="card" style="display:flex;justify-content:space-between;align-items:center;background:var(--ppbg);border:0;margin-bottom:18px"><div><div style="font-weight:800;font-size:15px;color:var(--pp)">Terminale Bac Pro</div><div class="sub">Lyc\u00e9e de Vence</div></div><span class="pill">2e / 4 classes</span></div>'
+  +'<div class="grid2">'
+   +'<div class="card"><h3>Classement des classes</h3>'+[['1','Terminale Commerce','76','#B87A10'],['2','Terminale Bac Pro','70','var(--pp)'],['3','Terminale ASSP','64','#6B7280'],['4','Terminale MELEC','58','#9A6B3A']].map(function(c){return '<div class="row"><div class="rank" style="background:'+c[3]+';color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px">'+c[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+c[1]+'</div><b style="color:var(--pp)">'+c[2]+'%</b></div>';}).join('')+'</div>'
+   +'<div class="card"><h3>Niveau par mati\u00e8re</h3>'+[['Histoire',78,'#D63050'],['G\u00e9o',66,'#1E6FCC'],['EMC',72,'#C27C0A'],['PSE',61,'#0E9E6E']].map(function(m){return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:11px"><div style="width:60px;font-size:12px;font-weight:600">'+m[0]+'</div><div style="flex:1;height:10px;background:var(--bg);border-radius:6px;overflow:hidden"><div style="width:'+m[1]+'%;height:100%;background:'+m[2]+'"></div></div><div style="width:32px;text-align:right;font-weight:700;font-size:12px;color:var(--pp)">'+m[1]+'%</div></div>';}).join('')+'</div>'
+  +'</div>';
+ },
+ ligue:function(){return ''
+  +'<div class="topbar"><div class="h1">Ligue</div></div>'
+  +'<div class="tier">'+[['Bronze','#9A6B3A'],['Argent','#6B7280'],['Or','#B87A10'],['Platine','#2478CC'],['L\u00e9gende','#7F77DD']].map(function(t){return '<div class="t" style="background:'+t[1]+'">'+t[0]+'</div>';}).join('')+'</div>'
+  +'<div class="grid2">'
+   +'<div class="card"><h3>Ligue Or<span class="pill">Top 3 montent</span></h3>'+[['1','Sophie','512','#B87A10'],['2','Marie','400','var(--pp)'],['3','Lilou','395','var(--pp)']].map(function(r){return '<div class="row"><div class="rank">'+r[0]+'</div><div class="av" style="background:'+r[3]+'">'+r[1][0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+r[1]+'</div><b style="color:var(--pp)">'+r[2]+'</b></div>';}).join('')+'</div>'
+   +'<div class="card"><h3>Lots en jeu</h3>'+[['1 semaine salle de sport','Ligue Or, 7 jours'],['Bon d\'achat 10 \u20ac','1er hebdo']].map(function(l){return '<div class="row"><div style="width:36px;height:36px;border-radius:10px;background:var(--ppbg);color:var(--pp);display:flex;align-items:center;justify-content:center">'+ICON.gift+'</div><div><div style="font-weight:700;font-size:13.5px">'+l[0]+'</div><div class="sub" style="margin:0">'+l[1]+'</div></div></div>';}).join('')+'</div>'
+  +'</div>';
+ },
+ profil:function(){return ''
+  +'<div class="topbar"><div class="h1">Profil</div></div>'
+  +'<div class="grid2">'
+   +'<div class="card"><h3>Mes informations</h3><div style="font-size:13.5px;color:var(--ink2);line-height:2.1">Sophie \u00b7 @Soso<br>sophie@email.com<br>06 12 34 56 78<br>Lyc\u00e9e de Vence \u00b7 Terminale Bac Pro</div></div>'
+   +'<div class="card"><h3>Parrainage</h3><div style="background:var(--bg);border:1px dashed var(--ppln);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--pp);font-weight:700;margin-bottom:10px">flowrevis.app/i/soso-8f2a</div><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="chip on">WhatsApp</span><span class="chip on">SMS</span><span class="chip on">Email</span><span class="chip on">Snapchat</span><span class="chip on">Copier</span></div><div class="sub" style="margin-top:10px">3 inscrits \u00b7 +300 pts</div></div>'
+  +'</div>';
+ }
+};
+function render(){document.getElementById('main').innerHTML=(PAGES[PAGE]||PAGES.hub)();if(PAGE==='quiz')mountWheel();}
+function mountWheel(){var chips=document.getElementById('mchips');chips.innerHTML='';MAT.forEach(function(m){var el=document.createElement('div');el.className='chip'+(wheelState.enabled[m.k]?' on':'');el.innerHTML='<span class="sw" style="background:'+m.c+'"></span>'+m.n;el.onclick=function(){if(wheelState.spinning)return;var act=MAT.filter(function(x){return wheelState.enabled[x.k];});if(wheelState.enabled[m.k]&&act.length<=1)return;wheelState.enabled[m.k]=!wheelState.enabled[m.k];mountWheel();drawWheel();};chips.appendChild(el);});drawWheel();}
+function drawWheel(){var w=document.getElementById('wheel');if(!w)return;var act=MAT.filter(function(m){return wheelState.enabled[m.k];});if(!act.length){w.style.background='#EEEDFE';return;}var seg=100/act.length,acc=0,stops=[];act.forEach(function(m){stops.push(m.c+' '+acc+'% '+(acc+seg)+'%');acc+=seg;});w.style.background='conic-gradient('+stops.join(',')+')';w.style.transform='rotate('+wheelState.rot+'deg)';}
+function spin(){var act=MAT.filter(function(m){return wheelState.enabled[m.k];});if(wheelState.spinning||!act.length)return;wheelState.spinning=true;document.getElementById('spinBtn').disabled=true;var pick=Math.floor(Math.random()*act.length);var seg=360/act.length;wheelState.rot+=360*5+(360-(pick*seg+seg/2));drawWheel();setTimeout(function(){wheelState.spinning=false;document.getElementById('spinBtn').disabled=false;document.getElementById('spinRes').innerHTML='Th\u00e8me tir\u00e9 dans <b style="color:'+act[pick].c+'">'+act[pick].n+'</b> !';setTimeout(function(){triggerGain(60);},500);},3500);}
+
+function triggerGain(points){
+  points = points || 50;
+  var layer = document.getElementById('gainlayer');
+  // pièces qui tombent
+  var syms = ['\u{1FA99}','\u2B50','\u{1F4B0}'];
+  for (var i=0;i<18;i++){
+    (function(idx){
+      var c = document.createElement('div');
+      c.className='gcoin';
+      c.textContent = syms[idx%3];
+      c.style.left = (Math.random()*90+2)+'vw';
+      c.style.animationDelay = (Math.random()*0.5)+'s, '+(Math.random()*0.3)+'s';
+      c.style.fontSize = (16+Math.random()*14)+'px';
+      layer.appendChild(c);
+      setTimeout(function(){c.remove();}, 2300);
+    })(i);
+  }
+  // burst central avec compteur animé
+  var burst = document.createElement('div');
+  burst.className='gburst';
+  burst.innerHTML = '<div class="gcard"><div class="gmedal">\u{1F3C6}</div><div style="font-weight:800;font-size:16px">Bien jou\u00e9 !</div><div class="gpts" id="gcount">+0</div><div style="color:var(--ink3);font-size:12.5px;font-weight:600">points cr\u00e9dit\u00e9s</div></div>';
+  layer.appendChild(burst);
+  var el = burst.querySelector('#gcount');
+  var start = 0, dur = 700, t0 = performance.now();
+  function step(t){
+    var p = Math.min(1,(t-t0)/dur);
+    var val = Math.round(points * (1 - Math.pow(1-p,3)));
+    el.textContent = '+' + val;
+    if(p<1) requestAnimationFrame(step); else el.textContent='+'+points;
+  }
+  requestAnimationFrame(step);
+  setTimeout(function(){
+    burst.querySelector('.gcard').classList.add('gout');
+    setTimeout(function(){burst.remove();}, 380);
+  }, 1900);
+}
+
+render();
+</script>
+</body>
+</html>
