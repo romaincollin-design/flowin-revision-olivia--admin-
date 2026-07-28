@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowin Révision — Espace partenaire (prototype)</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--pp:#534AB7;--pp2:#7F77DD;--ppbg:#EEEDFE;--ppln:#AFA9EC;--ink:#14162A;--ink2:#3D4268;--ink3:#8B90B8;--surf:#fff;--bg:#F3F3F9;--line:rgba(0,0,0,.08);--gr:#0E9E6E;--grbg:#E4F7F0;--am:#C27C0A;--ambg:#FBEEDA;--re:#D63050;--bl:#1E6FCC;--gold:#E0A800;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#E9E9F2;color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.12em}
+.device{width:390px;height:800px;max-height:94vh;background:#0B0D1A;border-radius:44px;padding:12px;box-shadow:0 40px 80px -24px rgba(83,74,183,.5)}
+.viewport{width:100%;height:100%;background:var(--bg);border-radius:33px;overflow:hidden;position:relative;display:flex;flex-direction:column}
+.status{display:flex;justify-content:space-between;padding:13px 24px 4px;font-size:13px;font-weight:700;flex-shrink:0}
+.status .dd{display:flex;gap:3px;align-items:center}.status .dd i{width:4px;height:4px;border-radius:50%;background:var(--ink3);display:block}
+.screen{flex:1;overflow-y:auto;padding:6px 20px 90px}
+.screen::-webkit-scrollbar{width:0}
+.tabbar{position:absolute;bottom:0;left:0;right:0;height:74px;background:var(--surf);border-top:1px solid var(--line);display:flex;padding:8px 12px 20px;z-index:20}
+.tabbar button{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--ink3);font-size:10px;font-weight:600;cursor:pointer}
+.tabbar button.on{color:var(--pp)}
+.top{display:flex;align-items:center;gap:12px;padding:10px 0 14px}
+.back{width:36px;height:36px;border-radius:50%;background:var(--surf);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink);flex-shrink:0}
+.h1{font-size:22px;font-weight:800;letter-spacing:-.4px}
+.sub{color:var(--ink3);font-size:13px}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(0,0,0,.05)}
+.row:last-child{border:0}
+.btn{background:var(--pp);color:#fff;border:none;border-radius:13px;padding:15px;text-align:center;font-weight:700;font-size:15px;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn.sec{background:var(--surf);color:var(--pp);border:1.5px solid var(--ppln)}
+.lab{font-size:11px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.mut{color:var(--ink3);font-size:12px}
+.pill{display:inline-flex;align-items:center;gap:5px;background:var(--ppbg);color:var(--pp);font-size:11px;font-weight:700;padding:5px 10px;border-radius:20px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:20px;padding:8px 14px;font-weight:600;font-size:13px;cursor:pointer}
+.chip.on{background:var(--ppbg);color:var(--pp);border-color:var(--ppln)}
+.field{margin-bottom:16px}.field label{font-size:12px;font-weight:600;color:var(--ink2);display:block;margin-bottom:6px}
+.field input,.field textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:13px;font-family:inherit;font-size:15px;font-weight:500}
+.dz{border:1.5px dashed var(--ppln);border-radius:12px;padding:22px;text-align:center;color:var(--pp);font-weight:600;font-size:13px;cursor:pointer;background:var(--ppbg)}
+.tile{display:flex;align-items:center;gap:14px;background:var(--surf);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:11px;cursor:pointer;width:100%;text-align:left}
+.tile .ic{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;flex-shrink:0}
+.steps{display:flex;gap:5px;margin-bottom:16px}
+.steps i{flex:1;height:4px;border-radius:3px;background:var(--ppln)}
+.steps i.on{background:var(--pp)}
+.bar{background:var(--bg);border-radius:20px;overflow:hidden;height:9px}
+.bar i{display:block;height:100%;background:var(--pp)}
+#toast{position:absolute;bottom:88px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:22px;font-size:13px;font-weight:600;opacity:0;transition:.25s;z-index:50;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.scanbox{aspect-ratio:1;background:#0B0D1A;border-radius:20px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.scanbox .frame{width:70%;height:70%;border:3px solid rgba(255,255,255,.5);border-radius:16px;position:relative}
+.scanbox .frame::before,.scanbox .frame::after{content:'';position:absolute;width:26px;height:26px;border-color:#fff}
+.scanbox .laser{position:absolute;left:15%;right:15%;height:2px;background:linear-gradient(90deg,transparent,#7F77DD,transparent);animation:lz 1.6s ease-in-out infinite}
+@keyframes lz{0%,100%{top:15%}50%{top:85%}}
+</style>
+</head>
+<body>
+<div class="device"><div class="viewport">
+  <div class="status"><span>9:41</span><div class="dd"><i></i><i></i><i></i></div></div>
+  <div class="screen" id="screen"></div>
+  <div class="tabbar" id="tabbar"></div>
+  <div id="toast"></div>
+</div></div>
+<script>
+var ICON={
+ gift:'<svg class="i" viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7"/></svg>',
+ qr:'<svg class="i" viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/></svg>',
+ home:'<svg class="i" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
+ plus:'<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+ chev:'<svg class="i" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>',
+ back:'<svg class="i" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>',
+ check:'<svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>',
+ scan:'<svg class="i" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>',
+ user:'<svg class="i" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>',
+ image:'<svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>'
+};
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.className='show';clearTimeout(window._tt);window._tt=setTimeout(function(){t.className='';},1900);}
+function chipPick(el){var pr=el.parentNode;pr.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on');});el.classList.add('on');}
+function chipToggle(el){el.classList.toggle('on');}
+
+var LOTS=[{nom:"1 semaine salle de sport",qte:20,restant:14,pts:0,cond:"Ligue Or, 7 jours d'affilée",freq:"Hebdomadaire",budget:300,etabs:["Lycée de Vence"]}];
+var NEWLOT={};
+var scr=document.getElementById('screen'), tb=document.getElementById('tabbar');
+var TABS=[['home','Accueil','home'],['lots','Mes lots','gift'],['scan','Valider','scan'],['profil','Profil','user']];
+var current='welcome';
+function nav(s){current=s;render();scr.scrollTop=0;}
+function topbar(t,back){return '<div class="top"><button class="back" onclick="nav(\''+(back||'home')+'\')">'+ICON.back+'</button><div class="h1">'+t+'</div></div>';}
+
+var SCREENS={
+ welcome:function(){return '<div style="text-align:center;padding-top:60px">'+
+   '<div style="width:66px;height:66px;border-radius:18px;background:linear-gradient(135deg,#5B52C9,#7F77DD);color:#fff;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 18px">'+ICON.gift+'</div>'+
+   '<div class="h1">Espace partenaire</div>'+
+   '<div class="sub" style="margin-top:8px;max-width:260px;margin-left:auto;margin-right:auto">Propose tes lots aux meilleurs élèves de la région</div>'+
+   '<button class="btn" style="margin-top:32px" onclick="nav(\'signup\')">Créer mon compte partenaire</button>'+
+   '<button class="btn sec" style="margin-top:10px" onclick="nav(\'home\')">J\'ai déjà un compte</button>'+
+   '</div>';
+ },
+ signup:function(){return topbar('Créer mon compte','welcome')+
+   '<div class="field"><label>Nom de l\'entreprise</label><input placeholder="ex. FitClub Vence"></div>'+
+   '<div class="field"><label>Email professionnel</label><input placeholder="contact@monentreprise.fr"></div>'+
+   '<div class="field"><label>Téléphone</label><input placeholder="06 12 34 56 78"></div>'+
+   '<div class="lab">Logo</div><div class="dz" style="margin-bottom:16px">'+ICON.image+' Glisser ton logo (PNG, JPG)</div>'+
+   '<button class="btn" onclick="toast(\'Compte cr\u00e9\u00e9\');nav(\'home\')">Créer mon compte</button>';
+ },
+ home:function(){var totLots=LOTS.length,totStock=LOTS.reduce(function(a,l){return a+l.restant;},0);return '<div class="top" style="justify-content:space-between"><div><div class="sub">Bonjour</div><div class="h1">FitClub Vence</div></div><div class="pill">Partenaire</div></div>'+
+   '<div class="card" style="display:flex;gap:10px"><div style="flex:1;text-align:center"><div style="font-size:22px;font-weight:800;color:var(--pp)">'+totLots+'</div><div class="mut">lots actifs</div></div><div style="flex:1;text-align:center;border-left:1px solid var(--line)"><div style="font-size:22px;font-weight:800;color:var(--pp)">'+totStock+'</div><div class="mut">unités en stock</div></div><div style="flex:1;text-align:center;border-left:1px solid var(--line)"><div style="font-size:22px;font-weight:800;color:var(--gr)">38</div><div class="mut">déjà distribués</div></div></div>'+
+   '<button class="btn" onclick="nav(\'lotcreate1\')">'+ICON.plus+' Proposer un nouveau lot</button>'+
+   '<div class="lab" style="margin-top:18px">Mes lots</div>'+
+   LOTS.map(function(l,i){var pct=Math.round(l.restant/l.qte*100);return '<button class="tile" onclick="nav(\'lots\')"><div class="ic" style="background:linear-gradient(135deg,#FBBF24,#E0A800)">'+ICON.gift+'</div><div style="flex:1"><div style="font-weight:700;font-size:14.5px">'+l.nom+'</div><div class="mut">'+l.restant+' / '+l.qte+' restants</div></div></button>';}).join('')+
+   '<button class="btn sec" style="margin-top:6px" onclick="nav(\'scan\')">'+ICON.scan+' Valider un QR élève</button>';
+ },
+ lotcreate1:function(){return topbar('Nouveau lot','home')+
+   '<div class="steps"><i class="on"></i><i></i><i></i><i></i></div>'+
+   '<div class="lab">Type de lot</div>'+
+   [['Sport','var(--re)'],['Mode','var(--am)'],['Loisir culturel','var(--bl)'],['Bon d\'achat','var(--gr)']].map(function(t){return '<button class="tile" onclick="chipPick(this);NEWLOT.type=\''+t[0]+'\';nav(\'lotcreate2\')" style="padding:14px"><div class="ic" style="background:'+t[1]+';font-size:18px">'+ICON.gift+'</div><div style="font-weight:700;font-size:14.5px">'+t[0]+'</div></button>';}).join('');
+ },
+ lotcreate2:function(){return topbar('Détails du lot','lotcreate1')+
+   '<div class="steps"><i class="on"></i><i class="on"></i><i></i><i></i></div>'+
+   '<div class="field"><label>Nom du lot</label><input id="ln" placeholder="ex. 1 semaine salle de sport"></div>'+
+   '<div class="field"><label>Description</label><textarea rows="3" placeholder="Décris ton offre..."></textarea></div>'+
+   '<div class="lab" style="margin-bottom:6px">Nombre de lots</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">'+[5,10,20,50,100].map(function(v){return '<div class="chip'+(v===20?' on':'')+'" onclick="chipPick(this)">'+v+'</div>';}).join('')+'</div>'+
+   '<div class="field"><label>Valeur unitaire (€)</label><input placeholder="ex. 35"></div>'+
+   '<div class="lab">Logo du lot</div><div class="dz" style="margin-bottom:16px">'+ICON.image+' Glisser une image</div>'+
+   '<button class="btn" onclick="nav(\'lotcreate3\')">Continuer</button>';
+ },
+ lotcreate3:function(){return topbar('Diffusion','lotcreate2')+
+   '<div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>'+
+   '<div class="lab">Établissements ciblés</div>'+
+   ['Lycée de Vence','Collège Estienne d\'Orves','Lycée Parc Impérial'].map(function(e,i){return '<div class="row"><div style="flex:1;font-weight:600;font-size:14px">'+e+'</div><div class="chip'+(i===0?' on':'')+'" onclick="chipToggle(this)">'+(i===0?ICON.check+' Ciblé':'Cibler')+'</div></div>';}).join('')+
+   '<div class="lab" style="margin-top:16px">Condition d\'obtention</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"><div class="chip on" onclick="chipPick(this)">Ligue Or+</div><div class="chip" onclick="chipPick(this)">Top 3 classement</div><div class="chip" onclick="chipPick(this)">Points fixes</div></div>'+
+   '<div class="field"><label>Points requis (si applicable)</label><input placeholder="ex. 1500 pts"></div>'+
+   '<button class="btn" onclick="nav(\'lotcreate4\')">Continuer</button>';
+ },
+ lotcreate4:function(){return topbar('Fréquence & budget','lotcreate3')+
+   '<div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>'+
+   '<div class="lab">Fréquence de distribution</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">'+['Quotidien','Hebdomadaire','Mensuel','Trimestriel'].map(function(f){return '<div class="chip'+(f==='Hebdomadaire'?' on':'')+'" onclick="chipPick(this)">'+f+'</div>';}).join('')+'</div>'+
+   '<div class="field"><label>Budget mensuel alloué (€)</label><input placeholder="ex. 300"></div>'+
+   '<div class="card" style="background:var(--ppbg);border:0;color:var(--pp);font-size:12.5px;line-height:1.6">Ton lot sera proposé aux élèves éligibles selon la fréquence choisie, dans la limite de ton budget et de ton stock.</div>'+
+   '<button class="btn" onclick="nav(\'lotreview\')">Vérifier &amp; publier</button>';
+ },
+ lotreview:function(){return topbar('Récapitulatif','lotcreate4')+
+   '<div class="card"><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><div class="ic" style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#FBBF24,#E0A800);display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px">'+ICON.gift+'</div><div><div style="font-weight:700;font-size:15px">1 semaine salle de sport</div><div class="mut">Sport · FitClub Vence</div></div></div>'+
+   [['Nombre de lots','20'],['Valeur unitaire','35 €'],['Établissement','Lycée de Vence'],['Condition','Ligue Or, 7 jours'],['Fréquence','Hebdomadaire'],['Budget mensuel','300 €']].map(function(r){return '<div class="row"><span class="mut" style="flex:1">'+r[0]+'</span><b style="font-size:13.5px">'+r[1]+'</b></div>';}).join('')+
+   '</div>'+
+   '<button class="btn" onclick="LOTS.push({nom:\'1 semaine salle de sport\',qte:20,restant:20,pts:1500,cond:\'Ligue Or, 7 jours\',freq:\'Hebdomadaire\',budget:300,etabs:[\'Lyc\u00e9e de Vence\']});toast(\'Lot publi\u00e9 !\');nav(\'lots\')">Publier le lot</button>';
+ },
+ lots:function(){return topbar('Mes lots','home')+
+   LOTS.map(function(l,i){var pct=Math.round(l.restant/l.qte*100);return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-weight:700;font-size:15px">'+l.nom+'</div><span class="pill">'+l.freq+'</span></div>'+
+     '<div class="mut" style="margin-bottom:10px">'+l.cond+' · '+l.etabs.join(', ')+'</div>'+
+     '<div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:6px"><span>Stock</span><span style="color:var(--pp)">'+l.restant+' / '+l.qte+'</span></div>'+
+     '<div class="bar"><i style="width:'+pct+'%"></i></div></div>';}).join('')+
+   '<button class="btn" onclick="nav(\'lotcreate1\')">'+ICON.plus+' Proposer un nouveau lot</button>';
+ },
+ scan:function(){return topbar('Valider un QR','home')+
+   '<div class="sub" style="text-align:center;margin-bottom:14px">Flashe le QR de points affiché par l\'élève.</div>'+
+   '<div class="scanbox"><div class="frame"><div class="laser"></div></div></div>'+
+   '<button class="btn" style="margin-top:16px" onclick="nav(\'scanresult\')">Simuler le flash</button>';
+ },
+ scanresult:function(){return topbar('QR détecté','scan')+
+   '<div class="card" style="text-align:center;padding:26px 18px"><div style="width:54px;height:54px;border-radius:50%;background:var(--grbg);color:var(--gr);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:24px">'+ICON.check+'</div>'+
+   '<div style="font-weight:800;font-size:17px">Pseudo : Soso</div>'+
+   '<div class="mut" style="margin:6px 0 16px">Lyc\u00e9e de Vence · Ligue Or · 512 pts</div>'+
+   '<div class="pill">1 semaine salle de sport</div></div>'+
+   '<div class="anon" style="display:flex;gap:10px;background:var(--ppbg);border-radius:10px;padding:11px 13px;font-size:12.5px;color:var(--pp);font-weight:600;margin-bottom:14px">Aucune coordonn\u00e9e transmise \u2014 seul le pseudo et l\'\u00e9ligibilit\u00e9 sont visibles.</div>'+
+   '<button class="btn" onclick="LOTS[0].restant--;toast(\'Lot valid\u00e9 \u2014 stock d\u00e9crement\u00e9\');nav(\'scanvalidated\')">Valider &amp; d\u00e9stocker</button>'+
+   '<button class="btn sec" style="margin-top:10px" onclick="nav(\'scan\')">Annuler</button>';
+ },
+ scanvalidated:function(){return '<div style="text-align:center;padding-top:60px">'+
+   '<div style="width:72px;height:72px;border-radius:50%;background:var(--grbg);color:var(--gr);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px">'+ICON.check+'</div>'+
+   '<div class="h1">Lot remis !</div>'+
+   '<div class="sub" style="margin-top:8px">Soso a re\u00e7u : 1 semaine salle de sport</div>'+
+   '<div class="card" style="margin-top:20px;text-align:left"><div class="row"><span class="mut" style="flex:1">Stock restant</span><b>'+LOTS[0].restant+' / '+LOTS[0].qte+'</b></div><div class="row" style="border:0"><span class="mut" style="flex:1">Distribu\u00e9 le</span><b>Aujourd\'hui</b></div></div>'+
+   '<button class="btn" style="margin-top:16px" onclick="nav(\'home\')">Retour \u00e0 l\'accueil</button>'+
+   '</div>';
+ },
+ profil:function(){return topbar('Profil','home')+
+   '<div class="card" style="display:flex;align-items:center;gap:14px"><div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#5B52C9,#7F77DD);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700">FC</div><div><div style="font-weight:700;font-size:16px">FitClub Vence</div><div class="mut">Partenaire depuis mars 2026</div></div></div>'+
+   [['Email','contact@fitclub-vence.fr'],['Téléphone','06 12 34 56 78'],['Établissements ciblés','3']].map(function(r){return '<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:13px 15px"><span class="mut">'+r[0]+'</span><b style="font-size:13.5px">'+r[1]+'</b></div>';}).join('')+
+   '<button class="btn sec" onclick="nav(\'welcome\')">Se déconnecter</button>';
+ }
+};
+function render(){
+  scr.innerHTML=(SCREENS[current]||SCREENS.welcome)();
+  var map={home:'home',lotcreate1:'home',lotcreate2:'home',lotcreate3:'home',lotcreate4:'home',lotreview:'home',lots:'lots',scan:'scan',scanresult:'scan',scanvalidated:'scan',profil:'profil'};
+  tb.style.display = (current==='welcome'||current==='signup') ? 'none' : 'flex';
+  tb.innerHTML='';
+  TABS.forEach(function(t){var b=document.createElement('button');b.className=(map[current]===t[0])?'on':'';b.innerHTML=ICON[t[2]]+'<span>'+t[1]+'</span>';b.onclick=function(){nav(t[0]);};tb.appendChild(b);});
+}
+render();
+</script>
+</body>
+</html>
