@@ -114,9 +114,9 @@ var PROFS=[
  {nom:'Julie Marchand',etab:'Lycée Parc Impérial',matieres:'Français, Histoire',classes:6,quiz:41,pts:14300,derniere:'Aujourd\'hui'}
 ];
 var LOTS=[
- {nom:'1 semaine salle de sport',partenaire:'FitClub Vence',statut:'validé',qte:20,restant:14,etab:'Lycée de Vence'},
- {nom:'Bon d\'achat 10€',partenaire:'SuperMarket Vence',statut:'validé',qte:50,restant:31,etab:'Lycée de Vence'},
- {nom:'Place de cinéma',partenaire:'Ciné Nice',statut:'en attente',qte:30,restant:30,etab:'Lycée Parc Impérial'}
+ {nom:'1 semaine salle de sport',partenaire:'FitClub Vence',statut:'validé',qte:20,restant:14,etab:'Lycée de Vence',type:'Sport',budget:300,nbEtabs:1},
+ {nom:'Bon d\'achat 10€',partenaire:'SuperMarket Vence',statut:'validé',qte:50,restant:31,etab:'Lycée de Vence',type:'Bon d\'achat',budget:500,nbEtabs:2},
+ {nom:'Place de cinéma',partenaire:'Ciné Nice',statut:'en attente',qte:30,restant:30,etab:'Lycée Parc Impérial',type:'Loisir culturel',budget:210,nbEtabs:1}
 ];
 
 var CURETAB=0, CURELEVE=0, CURPROF=0;
@@ -140,7 +140,7 @@ var PAGES={
   +'</div>'
   +'<div class="grid2">'
    +'<div class="card"><h3>Activité globale (7 derniers mois)</h3><div class="chart">'+[38,52,61,74,80,95,112].map(function(v,i){var labs=['S','O','N','D','J','F','M'];return '<div class="bar"><i style="height:'+v+'px"></i><span>'+labs[i]+'</span></div>';}).join('')+'</div></div>'
-   +'<div class="card"><h3>Classement des établissements</h3>'+ETABS.slice().sort(function(a,b){return b.pts-a.pts;}).map(function(e,i){return '<div class="row"><div class="pill" style="width:22px;height:22px;padding:0;justify-content:center;border-radius:50%">'+(i+1)+'</div><div style="flex:1;font-weight:700;font-size:13px">'+e.nom+'</div><b style="color:var(--pp)">'+e.pts.toLocaleString()+'</b></div>';}).join('')+'</div>'
+   +'<div class="card"><h3>Établissements les plus actifs</h3>'+ETABS.slice().sort(function(a,b){return b.pts-a.pts;}).map(function(e,i){return '<div class="row link" style="cursor:pointer" onclick="openEtab('+ETABS.indexOf(e)+')"><div class="pill" style="width:22px;height:22px;padding:0;justify-content:center;border-radius:50%">'+(i+1)+'</div><div style="flex:1;font-weight:700;font-size:13px">'+e.nom+'</div><b style="color:var(--pp)">'+e.pts.toLocaleString()+'</b></div>';}).join('')+'</div>'
   +'</div>'
   +'<div class="card"><h3>Mapping d\'activité récente<span class="pill">clique pour ouvrir la fiche</span></h3><div class="map">'+ELEVES.concat(PROFS.map(function(p){return {ps:p.nom,pts:p.pts};})).map(function(e,i){var v=Math.min(100,Math.round((e.pts||0)/150));var col='hsl('+(250-v*1.3)+',55%,'+(70-v*0.25)+'%)';var isP=i>=ELEVES.length;return '<div class="cell" style="background:'+col+'" title="'+e.ps+'" onclick="'+(isP?'openProf('+(i-ELEVES.length)+')':'openEleve('+i+')')+'">'+e.ps.slice(0,2)+'</div>';}).join('')+'</div></div>';
  },
@@ -167,7 +167,8 @@ var PAGES={
     +ELEVES.map(function(x,i){return '<tr class="link" onclick="openEleve('+i+')"><td style="font-weight:700;color:var(--pp)">'+x.ps+'</td><td>'+x.etab+'</td><td>'+x.classe+'</td><td style="font-weight:700">'+x.pts+'</td><td><span class="pill">'+x.ligue+'</span></td><td class="sub">'+x.derniere+'</td><td style="text-align:right;color:var(--ink3)">'+ICON.chev+'</td></tr>';}).join('')
   +'</table></div>';
  },
- elevedetail:function(){var e=ELEVES[CURELEVE];return ''
+ elevedetail:function(){var e=ELEVES[CURELEVE];var dperiod=DPERIOD||'hebdo';var ddata={hebdo:[30,42,38,55,60,72,82],jour:[10,25,15,40,30,55,48]};var dlabs={hebdo:['S','O','N','D','J','F','M'],jour:['Lu','Ma','Me','Je','Ve','Sa','Di']};
+  return ''
   +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'eleves\')">'+ICON.back+'</button><div><div class="sub">'+e.etab+' · '+e.classe+'</div><div class="h1">'+e.ps+'</div></div></div></div>'
   +'<div class="kpis">'
    +'<div class="kpi"><div class="lab">Points</div><div class="v">'+e.pts+'</div></div>'
@@ -176,11 +177,14 @@ var PAGES={
    +'<div class="kpi"><div class="lab">Défis joués</div><div class="v">'+e.defis+'</div></div>'
   +'</div>'
   +'<div class="grid2">'
-   +'<div class="card"><h3>Progression sur l\'année</h3><div class="chart">'+[30,42,38,55,60,72,82].map(function(v,i){var labs=['S','O','N','D','J','F','M'];return '<div class="bar"><i style="height:'+(v*1.3)+'px"></i><span>'+labs[i]+'</span></div>';}).join('')+'</div></div>'
+   +'<div class="card"><h3>Progression<div style="display:flex;gap:5px">'+['jour','hebdo'].map(function(pp){return '<span class="chip'+(pp===dperiod?' on':'')+'" style="padding:5px 10px;font-size:11px" onclick="DPERIOD=\''+pp+'\';go(\'elevedetail\')">'+(pp==='jour'?'Journali\u00e8re':'Hebdo')+'</span>';}).join('')+'</div></h3><div class="chart">'+ddata[dperiod].map(function(v,i){return '<div class="bar"><i style="height:'+(v*1.3)+'px"></i><span>'+dlabs[dperiod][i]+'</span></div>';}).join('')+'</div></div>'
    +'<div class="card"><h3>Profil &amp; activité</h3>'
-     +[['Temps de connexion','4h12 / semaine'],['Lieu de connexion',e.lieu],['Parrainages',e.parr+' inscrits'],['Dernière activité',e.derniere]].map(function(r){return '<div class="row"><span class="sub" style="flex:1">'+r[0]+'</span><b style="font-size:13px">'+r[1]+'</b></div>';}).join('')+'</div>'
+     +[['Temps de connexion','4h12 / semaine'],['Nombre de connexions','23 ce mois'],['Heure de pointe','18h\u201320h'],['Lieu de connexion',e.lieu],['Dernière activité',e.derniere]].map(function(r){return '<div class="row"><span class="sub" style="flex:1">'+r[0]+'</span><b style="font-size:13px">'+r[1]+'</b></div>';}).join('')+'</div>'
   +'</div>'
-  +'<div class="card"><h3>Résultats par matière</h3>'+[['Histoire',82,'#D63050'],['Géo',64,'#1E6FCC'],['EMC',74,'#C27C0A'],['PSE',58,'#0E9E6E']].map(function(m){return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:11px"><div style="width:64px;font-size:12px;font-weight:600">'+m[0]+'</div><div class="bar-mini" style="width:100%"><i style="width:'+m[1]+'%;background:'+m[2]+'"></i></div><div style="width:32px;text-align:right;font-weight:700;font-size:12px;color:var(--pp)">'+m[1]+'%</div></div>';}).join('')+'</div>';
+  +'<div class="grid2">'
+   +'<div class="card"><h3>Résultats par matière</h3>'+[['Histoire',82,'#D63050'],['Géo',64,'#1E6FCC'],['EMC',74,'#C27C0A'],['PSE',58,'#0E9E6E']].map(function(m){return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:11px"><div style="width:64px;font-size:12px;font-weight:600">'+m[0]+'</div><div class="bar-mini" style="width:100%"><i style="width:'+m[1]+'%;background:'+m[2]+'"></i></div><div style="width:32px;text-align:right;font-weight:700;font-size:12px;color:var(--pp)">'+m[1]+'%</div></div>';}).join('')+'</div>'
+   +'<div class="card"><h3>Parrainage<span class="pill">'+e.parr+' inscrits</span></h3>'+(e.parr>0?['LucaP','Emma_V','Nadir06'].slice(0,e.parr).map(function(n){return '<div class="row"><div class="av" style="width:26px;height:26px;font-size:11px">'+n[0]+'</div><div style="flex:1;font-weight:600;font-size:12.5px">'+n+'</div><span class="sub">via WhatsApp</span></div>';}).join(''):'<div class="sub">Aucun parrainage pour l\'instant.</div>')+'</div>'
+  +'</div>';
  },
  profs:function(){return ''
   +'<div class="topbar"><div><div class="h1">Professeurs</div><div class="sub">'+PROFS.length+' profils (échantillon)</div></div></div>'
@@ -196,9 +200,27 @@ var PAGES={
    +'<div class="kpi"><div class="lab">Points distribués</div><div class="v">'+p.pts.toLocaleString()+'</div></div>'
    +'<div class="kpi"><div class="lab">Dernière activité</div><div class="v" style="font-size:16px">'+p.derniere+'</div></div>'
   +'</div>'
-  +'<div class="card"><h3>Matières enseignées</h3><div style="font-size:13.5px;color:var(--ink2)">'+p.matieres+'</div></div>';
+  +'<div class="grid2">'
+   +'<div class="card"><h3>Matières enseignées</h3><div style="font-size:13.5px;color:var(--ink2)">'+p.matieres+'</div></div>'
+   +'<div class="card"><h3>Connexions</h3>'+[['Nombre de connexions','41 ce mois'],['Fréquence moyenne','3,2 / semaine'],['Dernière session','2h14 aujourd\'hui']].map(function(r){return '<div class="row"><span class="sub" style="flex:1">'+r[0]+'</span><b style="font-size:13px">'+r[1]+'</b></div>';}).join('')+'</div>'
+  +'</div>'
+  +'<div class="card"><h3>Ses classes<span class="pill">acc\u00e8s direct</span></h3>'+ETABS.filter(function(x){return x.nom===p.etab;}).map(function(){return '';}).join('')+['Classe A','Classe B'].slice(0,p.classes>2?2:p.classes).map(function(c,i){return '<div class="row link" style="cursor:pointer" onclick="go(\'classedetail\')"><div style="flex:1;font-weight:700;font-size:13.5px">'+p.matieres.split(',')[0]+' \u2014 groupe '+(i+1)+'</div><span style="color:var(--ink3)">'+ICON.chev+'</span></div>';}).join('')+'</div>';
  },
- ligues:function(){return ''
+ classedetail:function(){return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'profdetail\')">'+ICON.back+'</button><div><div class="sub">Lyc\xe9e de Vence</div><div class="h1">Terminale Bac Pro</div></div></div></div>'
+  +'<div class="kpis">'
+   +'<div class="kpi"><div class="lab">\xc9l\xe8ves</div><div class="v">19</div></div>'
+   +'<div class="kpi"><div class="lab">Points de la classe</div><div class="v">1 240</div></div>'
+   +'<div class="kpi"><div class="lab">Points restants (quota)</div><div class="v">180</div></div>'
+   +'<div class="kpi"><div class="lab">Lots en cours</div><div class="v">2</div></div>'
+  +'</div>'
+  +'<div class="card"><h3>Lots actuellement propos\xe9s \xe0 cette classe</h3>'+LOTS.filter(function(l){return l.etab==='Lyc\xe9e de Vence';}).map(function(l){return '<div class="row"><div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#FBBF24,#E0A800);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ICON.gift+'</div><div style="flex:1"><div style="font-weight:700;font-size:13.5px">'+l.nom+'</div><div class="sub">'+l.partenaire+'</div></div><span class="pill">'+l.restant+' restants</span></div>';}).join('')+'</div>'
+  +'<div class="grid2">'
+   +'<div class="card"><h3>Action sur les points de la classe</h3><div class="sub" style="margin-bottom:12px">Ajuster manuellement le quota ou le total de la classe.</div><input type="range" min="0" max="500" value="180" class="slider" style="width:100%;accent-color:var(--pp);margin-bottom:10px"><button class="btn sec" style="width:100%;justify-content:center">Appliquer l\'ajustement</button></div>'
+   +'<div class="card"><h3>Action sur les points du professeur</h3><div class="sub" style="margin-bottom:12px">Ajuster la cagnotte d\'Olivia Laurent.</div><input type="range" min="0" max="2000" value="1500" class="slider" style="width:100%;accent-color:var(--pp);margin-bottom:10px"><button class="btn sec" style="width:100%;justify-content:center">Appliquer l\'ajustement</button></div>'
+  +'</div>';
+ },
+  ligues:function(){return ''
   +'<div class="topbar"><div class="h1">Classements &amp; ligues</div></div>'
   +'<div class="grid2">'
    +'<div class="card"><h3>Classement des établissements</h3>'+ETABS.slice().sort(function(a,b){return b.pts-a.pts;}).map(function(e,i){return '<div class="row"><div class="pill" style="width:22px;height:22px;padding:0;justify-content:center;border-radius:50%">'+(i+1)+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+e.nom+'</div><b style="color:var(--pp)">'+e.pts.toLocaleString()+'</b></div>';}).join('')+'</div>'
@@ -213,7 +235,8 @@ var PAGES={
    +'<div class="kpi"><div class="lab">Unités en stock</div><div class="v">'+LOTS.reduce(function(a,l){return a+l.restant;},0)+'</div></div>'
    +'<div class="kpi"><div class="lab">En attente de validation</div><div class="v" style="color:var(--am)">'+LOTS.filter(function(l){return l.statut==='en attente';}).length+'</div></div>'
   +'</div>'
-  +'<div class="card"><h3>Lots des partenaires</h3>'+LOTS.map(function(l,i){var pct=Math.round(l.restant/l.qte*100);return '<div class="row" style="align-items:flex-start"><div style="width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#FBBF24,#E0A800);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ICON.gift+'</div><div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:700;font-size:14px">'+l.nom+'</div>'+(l.statut==='en attente'?'<span class="pill" style="background:var(--ambg);color:var(--am)">En attente</span>':'<span class="pill" style="background:var(--grbg);color:var(--gr)">Validé</span>')+'</div><div class="sub">'+l.partenaire+' · '+l.etab+'</div><div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin:6px 0 4px"><span>Stock</span><span style="color:var(--pp)">'+l.restant+' / '+l.qte+'</span></div><div class="bar-mini" style="width:200px"><i style="width:'+pct+'%"></i></div>'+(l.statut==='en attente'?'<div style="margin-top:8px"><button class="btn sec" style="padding:7px 12px;font-size:12px" onclick="LOTS['+i+'].statut=\'validé\';go(\'partenaires\')">Valider ce partenaire</button></div>':'')+'</div></div>';}).join('')+'</div>';
+  +'<div class="anon" style="display:flex;gap:10px;background:var(--ppbg);border-radius:10px;padding:12px 14px;font-size:12.5px;color:var(--pp);font-weight:600;margin-bottom:16px">Contr\u00f4le mod\u00e9rateur : aucun lot n\'est visible des \u00e9l\u00e8ves tant qu\'il n\'a pas \u00e9t\u00e9 valid\u00e9 ici par un Super Admin.</div>'
+  +'<div class="card"><h3>Lots des partenaires</h3>'+LOTS.map(function(l,i){var pct=Math.round(l.restant/l.qte*100);return '<div class="row" style="align-items:flex-start"><div style="width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#FBBF24,#E0A800);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+ICON.gift+'</div><div style="flex:1"><div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:700;font-size:14px">'+l.nom+'</div>'+(l.statut==='en attente'?'<span class="pill" style="background:var(--ambg);color:var(--am)">En attente</span>':'<span class="pill" style="background:var(--grbg);color:var(--gr)">Validé</span>')+'</div><div class="sub">'+l.partenaire+' · '+l.type+'</div><div style="display:flex;gap:16px;margin:6px 0;font-size:12px"><span class="sub">Budget : <b style="color:var(--ink)">'+l.budget+' €</b></span><span class="sub">Établissements : <b style="color:var(--ink)">'+l.nbEtabs+'</b></span></div><div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin:6px 0 4px"><span>Stock</span><span style="color:var(--pp)">'+l.restant+' / '+l.qte+'</span></div><div class="bar-mini" style="width:200px"><i style="width:'+pct+'%"></i></div>'+(l.statut==='en attente'?'<div style="margin-top:10px;display:flex;gap:8px"><button class="btn sec" style="padding:7px 12px;font-size:12px" onclick="LOTS['+i+'].statut=\'validé\';go(\'partenaires\')">Valider &amp; publier</button><button class="btn sec" style="padding:7px 12px;font-size:12px;color:var(--re);border-color:#F0C0C0">Refuser</button></div>':'')+'</div></div>';}).join('')+'</div>';
  },
  params:function(){return ''
   +'<div class="topbar"><div class="h1">Paramètres</div></div>'
