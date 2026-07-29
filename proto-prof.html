@@ -80,7 +80,8 @@ var ICON={
  book:'<svg class="i" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>',
  settings:'<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>',
  refresh:'<svg class="i" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></svg>',
- eye:'<svg class="i" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>'
+ eye:'<svg class="i" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>',
+ trash:'<svg class="i" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16zM10 11v6M14 11v6"/></svg>'
 };
 function qrSvg(){var r='';for(var y=0;y<11;y++)for(var x=0;x<11;x++){if((x*y+x+y)%3===0||(x<3&&y<3)||(x>7&&y<3)||(x<3&&y>7))r+='<rect x="'+(x*10)+'" y="'+(y*10)+'" width="10" height="10" fill="#111"/>';}return '<svg viewBox="0 0 110 110" style="width:120px;height:120px">'+r+'</svg>';}
 
@@ -90,6 +91,7 @@ var current='welcome';
 function nav(s){current=s;render();scr.scrollTop=0;}
 
 var CLASSES=[['Terminale Bac Pro',19,1240],['1re Bac Pro Commerce',22,860],['2de Bac Pro ASSP',18,540]];
+var REGLAGES={ptsBonneReponse:10,modeReussite:'partiel',seuilReussite:60,ecartMax:25,ecartType:12,progressionActive:true,bonusProgression:15,malusRegression:10};
 var ELEVES=[['Soso',512,'#534AB7'],['Lilou',395,'#1E6FCC'],['MarcX',300,'#C27C0A'],['Nadir06',280,'#0E9E6E'],['Emma_V',255,'#D63050'],['Karim.T',210,'#7F77DD']];
 
 var SCREENS={
@@ -107,7 +109,7 @@ var SCREENS={
  },
  classes:function(){return '<div class="top" style="justify-content:space-between"><div class="h1">Mes classes</div><div class="av" style="background:var(--gold)">R</div></div>'+
    '<div class="card" style="display:flex;align-items:center;gap:12px;background:var(--ppbg);border:0"><div style="width:40px;height:40px;border-radius:11px;background:var(--pp);color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px">'+ICON.coin+'</div><div style="flex:1"><div class="lab" style="color:var(--pp)">Cagnotte de l\'année</div><div style="font-weight:700;font-size:15px">1 500 pts à distribuer</div></div></div>'+
-   CLASSES.map(function(c,i){return '<button class="tile" onclick="nav(\'classe\')"><div class="ic">'+ICON.users+'</div><div style="flex:1"><div style="font-weight:700;font-size:15px">'+c[0]+'</div><div class="mut">'+c[1]+' élèves · '+c[2]+' pts générés</div></div><div class="go">'+ICON.chev+'</div></button>';}).join('')+
+   CLASSES.map(function(c,i){return '<div class="tile" style="cursor:default"><div class="ic" style="cursor:pointer" onclick="nav(\'classe\')">'+ICON.users+'</div><div style="flex:1;cursor:pointer" onclick="nav(\'classe\')"><div style="font-weight:700;font-size:15px">'+c[0]+'</div><div class="mut">'+c[1]+' élèves · '+c[2]+' pts générés</div></div><span onclick="delClasse('+i+')" title="Supprimer la classe" style="color:var(--re);opacity:.6;padding:6px;cursor:pointer;display:inline-flex" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.6">'+ICON.trash+'</span></div>';}).join('')+
    '<button class="btn sec" style="margin-top:4px" onclick="nav(\'createclasse\')">'+ICON.plus+' Créer une classe</button>';
  },
  classe:function(){return '<div class="top"><button class="back" onclick="nav(\'classes\')">'+ICON.back+'</button><div><div class="sub">Terminale · Lycée de Vence</div><div class="h1" style="font-size:21px">Terminale Bac Pro</div></div></div>'+
@@ -290,16 +292,33 @@ var SCREENS={
    '<button class="btn" style="margin-top:18px" onclick="toast(\'Enregistr\u00e9\')">Enregistrer</button>';
  },
  jeuparams:function(){return '<div class="top"><button class="back" onclick="nav(\'profil\')">'+ICON.back+'</button><div class="h1">Param\u00e8tres du jeu</div></div>'+
-   '<div class="mut" style="margin-bottom:16px">R\u00e8gle chaque r\u00e9compense comme un equalizer. Ces r\u00e9glages sont globaux, et modifiables sur chaque quiz.</div>'+
-   '<div class="card"><div class="lab" style="margin-bottom:14px">R\u00e9compense de l\'\u00e9l\u00e8ve</div>'+eqRow('Points par bonne r\u00e9ponse','eqp',10,5,20,5,' pts')+'<div class="mut" style="margin-top:-8px">Attribu\u00e9s \u00e0 l\'\u00e9l\u00e8ve pour chaque bonne r\u00e9ponse.</div></div>'+
-   '<div class="card"><div class="lab" style="margin-bottom:14px">R\u00e9compense de la classe</div>'+
+   '<div class="mut" style="margin-bottom:16px">R\u00e8gle chaque r\u00e9compense comme un equalizer. Ces r\u00e9glages sont globaux, et modifiables ponctuellement sur chaque quiz (bouton \u00ab R\u00e9compenses de ce quiz \u00bb).</div>'+
+   '<div class="card"><div class="lab" style="margin-bottom:14px">R\u00e9compense de l\'\u00e9l\u00e8ve (par question)</div>'+
+     eqRow('Points par bonne r\u00e9ponse','eqp',10,5,20,5,' pts')+
+     '<div class="mut" style="margin:-8px 0 14px">Attribu\u00e9s \u00e0 l\'\u00e9l\u00e8ve pour chaque bonne r\u00e9ponse.</div>'+
+     '<div class="lab" style="margin-bottom:6px">Mode de r\u00e9ussite</div>'+
+     '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">'+
+       '<div class="chip'+(REGLAGES.modeReussite==='partiel'?' on':'')+'" id="mrpartiel" onclick="setModeReussite(\'partiel\')">R\u00e9ussite partielle</div>'+
+       '<div class="chip'+(REGLAGES.modeReussite==='sansfaute'?' on':'')+'" id="mrsansfaute" onclick="setModeReussite(\'sansfaute\')">Sans-faute uniquement</div>'+
+     '</div>'+
+     '<div class="mut">En r\u00e9ussite partielle, chaque bonne r\u00e9ponse compte m\u00eame sans sans-faute. En mode sans-faute, seul un score de 100% d\u00e9clenche la r\u00e9compense.</div>'+
+   '</div>'+
+   '<div class="card"><div class="lab" style="margin-bottom:14px">R\u00e9compense de la classe \u2014 homog\u00e9n\u00e9it\u00e9</div>'+
      eqRow('Seuil de r\u00e9ussite du quiz','eqs',60,15,100,5,' %')+
      '<div class="mut" style="margin:-8px 0 16px">La classe est r\u00e9compens\u00e9e au-dessus de ce taux de r\u00e9ussite.</div>'+
-     eqRow('\u00c9cart max (homog\u00e9n\u00e9it\u00e9)','eqe',25,0,100,5,' %')+
-     '<div class="mut" style="margin-top:-8px">Si l\'\u00e9cart entre le meilleur et le dernier est sous ce seuil, la classe touche le bonus d\'homog\u00e9n\u00e9it\u00e9.</div>'+
+     eqRow('\u00c9cart max 1er/dernier','eqe',25,0,100,5,' %')+
+     '<div class="mut" style="margin:-8px 0 16px">Si l\'\u00e9cart entre le meilleur et le dernier \u00e9l\u00e8ve est sous ce seuil, la classe touche le bonus d\'homog\u00e9n\u00e9it\u00e9.</div>'+
+     eqRow('Dispersion entre \u00e9l\u00e8ves (\u00e9cart-type)','eqet',12,0,40,2,' pts')+
+     '<div class="mut" style="margin-top:-8px">Compl\u00e8te l\'\u00e9cart 1er/dernier : plus les scores sont group\u00e9s autour de la moyenne, plus la classe est r\u00e9compens\u00e9e.</div>'+
+   '</div>'+
+   '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div class="lab" style="margin:0">Progression / R\u00e9gression</div><span id="progtoggle" class="pill" style="cursor:pointer'+(REGLAGES.progressionActive?'':';background:var(--line);color:var(--ink3)')+'" onclick="toggleProgression()">'+(REGLAGES.progressionActive?'activ\u00e9':'d\u00e9sactiv\u00e9')+'</span></div>'+
+     eqRow('Bonus si progression','eqpb',15,0,50,5,' pts')+
+     '<div class="mut" style="margin:-8px 0 16px">Points ajout\u00e9s \u00e0 la classe si sa moyenne progresse par rapport \u00e0 la p\u00e9riode pr\u00e9c\u00e9dente.</div>'+
+     eqRow('Malus si r\u00e9gression','eqpm',10,0,50,5,' pts')+
+     '<div class="mut" style="margin-top:-8px">Points retir\u00e9s si la moyenne de la classe baisse par rapport \u00e0 la p\u00e9riode pr\u00e9c\u00e9dente.</div>'+
    '</div>'+
    '<div class="card" style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:700;font-size:14px">Banque rare \u00d71,5</div><div class="mut">les questions rares valent plus</div></div><span class="pill">activ\u00e9</span></div>'+
-   '<button class="btn" style="margin-top:6px" onclick="toast(\'Enregistr\u00e9\')">Enregistrer</button>';
+   '<button class="btn" style="margin-top:6px" onclick="saveReglages()">Enregistrer</button>';
  }
 };
 
@@ -344,6 +363,10 @@ function carouselHTML(S){
 }
  function eqRow(label,id,val,mn,mx,st,unit){return '<div style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px"><span style="font-weight:600;font-size:13px">'+label+'</span><span style="font-weight:800;color:var(--pp);font-size:14px" id="'+id+'">'+val+unit+'</span></div><input type="range" min="'+mn+'" max="'+mx+'" step="'+st+'" value="'+val+'" data-tgt="'+id+'" data-unit="'+unit+'" oninput="eqUpd(this)"></div>';}
 function eqUpd(el){document.getElementById(el.dataset.tgt).textContent=el.value+el.dataset.unit;}
+function delClasse(i){var c=CLASSES[i];if(!c)return;if(!confirm('Supprimer la classe \u00ab '+c[0]+' \u00bb ? Cette action est irr\u00e9versible.'))return;CLASSES.splice(i,1);toast('Classe supprim\u00e9e');refresh();}
+function setModeReussite(m){REGLAGES.modeReussite=m;var a=document.getElementById('mrpartiel'),b=document.getElementById('mrsansfaute');if(a)a.classList.toggle('on',m==='partiel');if(b)b.classList.toggle('on',m==='sansfaute');}
+function toggleProgression(){REGLAGES.progressionActive=!REGLAGES.progressionActive;var el=document.getElementById('progtoggle');if(el){el.textContent=REGLAGES.progressionActive?'activ\u00e9':'d\u00e9sactiv\u00e9';el.style.background=REGLAGES.progressionActive?'':'var(--line)';el.style.color=REGLAGES.progressionActive?'':'var(--ink3)';}}
+function saveReglages(){var g=function(id){var el=document.getElementById(id);return el?parseInt(el.textContent,10):null;};REGLAGES.ptsBonneReponse=g('eqp')||REGLAGES.ptsBonneReponse;REGLAGES.seuilReussite=g('eqs')||REGLAGES.seuilReussite;REGLAGES.ecartMax=g('eqe')||REGLAGES.ecartMax;REGLAGES.ecartType=g('eqet')||REGLAGES.ecartType;REGLAGES.bonusProgression=g('eqpb')||REGLAGES.bonusProgression;REGLAGES.malusRegression=g('eqpm')||REGLAGES.malusRegression;toast('Enregistr\u00e9');}
 
 function qBank(i){var b=BANK[i];QUESTIONS.push({q:b.q,a:b.a.slice(),c:b.c,valid:false});nav("quizbuild");}
 function addClasse(){var n=(document.getElementById("newclassnom")||{}).value||"Nouvelle classe";CLASSES.push([n,0,0]);nav("classes");}
