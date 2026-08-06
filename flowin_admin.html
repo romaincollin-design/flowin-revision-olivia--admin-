@@ -7790,10 +7790,10 @@ async function cloturerDefiAdmin(defiId) {
 
 function cancelDefi(defiId) {
   if(!confirm('Annuler ce défi ? Le statut passera à "refuse".')) return;
-  const hdrs = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'};
-  fetch(SB_URL+'/rest/v1/defis?id=eq.'+encodeURIComponent(defiId), {
-    method:'PATCH', headers:hdrs,
-    body: JSON.stringify({status:'refuse', cancelled_by_admin: true})
+  const hdrs = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
+  fetch(SB_URL+'/rest/v1/rpc/admin_annuler_defi', {
+    method:'POST', headers:hdrs,
+    body: JSON.stringify({p_defi_id: defiId})
   }).then(function(r){
     if(r.ok) {
       const d = (DB.defis||[]).find(function(x){return x.id===defiId;});
