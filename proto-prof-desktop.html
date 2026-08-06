@@ -139,7 +139,7 @@ var KBOPEN={asuivre:false,encours:true,passe:false};
 var CURPSEUDO=null, CURSTEP='list';
 var CUREQR=0;
 function openEleveQR(i){CUREQR=i;go('eleveqr');}
-var ETABS=['Lycée de Vence','Collège Estienne d\'Orves'];
+var ETABS=['Lycée de Vence','Lycée Estienne d\'Orves'];
 var CURETAB=0, ETABMENU=false;
 function toggleEtabMenu(){ETABMENU=!ETABMENU;render();}
 function setEtab(i){CURETAB=i;ETABMENU=false;toast('Établissement : '+ETABS[i]);render();}
@@ -318,7 +318,7 @@ var PAGES={
   +'<div class="anon" style="margin-bottom:18px">'+ICON.lock+'<div>Anonymat total : tu ne vois que les pseudos de tes élèves, sur mobile comme sur ordinateur.</div></div>'
   +'<div class="grid2" style="grid-template-columns:1fr 1fr">'
    +'<div class="card"><h3>Mes informations</h3><div style="font-size:13.5px;color:var(--ink2);line-height:2.1">Olivia Laurent<br>o.laurent@ac-nice.fr<br>06 12 34 56 78</div></div>'
-   +'<div class="card"><h3>Mes établissements</h3><div class="row"><div style="flex:1;font-weight:700;font-size:13.5px">Lycée de Vence</div><span class="pill">principal</span></div><div class="row"><div style="flex:1;font-weight:700;font-size:13.5px">Collège Estienne d\'Orves</div></div></div>'
+   +'<div class="card"><h3>Mes établissements</h3><div class="row"><div style="flex:1;font-weight:700;font-size:13.5px">Lycée de Vence</div><span class="pill">principal</span></div><div class="row"><div style="flex:1;font-weight:700;font-size:13.5px">Lycée Estienne d\'Orves</div></div></div>'
   +'</div>';
  }
 };

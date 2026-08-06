@@ -124,7 +124,7 @@ var SCREENS={
  lotcreate3:function(){return topbar('Diffusion','lotcreate2')+
    '<div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>'+
    '<div class="lab">Établissements ciblés</div>'+
-   ['Lycée de Vence','Collège Estienne d\'Orves','Lycée Parc Impérial'].map(function(e,i){return '<div class="row"><div style="flex:1;font-weight:600;font-size:14px">'+e+'</div><div class="chip'+(i===0?' on':'')+'" onclick="chipToggle(this)">'+(i===0?ICON.check+' Ciblé':'Cibler')+'</div></div>';}).join('')+
+   ['Lycée de Vence','Lycée Estienne d\'Orves','Lycée Parc Impérial'].map(function(e,i){return '<div class="row"><div style="flex:1;font-weight:600;font-size:14px">'+e+'</div><div class="chip'+(i===0?' on':'')+'" onclick="chipToggle(this)">'+(i===0?ICON.check+' Ciblé':'Cibler')+'</div></div>';}).join('')+
    '<div class="lab" style="margin-top:16px">Condition d\'obtention</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"><div class="chip on" onclick="chipPick(this)">Ligue Or+</div><div class="chip" onclick="chipPick(this)">Top 3 classement</div><div class="chip" onclick="chipPick(this)">Points fixes</div></div>'+
    '<div class="field"><label>Points requis (si applicable)</label><input placeholder="ex. 1500 pts"></div>'+
    '<button class="btn" onclick="nav(\'lotcreate4\')">Continuer</button>';
