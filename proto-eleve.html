@@ -68,6 +68,7 @@ svg.i{width:1em;height:1em;stroke:currentColor;stroke-width:1.8;fill:none;stroke
 <script>
 var MAT=[{k:'histoire',n:'Histoire',c:'#D63050'},{k:'geo',n:'Géo',c:'#1E6FCC'},{k:'emc',n:'EMC',c:'#C27C0A'},{k:'pse',n:'PSE',c:'#0E9E6E'}];
 var wheelState={enabled:{histoire:true,geo:true,emc:true,pse:true},rot:0,spinning:false};
+var PROFQUIZ={actif:true,titre:'Le jeu des puissances',matiere:'Histoire',classe:'Terminale Bac Pro'};
 var ICON={
  book:'<svg class="i" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"/></svg>',
  star:'<svg class="i" viewBox="0 0 24 24"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg>',
@@ -98,6 +99,7 @@ function topbar(title){ return '<div class="top"><button class="back" onclick="n
 var SCREENS={
  hub:function(){return '<div class="top" style="justify-content:space-between"><div><div class="sub">Salut Sophie</div><div class="h1">On joue ?</div></div><div class="av gold">S</div></div>'+
    '<div class="stat3"><div class="s"><div class="si" style="color:#E0A800">'+ICON.coin+'</div><div class="v">512</div><div class="l">Points</div></div><div class="s"><div class="si" style="color:#F97316">'+ICON.flame+'</div><div class="v">7</div><div class="l">Streak</div></div><div class="s"><div class="si" style="color:var(--pp)">'+ICON.star+'</div><div class="v">64</div><div class="l">Quiz faits</div></div></div>'+
+   (PROFQUIZ.actif?'<div class="card" style="border:1.5px solid var(--ppln);background:var(--ppbg);display:flex;align-items:center;gap:12px;cursor:pointer" onclick="nav(\'quizroomjoin\')"><div class="av" style="background:var(--pp);font-size:15px">'+ICON.star+'</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Ta prof a lanc\u00e9 un quiz</div><div class="mut">'+PROFQUIZ.titre+' \u00b7 en direct \u2014 tape pour rejoindre</div></div><span class="pill" style="background:var(--pp);color:#fff">En direct</span></div>':'')+
    '<div class="h2">Mes 3 façons de jouer</div>'+
    '<button class="brick" onclick="nav(\'reviser\')"><div class="ic" style="background:var(--pp)">'+ICON.book+'</div><div><div class="t">Réviser mes cours</div><div class="d">23 fiches t\'attendent</div></div><div class="go">'+ICON.chev+'</div></button>'+
    '<button class="brick" onclick="nav(\'quiz\')"><div class="ic" style="background:var(--am)">'+ICON.star+'</div><div><div class="t">Quiz · Révise &amp; Gagne</div><div class="d">Tourne la roue, gagne des points</div></div><div class="go">'+ICON.chev+'</div></button>'+
@@ -129,7 +131,9 @@ var SCREENS={
    '<button class="brick" onclick="nav(\'quizplay\')"><div class="ic" style="background:var(--re);font-weight:800">3</div><div><div class="t">Difficile</div><div class="d">Analyse et mise en relation \u00b7 g\u00e9n\u00e9r\u00e9 par l\'IA</div></div></button>'+
    '<div class="card" style="background:var(--ppbg);border:0;color:var(--pp);font-size:12px;line-height:1.6">Plus la difficult\u00e9 monte, plus les questions sont exigeantes \u2014 l\'IA g\u00e9n\u00e8re des questions d\'analyse \u00e0 partir du cours.</div>';
  },
- quiz:function(){return topbar('Quiz')+'<div class="sub" style="text-align:center;margin-bottom:6px">Choisis tes matières, puis tourne la roue.</div>'+
+ quiz:function(){return topbar('Quiz')+
+   (PROFQUIZ.actif?'<div class="card" style="border:1.5px solid var(--ppln);background:var(--ppbg);display:flex;align-items:center;gap:12px;cursor:pointer;margin-bottom:14px" onclick="nav(\'quizroomjoin\')"><div class="av" style="background:var(--pp);font-size:15px">'+ICON.star+'</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Quiz de ta prof \u2014 en direct</div><div class="mut">'+PROFQUIZ.titre+' \u00b7 tape pour rejoindre</div></div><span class="pill" style="background:var(--pp);color:#fff">Rejoindre</span></div>':'')+
+   '<div class="sub" style="text-align:center;margin-bottom:6px">Ou r\u00e9vise en solo : choisis tes mati\u00e8res, puis tourne la roue.</div>'+
    '<div id="mchips" style="display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin:12px 0"></div>'+
    '<div class="wheelwrap"><div class="needle"></div><div class="wheel" id="wheel"></div><div class="hub">SPIN</div></div>'+
    '<button class="btn" style="margin-top:22px" id="spinBtn" onclick="spin()">Tourner la roue</button>'+
@@ -144,6 +148,29 @@ var SCREENS={
    '<div style="text-align:center;font-size:44px;font-weight:800;color:var(--pp);margin:8px 0">+60</div><div style="text-align:center;font-weight:600;margin-bottom:18px">points gagnés · 4/5 bonnes réponses</div>'+
    '<div class="card" style="display:flex;justify-content:space-between;align-items:center"><span class="lab">Nouveau solde</span><b style="color:var(--pp);font-size:18px">572 pts</b></div>'+
    '<button class="btn" style="margin-top:8px" onclick="nav(\'quiz\')">Rejouer</button><button class="btn sec" style="margin-top:10px" onclick="nav(\'reviser\')">Continuer à réviser</button>';
+ },
+ quizroomjoin:function(){return '<div class="top"><button class="back" onclick="nav(\'hub\')">'+ICON.back+'</button><div><div class="sub">'+PROFQUIZ.matiere+' \u00b7 '+PROFQUIZ.classe+'</div><div class="h1" style="font-size:20px">'+PROFQUIZ.titre+'</div></div></div>'+
+   '<div class="card" style="text-align:center;padding:26px 18px"><div class="av gold" style="width:56px;height:56px;font-size:20px;margin:0 auto 12px">S</div><div style="font-weight:700;font-size:16px">Tu rejoins sous ton pseudo</div><div style="font-weight:800;color:var(--pp);font-size:19px;margin-top:4px">Soso</div></div>'+
+   '<div class="card" style="background:var(--ppbg);border:0;color:var(--pp);font-size:12.5px;line-height:1.6">Ta prof ne voit que ton pseudo \u2014 jamais ton identit\u00e9 r\u00e9elle. Les questions s\'affichent en m\u00eame temps pour toute la classe.</div>'+
+   '<button class="btn" style="margin-top:14px" onclick="nav(\'quizroomwait\')">Rejoindre la room</button>'+
+   '<button class="btn sec" style="margin-top:10px" onclick="nav(\'hub\')">Annuler</button>';
+ },
+ quizroomwait:function(){return '<div class="top"><button class="back" onclick="nav(\'quizroomjoin\')">'+ICON.back+'</button><div class="h1" style="font-size:20px">Salle d\'attente</div></div>'+
+   '<div class="card" style="text-align:center;padding:26px 18px"><div style="margin:0 auto 14px;width:42px;height:42px;border:3px solid var(--ppbg);border-top-color:var(--pp);border-radius:50%;animation:fwspin2 1s linear infinite"></div><div style="font-weight:700;font-size:15px">En attente du lancement</div><div class="mut" style="margin-top:4px">ta prof d\u00e9marre le quiz pour toute la classe</div></div>'+
+   '<style>@keyframes fwspin2{to{transform:rotate(360deg)}}</style>'+
+   '<div class="lab" style="margin:6px 0 6px">D\u00e9j\u00e0 connect\u00e9s (4)</div>'+
+   ['Soso (toi)','Lilou','MarcX','Nadir06'].map(function(n){return '<div class="row" style="padding:9px 0"><div class="av">'+n[0]+'</div><div style="flex:1;font-weight:700;font-size:14px">'+n+'</div><span class="pill" style="background:var(--grbg);color:var(--gr)">connect\u00e9</span></div>';}).join('')+
+   '<button class="btn" style="margin-top:12px" onclick="nav(\'quizroomplay\')">Ta prof a lanc\u00e9 le quiz \u2192 jouer</button>';
+ },
+ quizroomplay:function(){return '<div class="top"><div><div class="sub">En direct \u00b7 Question 1/5</div><div class="h1" style="font-size:19px">'+PROFQUIZ.titre+'</div></div></div>'+
+   '<div class="card" style="text-align:center;font-weight:600;font-size:16px;padding:24px 16px">En quelle ann\u00e9e tombe le mur de Berlin ?</div>'+
+   '<div class="tiles" style="margin-top:6px"><button class="tile" style="background:var(--re)" onclick="nav(\'quizroomresult\')">1961</button><button class="tile" style="background:var(--gr)" onclick="nav(\'quizroomresult\')">1989</button><button class="tile" style="background:var(--bl)" onclick="nav(\'quizroomresult\')">1991</button><button class="tile" style="background:var(--am)" onclick="nav(\'quizroomresult\')">1975</button></div>'+
+   '<div class="card" style="margin-top:14px;text-align:center"><span class="pill">Toute la classe r\u00e9pond en m\u00eame temps</span></div>';
+ },
+ quizroomresult:function(){return '<div class="done">'+ICON.check+'</div><div class="h1" style="text-align:center">Envoy\u00e9 !</div>'+
+   '<div style="text-align:center;font-size:44px;font-weight:800;color:var(--pp);margin:8px 0">+45</div><div style="text-align:center;font-weight:600;margin-bottom:18px">points en attente du classement final</div>'+
+   '<div class="card" style="background:var(--ppbg);border:0;color:var(--pp);font-size:12.5px;line-height:1.6">Les points sont cr\u00e9dit\u00e9s automatiquement par pseudo d\u00e8s que ta prof cl\u00f4t le quiz \u2014 aucune remise individuelle.</div>'+
+   '<button class="btn" style="margin-top:10px" onclick="nav(\'hub\')">Retour \u00e0 l\'accueil</button>';
  },
  defis:function(){return topbar('D\u00e9fis')+
    '<div class="card" style="border:1.5px solid var(--am);background:var(--ambg);display:flex;align-items:center;gap:12px;cursor:pointer" onclick="nav(\'defiinvit\')"><div class="av" style="background:var(--am)">M</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Marc t\'invite \u00e0 un d\u00e9fi</div><div class="mut">45 pts \u00b7 tape pour voir</div></div><span class="pill" style="background:var(--am);color:#fff">Nouveau</span></div>'+
@@ -268,7 +295,7 @@ function render(){
   scr.innerHTML = (SCREENS[current]||SCREENS.hub)();
   // tabbar
   tb.innerHTML='';
-  var map={reviser:'reviser',fiche:'reviser',quizdiff:'quiz',quiz:'quiz',quizplay:'quiz',quizresult:'quiz',defis:'defis',deficreate:'defis',defiroom:'defis',qrlive:'defis',defirules:'defis',defiinvit:'defis',defiwait:'defis',defilive:'defis',defiresult:'defis',maclasse:'maclasse',ligue:'ligue',profil:'profil',mesinfos:'profil',hub:'hub'};
+  var map={reviser:'reviser',fiche:'reviser',quizdiff:'quiz',quiz:'quiz',quizplay:'quiz',quizresult:'quiz',quizroomjoin:'quiz',quizroomwait:'quiz',quizroomplay:'quiz',quizroomresult:'quiz',defis:'defis',deficreate:'defis',defiroom:'defis',qrlive:'defis',defirules:'defis',defiinvit:'defis',defiwait:'defis',defilive:'defis',defiresult:'defis',maclasse:'maclasse',ligue:'ligue',profil:'profil',mesinfos:'profil',hub:'hub'};
   TABS.forEach(function(t){var b=document.createElement('button');b.className=(map[current]===t[0])?'on':'';b.innerHTML=ICON[t[2]]+'<span>'+t[1]+'</span>';b.onclick=function(){nav(t[0]);};tb.appendChild(b);});
   if(current==='quiz') mountWheel();
 }

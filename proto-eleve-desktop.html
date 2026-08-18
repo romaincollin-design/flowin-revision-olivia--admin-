@@ -97,7 +97,8 @@ var ICON={
  trophy:'<svg class="i" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 4H4v2a3 3 0 0 0 3 3M17 4h3v2a3 3 0 0 1-3 3"/></svg>',
  chev:'<svg class="i" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>',
  back:'<svg class="i" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>',
- gift:'<svg class="i" viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7"/></svg>'
+ gift:'<svg class="i" viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7"/></svg>',
+ check:'<svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>'
 };
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.className='show';t.style.opacity=1;t.style.transform='translateX(-50%) translateY(0)';clearTimeout(window._tt);window._tt=setTimeout(function(){t.style.opacity=0;t.style.transform='translateX(-50%) translateY(10px)';},1900);}
 
@@ -106,6 +107,7 @@ var wheelState={enabled:{histoire:true,geo:true,emc:true,pse:true},rot:0,spinnin
 
 var CURROOM=0;
 function openRoom(i){CURROOM=i;go('room');}
+var PROFQUIZ={actif:true,titre:'Le jeu des puissances',matiere:'Histoire',classe:'Terminale Bac Pro'};
 var CLASSPERIOD='trimestre';
 function setClassPeriod(p){CLASSPERIOD=p;render();}
 var PAGE='hub';
@@ -120,6 +122,7 @@ var PAGES={
    +'<div class="kpi"><div class="ic" style="background:#F97316">'+ICON.flame+'</div><div><div class="v">7</div><div class="l">Streak</div></div></div>'
    +'<div class="kpi"><div class="ic" style="background:var(--pp)">'+ICON.star+'</div><div><div class="v">64</div><div class="l">Quiz faits</div></div></div>'
   +'</div>'
+  +(PROFQUIZ.actif?'<div class="card" style="border:1.5px solid var(--ppln);background:var(--ppbg);display:flex;align-items:center;gap:14px;cursor:pointer;margin-bottom:22px" onclick="go(\'quizroomjoin\')"><div style="width:44px;height:44px;border-radius:12px;background:var(--pp);color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px">'+ICON.star+'</div><div style="flex:1"><div style="font-weight:700;font-size:14.5px">Ta prof a lanc\u00e9 un quiz \u2014 '+PROFQUIZ.titre+'</div><div class="sub" style="margin:2px 0 0">En direct \u00b7 tape pour rejoindre la room</div></div><span class="pill" style="background:var(--pp);color:#fff">En direct</span></div>':'')
   +'<div class="grid2">'
    +'<div><div class="card"><h3>Tes 3 fa\u00e7ons de jouer</h3>'
      +'<div class="tile" onclick="go(\'reviser\')"><div class="ic" style="background:var(--pp)">'+ICON.book+'</div><div style="flex:1"><div style="font-weight:700;font-size:14.5px">R\u00e9viser mes cours</div><div class="sub" style="margin:0">23 fiches t\'attendent</div></div><span style="color:var(--ink3)">'+ICON.chev+'</span></div>'
@@ -147,6 +150,7 @@ var PAGES={
  },
  quiz:function(){return ''
   +'<div class="topbar"><div class="h1">Quiz</div></div>'
+  +(PROFQUIZ.actif?'<div class="card" style="border:1.5px solid var(--ppln);background:var(--ppbg);display:flex;align-items:center;gap:14px;cursor:pointer;margin-bottom:18px;max-width:520px" onclick="go(\'quizroomjoin\')"><div style="width:42px;height:42px;border-radius:11px;background:var(--pp);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px">'+ICON.star+'</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Ta prof a lanc\u00e9 un quiz</div><div class="sub" style="margin:2px 0 0">'+PROFQUIZ.titre+' \u00b7 en direct</div></div><span class="pill" style="background:var(--pp);color:#fff">Rejoindre</span></div>':'')
   +'<div class="card" style="max-width:420px;margin:0 auto;text-align:center">'
    +'<div class="sub" style="margin-bottom:10px">Choisis tes mati\u00e8res, puis tourne la roue.</div>'
    +'<div id="mchips" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:14px"></div>'
@@ -175,6 +179,30 @@ var PAGES={
    +'<div class="card"><h3>Joueurs</h3>'+['Sophie (toi)','Marc','Lilou','Tom'].slice(0,parseInt(r[2])).map(function(n,i){return '<div class="row"><div class="av">'+n[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+n+'</div><span class="pill">'+(i<2?'pr\u00eat':'en attente')+'</span></div>';}).join('')+'</div>'
   +'</div>'
   +'<button class="btn" style="margin-top:16px" onclick="toast(\'Demande envoy\u00e9e \u2014 en attente de validation de l\'organisateur\')">Rejoindre la room</button>';
+ },
+ quizroomjoin:function(){return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'hub\')">'+ICON.back+'</button><div><div class="sub">'+PROFQUIZ.matiere+' \u00b7 '+PROFQUIZ.classe+'</div><div class="h1">'+PROFQUIZ.titre+'</div></div></div></div>'
+  +'<div class="card" style="max-width:460px;text-align:center;padding:28px 22px"><div class="av" style="width:56px;height:56px;font-size:20px;margin:0 auto 12px">S</div><div style="font-weight:700;font-size:15px">Tu rejoins sous ton pseudo</div><div style="font-weight:800;color:var(--pp);font-size:19px;margin-top:4px">Soso</div></div>'
+  +'<div class="card" style="max-width:460px;background:var(--ppbg);border:0;color:var(--pp);font-size:12.5px;line-height:1.6">Ta prof ne voit que ton pseudo \u2014 jamais ton identit\u00e9 r\u00e9elle. Les questions s\'affichent en m\u00eame temps pour toute la classe.</div>'
+  +'<button class="btn" style="margin-top:14px" onclick="go(\'quizroomwait\')">Rejoindre la room</button>';
+ },
+ quizroomwait:function(){return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'quizroomjoin\')">'+ICON.back+'</button><div class="h1">Salle d\'attente</div></div></div>'
+  +'<div class="card" style="max-width:460px;text-align:center;padding:28px 22px"><div style="margin:0 auto 14px;width:40px;height:40px;border:3px solid var(--ppbg);border-top-color:var(--pp);border-radius:50%;animation:qrspin 1s linear infinite"></div><div style="font-weight:700;font-size:15px">En attente du lancement</div><div class="sub" style="margin-top:4px">ta prof d\u00e9marre le quiz pour toute la classe</div></div>'
+  +'<style>@keyframes qrspin{to{transform:rotate(360deg)}}</style>'
+  +'<div class="card" style="max-width:460px"><h3>D\u00e9j\u00e0 connect\u00e9s (4)</h3>'+['Soso (toi)','Lilou','MarcX','Nadir06'].map(function(n){return '<div class="row"><div class="av">'+n[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+n+'</div><span class="pill" style="background:var(--grbg);color:var(--gr)">connect\u00e9</span></div>';}).join('')+'</div>'
+  +'<button class="btn" style="margin-top:4px" onclick="go(\'quizroomplay\')">Ta prof a lanc\u00e9 le quiz \u2192 jouer</button>';
+ },
+ quizroomplay:function(){return ''
+  +'<div class="topbar"><div><div class="sub">En direct \u00b7 Question 1/5</div><div class="h1">'+PROFQUIZ.titre+'</div></div></div>'
+  +'<div class="card" style="max-width:520px;text-align:center;font-weight:600;font-size:16px;padding:24px 18px">En quelle ann\u00e9e tombe le mur de Berlin ?</div>'
+  +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:520px">'+[['1961','var(--re)'],['1989','var(--gr)'],['1991','var(--bl)'],['1975','var(--am)']].map(function(a){return '<button class="btn" style="background:'+a[1]+'" onclick="go(\'quizroomresult\')">'+a[0]+'</button>';}).join('')+'</div>';
+ },
+ quizroomresult:function(){return ''
+  +'<div class="topbar"><div class="h1">Envoy\u00e9 !</div></div>'
+  +'<div class="card" style="max-width:460px;text-align:center;padding:26px 20px"><div style="width:60px;height:60px;border-radius:50%;background:var(--grbg);color:var(--gr);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:26px">'+ICON.check+'</div><div style="font-size:38px;font-weight:800;color:var(--pp);margin:6px 0">+45</div><div class="sub">points en attente du classement final</div></div>'
+  +'<div class="card" style="max-width:460px;background:var(--ppbg);border:0;color:var(--pp);font-size:12.5px;line-height:1.6">Les points sont cr\u00e9dit\u00e9s automatiquement par pseudo d\u00e8s que ta prof cl\u00f4t le quiz.</div>'
+  +'<button class="btn" style="margin-top:10px;max-width:460px" onclick="go(\'hub\')">Retour \u00e0 l\'accueil</button>';
  },
  classe:function(){var period=CLASSPERIOD||'trimestre';
   var data={trimestre:[58,60,64,66,68,70],mois:[63,65,66,67,69,70],annee:[42,48,55,60,65,70]};

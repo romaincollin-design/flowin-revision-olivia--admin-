@@ -162,7 +162,9 @@ function qAddBank(i){var b=BANK[i];QUESTIONS.push({q:b.q,a:b.a.slice(),c:b.c,dif
 function qAddIA(){var gen=[{q:"Quel événement marque le début de la guerre froide ?",a:["Doctrine Truman","Chute du mur","Crise de Cuba","Plan Marshall"],c:0},{q:"Que désigne la coexistence pacifique ?",a:["Une détente relative","Une guerre ouverte","La fin de l'URSS","Un traité de paix"],c:0},{q:"En quelle année a lieu la crise de Cuba ?",a:["1949","1962","1975","1989"],c:1}];
   gen.forEach(function(g){QUESTIONS.push({q:g.q,a:g.a,c:g.c,diff:'Difficile',valid:false});});toast("5 questions générées par l'IA — à relire");render();}
 function qDel(i){QUESTIONS.splice(i,1);render();}
-function publishQuiz(){CHALLENGES.unshift({t:'Le jeu des puissances',cl:'Terminale Bac Pro',d:"aujourd'hui",s:'encours',r:''});LOTQR.forEach(function(l){l.statut='attente';});toast('Quiz publié et lancé');go('quizresult');}
+var QUIZROOM={joined:[]};
+function simulateJoinQuiz(){var pool=ELEVES.map(function(e){return e[0];}).filter(function(p){return QUIZROOM.joined.indexOf(p)===-1;});if(!pool.length){toast('Toute la classe est connectée');return;}var ps=pool[Math.floor(Math.random()*pool.length)];QUIZROOM.joined.push(ps);toast(ps+' a rejoint le quiz');render();}
+function publishQuiz(){CHALLENGES.unshift({t:'Le jeu des puissances',cl:'Terminale Bac Pro',d:"aujourd'hui",s:'encours',r:''});LOTQR.forEach(function(l){l.statut='attente';});QUIZROOM.joined=[];toast('Quiz publié — salle d\'attente ouverte');go('quizroom');}
 function saveDraft(){DRAFTS.unshift({t:'Le jeu des puissances',theme:'Histoire',d:"aujourd'hui"});toast('Brouillon enregistré');go('quizhub');}
 function kbToggle(g){KBOPEN[g]=!KBOPEN[g];render();}
 function openPseudo(ps){CURPSEUDO=ps;go('fiche');}
@@ -284,6 +286,15 @@ var PAGES={
   +'<div class="card"><h3>\u00c9l\u00e8ves &amp; points individuels</h3><table><tr><th>Pseudo</th><th>Points</th><th>R\u00e9ussite</th><th></th></tr>'
     +roster.map(function(e){return '<tr class="link" onclick="openPseudo(\''+e[0]+'\')"><td style="font-weight:700;color:var(--pp)">'+e[0]+'</td><td style="font-weight:700">'+e[1]+'</td><td>'+e[2]+'</td><td style="text-align:right;color:var(--ink3)">'+ICON.chev+'</td></tr>';}).join('')
   +'</table></div>';
+ },
+ quizroom:function(){var n=QUIZROOM.joined.length,tot=ELEVES.length;return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'quizhub\')">'+ICON.back+'</button><div><div class="sub">Le jeu des puissances \u00b7 Terminale Bac Pro</div><div class="h1">Salle d\'attente</div></div></div></div>'
+  +'<div class="grid2">'
+   +'<div class="card" style="text-align:center"><h3 style="justify-content:center">Diffuse aux \u00e9l\u00e8ves</h3><div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;display:inline-block">'+qrSvg()+'</div><div class="sub" style="margin-top:10px">Projette cet \u00e9cran (vid\u00e9oprojecteur), ou fais circuler ton t\u00e9l\u00e9phone \u2014 les \u00e9l\u00e8ves flashent pour rejoindre.</div><button class="btn sec" style="margin-top:14px" onclick="simulateJoinQuiz()">'+ICON.qr+' Simuler une connexion \u00e9l\u00e8ve</button></div>'
+   +'<div class="card"><h3>Connect\u00e9s<span class="pill">'+n+' / '+tot+'</span></h3>'+(n?QUIZROOM.joined.map(function(ps){return '<div class="row"><div class="av">'+ps[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+ps+'</div><span class="pill" style="background:var(--grbg);color:var(--gr)">connect\u00e9</span></div>';}).join(''):'<div class="sub">En attente de connexions\u2026</div>')+'</div>'
+  +'</div>'
+  +'<div class="anon" style="margin-top:16px">'+ICON.lock+'<div>100% anonyme \u2014 seuls les pseudos sont visibles ici. Le QR ne demande aucune coordonn\u00e9e.</div></div>'
+  +'<button class="btn" style="margin-top:16px" onclick="go(\'quizresult\')">D\u00e9marrer le quiz</button>';
  },
  quizresult:function(){var res=[['Soso',5,512,'A'],['MarcX',3,300,'B'],['Lilou',3,395,'C'],['Nadir06',2,280,'D']].sort(function(a,b){return b[1]-a[1];});
   var moy=Math.round(res.reduce(function(a,r){return a+r[1];},0)/res.length/5*100);

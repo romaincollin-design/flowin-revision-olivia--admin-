@@ -173,12 +173,13 @@ var SCREENS={
    '<button class="btn" onclick="iaGen()">'+ICON.wand+' G\u00e9n\u00e9rer les questions</button>'+
    '<div class="mut" style="text-align:center;margin-top:10px">Tu relis, modifies, supprimes ou ajoutes chaque question.</div>';
  },
-  quizlaunch:function(){return '<div class="top"><button class="back" onclick="nav(\'quizbuild\')">'+ICON.back+'</button><div class="h1">Lancer le quiz</div></div>'+
-   '<div class="card" style="text-align:center;padding:16px"><div class="lab">Les \u00e9l\u00e8ves flashent pour rejoindre</div><div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;display:inline-block;margin-top:10px">'+qrSvg()+'</div></div>'+
-   '<div class="anon">'+ICON.lock+'<div class="d">Le QR donne acc\u00e8s au quiz par pseudo \u2014 aucune coordonn\u00e9e demand\u00e9e.</div></div>'+
-   '<div class="lab" style="margin:6px 0 6px">Dans la partie (3)</div>'+
-   ['Soso','Lilou','MarcX'].map(function(n){return '<div class="row" style="padding:9px 0"><div class="av">'+n[0]+'</div><div style="flex:1;font-weight:700;font-size:14px">'+n+'</div><span class="pill">pr\u00eat</span></div>';}).join('')+
-   '<button class="btn" style="margin-top:12px" onclick="nav(\'classe\')">D\u00e9marrer le quiz</button>';
+  quizlaunch:function(){var n=QUIZROOM.joined.length;return '<div class="top"><button class="back" onclick="nav(\'quizbuild\')">'+ICON.back+'</button><div><div class="sub">Le jeu des puissances \u00b7 Terminale Bac Pro</div><div class="h1" style="font-size:20px">Salle d\'attente</div></div></div>'+
+   '<div class="card" style="text-align:center;padding:16px"><div class="lab">Diffuse aux \u00e9l\u00e8ves</div><div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;display:inline-block;margin:10px 0">'+qrSvg()+'</div><div class="mut">Projette cet \u00e9cran (vid\u00e9oprojecteur), ou fais circuler ton t\u00e9l\u00e9phone \u2014 les \u00e9l\u00e8ves flashent pour rejoindre.</div></div>'+
+   '<div class="anon">'+ICON.lock+'<div class="d">Le QR donne acc\u00e8s au quiz par pseudo \u2014 aucune coordonn\u00e9e demand\u00e9e. Tu ne vois jamais l\'identit\u00e9 r\u00e9elle.</div></div>'+
+   '<div class="lab" style="margin:6px 0 6px">Connect\u00e9s ('+n+'/'+ELEVES.length+')</div>'+
+   (n?QUIZROOM.joined.map(function(ps){return '<div class="row" style="padding:9px 0"><div class="av">'+ps[0]+'</div><div style="flex:1;font-weight:700;font-size:14px">'+ps+'</div><span class="pill" style="background:var(--grbg);color:var(--gr)">connect\u00e9</span></div>';}).join(''):'<div class="mut" style="padding:10px 0">En attente de connexions\u2026</div>')+
+   '<button class="btn sec" style="margin-top:10px" onclick="simulateJoinQuiz()">'+ICON.qr+' Simuler une connexion \u00e9l\u00e8ve</button>'+
+   '<button class="btn" style="margin-top:10px" onclick="startQuizRoom()">D\u00e9marrer le quiz</button>';
  },
  quizedit:function(){var qq=QUESTIONS[QEDIT]||QUESTIONS[0];var cols=['#D63050','#0E9E6E','#1E6FCC','#C27C0A'];return '<div class="top"><button class="back" onclick="nav(\'quizbuild\')">'+ICON.back+'</button><div class="h1">Modifier la question</div></div>'+
    '<div class="field"><label>\u00c9nonc\u00e9</label><input value="'+qq.q+'" placeholder="\u00c9nonc\u00e9 de la question"></div>'+
@@ -374,7 +375,10 @@ var CHALLENGES=[{t:"La guerre froide",cl:"Terminale Bac Pro",d:"5 mars",s:"passe
 var CURCHAL=null;
 function openChal(t){CURCHAL=t;nav("chaldetail");}
 function openChalEl(el){openChal(el.dataset.t);}
-function publishQuiz(){CHALLENGES.unshift({t:"Le jeu des puissances",cl:"Terminale Bac Pro",d:"aujourd'hui",s:"encours",r:""});nav("quizlaunch");}
+var QUIZROOM={joined:[]};
+function simulateJoinQuiz(){var pool=ELEVES.map(function(e){return e[0];}).filter(function(p){return QUIZROOM.joined.indexOf(p)===-1;});if(!pool.length){toast("Toute la classe est connectée");return;}var ps=pool[Math.floor(Math.random()*pool.length)];QUIZROOM.joined.push(ps);toast(ps+" a rejoint le quiz");render();}
+function startQuizRoom(){toast("Quiz démarré — "+QUIZROOM.joined.length+" élève"+(QUIZROOM.joined.length>1?"s":"")+" en jeu");nav("classe");}
+function publishQuiz(){CHALLENGES.unshift({t:"Le jeu des puissances",cl:"Terminale Bac Pro",d:"aujourd'hui",s:"encours",r:""});QUIZROOM.joined=[];nav("quizlaunch");}
 function addPseudo(){var ps=(document.getElementById("newpseudo")||{}).value||("\u00c9l\u00e8ve "+(ELEVES.length+1));ELEVES.push([ps,0,"#534AB7"]);nav("classe");}
 function iaGen(){QUESTIONS=[{q:"Quel événement marque le début de la guerre froide ?",a:["Doctrine Truman","Chute du mur","Crise de Cuba","Plan Marshall"],c:0,valid:false},{q:"Que symbolise le rideau de fer ?",a:["La partition de l'Europe","L'ONU","La décolonisation","L'OTAN"],c:0,valid:false},{q:"En quelle année a lieu la crise de Cuba ?",a:["1949","1962","1975","1989"],c:1,valid:false},{q:"Quelle alliance regroupe le bloc de l'Est ?",a:["OTAN","Pacte de Varsovie","ONU","CEE"],c:1,valid:false},{q:"Que désigne la coexistence pacifique ?",a:["Une détente relative","Une guerre ouverte","La fin de l'URSS","Un traité de paix"],c:0,valid:false}];nav("quizbuild");}
 function chipPick(el){var pr=el.parentNode;pr.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on');});el.classList.add('on');}
