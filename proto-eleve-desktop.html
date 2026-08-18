@@ -154,11 +154,37 @@ function lancerManche(){
   var r=ROOMS[CURROOM];
   if(r.joueursActuels<2){toast('Il faut au moins 2 joueurs pour lancer');return;}
   if(!r.scores)r.scores=r.participants.map(function(p){return {pseudo:p,pts:Math.floor(Math.random()*40)+55};});
-  r.statut='encours';go('roomlive');
+  go('roomcountdown');
+  var n=3;
+  var overlay=document.getElementById('main');
+  function tick(){
+    overlay.querySelector('#cdNum') && (overlay.querySelector('#cdNum').textContent=n>0?n:'GO');
+    if(n===0){r.statut='encours';setTimeout(function(){go('roomlive');},500);return;}
+    n--;setTimeout(tick,800);
+  }
+  tick();
 }
 function validerManche(){
-  var r=ROOMS[CURROOM];r.scores.sort(function(a,b){return b.pts-a.pts;});r.gagnant=r.scores[0].pseudo;r.statut='termine';go('roomresult');
+  var r=ROOMS[CURROOM];r.scores.sort(function(a,b){return b.pts-a.pts;});r.gagnant=r.scores[0].pseudo;r.statut='termine';
+  afficherPopupGagnant(r);
 }
+function afficherPopupGagnant(r){
+  var cagnotte=r.mise*r.joueursActuels,gain=cagnotte-r.mise;
+  var overlay=document.createElement('div');
+  overlay.id='popupGagnant';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(20,16,50,.55);display:flex;align-items:center;justify-content:center;z-index:999;animation:fadeInPop .25s ease';
+  overlay.innerHTML='<style>@keyframes fadeInPop{from{opacity:0}to{opacity:1}}@keyframes popIn{0%{transform:scale(.8);opacity:0}100%{transform:scale(1);opacity:1}}</style>'
+    +'<div style="background:#fff;border-radius:20px;padding:32px 28px;max-width:380px;width:90%;text-align:center;animation:popIn .35s cubic-bezier(.34,1.56,.64,1)">'
+    +'<div style="width:72px;height:72px;border-radius:50%;background:#FDF3D0;color:var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:34px">'+ICON.trophy+'</div>'
+    +'<div class="h1" style="font-size:19px">'+r.gagnant+' remporte la room !</div>'
+    +'<div style="font-size:40px;font-weight:800;color:var(--pp);margin:8px 0">+'+gain+'</div>'
+    +'<div class="sub" style="margin-bottom:16px">la cagnotte enti\u00e8re (moins sa propre mise)</div>'
+    +'<div style="text-align:left;background:var(--bg);border-radius:12px;padding:10px 12px;margin-bottom:16px">'+r.participants.map(function(p){var g=p===r.gagnant;return '<div class="row" style="padding:6px 0"><div class="av" style="width:24px;height:24px;font-size:11px">'+p[0]+'</div><div style="flex:1;font-weight:700;font-size:12.5px">'+p+'</div><span style="font-weight:800;font-size:12.5px;color:'+(g?'var(--gr)':'var(--re)')+'">'+(g?'+'+gain:'-'+r.mise)+'</span></div>';}).join('')+'</div>'
+    +'<button class="btn" style="width:100%;justify-content:center" onclick="fermerPopupGagnant()">Retour aux d\u00e9fis</button>'
+    +'</div>';
+  document.body.appendChild(overlay);
+}
+function fermerPopupGagnant(){var o=document.getElementById('popupGagnant');if(o)o.remove();go('defis');}
 var PROFQUIZ={actif:true,titre:'Le jeu des puissances',matiere:'Histoire',classe:'Terminale Bac Pro'};
 var CLASSPERIOD='trimestre';
 function setClassPeriod(p){CLASSPERIOD=p;render();}
@@ -174,7 +200,7 @@ var PAGES={
    +'<div class="kpi"><div class="ic" style="background:#F97316">'+ICON.flame+'</div><div><div class="v">7</div><div class="l">Streak</div></div></div>'
    +'<div class="kpi"><div class="ic" style="background:var(--pp)">'+ICON.star+'</div><div><div class="v">64</div><div class="l">Quiz faits</div></div></div>'
   +'</div>'
-  +(PROFQUIZ.actif?'<div class="card" style="border:1.5px solid var(--ppln);background:var(--ppbg);display:flex;align-items:center;gap:14px;cursor:pointer;margin-bottom:22px" onclick="go(\'quizroomjoin\')"><div style="width:44px;height:44px;border-radius:12px;background:var(--pp);color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px">'+ICON.star+'</div><div style="flex:1"><div style="font-weight:700;font-size:14.5px">Ta prof a lanc\u00e9 un quiz \u2014 '+PROFQUIZ.titre+'</div><div class="sub" style="margin:2px 0 0">En direct \u00b7 tape pour rejoindre la room</div></div><span class="pill" style="background:var(--pp);color:#fff">En direct</span></div>':'')
+  +(PROFQUIZ.actif?'<div class="card" style="border:1.5px solid var(--ppln);background:var(--ppbg);display:flex;align-items:center;gap:14px;cursor:pointer;margin-bottom:22px" onclick="go(\'quizroomjoin\')"><div style="width:44px;height:44px;border-radius:12px;background:var(--pp);color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px">'+ICON.star+'</div><div style="flex:1"><div style="font-weight:700;font-size:14.5px">'+PROFQUIZ.titre+'</div><div class="sub" style="margin:2px 0 0">'+PROFQUIZ.matiere+' \u00b7 '+PROFQUIZ.classe+' \u00b7 en direct</div></div><span class="pill" style="background:var(--pp);color:#fff">En direct</span></div>':'')
   +'<div class="grid2">'
    +'<div><div class="card"><h3>Tes 3 fa\u00e7ons de jouer</h3>'
      +'<div class="tile" onclick="go(\'reviser\')"><div class="ic" style="background:var(--pp)">'+ICON.book+'</div><div style="flex:1"><div style="font-weight:700;font-size:14.5px">R\u00e9viser mes cours</div><div class="sub" style="margin:0">23 fiches t\'attendent</div></div><span style="color:var(--ink3)">'+ICON.chev+'</span></div>'
@@ -202,7 +228,7 @@ var PAGES={
  },
  quiz:function(){return ''
   +'<div class="topbar"><div class="h1">Quiz</div></div>'
-  +(PROFQUIZ.actif?'<div class="card" style="border:1.5px solid var(--ppln);background:var(--ppbg);display:flex;align-items:center;gap:14px;cursor:pointer;margin-bottom:18px;max-width:520px" onclick="go(\'quizroomjoin\')"><div style="width:42px;height:42px;border-radius:11px;background:var(--pp);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px">'+ICON.star+'</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Ta prof a lanc\u00e9 un quiz</div><div class="sub" style="margin:2px 0 0">'+PROFQUIZ.titre+' \u00b7 en direct</div></div><span class="pill" style="background:var(--pp);color:#fff">Rejoindre</span></div>':'')
+  +(PROFQUIZ.actif?'<div class="card" style="border:1.5px solid var(--ppln);background:var(--ppbg);display:flex;align-items:center;gap:14px;cursor:pointer;margin-bottom:18px;max-width:520px" onclick="go(\'quizroomjoin\')"><div style="width:42px;height:42px;border-radius:11px;background:var(--pp);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px">'+ICON.star+'</div><div style="flex:1"><div style="font-weight:700;font-size:14px">'+PROFQUIZ.titre+'</div><div class="sub" style="margin:2px 0 0">'+PROFQUIZ.matiere+' \u00b7 '+PROFQUIZ.classe+' \u00b7 en direct</div></div><span class="pill" style="background:var(--pp);color:#fff">Rejoindre</span></div>':'')
   +'<div class="card" style="max-width:420px;margin:0 auto;text-align:center">'
    +'<div class="sub" style="margin-bottom:10px">Choisis tes mati\u00e8res, puis tourne la roue.</div>'
    +'<div id="mchips" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:14px"></div>'
@@ -228,6 +254,13 @@ var PAGES={
    +'<button class="btn" style="width:100%;justify-content:center" onclick="creerRoomDefi()">Cr\u00e9er la room</button></div>';
  },
  room:function(){var r=ROOMS[CURROOM||0];var cagnotte=r.mise*r.joueursTotal;
+  if(r.statut==='termine'){var gain=r.mise*r.joueursActuels-r.mise;
+    return ''
+    +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'defis\')">'+ICON.back+'</button><div><div class="sub">Room termin\u00e9e \u00b7 '+r.theme+'</div><div class="h1">'+r.titre+'</div></div></div></div>'
+    +'<div class="card" style="max-width:460px;text-align:center;padding:26px 20px"><div style="width:60px;height:60px;border-radius:50%;background:#FDF3D0;color:var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:26px">'+ICON.trophy+'</div><div class="h1" style="font-size:17px">'+r.gagnant+' a remport\u00e9</div><div style="font-size:30px;font-weight:800;color:var(--pp);margin:4px 0">+'+gain+'</div></div>'
+    +'<div class="card" style="max-width:460px"><h3>R\u00e9partition</h3>'+r.participants.map(function(p){var g=p===r.gagnant;return '<div class="row"><div class="av">'+p[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+p+'</div><span style="font-weight:800;color:'+(g?'var(--gr)':'var(--re)')+'">'+(g?'+'+gain:'-'+r.mise)+'</span></div>';}).join('')+'</div>'
+    +'<button class="btn" style="margin-top:16px;max-width:460px" onclick="go(\'defis\')">Retour aux d\u00e9fis</button>';
+  }
   return ''
   +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'defis\')">'+ICON.back+'</button><div><div class="sub">Room \u00b7 '+r.theme+' \u00b7 '+r.type+'</div><div class="h1">'+r.titre+'</div></div></div></div>'
   +'<div class="grid2">'
@@ -235,6 +268,7 @@ var PAGES={
    +'<div class="card"><h3>Joueurs<span class="pill">'+r.joueursActuels+'/'+r.joueursTotal+'</span></h3>'+r.participants.map(function(p){return '<div class="row"><div class="av">'+p[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+p+'</div><span class="pill" style="background:var(--grbg);color:var(--gr)">pr\u00eat</span></div>';}).join('')+Array(Math.max(0,r.joueursTotal-r.participants.length)).fill(0).map(function(){return '<div class="row"><div class="av" style="background:var(--line);color:var(--ink3)">?</div><div style="flex:1;font-weight:700;font-size:13.5px;color:var(--ink3)">En attente\u2026</div></div>';}).join('')+'</div>'
   +'</div>'
   +(r.type==='Publique'?'<div class="card" style="margin-top:16px"><h3>Demandes \u00e0 valider<span class="pill">'+JOIN_REQUESTS.length+'</span></h3>'+(JOIN_REQUESTS.length?JOIN_REQUESTS.map(function(p){return '<div class="row"><div class="av" style="background:var(--am)">'+p[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+p+'</div><button class="btn sec" style="width:auto;padding:8px 14px" onclick="admettreJoueur(\''+p+'\')">Admettre</button></div>';}).join(''):'<div class="sub">Aucune demande pour l\'instant.</div>')+'<button class="btn sec" style="margin-top:10px" onclick="simulerDemandeRejoindre()">Simuler une demande</button></div>':'')
+  +'<div class="card" style="margin-top:16px;background:var(--bg);border:0"><h3 style="font-size:12.5px">R\u00e8gles de la room</h3><div class="sub" style="line-height:1.6">Chaque joueur mise le m\u00eame montant, bloqu\u00e9 au d\u00e9part. Le gagnant rafle toute la cagnotte. Un joueur qui quitte en cours perd sa mise.</div></div>'
   +'<button class="btn" style="margin-top:16px" onclick="lancerManche()">Lancer la manche</button>'
   +(r.joueursActuels<2?'<div class="sub" style="margin-top:8px">Il faut au moins 2 joueurs pour lancer.</div>':'');
  },
@@ -251,6 +285,9 @@ var PAGES={
   +'<div class="card" style="max-width:520px"><h3>Lien de la room</h3><div style="background:var(--bg);border:1px dashed var(--ppln);border-radius:10px;padding:10px 12px;font-size:12.5px;color:var(--pp);font-weight:700;margin-bottom:10px;word-break:break-all">'+lien+'</div><button class="btn sec" style="width:100%;justify-content:center" onclick="copierLienDefi(\''+lien+'\')">Copier le lien</button><div class="sub" style="margin-top:10px">Transmets-le par le canal de ton choix (messagerie, ENT\u2026).</div></div>'
   +'<div class="card" style="max-width:520px;margin-top:16px"><h3>Invit\u00e9(s)<span class="pill">'+(r.participants.length-1)+'</span></h3>'+(r.participants.length>1?r.participants.slice(1).map(function(p){return '<div class="row"><div class="av" style="background:var(--am)">'+p[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+p+'</div><span class="pill" style="background:var(--ambg);color:var(--am)">invit\u00e9</span></div>';}).join(''):'<div class="sub">Aucun invit\u00e9 s\u00e9lectionn\u00e9.</div>')+'</div>'
   +'<button class="btn" style="margin-top:16px;max-width:520px" onclick="go(\'room\')">Voir la room</button>';
+ },
+ roomcountdown:function(){var r=ROOMS[CURROOM];
+  return '<div class="card" style="max-width:420px;text-align:center;padding:40px 20px"><div class="sub" style="margin-bottom:6px">'+r.titre+' \u00b7 '+r.theme+'</div><div id="cdNum" style="font-size:64px;font-weight:800;color:var(--pp)">3</div><div class="sub" style="margin-top:8px">La manche d\u00e9marre\u2026 mise bloqu\u00e9e, le gagnant rafle tout.</div></div>';
  },
  roomlive:function(){var r=ROOMS[CURROOM];var tri=r.scores.slice().sort(function(a,b){return b.pts-a.pts;});
   return ''
@@ -283,7 +320,11 @@ var PAGES={
  quizroomplay:function(){return ''
   +'<div class="topbar"><div><div class="sub">En direct \u00b7 Question 1/5</div><div class="h1">'+PROFQUIZ.titre+'</div></div></div>'
   +'<div class="card" style="max-width:520px;text-align:center;font-weight:600;font-size:16px;padding:24px 18px">En quelle ann\u00e9e tombe le mur de Berlin ?</div>'
-  +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:520px">'+[['1961','var(--re)'],['1989','var(--gr)'],['1991','var(--bl)'],['1975','var(--am)']].map(function(a){return '<button class="btn" style="background:'+a[1]+'" onclick="go(\'quizroomresult\')">'+a[0]+'</button>';}).join('')+'</div>';
+  +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:520px">'+[['1961','var(--re)'],['1989','var(--gr)'],['1991','var(--bl)'],['1975','var(--am)']].map(function(a){return '<button class="btn" style="background:'+a[1]+'" onclick="go(\'quizroomwaitresult\')">'+a[0]+'</button>';}).join('')+'</div>';
+ },
+ quizroomwaitresult:function(){return ''
+  +'<div class="card" style="max-width:460px;text-align:center;padding:28px 22px"><div style="width:48px;height:48px;border-radius:50%;background:var(--grbg);color:var(--gr);display:flex;align-items:center;justify-content:center;margin:0 auto 14px">'+ICON.check+'</div><div style="font-weight:700;font-size:15px">R\u00e9ponse envoy\u00e9e</div><div class="sub" style="margin-top:6px">En attente que ta prof cl\u00f4ture la question \u2014 le score n\'est pas encore visible.</div></div>'
+  +'<button class="btn sec" style="margin-top:14px;max-width:460px" onclick="go(\'quizroomresult\')">Simuler : la prof cl\u00f4t et publie</button>';
  },
  quizroomresult:function(){return ''
   +'<div class="topbar"><div class="h1">Envoy\u00e9 !</div></div>'

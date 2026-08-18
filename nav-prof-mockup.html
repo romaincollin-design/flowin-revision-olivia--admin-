@@ -293,14 +293,15 @@ var roomVue = 'prof';
 var etapeRoom = 'ouverture'; // côté prof : ouverture -> question -> resultats
 var etapeEleveRoom = 'landing'; // côté élève : landing -> attente -> question -> resultats
 var joueursConnectes = ['Mailys','Lilou','TestDefi1'];
+var reponsesRecues = 0;
 var questionActuelle = 0, TOTAL_Q = 5, DUREE_Q = 15, tempsRestantRoom = DUREE_Q, minuteurRoomId = null, animationValidationRoom = false;
 var SCORES = [{pseudo:'Lilou',pts:85},{pseudo:'Mailys',pts:80},{pseudo:'TestDefi1',pts:62},{pseudo:'Noah',pts:40}];
 
 function toggleRoomVue(v){ roomVue = v; selectScreen('room-ouverture'); }
-function lancerRoom(){ etapeRoom='question'; questionActuelle=1; etapeEleveRoom='question'; demarrerMinuteurRoom(); selectScreen('room-ouverture'); }
+function lancerRoom(){ etapeRoom='question'; questionActuelle=1; etapeEleveRoom='question'; reponsesRecues=0; demarrerMinuteurRoom(); selectScreen('room-ouverture'); }
 function roomSuivant(){
   arreterMinuteurRoom();
-  if (questionActuelle<TOTAL_Q) { questionActuelle++; demarrerMinuteurRoom(); }
+  if (questionActuelle<TOTAL_Q) { questionActuelle++; etapeEleveRoom='question'; reponsesRecues=0; demarrerMinuteurRoom(); }
   else { etapeRoom='resultats'; etapeEleveRoom='resultats'; }
   selectScreen('room-ouverture');
 }
@@ -319,7 +320,7 @@ function eleveValiderEntreeRoom(){
   selectScreen('room-ouverture');
   setTimeout(function(){ animationValidationRoom=false; etapeEleveRoom='attente'; selectScreen('room-ouverture'); }, 900);
 }
-function eleveRepondreRoom(){ /* simule une réponse, score déjà mocké */ }
+function eleveRepondreRoom(){ etapeEleveRoom='attente_resultat'; reponsesRecues++; selectScreen('room-ouverture'); }
 
 function toggleBar(){
   return '<div style="display:flex;gap:6px;margin-bottom:12px;">'
@@ -346,9 +347,10 @@ function screenRoomProf(){
   }
   if (etapeRoom==='question') {
     return '<div class="card" style="text-align:center;margin-bottom:12px;"><div style="font-size:10px;color:var(--ink3);">Question '+questionActuelle+'/'+TOTAL_Q+'</div><div style="font-weight:800;font-size:12.5px;">Quelle est la capitale ?</div></div>'
-      + '<div class="sec-title">Score en direct</div>'
+      + '<div class="card" style="text-align:center;margin-bottom:12px;background:var(--ppbg);border:0;"><div style="font-weight:800;font-size:13px;color:var(--pp);">'+Math.min(reponsesRecues,joueursConnectes.length)+' / '+joueursConnectes.length+' ont répondu</div><div style="font-size:9.5px;color:var(--pp);">le score reste masqué côté élève tant que tu ne cl\u00f4tures pas</div></div>'
+      + '<div class="sec-title">Score en direct (vue prof uniquement)</div>'
       + SCORES.slice(0,joueursConnectes.length).map(function(s,i){return '<div class="row card" style="margin-bottom:6px;padding:7px 10px;"><span style="font-size:9px;font-weight:800;color:var(--ink3);width:12px;">'+(i+1)+'</span><span style="flex:1;font-size:11px;font-weight:700;">'+s.pseudo+'</span><span style="font-size:11px;font-weight:800;color:var(--pp);">'+s.pts+' pts</span></div>';}).join('')
-      + '<button onclick="roomSuivant()" class="btn" style="margin-top:8px;">'+(questionActuelle<TOTAL_Q?'Suivante':'Résultats')+'</button>';
+      + '<button onclick="roomSuivant()" class="btn" style="margin-top:8px;">'+(questionActuelle<TOTAL_Q?'Clore et passer à la suivante':'Clore et publier les résultats')+'</button>';
   }
   var moyenne = Math.round(SCORES.reduce(function(a,s){return a+s.pts;},0)/SCORES.length);
   var ecart = SCORES[0].pts - SCORES[SCORES.length-1].pts;
@@ -390,6 +392,13 @@ function screenRoomEleve(){
       + '</div>'
       + '<div class="card" style="text-align:center;margin-bottom:10px;"><div style="font-weight:800;font-size:12.5px;">Quelle est la capitale ?</div></div>'
       + options.map(function(o){return '<button onclick="eleveRepondreRoom()" class="card" style="width:100%;text-align:left;font-family:inherit;cursor:pointer;margin-bottom:7px;font-weight:700;font-size:11.5px;">'+o+'</button>';}).join('');
+  }
+  if (etapeEleveRoom === 'attente_resultat') {
+    return '<div class="card" style="text-align:center;padding:24px 14px;">'
+      + '<div style="width:44px;height:44px;border-radius:50%;background:var(--grbg);color:var(--gr);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">'+icon('M20 6 9 17l-5-5',{w:20,stroke:'var(--gr)'})+'</div>'
+      + '<div style="font-weight:800;font-size:12.5px;">Réponse envoyée</div>'
+      + '<div style="font-size:10px;color:var(--ink3);margin-top:4px;">En attente que ta prof cl\u00f4ture la question — le score n\'est pas encore visible.</div>'
+    + '</div>';
   }
   var moyenne = Math.round(SCORES.reduce(function(a,s){return a+s.pts;},0)/SCORES.length);
   var ecart = SCORES[0].pts - SCORES[SCORES.length-1].pts;
