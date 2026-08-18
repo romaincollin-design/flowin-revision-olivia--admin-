@@ -19,7 +19,8 @@
   #phone-wrap { width: 100%; max-width: 300px; margin: 0 auto; }
   #frame-mobile { width: 100%; aspect-ratio: 300/580; border: 7px solid var(--ink); border-radius: 36px; overflow: hidden; background: var(--bg); position: relative; display: flex; flex-direction: column; box-shadow: 0 20px 50px -20px rgba(20,20,45,.3); }
   .notch { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 100px; height: 22px; background: var(--ink); border-radius: 12px; z-index: 5; }
-  .mtop { background: white; border-bottom: 1px solid var(--line); padding: 20px 14px 10px; display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .statusbar { padding: 16px 26px 4px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 700; background: white; flex-shrink: 0; }
+  .mtop { background: white; border-bottom: 1px solid var(--line); padding: 12px 16px; display:flex; align-items:center; gap:8px; flex-shrink:0; }
   .mtop .brand{flex:1;}
   .brand{display:flex;align-items:center;gap:7px;}
   .brand-icon{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#5B52C9,#7F77DD);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -67,6 +68,13 @@
   <div id="phone-wrap">
     <div id="frame-mobile">
       <div class="notch"></div>
+      <div class="statusbar">
+        <span>9:41</span>
+        <span style="display:flex; align-items:center; gap:4px;">
+          <svg viewBox="0 0 18 12" width="16" height="11"><rect x="0" y="7" width="3" height="5" rx="0.5" fill="var(--ink)"/><rect x="4.5" y="5" width="3" height="7" rx="0.5" fill="var(--ink)"/><rect x="9" y="3" width="3" height="9" rx="0.5" fill="var(--ink)"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="var(--ink)"/></svg>
+          <svg viewBox="0 0 24 12" width="21" height="11"><rect x="1" y="1" width="19" height="10" rx="2.5" stroke="var(--ink)" stroke-width="1" fill="none"/><rect x="2.5" y="2.5" width="15" height="7" rx="1.2" fill="var(--ink)"/><rect x="21" y="4" width="1.5" height="4" rx="0.7" fill="var(--ink)"/></svg>
+        </span>
+      </div>
       <div class="mtop">
         <button id="back-btn" onclick="goBack()" style="border:none;background:none;padding:4px;cursor:pointer;display:none;">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -103,7 +111,8 @@ var ICONS = {
   quiz:'M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z',
   cagnotte:'M14.5 9.5A2.5 2.5 0 0 0 12 8.5h-1.5a2 2 0 0 0 0 4H13a2 2 0 0 1 0 4h-1.5A2.5 2.5 0 0 1 9 15M12 8V6m0 14v-2',
   reglages:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z',
-  chevron:'M9 18l6-6-6-6', plus:'M12 5v14M5 12h14', upload:'M12 16V4m0 0L7 9m5-5 5 5M5 20h14', check:'M20 6 9 17l-5-5', sparkle:'M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z'
+  chevron:'M9 18l6-6-6-6', plus:'M12 5v14M5 12h14', upload:'M12 16V4m0 0L7 9m5-5 5 5M5 20h14', check:'M20 6 9 17l-5-5', sparkle:'M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z',
+  book:'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15Z'
 };
 
 // ---------- État global ----------
@@ -148,6 +157,13 @@ var questionsQuiz = [
 var iaPrompt = '';
 var questionEnEdition = null; // index de la question actuellement éditée, ou null
 var derniereActionBanque = null; // message de confirmation temporaire
+var titreQuiz = 'Le jeu des puissances';
+function majTitreQuiz(v){ titreQuiz = v; }
+var QUIZ_PAR_CLASSE = {
+  c1: [{titre:'Le mouvement ouvrier', quand:'Il y a 2 jours', questions:5, statut:'termin\u00e9', reponduPar:12, moyenne:'74%'}],
+  c2: [{titre:'Institutions politiques', quand:'Il y a 5 jours', questions:5, statut:'termin\u00e9', reponduPar:9, moyenne:'68%'}]
+};
+var QUIZ_EN_COURS = null;
 function toggleModeCreation(m){ modeCreation=m; selectScreen('nouveau-quiz'); }
 function toggleGarderQuestion(i){ questionsQuiz[i].garder = !questionsQuiz[i].garder; selectScreen('nouveau-quiz'); }
 function supprimerQuestion(i){ questionsQuiz.splice(i,1); selectScreen('nouveau-quiz'); }
@@ -174,7 +190,13 @@ function ajouterEtRevenirBanque(i){
   selectScreen('nouveau-quiz');
 }
 function lancerGenerationIA(){ selectScreen('publier-quiz'); } // IA câblée mais non branchée -> ne génère rien de réel, va direct à l'étape suivante avec un avertissement affiché
-function publierEtOuvrirRoom(){ selectScreen('room-ouverture'); }
+function publierEtOuvrirRoom(){
+  var retenues = questionsQuiz.filter(function(q){return q.garder;});
+  QUIZ_EN_COURS = {titre:titreQuiz||'Quiz sans titre', quand:"\u00e0 l'instant", questions:retenues.length, statut:'en cours', reponduPar:0, moyenne:'\u2014'};
+  if(!QUIZ_PAR_CLASSE[classeSelectionnee]) QUIZ_PAR_CLASSE[classeSelectionnee]=[];
+  QUIZ_PAR_CLASSE[classeSelectionnee].unshift(QUIZ_EN_COURS);
+  selectScreen('room-ouverture');
+}
 
 // Cagnotte prof — suivi du budget de points par classe
 var CAGNOTTE_PROF = { total: 2000, depense: 640, parClasse: {c1: 380, c2: 260} };
@@ -203,6 +225,8 @@ function afficheOptions(opts, bon){
 function screenNouveauQuiz(){
   var html = '<div class="h-title">Nouveau quiz</div>'
     + carteCagnotteMini()
+    + '<span class="field-label">Nom du quiz / de la room</span><input type="text" value="'+titreQuiz+'" oninput="majTitreQuiz(this.value)" placeholder="Ex : Le jeu des puissances"/>'
+    + '<div style="font-size:10px;color:var(--ink3);margin:-6px 0 12px;">Pour '+CLASSES.filter(function(c){return c.id===classeSelectionnee;})[0].nom+'</div>'
     + '<div style="display:flex;gap:6px;margin-bottom:14px;">'
       + '<button onclick="toggleModeCreation(\'manuel\')" class="chip'+(modeCreation==='manuel'?' active':'')+'" style="flex:1;justify-content:center;">Manuel</button>'
       + '<button onclick="toggleModeCreation(\'banque\')" class="chip'+(modeCreation==='banque'?' active':'')+'" style="flex:1;justify-content:center;">Banque</button>'
@@ -270,6 +294,7 @@ function screenPublierQuiz(){
   var retenues = questionsQuiz.filter(function(q){return q.garder;});
   return '<div class="h-title">Publier le quiz</div>'
     + '<div class="card" style="margin-bottom:12px;">'
+      + '<div class="row" style="padding:4px 0;"><span style="flex:1;font-size:11px;color:var(--ink3);">Nom du quiz</span><span style="font-size:11px;font-weight:800;">'+titreQuiz+'</span></div>'
       + '<div class="row" style="padding:4px 0;"><span style="flex:1;font-size:11px;color:var(--ink3);">Questions retenues</span><span style="font-size:11px;font-weight:800;">'+retenues.length+'</span></div>'
       + '<div class="row" style="padding:4px 0;"><span style="flex:1;font-size:11px;color:var(--ink3);">Classe</span><span style="font-size:11px;font-weight:800;">'+CLASSES.filter(function(c){return c.id===classeSelectionnee;})[0].nom+'</span></div>'
       + '<div class="row" style="padding:4px 0;"><span style="flex:1;font-size:11px;color:var(--ink3);">Points par bonne réponse</span><span style="font-size:11px;font-weight:800;">'+REGLES_JEU.pointsBonneReponse+' pts</span></div>'
@@ -302,7 +327,14 @@ function lancerRoom(){ etapeRoom='question'; questionActuelle=1; etapeEleveRoom=
 function roomSuivant(){
   arreterMinuteurRoom();
   if (questionActuelle<TOTAL_Q) { questionActuelle++; etapeEleveRoom='question'; reponsesRecues=0; demarrerMinuteurRoom(); }
-  else { etapeRoom='resultats'; etapeEleveRoom='resultats'; }
+  else {
+    etapeRoom='resultats'; etapeEleveRoom='resultats';
+    if (QUIZ_EN_COURS) {
+      QUIZ_EN_COURS.statut='termin\u00e9';
+      QUIZ_EN_COURS.reponduPar=joueursConnectes.length;
+      QUIZ_EN_COURS.moyenne=Math.round(SCORES.reduce(function(a,s){return a+s.pts;},0)/SCORES.length)+'%';
+    }
+  }
   selectScreen('room-ouverture');
 }
 function demarrerMinuteurRoom(){
@@ -335,11 +367,13 @@ function screenRoom(){
 }
 
 function screenRoomProf(){
+  var classeActive = CLASSES.filter(function(c){return c.id===classeSelectionnee;})[0];
   if (etapeRoom==='ouverture') {
     return '<div class="card" style="text-align:center;margin-bottom:12px;">'
-      + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:8px;">Les élèves rejoignent avec ce code</div>'
-      + '<div style="border:1px solid var(--line);border-radius:12px;padding:8px;display:inline-block;margin-bottom:8px;"><svg viewBox="0 0 110 110" style="width:90px;height:90px;">'+qrPattern('room482')+'</svg></div>'
-      + '<div style="font-family:monospace;font-size:14px;font-weight:800;letter-spacing:.1em;">482 913</div>'
+      + '<div style="font-weight:800;font-size:13px;margin-bottom:6px;">'+(QUIZ_EN_COURS?QUIZ_EN_COURS.titre:titreQuiz)+'</div>'
+      + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:8px;">'+classeActive.nom+' \u00b7 les \u00e9l\u00e8ves rejoignent avec ce code</div>'
+      + '<div style="border:1px solid var(--line);border-radius:12px;padding:8px;display:inline-block;margin-bottom:8px;"><svg viewBox="0 0 110 110" style="width:90px;height:90px;">'+qrPattern(classeActive.id)+'</svg></div>'
+      + '<div style="font-family:monospace;font-size:14px;font-weight:800;letter-spacing:.1em;">'+classeActive.code+'</div>'
     + '</div>'
     + '<div class="sec-title">'+joueursConnectes.length+' élève(s) connecté(s)</div>'
     + joueursConnectes.map(function(p){return '<div class="row card" style="margin-bottom:6px;padding:8px 11px;"><div style="width:20px;height:20px;border-radius:50%;background:var(--pp);color:white;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;">'+p[0]+'</div><span style="font-size:11px;font-weight:700;">'+p+'</span></div>';}).join('')
@@ -367,8 +401,8 @@ function screenRoomEleve(){
     return '<div class="card" style="text-align:center;padding:20px 14px;'+(animationValidationRoom?'animation:popflip .9s ease;':'')+'">'
       + '<style>@keyframes popflip{0%{transform:scale(1) rotateY(0);}50%{transform:scale(1.08) rotateY(180deg);}100%{transform:scale(1) rotateY(360deg);}}</style>'
       + '<div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--re),#B02540);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">'+icon(swordPath,{w:22,stroke:'white'})+'</div>'
-      + '<div style="font-weight:800;font-size:14px;">Quiz du jour</div>'
-      + '<div style="font-size:10px;color:var(--ink3);margin:2px 0 14px;">Histoire · Tale Bac Pro Vente</div>'
+      + '<div style="font-weight:800;font-size:14px;">'+(QUIZ_EN_COURS?QUIZ_EN_COURS.titre:titreQuiz)+'</div>'
+      + '<div style="font-size:10px;color:var(--ink3);margin:2px 0 14px;">'+CLASSES.filter(function(c){return c.id===classeSelectionnee;})[0].nom+'</div>'
       + '<div style="display:flex;justify-content:center;gap:16px;margin-bottom:16px;">'
         + '<div><div style="font-weight:800;font-size:13px;">'+TOTAL_Q+'</div><div style="font-size:8px;color:var(--ink3);font-weight:700;">QUESTIONS</div></div>'
         + '<div><div style="font-weight:800;font-size:13px;">'+DUREE_Q+'s</div><div style="font-size:8px;color:var(--ink3);font-weight:700;">PAR QUESTION</div></div>'
@@ -612,6 +646,23 @@ function supprimerParticipant(classeId, pseudo){
 }
 function ouvrirFicheEleve(classeId, pseudo){ selectScreen('fiche-eleve-'+classeId+'-'+pseudo); }
 
+var BAREME_PAR_CLASSE = {}; // absent = utilise les réglages globaux (REGLES_JEU)
+function personnaliserBaremeClasse(cid){ BAREME_PAR_CLASSE[cid] = Object.assign({}, REGLES_JEU); selectScreen('detail-classe-'+cid); }
+function reinitialiserBaremeClasse(cid){ delete BAREME_PAR_CLASSE[cid]; selectScreen('detail-classe-'+cid); }
+function majBaremeClasse(cid, champ, val){ if(!BAREME_PAR_CLASSE[cid]) BAREME_PAR_CLASSE[cid]=Object.assign({}, REGLES_JEU); BAREME_PAR_CLASSE[cid][champ]=Number(val); selectScreen('detail-classe-'+cid); }
+function baremeClasseHtml(cid){
+  var perso = BAREME_PAR_CLASSE[cid];
+  var actif = perso || REGLES_JEU;
+  return '<div class="card" style="margin-bottom:10px;">'
+    + '<div class="row" style="justify-content:space-between;margin-bottom:'+(perso?'10px':'0')+';"><span class="sec-title" style="margin:0;">Bar\u00e8me de r\u00e9mun\u00e9ration</span><span class="badge" style="background:'+(perso?'var(--ppbg)':'var(--bg)')+';color:'+(perso?'var(--pp)':'var(--ink3)')+';">'+(perso?'Personnalis\u00e9':'R\u00e9glages globaux')+'</span></div>'
+    + (perso
+        ? ('<div class="card" style="margin-bottom:6px;"><span class="field-label">Points par bonne r\u00e9ponse</span><input type="text" value="'+actif.pointsBonneReponse+'" oninput="majBaremeClasse(\''+cid+'\',\'pointsBonneReponse\',this.value)"/></div>'
+          + '<div class="card" style="margin-bottom:8px;"><span class="field-label">Dur\u00e9e par question (s)</span><input type="text" value="'+actif.dureeParDefaut+'" oninput="majBaremeClasse(\''+cid+'\',\'dureeParDefaut\',this.value)"/></div>'
+          + '<button onclick="reinitialiserBaremeClasse(\''+cid+'\')" class="btn-outline">Revenir aux r\u00e9glages globaux</button>')
+        : ('<div style="font-size:10px;color:var(--ink3);margin-bottom:8px;">'+REGLES_JEU.pointsBonneReponse+' pts / bonne r\u00e9ponse \u00b7 '+REGLES_JEU.dureeParDefaut+'s par question \u2014 h\u00e9rit\u00e9 des R\u00e9glages.</div>'
+          + '<button onclick="personnaliserBaremeClasse(\''+cid+'\')" class="btn-outline">Personnaliser pour cette classe</button>'))
+  + '</div>';
+}
 function enregistrerEcransClasse(c){
   subScreens['detail-classe-'+c.id] = function(){
     var participants = PARTICIPANTS_PAR_CLASSE[c.id] || [];
@@ -625,7 +676,18 @@ function enregistrerEcransClasse(c){
         + '<div style="font-family:monospace;font-size:14px;font-weight:800;letter-spacing:.1em;">'+c.code+'</div>'
       + '</div>'
 
-      + '<div class="sec-title">Participants ('+actifs.length+' actif(s) sur '+participants.length+')</div>'
+      + '<button onclick="classeSelectionnee=\''+c.id+'\';titreQuiz=\'\';selectScreen(\'nouveau-quiz\')" class="btn" style="margin-bottom:12px;">'+icon(ICONS.plus,{w:14,stroke:'white'})+' Lancer un nouveau d\u00e9fi pour cette classe</button>'
+
+      + '<div class="sec-title">Quiz d\u00e9j\u00e0 cr\u00e9\u00e9s ('+(QUIZ_PAR_CLASSE[c.id]||[]).length+')</div>'
+      + ((QUIZ_PAR_CLASSE[c.id]||[]).length ? (QUIZ_PAR_CLASSE[c.id]||[]).map(function(q){
+          var enCours = q.statut==='en cours';
+          return '<div class="card" style="margin-bottom:8px;">'
+            + '<div class="row" style="justify-content:space-between;margin-bottom:3px;"><span style="font-size:11.5px;font-weight:800;">'+q.titre+'</span><span class="badge" style="background:'+(enCours?'var(--ambg)':'var(--grbg)')+';color:'+(enCours?'var(--am)':'var(--gr)')+';">'+q.statut+'</span></div>'
+            + '<div style="font-size:10px;color:var(--ink3);">'+q.quand+' \u00b7 '+q.questions+' questions'+(enCours?'':' \u00b7 r\u00e9pondu par '+q.reponduPar+' \u00b7 moyenne '+q.moyenne)+'</div>'
+          + '</div>';
+        }).join('') : '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:12px;">Aucun quiz cr\u00e9\u00e9 pour l\'instant.</div>')
+
+      + '<div class="sec-title" style="margin-top:12px;">Participants ('+actifs.length+' actif(s) sur '+participants.length+')</div>'
       + participants.map(function(p){
           var suspendu = p.statut === 'suspendu';
           return '<div class="card row" style="margin-bottom:8px;'+(suspendu?'opacity:.55;':'')+'">'
@@ -652,6 +714,8 @@ function enregistrerEcransClasse(c){
         + '<div class="sec-title">Écart entre élèves : '+ecart+' pts</div>'
         + actifs.map(function(e){ return ligneSparklineEleve(e.pseudo, e.pts+' pts', e.progression); }).join('')
       + '</div>'
+
+      + baremeClasseHtml(c.id)
 
       + '<div class="card">'
         + '<div class="sec-title">Cette classe parmi les autres</div>'
@@ -718,6 +782,13 @@ function kpiCardProf(couleur, path, valeur, label, target){
     + '<div class="icon-sq" style="width:34px;height:34px;background:'+couleur+';">'+icon(path,{w:16,stroke:'white'})+'</div>'
     + '<div class="kpi-v">'+valeur+'</div><div class="kpi-l">'+label+'</div></button>';
 }
+function briqueProf(couleur, path, titre, desc, target) {
+  return '<button onclick="selectScreen(\''+target+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 4px;width:100%;border:none;background:transparent;text-align:left;cursor:pointer;font-family:inherit;">'
+    + '<div class="icon-sq" style="width:38px;height:38px;background:'+couleur+';">'+icon(path,{w:17})+'</div>'
+    + '<div style="flex:1;"><div style="font-weight:800;font-size:12.5px;">'+titre+'</div><div style="font-size:11px;color:var(--ink3);">'+desc+'</div></div>'
+    + icon(ICONS.chevron,{w:13,stroke:'var(--ink3)'})
+  + '</button>';
+}
 function screenAccueilProf(){
   var restant = CAGNOTTE_PROF.total - CAGNOTTE_PROF.depense;
   var activiteRecente = [
@@ -732,8 +803,14 @@ function screenAccueilProf(){
       + kpiCardProf('var(--bl)', ICONS.classe, CLASSES.length, 'CLASSES', 'classes')
       + kpiCardProf('var(--gold)', ICONS.cagnotte, restant, 'CAGNOTTE', 'cagnotte')
     + '</div>'
-    + '<button onclick="selectScreen(\'nouveau-quiz\')" class="btn" style="margin-bottom:10px;">'+icon(ICONS.plus,{w:14,stroke:'white'})+' Créer un défi</button>'
-    + '<button onclick="selectScreen(\'statistiques\')" class="btn-outline" style="margin-bottom:18px;">Voir les statistiques</button>'
+    + '<div class="card" style="margin-bottom:14px;">'
+      + '<div class="sec-title">Accès rapide</div>'
+      + briqueProf('var(--bl)', ICONS.classe, 'Classes', CLASSES.length+' classe(s) en room ouverte', 'classes')
+      + briqueProf('var(--re)', ICONS.sword, 'Défis', 'Créer et lancer un nouveau quiz', 'nouveau-quiz')
+      + briqueProf('var(--am)', ICONS.book, 'Cours', BANQUE_GENERALE.length+' questions dans la banque', 'cours-banque')
+      + briqueProf('var(--gold)', ICONS.cagnotte, 'Cagnotte', restant+' pts restants', 'cagnotte')
+      + briqueProf('var(--pp)', ICONS.plus, 'Nouvelle classe', 'Ouvrir une room pour une nouvelle classe', 'creer-classe')
+    + '</div>'
     + '<div class="sec-title">Activité récente</div>'
     + activiteRecente.map(function(a){
         return '<button onclick="selectScreen(\'statistiques\')" class="card" style="margin-bottom:8px;width:100%;text-align:left;font-family:inherit;cursor:pointer;">'
@@ -742,6 +819,19 @@ function screenAccueilProf(){
         + '</button>';
       }).join('');
 }
+subScreens['cours-banque'] = function(){
+  var matieres = {};
+  BANQUE_GENERALE.forEach(function(q){ (matieres[q.mat]=matieres[q.mat]||[]).push(q); });
+  return '<div class="h-title">Cours & banque de questions</div>'
+    + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:14px;">'+BANQUE_GENERALE.length+' questions, issues de la classe modèle « '+CLASSE_MODELE+' » et des ajouts des profs.</div>'
+    + Object.keys(matieres).map(function(m){
+        return '<div class="sec-title">'+m+' ('+matieres[m].length+')</div>'
+          + matieres[m].slice(0,4).map(function(q){
+              return '<div class="card" style="margin-bottom:6px;"><div style="font-weight:700;font-size:11px;">'+q.q+'</div></div>';
+            }).join('');
+      }).join('')
+    + '<button onclick="modeCreation=\'banque\';selectScreen(\'nouveau-quiz\')" class="btn" style="margin-top:6px;">Créer un quiz depuis la banque</button>';
+};
 subScreens['distribution-manuelle'] = function(){
   return '<div class="h-title">Distribution manuelle</div>'
     + '<div style="display:flex;gap:6px;margin-bottom:14px;">'
