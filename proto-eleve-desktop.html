@@ -245,6 +245,7 @@ var PAGES={
   +'</div>';
  }
 };
+function chipPick(el){var pr=el.parentNode;pr.querySelectorAll('.chip').forEach(function(c){c.classList.remove('on');});el.classList.add('on');}
 function render(){document.getElementById('main').innerHTML=(PAGES[PAGE]||PAGES.hub)();if(PAGE==='quiz')mountWheel();}
 function mountWheel(){var chips=document.getElementById('mchips');chips.innerHTML='';MAT.forEach(function(m){var el=document.createElement('div');el.className='chip'+(wheelState.enabled[m.k]?' on':'');el.innerHTML='<span class="sw" style="background:'+m.c+'"></span>'+m.n;el.onclick=function(){if(wheelState.spinning)return;var act=MAT.filter(function(x){return wheelState.enabled[x.k];});if(wheelState.enabled[m.k]&&act.length<=1)return;wheelState.enabled[m.k]=!wheelState.enabled[m.k];mountWheel();drawWheel();};chips.appendChild(el);});drawWheel();}
 function drawWheel(){var w=document.getElementById('wheel');if(!w)return;var act=MAT.filter(function(m){return wheelState.enabled[m.k];});if(!act.length){w.style.background='#EEEDFE';return;}var seg=100/act.length,acc=0,stops=[];act.forEach(function(m){stops.push(m.c+' '+acc+'% '+(acc+seg)+'%');acc+=seg;});w.style.background='conic-gradient('+stops.join(',')+')';w.style.transform='rotate('+wheelState.rot+'deg)';}
