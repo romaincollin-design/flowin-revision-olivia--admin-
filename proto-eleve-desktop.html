@@ -107,6 +107,19 @@ var wheelState={enabled:{histoire:true,geo:true,emc:true,pse:true},rot:0,spinnin
 
 var CURROOM=0;
 function openRoom(i){CURROOM=i;go('room');}
+var ROOMS=[
+  {nom:'Sophie',mise:45,joueursActuels:2,joueursTotal:4,type:'Publique',couleur:'var(--pp)',theme:'Al\u00e9atoire'},
+  {nom:'Nadir',mise:25,joueursActuels:1,joueursTotal:3,type:'Priv\u00e9e',couleur:'var(--am)',theme:'Histoire'},
+  {nom:'In\u00e8s',mise:100,joueursActuels:6,joueursTotal:8,type:'Live',couleur:'var(--gr)',theme:'G\u00e9o'}
+];
+var DEFICREATE_STATE={mise:45,joueurs:2,theme:'Al\u00e9atoire',type:'Publique'};
+function setDefiField(field,value){DEFICREATE_STATE[field]=value;}
+function creerRoomDefi(){
+  var couleurs={Publique:'var(--pp)','Priv\u00e9e':'var(--am)',Live:'var(--gr)'};
+  ROOMS.unshift({nom:'Soso (toi)',mise:DEFICREATE_STATE.mise,joueursActuels:1,joueursTotal:DEFICREATE_STATE.joueurs,type:DEFICREATE_STATE.type,couleur:couleurs[DEFICREATE_STATE.type]||'var(--pp)',theme:DEFICREATE_STATE.theme});
+  toast('Room cr\u00e9\u00e9e \u2014 en attente de joueurs');
+  go('defis');
+}
 var PROFQUIZ={actif:true,titre:'Le jeu des puissances',matiere:'Histoire',classe:'Terminale Bac Pro'};
 var CLASSPERIOD='trimestre';
 function setClassPeriod(p){CLASSPERIOD=p;render();}
@@ -161,22 +174,22 @@ var PAGES={
  },
  defis:function(){return ''
   +'<div class="topbar"><div class="h1">D\u00e9fis</div><button class="btn" onclick="go(\'deficreate\')">'+ICON.defi+' Cr\u00e9er un d\u00e9fi</button></div>'
-  +'<div class="grid3">'+[['Sophie','45','2/4','Publique','var(--pp)','Al\u00e9atoire'],['Nadir','25','1/3','Priv\u00e9e','var(--am)','Histoire'],['In\u00e8s','100','6/8','Live','var(--gr)','G\u00e9o']].map(function(r,i){return '<div class="card"><div style="display:flex;align-items:center;gap:11px;margin-bottom:10px"><div class="av" style="background:'+r[4]+'">'+r[0][0]+'</div><div><div style="font-weight:700;font-size:14px">Room de '+r[0]+'<span class="pill" style="margin-left:6px;font-size:9px">'+r[3]+'</span></div><div class="sub" style="margin:0">'+r[2]+' joueurs \u00b7 '+r[5]+'</div></div></div><div style="font-weight:800;color:var(--pp);font-size:20px;margin-bottom:10px">'+r[1]+' pts</div><button class="btn sec" style="width:100%;justify-content:center" onclick="openRoom('+i+')">Voir la room</button></div>';}).join('')+'</div>';
+  +'<div class="grid3">'+ROOMS.map(function(r,i){return '<div class="card"><div style="display:flex;align-items:center;gap:11px;margin-bottom:10px"><div class="av" style="background:'+r.couleur+'">'+r.nom[0]+'</div><div><div style="font-weight:700;font-size:14px">Room de '+r.nom+'<span class="pill" style="margin-left:6px;font-size:9px">'+r.type+'</span></div><div class="sub" style="margin:0">'+r.joueursActuels+'/'+r.joueursTotal+' joueurs \u00b7 '+r.theme+'</div></div></div><div style="font-weight:800;color:var(--pp);font-size:20px;margin-bottom:10px">'+r.mise+' pts</div><button class="btn sec" style="width:100%;justify-content:center" onclick="openRoom('+i+')">Voir la room</button></div>';}).join('')+'</div>';
  },
  deficreate:function(){return ''
   +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'defis\')">'+ICON.back+'</button><div class="h1">Cr\u00e9er un d\u00e9fi</div></div></div>'
-  +'<div class="card" style="max-width:520px"><div class="sub" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;font-size:11px">Ta mise (par joueur)</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">'+[15,25,35,45,65,100].map(function(v){return '<span class="chip'+(v===45?' on':'')+'" onclick="chipPick(this)">'+v+' pts</span>';}).join('')+'</div>'
-   +'<div class="sub" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;font-size:11px">Nombre de joueurs</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">'+[2,3,5,6,8,10].map(function(v){return '<span class="chip'+(v===4?' on':'')+'" onclick="chipPick(this)">'+v+'</span>';}).join('')+'</div>'
-   +'<div class="sub" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;font-size:11px">Th\u00e8me</div><div style="display:flex;gap:6px;margin-bottom:16px"><span class="chip on" onclick="chipPick(this)">Al\u00e9atoire</span><span class="chip" onclick="chipPick(this)">Une mati\u00e8re</span></div>'
-   +'<div class="sub" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;font-size:11px">Type de room</div><div style="display:flex;gap:6px;margin-bottom:20px"><span class="chip on" onclick="chipPick(this)">Publique</span><span class="chip" onclick="chipPick(this)">Priv\u00e9e (lien)</span><span class="chip" onclick="chipPick(this)">Live (QR)</span></div>'
-   +'<button class="btn" style="width:100%;justify-content:center" onclick="toast(\'Room cr\u00e9\u00e9e \u2014 en attente de joueurs\');go(\'defis\')">Cr\u00e9er la room</button></div>';
+  +'<div class="card" style="max-width:520px"><div class="sub" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;font-size:11px">Ta mise (par joueur)</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">'+[15,25,35,45,65,100].map(function(v){return '<span class="chip'+(v===DEFICREATE_STATE.mise?' on':'')+'" onclick="chipPick(this);setDefiField(\'mise\','+v+')">'+v+' pts</span>';}).join('')+'</div>'
+   +'<div class="sub" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;font-size:11px">Nombre de joueurs</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">'+[2,3,5,6,8,10].map(function(v){return '<span class="chip'+(v===DEFICREATE_STATE.joueurs?' on':'')+'" onclick="chipPick(this);setDefiField(\'joueurs\','+v+')">'+v+'</span>';}).join('')+'</div>'
+   +'<div class="sub" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;font-size:11px">Th\u00e8me</div><div style="display:flex;gap:6px;margin-bottom:16px">'+['Al\u00e9atoire','Une mati\u00e8re'].map(function(t){return '<span class="chip'+(t===DEFICREATE_STATE.theme?' on':'')+'" onclick="chipPick(this);setDefiField(\'theme\',\''+t+'\')">'+t+'</span>';}).join('')+'</div>'
+   +'<div class="sub" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;font-size:11px">Type de room</div><div style="display:flex;gap:6px;margin-bottom:20px">'+['Publique','Priv\u00e9e','Live'].map(function(t){return '<span class="chip'+(t===DEFICREATE_STATE.type?' on':'')+'" onclick="chipPick(this);setDefiField(\'type\',\''+t+'\')">'+t+'</span>';}).join('')+'</div>'
+   +'<button class="btn" style="width:100%;justify-content:center" onclick="creerRoomDefi()">Cr\u00e9er la room</button></div>';
  },
- room:function(){var r=[['Sophie','45','4','Al\u00e9atoire'],['Nadir','25','3','Histoire'],['In\u00e8s','100','8','G\u00e9o']][CURROOM||0];var cagnotte=r[1]*r[2];
+ room:function(){var r=ROOMS[CURROOM||0];var cagnotte=r.mise*r.joueursTotal;
   return ''
-  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'defis\')">'+ICON.back+'</button><div><div class="sub">Room \u00b7 '+r[3]+'</div><div class="h1">Room de '+r[0]+'</div></div></div></div>'
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'defis\')">'+ICON.back+'</button><div><div class="sub">Room \u00b7 '+r.theme+'</div><div class="h1">Room de '+r.nom+'</div></div></div></div>'
   +'<div class="grid2">'
-   +'<div class="card"><h3>Cagnotte en jeu</h3><div style="font-size:34px;font-weight:800;color:var(--pp);margin-bottom:4px">'+cagnotte+' pts</div><div class="sub">'+r[2]+' joueurs \u00d7 '+r[1]+' pts \u00b7 le gagnant rafle tout</div></div>'
-   +'<div class="card"><h3>Joueurs</h3>'+['Sophie (toi)','Marc','Lilou','Tom'].slice(0,parseInt(r[2])).map(function(n,i){return '<div class="row"><div class="av">'+n[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+n+'</div><span class="pill">'+(i<2?'pr\u00eat':'en attente')+'</span></div>';}).join('')+'</div>'
+   +'<div class="card"><h3>Cagnotte en jeu</h3><div style="font-size:34px;font-weight:800;color:var(--pp);margin-bottom:4px">'+cagnotte+' pts</div><div class="sub">'+r.joueursTotal+' joueurs \u00d7 '+r.mise+' pts \u00b7 le gagnant rafle tout</div></div>'
+   +'<div class="card"><h3>Joueurs</h3>'+['Soso (toi)','Marc','Lilou','Tom','In\u00e8s','Nadir','Lucas','Emma'].slice(0,r.joueursTotal).map(function(n,i){return '<div class="row"><div class="av">'+n[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+n+'</div><span class="pill">'+(i<r.joueursActuels?'pr\u00eat':'en attente')+'</span></div>';}).join('')+'</div>'
   +'</div>'
   +'<button class="btn" style="margin-top:16px" onclick="toast(\'Demande envoy\u00e9e \u2014 en attente de validation de l\'organisateur\')">Rejoindre la room</button>';
  },
