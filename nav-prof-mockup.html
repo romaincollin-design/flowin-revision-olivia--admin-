@@ -190,6 +190,75 @@ function ajouterEtRevenirBanque(i){
   selectScreen('nouveau-quiz');
 }
 function lancerGenerationIA(){ selectScreen('publier-quiz'); } // IA câblée mais non branchée -> ne génère rien de réel, va direct à l'étape suivante avec un avertissement affiché
+
+// ---- Génération SANS IA : heuristique par texte à trous (cloze deletion) ----
+// Principe : on repère dans chaque phrase une date, un nombre, ou une notion (mot capitalisé hors début de phrase),
+// on la transforme en "trou" à deviner, et on fabrique des mauvaises réponses plausibles (autres notions du même texte,
+// ou variations numériques). C'est un algorithme, pas de l'IA : il ne comprend pas le sens, il repère des motifs.
+var MOTS_VIDES = ['Le','La','Les','Un','Une','Des','Ce','Cette','Ces','Il','Elle','Ils','Elles','Mais','Or','Donc','Car','Cependant','Ainsi','Puis','Alors','Quand','Dans','Pour','Avec','Sans','Sur','Sous','Entre','Nous','Vous','On'];
+function genererQuestionsSansIA(texte, nbQuestions){
+  nbQuestions = nbQuestions || 5;
+  var phrases = texte.replace(/\n/g,' ').split(/(?<=[.!?])\s+/).filter(function(p){ return p.trim().length > 20; });
+  var candidats = [];
+  var tousTermes = [];
+
+  phrases.forEach(function(phrase){
+    var mots = phrase.trim().split(/\s+/);
+    mots.forEach(function(m,i){
+      var propre = m.replace(/[^\wÀ-ÿ-]/g,'');
+      if (i>0 && propre.length>2 && /^[A-ZÀ-Ý]/.test(propre) && MOTS_VIDES.indexOf(propre)===-1) tousTermes.push(propre);
+    });
+  });
+
+  phrases.forEach(function(phrase){
+    var matchDate = phrase.match(/\b(1[0-9]{3}|20[0-9]{2})\b/);
+    var matchPourcent = phrase.match(/\b(\d+(?:[.,]\d+)?)\s?%/);
+    var mots = phrase.trim().split(/\s+/);
+    var terme = null;
+    for (var i=1;i<mots.length;i++){
+      var propre = mots[i].replace(/[^\wÀ-ÿ-]/g,'');
+      if (propre.length>2 && /^[A-ZÀ-Ý]/.test(propre) && MOTS_VIDES.indexOf(propre)===-1){ terme = propre; break; }
+    }
+    if (matchDate) candidats.push({type:'date', reponse:matchDate[0], phrase:phrase});
+    else if (matchPourcent) candidats.push({type:'pourcent', reponse:matchPourcent[0], phrase:phrase});
+    else if (terme) candidats.push({type:'terme', reponse:terme, phrase:phrase});
+  });
+
+  function distracteurs(c){
+    if (c.type==='date'){
+      var a=parseInt(c.reponse);
+      var vals=[a-(2+Math.floor(Math.random()*6)), a+(2+Math.floor(Math.random()*6)), a+(10+Math.floor(Math.random()*15))];
+      return vals.map(String);
+    }
+    if (c.type==='pourcent'){
+      var v=parseFloat(c.reponse.replace(',','.'));
+      return [Math.round(v*0.5)+'%', Math.round(Math.min(99,v*1.6))+'%', Math.round(Math.min(99,v+15))+'%'];
+    }
+    var pool = tousTermes.filter(function(t){return t!==c.reponse;});
+    pool.sort(function(){return Math.random()-0.5;});
+    var uniques=[];
+    pool.forEach(function(t){ if(uniques.indexOf(t)===-1) uniques.push(t); });
+    return uniques.slice(0,3);
+  }
+
+  return candidats.slice(0, nbQuestions).map(function(c){
+    var blank = c.phrase.replace(c.reponse, '_____');
+    var mauvaises = distracteurs(c);
+    while (mauvaises.length<3) mauvaises.push('Aucune de ces r\u00e9ponses');
+    var toutes = mauvaises.slice(0,3).concat([c.reponse]);
+    toutes.sort(function(){return Math.random()-0.5;});
+    return {q:'Compl\u00e8te : "'+blank.trim()+'"', opts:toutes, bon:toutes.indexOf(c.reponse), garder:true, origine:'auto-sans-ia'};
+  });
+}
+function genererSansIA(){
+  if (!iaPrompt || iaPrompt.trim().length<40){ derniereActionBanque = null; alert('Colle un texte un peu plus long (quelques phrases avec dates, chiffres ou notions) pour que la g\u00e9n\u00e9ration fonctionne.'); return; }
+  var generees = genererQuestionsSansIA(iaPrompt, 5);
+  if (!generees.length){ alert('Aucun motif exploitable trouv\u00e9 (pas de date, chiffre ou notion cl\u00e9 rep\u00e9r\u00e9). Essaie un texte plus factuel.'); return; }
+  questionsQuiz = questionsQuiz.concat(generees);
+  derniereActionBanque = generees.length+' question(s) g\u00e9n\u00e9r\u00e9e(s) sans IA \u2014 relis-les avant de garder';
+  modeCreation = 'manuel';
+  selectScreen('nouveau-quiz');
+}
 function publierEtOuvrirRoom(){
   var retenues = questionsQuiz.filter(function(q){return q.garder;});
   QUIZ_EN_COURS = {titre:titreQuiz||'Quiz sans titre', quand:"\u00e0 l'instant", questions:retenues.length, statut:'en cours', reponduPar:0, moyenne:'\u2014'};
@@ -234,13 +303,22 @@ function screenNouveauQuiz(){
     + '</div>';
 
   if (modeCreation === 'ia') {
-    html += '<div class="card" style="background:var(--ambg);border-color:#F0DFA8;margin-bottom:12px;">'
-      + '<div style="font-size:10.5px;font-weight:800;color:var(--am);">⚠ Câblé mais non branché</div>'
-      + '<div style="font-size:10px;color:var(--ink3);margin-top:3px;">L\'interface est prête. La génération réelle nécessite une clé API Anthropic côté serveur, pas encore configurée.</div>'
+    html += '<div class="card" style="margin-bottom:12px;">'
+      + '<span class="field-label">Depuis quel contenu ?</span>'
+      + '<textarea rows="4" oninput="iaPrompt=this.value" placeholder="Colle le texte du cours (quelques phrases suffisent, avec des dates, des chiffres ou des notions clés)">'+iaPrompt+'</textarea>'
     + '</div>'
-    + '<span class="field-label">Depuis quel contenu ?</span>'
-    + '<textarea rows="3" oninput="iaPrompt=this.value" placeholder="Colle le texte du cours, ou choisis une fiche existante"></textarea>'
-    + '<button onclick="lancerGenerationIA()" class="btn" style="opacity:.85;">Générer 5 questions (simulation)</button>';
+
+    + '<div class="card" style="background:var(--grbg);border-color:#B7E4CE;margin-bottom:8px;">'
+      + '<div style="font-size:10.5px;font-weight:800;color:var(--gr);">'+icon(ICONS.check,{w:12,stroke:'var(--gr)'})+' G\u00e9n\u00e9ration sans IA \u2014 fonctionne d\u00e8s maintenant</div>'
+      + '<div style="font-size:10px;color:var(--ink3);margin-top:3px;">Analyse le texte (dates, chiffres, notions cl\u00e9s) et fabrique des questions \u00e0 trous avec des mauvaises r\u00e9ponses plausibles. Moins fin qu\'une IA, mais r\u00e9el et gratuit \u2014 \u00e0 relire avant de garder.</div>'
+    + '</div>'
+    + '<button onclick="genererSansIA()" class="btn" style="margin-bottom:14px;">'+icon(ICONS.sparkle,{w:14,stroke:'white'})+' G\u00e9n\u00e9rer sans IA</button>'
+
+    + '<div class="card" style="background:var(--ambg);border-color:#F0DFA8;margin-bottom:12px;">'
+      + '<div style="font-size:10.5px;font-weight:800;color:var(--am);">\u26a0 G\u00e9n\u00e9ration par IA \u2014 c\u00e2bl\u00e9 mais non branch\u00e9</div>'
+      + '<div style="font-size:10px;color:var(--ink3);margin-top:3px;">Meilleure qualit\u00e9 (comprend le sens, pas seulement le texte), mais n\u00e9cessite une cl\u00e9 API Anthropic c\u00f4t\u00e9 serveur, pas encore configur\u00e9e.</div>'
+    + '</div>'
+    + '<button onclick="lancerGenerationIA()" class="btn-outline">Générer avec l\'IA (simulation)</button>';
     return html;
   }
 
