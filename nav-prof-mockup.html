@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flowin Révision — maquette espace prof</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; min-width: 0; }
+  body { margin: 0; font-family: 'DM Sans', system-ui, sans-serif; background: #FAFAFC; color: var(--ink); padding: 16px 6px; min-height: 100vh; }
+  :root { --pp:#534AB7; --ppbg:#EEEDFE; --ppln:#CECBF6; --ink:#14162A; --ink2:#3D3F5C; --ink3:#6B7094; --line:#E4E3F0; --bg:#F5F3FF; --gold:#E0A800; --gr:#0E9E6E; --grbg:#E3F7EF; --re:#D63050; --am:#C27C0A; --ambg:#FBEEDA; --bl:#1E6FCC; }
+  .wrap { max-width: 900px; width:100%; margin: 0 auto; }
+  .title { font-size: 13px; font-weight: 700; color: var(--ink3); text-transform: uppercase; margin-bottom: 4px; }
+  .subtitle { font-size: 20px; font-weight: 800; margin-bottom: 20px; }
+  .toggle { display: flex; gap: 8px; margin-bottom: 24px; max-width: 320px; }
+  .toggle button { flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid var(--line); background: white; color: var(--ink3); font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; }
+  .toggle button.active { border-color: var(--ppln); background: var(--ppbg); color: var(--pp); }
+  #phone-wrap { width: 100%; max-width: 300px; margin: 0 auto; }
+  #frame-mobile { width: 100%; aspect-ratio: 300/580; border: 7px solid var(--ink); border-radius: 36px; overflow: hidden; background: var(--bg); position: relative; display: flex; flex-direction: column; box-shadow: 0 20px 50px -20px rgba(20,20,45,.3); }
+  .notch { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 100px; height: 22px; background: var(--ink); border-radius: 12px; z-index: 5; }
+  .mtop { background: white; border-bottom: 1px solid var(--line); padding: 20px 14px 10px; display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .mtop .brand{flex:1;}
+  .brand{display:flex;align-items:center;gap:7px;}
+  .brand-icon{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#5B52C9,#7F77DD);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .brand-name{font-weight:700;font-size:12px;}
+  #mobile-screen { padding: 18px 14px; flex: 1; overflow-y: auto; }
+  #bottom-nav { display: flex; background: white; border-top: 1px solid var(--line); flex-shrink: 0; padding: 5px 2px 8px; }
+  .bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; border: none; background: transparent; padding: 5px 2px; cursor: pointer; font-family: inherit; }
+  .bnav-item span { font-size: 7.5px; font-weight: 700; color: var(--ink3); }
+  .bnav-item.active span { color: var(--pp); }
+  #frame-desktop { display:none; border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+  .dlayout{display:flex;min-height:560px;}
+  .sidebar{width:170px;background:white;border-right:1px solid var(--line);padding:16px 11px;display:flex;flex-direction:column;flex-shrink:0;}
+  .sidebar .brand{padding:0 7px 20px;}
+  #desktop-topbar{display:none;align-items:center;gap:8px;padding:16px 24px 0;}
+  #desktop-screen{padding:24px;background:var(--bg);}
+  nav button{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:9px;border:none;text-align:left;cursor:pointer;width:100%;font-size:11.5px;font-weight:700;background:transparent;color:var(--ink2);font-family:inherit;margin-bottom:1px;}
+  nav button.active{background:var(--ppbg);color:var(--pp);}
+  .card { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 14px; }
+  .h-title { font-size: 20px; font-weight: 800; margin: 2px 0 16px; }
+  .h-greet { color: var(--ink3); font-size: 13px; }
+  .icon-sq { border-radius: 11px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; }
+  .kpi-v { font-size: 17px; font-weight: 800; line-height: 1; }
+  .kpi-l { font-size: 9px; font-weight: 700; color: var(--ink3); text-transform: uppercase; margin-top: 4px; }
+  .row { display:flex; align-items:center; gap:9px; }
+  .sec-title { font-size: 14px; font-weight: 800; margin-bottom: 10px; }
+  .chip { display:inline-flex; align-items:center; gap:5px; border:1.5px solid var(--line); border-radius:999px; padding:5px 11px; font-size:10.5px; font-weight:700; color:var(--ink2); background:white; font-family:inherit; cursor:pointer; }
+  .chip.active { border-color:var(--ppln); background:var(--ppbg); color:var(--pp); }
+  .badge { font-size:9px; font-weight:800; padding:3px 9px; border-radius:999px; }
+  .btn { display:block; width:100%; background:var(--pp); color:white; font-weight:800; font-size:12.5px; padding:12px; border-radius:12px; border:none; font-family:inherit; cursor:pointer; }
+  .btn-outline { display:block; width:100%; border:1.5px solid var(--line); color:var(--ink2); background:transparent; font-weight:700; font-size:11.5px; padding:10px; border-radius:12px; font-family:inherit; cursor:pointer; }
+  .field-label{font-size:9.5px;font-weight:800;color:var(--ink3);text-transform:uppercase;margin-bottom:4px;display:block;}
+  input[type=text],input[type=email],input[type=password],textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:9px 11px;font-size:12px;font-family:inherit;margin-bottom:12px;}
+  .note { margin-top: 24px; font-size: 12.5px; color: var(--ink3); max-width: 700px; line-height: 1.6; }
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title">Flowin Révision</div>
+  <div class="subtitle">Maquette navigable — espace prof</div>
+  <div class="toggle">
+    <button id="btn-mobile" class="active" onclick="setMode('mobile')">Mobile</button>
+    <button id="btn-desktop" onclick="setMode('desktop')">Desktop</button>
+  </div>
+  <div id="phone-wrap">
+    <div id="frame-mobile">
+      <div class="notch"></div>
+      <div class="mtop">
+        <button id="back-btn" onclick="goBack()" style="border:none;background:none;padding:4px;cursor:pointer;display:none;">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="brand"><div class="brand-icon"><svg viewBox="0 0 24 24" width="12" height="12" fill="white"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg></div><span class="brand-name">Flowin Révision</span></div>
+      </div>
+      <div id="mobile-screen"></div>
+      <div id="bottom-nav"></div>
+    </div>
+  </div>
+  <div id="frame-desktop">
+    <div class="dlayout">
+      <div class="sidebar">
+        <div class="brand"><div class="brand-icon"><svg viewBox="0 0 24 24" width="12" height="12" fill="white"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg></div><span class="brand-name">Flowin Révision</span></div>
+        <nav id="desktop-nav"></nav>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+        <div id="desktop-topbar"><button onclick="goBack()" style="border:none;background:var(--ppbg);color:var(--pp);padding:6px 10px;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;font-size:12px;">← Retour</button></div>
+        <div id="desktop-screen" style="flex:1;overflow-y:auto;"></div>
+      </div>
+    </div>
+  </div>
+  <div class="note">Reproduction de l'espace prof réel (classes, cagnotte, réglages déjà branchés en vrai sur flowin-revisions.vercel.app) + nouveauté proposée : constructeur de quiz et room en direct.</div>
+</div>
+
+<script>
+function icon(p,e){return '<svg viewBox="0 0 24 24" width="'+(e&&e.w||18)+'" height="'+(e&&e.w||18)+'" fill="none" stroke="'+(e&&e.stroke||'currentColor')+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="'+p+'"/></svg>';}
+function qrPattern(seed){var h=0;for(var i=0;i<seed.length;i++)h=(h*31+seed.charCodeAt(i))>>>0;var c=[];for(var y=0;y<11;y++)for(var x=0;x<11;x++){var on=((h>>((x*y+x+y)%24))&1)===1||(x<3&&y<3)||(x>7&&y<3)||(x<3&&y>7);if(on)c.push('<rect x="'+(x*10)+'" y="'+(y*10)+'" width="10" height="10" fill="#14162A"/>');}return c.join('');}
+var ICONS = {
+  home:'M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
+  sword:'M21 3v5l-11 9-4 4-3-3 4-4 9-11zM5 13l6 6M14.3 17.3l3.7 3.7 3-3-3.7-3.7M10 5.5 8 3H3v5l3 2.5',
+  defiIcon:'M13 2 3 14h7l-1 8 10-12h-7z',
+  classe:'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
+  quiz:'M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z',
+  cagnotte:'M14.5 9.5A2.5 2.5 0 0 0 12 8.5h-1.5a2 2 0 0 0 0 4H13a2 2 0 0 1 0 4h-1.5A2.5 2.5 0 0 1 9 15M12 8V6m0 14v-2',
+  reglages:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z',
+  chevron:'M9 18l6-6-6-6', plus:'M12 5v14M5 12h14', upload:'M12 16V4m0 0L7 9m5-5 5 5M5 20h14', check:'M20 6 9 17l-5-5', sparkle:'M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z'
+};
+
+// ---------- État global ----------
+var CLASSES = [{id:'c1', nom:'Tale Bac Pro Vente', effectif:19}, {id:'c2', nom:'1re Bac Pro Vente', effectif:16}];
+var classeSelectionnee = 'c1';
+
+// Constructeur quiz
+var modeCreation = 'manuel'; // manuel | banque | ia
+// Vraie banque (230 questions en base — échantillon représentatif ici), issue de la classe modèle "Révision Olivia"
+var BANQUE_GENERALE = [
+  {q:'Qu\'est-ce que la conférence de Bandung (1955) ?', opts:['Conférence sur le désarmement','Sommet européen','Conférence des pays du tiers-monde','Sommet de l\'OTAN'], bon:2, mat:'Histoire'},
+  {q:'Depuis 1962, comment est élu le Président de la République ?', opts:['Par l\'Assemblée nationale','Au suffrage universel direct','Par le Sénat','Par les grands électeurs'], bon:1, mat:'Histoire'},
+  {q:'Quand a lieu la déclaration Schuman ?', opts:['9 mai 1945','9 mai 1950','25 mars 1957','7 février 1992'], bon:1, mat:'Histoire'},
+  {q:'Avant 1965, que devait obtenir une femme mariée pour travailler ?', opts:['Un diplôme','L\'autorisation du mari','L\'accord du maire','Une dérogation'], bon:1, mat:'Histoire'},
+  {q:'Quand l\'euro est-il mis en circulation ?', opts:['1992','1999','2002','2007'], bon:2, mat:'Histoire'},
+  {q:'Que sont les « trois mondes » selon la Chine (1974) ?', opts:['Trois continents','Superpuissances / pays développés / pays en développement','Occident / Orient / Afrique','Capitalistes / communistes / non-alignés'], bon:1, mat:'Histoire'},
+  {q:'Quel principe est posé en 1972 ?', opts:['Parité en politique','À travail égal, salaire égal','Liberté de contraception','Droit au divorce'], bon:1, mat:'Histoire'},
+  {q:'Où et quand a été adopté l\'Agenda 2030 ?', opts:['Paris, 2000','New York, septembre 2015','Rio, 1992','Genève, 2018'], bon:1, mat:'Géo'},
+  {q:'Combien l\'extraction de ressources a-t-elle été multipliée en 50 ans ?', opts:['Par 1,5','Par 3,4','Par 10','Par 100'], bon:1, mat:'Géo'},
+  {q:'Que signifie CNIL ?', opts:['Centre National d\'Information Légale','Commission Nationale de l\'Informatique et des Libertés','Conseil National d\'Internet Libre','Commission Nationale de l\'Industrie Lourde'], bon:1, mat:'EMC'},
+  {q:'Qu\'est-ce que l\'identité numérique ?', opts:['Numéro administratif','Ensemble des traces laissées sur Internet','Carte d\'identité électronique','Compte bancaire en ligne'], bon:1, mat:'EMC'},
+  {q:'À qui la PMA est-elle ouverte depuis 2021 ?', opts:['Uniquement aux couples hétérosexuels','À toutes les femmes (couples hétéros, homos, célibataires)','Aux hommes uniquement','Aux mineurs'], bon:1, mat:'EMC'},
+  {q:'Rosa, enceinte, est suivie par une gynécologue sans passer par son médecin traitant. Le parcours de soins est-il respecté ?', opts:['Non, elle aurait dû passer par son médecin traitant','Oui, la gynécologue est un médecin en libre accès','Non, elle devrait aller aux urgences','Oui, car la grossesse est une urgence'], bon:1, mat:'PSE'},
+  {q:'Où est localisée l\'horloge biologique dans le corps humain ?', opts:['Dans le cœur','Dans l\'hypothalamus (cerveau)','Dans le foie','Dans la moelle épinière'], bon:1, mat:'PSE'},
+  {q:'Principe de la protection sociale ?', opts:['Liberté','Solidarité','Responsabilité individuelle','Profitabilité'], bon:1, mat:'PSE'},
+  {q:'Qu\'est-ce que la nidation ?', opts:['Fécondation dans les trompes','Ovulation','Implantation de l\'embryon dans la paroi utérine','Formation du placenta'], bon:2, mat:'PSE'},
+  {q:'Qu\'est-ce que le « paradoxe de la faim » ?', opts:['On produit assez mais des gens ont faim','Seuls les pays pauvres ont faim','La faim diminue partout','Manger trop et être affamé'], bon:0, mat:'Géo'},
+  {q:'Combien d\'ODD a défini l\'ONU ?', opts:['7','12','17','25'], bon:2, mat:'Géo'},
+  {q:'Quel est l\'ODD 1 ?', opts:['Pas de pauvreté','Faim zéro','Bonne santé','Éducation'], bon:0, mat:'Géo'},
+  {q:'Qu\'est-ce qu\'un risque ?', opts:['Un danger potentiel pour une société','Un événement impossible','Une catastrophe historique','Un aléa sans enjeu'], bon:0, mat:'Géo'},
+  {q:'Lequel de ces conseils CNIL n\'est PAS dans la liste des 10 ?', opts:['Réfléchir avant de publier','Utiliser un pseudonyme','Payer un VPN premium','Sécuriser ses comptes'], bon:2, mat:'EMC'},
+  {q:'Qui peut consulter notre identité numérique ?', opts:['Personne','Seulement l\'État','Employeurs, organismes, personnes malveillantes...','Seulement la police'], bon:2, mat:'EMC'},
+  {q:'À quelle fréquence les lois de bioéthique sont-elles révisées ?', opts:['Tous les ans','Régulièrement (1994, 2004, 2011, 2021...)','Jamais','Tous les 20 ans'], bon:1, mat:'EMC'}
+];
+var CLASSE_MODELE = 'Révision Olivia'; // classe de référence, banque partagée entre tous les profs
+var filtreBanque = 'Tout';
+function toggleFiltreBanque(m){ filtreBanque = m; selectScreen('nouveau-quiz'); }
+var questionsQuiz = [
+  {q:'Quelle loi instaure les congés payés ?', opts:['Loi de 1919','Loi de 1936','Loi de 1945','Loi de 1968'], bon:1, garder:true, origine:'manuel'},
+  {q:'Qui dirige la CGT en 1936 ?', opts:['Léon Blum','Benoît Frachon','Jean Jaurès','Maurice Thorez'], bon:1, garder:true, origine:'manuel'}
+];
+var iaPrompt = '';
+var questionEnEdition = null; // index de la question actuellement éditée, ou null
+var derniereActionBanque = null; // message de confirmation temporaire
+function toggleModeCreation(m){ modeCreation=m; selectScreen('nouveau-quiz'); }
+function toggleGarderQuestion(i){ questionsQuiz[i].garder = !questionsQuiz[i].garder; selectScreen('nouveau-quiz'); }
+function supprimerQuestion(i){ questionsQuiz.splice(i,1); selectScreen('nouveau-quiz'); }
+function ajouterQuestionManuelle(){ questionsQuiz.push({q:'Nouvelle question', opts:['Proposition 1','Proposition 2','Proposition 3','Proposition 4'], bon:0, garder:true, origine:'manuel'}); selectScreen('nouveau-quiz'); }
+function ouvrirEditionQuestion(i){ questionEnEdition = i; derniereActionBanque = null; selectScreen('nouveau-quiz'); }
+function enregistrerEditionQuestion(i, nouveauQ, nouvellesOpts, nouveauBon){
+  questionsQuiz[i].q = nouveauQ;
+  questionsQuiz[i].opts = nouvellesOpts;
+  questionsQuiz[i].bon = nouveauBon;
+  BANQUE_GENERALE.push({q:nouveauQ, opts:nouvellesOpts, bon:nouveauBon, mat:'Ajoutée par le prof'});
+  derniereActionBanque = 'Enregistrée dans la banque générale';
+  questionEnEdition = null;
+  selectScreen('nouveau-quiz');
+}
+function ajouterDepuisBanque(item){
+  questionsQuiz.push({q:item.q, opts:item.opts.slice(), bon:item.bon, garder:true, origine:'banque'});
+  selectScreen('nouveau-quiz');
+}
+var apercuBanqueIndex = null;
+function ouvrirApercuBanque(i){ apercuBanqueIndex = i; selectScreen('apercu-banque'); }
+function ajouterEtRevenirBanque(i){
+  questionsQuiz.push({q:BANQUE_GENERALE[i].q, opts:BANQUE_GENERALE[i].opts.slice(), bon:BANQUE_GENERALE[i].bon, garder:true, origine:'banque'});
+  modeCreation = 'banque';
+  selectScreen('nouveau-quiz');
+}
+function lancerGenerationIA(){ selectScreen('publier-quiz'); } // IA câblée mais non branchée -> ne génère rien de réel, va direct à l'étape suivante avec un avertissement affiché
+function publierEtOuvrirRoom(){ selectScreen('room-ouverture'); }
+
+// Cagnotte prof — suivi du budget de points par classe
+var CAGNOTTE_PROF = { total: 2000, depense: 640, parClasse: {c1: 380, c2: 260} };
+function carteCagnotteMini(){
+  var restant = CAGNOTTE_PROF.total - CAGNOTTE_PROF.depense;
+  var classeNom = CLASSES.filter(function(c){return c.id===classeSelectionnee;})[0].nom;
+  var depenseClasse = CAGNOTTE_PROF.parClasse[classeSelectionnee] || 0;
+  return '<div style="display:flex;gap:8px;margin-bottom:12px;">'
+    + kpiCardProf('var(--gold)', ICONS.cagnotte, restant, 'PTS RESTANTS', 'cagnotte')
+    + kpiCardProf('var(--pp)', ICONS.cagnotte, CAGNOTTE_PROF.depense, 'DÉPENSÉS', 'cagnotte')
+    + kpiCardProf('var(--bl)', ICONS.classe, depenseClasse, classeNom.split(' ')[0].toUpperCase(), 'cagnotte')
+  + '</div>';
+}
+
+function afficheOptions(opts, bon){
+  var propositions = '<div style="margin-top:8px;">' + opts.map(function(o,i){
+    return '<div style="padding:3px 0;font-size:10.5px;color:var(--ink2);">'+(i+1)+'. '+o+'</div>';
+  }).join('') + '</div>';
+  var correction = '<div style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);">'
+    + '<span style="font-size:9px;font-weight:800;color:var(--gr);text-transform:uppercase;">Correction</span>'
+    + '<div style="font-size:11px;font-weight:800;color:var(--gr);margin-top:2px;">'+(bon+1)+'. '+opts[bon]+'</div>'
+  + '</div>';
+  return propositions + correction;
+}
+
+function screenNouveauQuiz(){
+  var html = '<div class="h-title">Nouveau quiz</div>'
+    + carteCagnotteMini()
+    + '<div style="display:flex;gap:6px;margin-bottom:14px;">'
+      + '<button onclick="toggleModeCreation(\'manuel\')" class="chip'+(modeCreation==='manuel'?' active':'')+'" style="flex:1;justify-content:center;">Manuel</button>'
+      + '<button onclick="toggleModeCreation(\'banque\')" class="chip'+(modeCreation==='banque'?' active':'')+'" style="flex:1;justify-content:center;">Banque</button>'
+      + '<button onclick="toggleModeCreation(\'ia\')" class="chip'+(modeCreation==='ia'?' active':'')+'" style="flex:1;justify-content:center;">'+icon(ICONS.sparkle,{w:12})+' IA</button>'
+    + '</div>';
+
+  if (modeCreation === 'ia') {
+    html += '<div class="card" style="background:var(--ambg);border-color:#F0DFA8;margin-bottom:12px;">'
+      + '<div style="font-size:10.5px;font-weight:800;color:var(--am);">⚠ Câblé mais non branché</div>'
+      + '<div style="font-size:10px;color:var(--ink3);margin-top:3px;">L\'interface est prête. La génération réelle nécessite une clé API Anthropic côté serveur, pas encore configurée.</div>'
+    + '</div>'
+    + '<span class="field-label">Depuis quel contenu ?</span>'
+    + '<textarea rows="3" oninput="iaPrompt=this.value" placeholder="Colle le texte du cours, ou choisis une fiche existante"></textarea>'
+    + '<button onclick="lancerGenerationIA()" class="btn" style="opacity:.85;">Générer 5 questions (simulation)</button>';
+    return html;
+  }
+
+  if (modeCreation === 'banque') {
+    var matieres = ['Tout','EMC','Géo','Histoire','PSE'];
+    var visibles = filtreBanque === 'Tout' ? BANQUE_GENERALE : BANQUE_GENERALE.filter(function(b){return b.mat===filtreBanque;});
+    html += '<div class="sec-title">Banque générale ('+BANQUE_GENERALE.length+' questions)</div>'
+      + '<div style="font-size:9.5px;color:var(--ink3);margin-bottom:10px;">Issue de la classe modèle « '+CLASSE_MODELE+' » (230 questions réelles en base), + celles modifiées par les profs.</div>'
+      + '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;">'
+        + matieres.map(function(m){return '<button onclick="toggleFiltreBanque(\''+m+'\')" class="chip'+(filtreBanque===m?' active':'')+'" style="padding:4px 9px;font-size:9.5px;">'+m+'</button>';}).join('')
+      + '</div>'
+      + visibles.map(function(b){var idx=BANQUE_GENERALE.indexOf(b);return '<button onclick="ouvrirApercuBanque('+idx+')" class="card" style="width:100%;text-align:left;font-family:inherit;cursor:pointer;margin-bottom:8px;"><div style="font-weight:800;font-size:11.5px;">'+b.q+'</div><div style="font-size:9.5px;color:var(--ink3);">'+b.mat+' · 4 propositions</div></button>';}).join('')
+    + '<button onclick="selectScreen(\'publier-quiz\')" class="btn" style="margin-top:6px;">Continuer avec '+questionsQuiz.length+' question(s)</button>';
+    return html;
+  }
+
+  // manuel
+  html += '<div class="sec-title">Questions ('+questionsQuiz.length+')</div>';
+  if (derniereActionBanque) { html += '<div style="font-size:10px;color:var(--gr);font-weight:700;margin-bottom:8px;">✓ '+derniereActionBanque+'</div>'; }
+  questionsQuiz.forEach(function(q,i){
+    if (questionEnEdition === i) {
+      html += '<div class="card" style="margin-bottom:8px;">'
+        + '<span class="field-label">Question</span><input type="text" id="edit-q-'+i+'" value="'+q.q+'"/>'
+        + '<span class="field-label">4 propositions (coche la bonne)</span>'
+        + q.opts.map(function(o,oi){return '<div class="row" style="margin-bottom:6px;"><input type="radio" name="edit-bon-'+i+'" value="'+oi+'" '+(oi===q.bon?'checked':'')+' id="edit-bon-'+i+'-'+oi+'"/><input type="text" id="edit-opt-'+i+'-'+oi+'" value="'+o+'" style="margin-bottom:0;flex:1;"/></div>';}).join('')
+        + '<button onclick="enregistrerEditionQuestion('+i+', document.getElementById(\'edit-q-'+i+'\').value, ['+q.opts.map(function(o,oi){return 'document.getElementById(\'edit-opt-'+i+'-'+oi+'\').value';}).join(',')+'], Number(document.querySelector(\'input[name=edit-bon-'+i+']:checked\').value))" class="btn" style="padding:9px;font-size:11px;margin-top:6px;">Enregistrer dans la banque</button>'
+      + '</div>';
+      return;
+    }
+    html += '<div class="card" style="margin-bottom:8px;">'
+      + '<div class="row" style="justify-content:space-between;margin-bottom:6px;">'
+        + '<span style="font-size:9.5px;font-weight:800;color:var(--ink3);">QUESTION '+(i+1)+(q.origine==='banque'?' · banque':'')+'</span>'
+        + '<div style="display:flex;gap:6px;">'
+          + '<button onclick="ouvrirEditionQuestion('+i+')" style="border:none;background:none;cursor:pointer;color:var(--pp);">'+icon('M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z',{w:14,stroke:'var(--pp)'})+'</button>'
+          + '<button onclick="toggleGarderQuestion('+i+')" style="border:none;background:none;cursor:pointer;color:'+(q.garder?'var(--gr)':'var(--ink3)')+';">'+icon(ICONS.check,{w:14,stroke:q.garder?'var(--gr)':'var(--ink3)'})+'</button>'
+          + '<button onclick="supprimerQuestion('+i+')" style="border:none;background:none;cursor:pointer;color:var(--re);">'+icon('M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6',{w:14,stroke:'var(--re)'})+'</button>'
+        + '</div>'
+      + '</div>'
+      + '<div style="font-size:11.5px;font-weight:700;">'+q.q+'</div>'
+      + afficheOptions(q.opts, q.bon)
+    + '</div>';
+  });
+  html += '<button onclick="ajouterQuestionManuelle()" class="btn-outline" style="margin-bottom:10px;">+ Ajouter une question</button>'
+    + '<button onclick="selectScreen(\'publier-quiz\')" class="btn">Continuer</button>';
+  return html;
+}
+
+var choixDiffusion = 'qr'; // 'qr' ou 'lien'
+function choisirDiffusion(m){ choixDiffusion = m; selectScreen('publier-quiz'); }
+function screenPublierQuiz(){
+  var retenues = questionsQuiz.filter(function(q){return q.garder;});
+  return '<div class="h-title">Publier le quiz</div>'
+    + '<div class="card" style="margin-bottom:12px;">'
+      + '<div class="row" style="padding:4px 0;"><span style="flex:1;font-size:11px;color:var(--ink3);">Questions retenues</span><span style="font-size:11px;font-weight:800;">'+retenues.length+'</span></div>'
+      + '<div class="row" style="padding:4px 0;"><span style="flex:1;font-size:11px;color:var(--ink3);">Classe</span><span style="font-size:11px;font-weight:800;">'+CLASSES.filter(function(c){return c.id===classeSelectionnee;})[0].nom+'</span></div>'
+      + '<div class="row" style="padding:4px 0;"><span style="flex:1;font-size:11px;color:var(--ink3);">Points par bonne réponse</span><span style="font-size:11px;font-weight:800;">'+REGLES_JEU.pointsBonneReponse+' pts</span></div>'
+      + '<div class="row" style="padding:4px 0;"><span style="flex:1;font-size:11px;color:var(--ink3);">Durée par question</span><span style="font-size:11px;font-weight:800;">'+REGLES_JEU.dureeParDefaut+' s</span></div>'
+    + '</div>'
+    + '<div class="sec-title">Comment les élèves accèdent au quiz</div>'
+    + '<div style="display:flex;gap:6px;margin-bottom:14px;">'
+      + '<button onclick="choisirDiffusion(\'qr\')" class="chip'+(choixDiffusion==='qr'?' active':'')+'" style="flex:1;justify-content:center;">QR code à projeter</button>'
+      + '<button onclick="choisirDiffusion(\'lien\')" class="chip'+(choixDiffusion==='lien'?' active':'')+'" style="flex:1;justify-content:center;">Lien à partager</button>'
+    + '</div>'
+    + '<div style="font-size:10px;color:var(--ink3);background:var(--bg);border-radius:9px;padding:9px 10px;margin-bottom:14px;">'
+      + (choixDiffusion==='qr'
+        ? 'Le QR s\'affiche en grand sur l\'écran de la room — les élèves le flashent avec leur téléphone, sans rien installer.'
+        : 'Un lien est généré — tu peux le copier et le transmettre par le canal de ton choix (ENT, messagerie de classe...).')
+    + '</div>'
+    + '<button onclick="publierEtOuvrirRoom()" class="btn">Publier et ouvrir la room</button>';
+}
+
+// ---------- Room en direct : consolidée, bascule prof/élève intégrée ----------
+var roomVue = 'prof';
+var etapeRoom = 'ouverture'; // côté prof : ouverture -> question -> resultats
+var etapeEleveRoom = 'landing'; // côté élève : landing -> attente -> question -> resultats
+var joueursConnectes = ['Mailys','Lilou','TestDefi1'];
+var questionActuelle = 0, TOTAL_Q = 5, DUREE_Q = 15, tempsRestantRoom = DUREE_Q, minuteurRoomId = null, animationValidationRoom = false;
+var SCORES = [{pseudo:'Lilou',pts:85},{pseudo:'Mailys',pts:80},{pseudo:'TestDefi1',pts:62},{pseudo:'Noah',pts:40}];
+
+function toggleRoomVue(v){ roomVue = v; selectScreen('room-ouverture'); }
+function lancerRoom(){ etapeRoom='question'; questionActuelle=1; etapeEleveRoom='question'; demarrerMinuteurRoom(); selectScreen('room-ouverture'); }
+function roomSuivant(){
+  arreterMinuteurRoom();
+  if (questionActuelle<TOTAL_Q) { questionActuelle++; demarrerMinuteurRoom(); }
+  else { etapeRoom='resultats'; etapeEleveRoom='resultats'; }
+  selectScreen('room-ouverture');
+}
+function demarrerMinuteurRoom(){
+  arreterMinuteurRoom();
+  tempsRestantRoom = DUREE_Q;
+  minuteurRoomId = setInterval(function(){
+    tempsRestantRoom--;
+    if (tempsRestantRoom <= 0) arreterMinuteurRoom();
+    if (roomVue==='eleve' && activeSub==='room-ouverture') renderMobileScreenContent();
+  }, 1000);
+}
+function arreterMinuteurRoom(){ if (minuteurRoomId) { clearInterval(minuteurRoomId); minuteurRoomId=null; } }
+function eleveValiderEntreeRoom(){
+  animationValidationRoom = true;
+  selectScreen('room-ouverture');
+  setTimeout(function(){ animationValidationRoom=false; etapeEleveRoom='attente'; selectScreen('room-ouverture'); }, 900);
+}
+function eleveRepondreRoom(){ /* simule une réponse, score déjà mocké */ }
+
+function toggleBar(){
+  return '<div style="display:flex;gap:6px;margin-bottom:12px;">'
+    + '<button onclick="toggleRoomVue(\'prof\')" class="chip'+(roomVue==='prof'?' active':'')+'" style="flex:1;justify-content:center;">Vue prof</button>'
+    + '<button onclick="toggleRoomVue(\'eleve\')" class="chip'+(roomVue==='eleve'?' active':'')+'" style="flex:1;justify-content:center;">Vue élève</button>'
+  + '</div>';
+}
+
+function screenRoom(){
+  if (roomVue === 'eleve') return toggleBar() + screenRoomEleve();
+  return toggleBar() + screenRoomProf();
+}
+
+function screenRoomProf(){
+  if (etapeRoom==='ouverture') {
+    return '<div class="card" style="text-align:center;margin-bottom:12px;">'
+      + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:8px;">Les élèves rejoignent avec ce code</div>'
+      + '<div style="border:1px solid var(--line);border-radius:12px;padding:8px;display:inline-block;margin-bottom:8px;"><svg viewBox="0 0 110 110" style="width:90px;height:90px;">'+qrPattern('room482')+'</svg></div>'
+      + '<div style="font-family:monospace;font-size:14px;font-weight:800;letter-spacing:.1em;">482 913</div>'
+    + '</div>'
+    + '<div class="sec-title">'+joueursConnectes.length+' élève(s) connecté(s)</div>'
+    + joueursConnectes.map(function(p){return '<div class="row card" style="margin-bottom:6px;padding:8px 11px;"><div style="width:20px;height:20px;border-radius:50%;background:var(--pp);color:white;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;">'+p[0]+'</div><span style="font-size:11px;font-weight:700;">'+p+'</span></div>';}).join('')
+    + '<button onclick="lancerRoom()" class="btn" style="margin-top:8px;">Lancer le quiz</button>';
+  }
+  if (etapeRoom==='question') {
+    return '<div class="card" style="text-align:center;margin-bottom:12px;"><div style="font-size:10px;color:var(--ink3);">Question '+questionActuelle+'/'+TOTAL_Q+'</div><div style="font-weight:800;font-size:12.5px;">Quelle est la capitale ?</div></div>'
+      + '<div class="sec-title">Score en direct</div>'
+      + SCORES.slice(0,joueursConnectes.length).map(function(s,i){return '<div class="row card" style="margin-bottom:6px;padding:7px 10px;"><span style="font-size:9px;font-weight:800;color:var(--ink3);width:12px;">'+(i+1)+'</span><span style="flex:1;font-size:11px;font-weight:700;">'+s.pseudo+'</span><span style="font-size:11px;font-weight:800;color:var(--pp);">'+s.pts+' pts</span></div>';}).join('')
+      + '<button onclick="roomSuivant()" class="btn" style="margin-top:8px;">'+(questionActuelle<TOTAL_Q?'Suivante':'Résultats')+'</button>';
+  }
+  var moyenne = Math.round(SCORES.reduce(function(a,s){return a+s.pts;},0)/SCORES.length);
+  var ecart = SCORES[0].pts - SCORES[SCORES.length-1].pts;
+  return '<div style="display:flex;gap:8px;margin-bottom:12px;">'
+    + '<div class="card" style="flex:1;text-align:center;padding:9px;"><div style="font-size:14px;font-weight:800;color:var(--pp);">'+moyenne+'</div><div style="font-size:8px;color:var(--ink3);font-weight:700;">MOYENNE</div></div>'
+    + '<div class="card" style="flex:1;text-align:center;padding:9px;"><div style="font-size:14px;font-weight:800;color:var(--gold);">'+ecart+'</div><div style="font-size:8px;color:var(--ink3);font-weight:700;">ÉCART</div></div>'
+  + '</div>'
+  + SCORES.map(function(s,i){return '<div class="row card" style="margin-bottom:6px;padding:7px 10px;"><div style="width:20px;height:20px;border-radius:50%;background:'+(i===0?'var(--gold)':'var(--pp)')+';color:white;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;">'+(i+1)+'</div><span style="flex:1;font-size:11px;font-weight:700;">'+s.pseudo+'</span><span style="font-size:11px;font-weight:800;">'+s.pts+' pts</span></div>';}).join('');
+}
+
+function screenRoomEleve(){
+  if (etapeEleveRoom === 'landing') {
+    var swordPath = 'M21 3v5l-11 9-4 4-3-3 4-4 9-11zM5 13l6 6M14.3 17.3l3.7 3.7 3-3-3.7-3.7M10 5.5 8 3H3v5l3 2.5';
+    return '<div class="card" style="text-align:center;padding:20px 14px;'+(animationValidationRoom?'animation:popflip .9s ease;':'')+'">'
+      + '<style>@keyframes popflip{0%{transform:scale(1) rotateY(0);}50%{transform:scale(1.08) rotateY(180deg);}100%{transform:scale(1) rotateY(360deg);}}</style>'
+      + '<div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--re),#B02540);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">'+icon(swordPath,{w:22,stroke:'white'})+'</div>'
+      + '<div style="font-weight:800;font-size:14px;">Quiz du jour</div>'
+      + '<div style="font-size:10px;color:var(--ink3);margin:2px 0 14px;">Histoire · Tale Bac Pro Vente</div>'
+      + '<div style="display:flex;justify-content:center;gap:16px;margin-bottom:16px;">'
+        + '<div><div style="font-weight:800;font-size:13px;">'+TOTAL_Q+'</div><div style="font-size:8px;color:var(--ink3);font-weight:700;">QUESTIONS</div></div>'
+        + '<div><div style="font-weight:800;font-size:13px;">'+DUREE_Q+'s</div><div style="font-size:8px;color:var(--ink3);font-weight:700;">PAR QUESTION</div></div>'
+      + '</div>'
+      + '<button onclick="eleveValiderEntreeRoom()" class="btn">Valider — le chrono démarre</button>'
+    + '</div>';
+  }
+  if (etapeEleveRoom === 'attente') {
+    return '<div class="card" style="text-align:center;padding:24px 14px;">'
+      + '<div style="width:40px;height:40px;border-radius:50%;border:3px solid var(--ppln);border-top-color:var(--pp);margin:0 auto 12px;animation:spin .9s linear infinite;"></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>'
+      + '<div style="font-weight:800;font-size:12px;">Tu es dans la room</div>'
+      + '<div style="font-size:10px;color:var(--ink3);margin-top:4px;">En attente que le prof lance le quiz…</div>'
+    + '</div>';
+  }
+  if (etapeEleveRoom === 'question') {
+    var options = ['Paris','Lyon','Marseille','Lille'];
+    var couleurTemps = tempsRestantRoom <= 5 ? 'var(--re)' : 'var(--pp)';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
+        + '<span style="font-size:10px;color:var(--ink3);">Question '+questionActuelle+' sur '+TOTAL_Q+'</span>'
+        + '<span style="font-weight:800;font-size:12px;color:'+couleurTemps+';">'+tempsRestantRoom+'s</span>'
+      + '</div>'
+      + '<div class="card" style="text-align:center;margin-bottom:10px;"><div style="font-weight:800;font-size:12.5px;">Quelle est la capitale ?</div></div>'
+      + options.map(function(o){return '<button onclick="eleveRepondreRoom()" class="card" style="width:100%;text-align:left;font-family:inherit;cursor:pointer;margin-bottom:7px;font-weight:700;font-size:11.5px;">'+o+'</button>';}).join('');
+  }
+  var moyenne = Math.round(SCORES.reduce(function(a,s){return a+s.pts;},0)/SCORES.length);
+  var ecart = SCORES[0].pts - SCORES[SCORES.length-1].pts;
+  return '<div style="display:flex;gap:8px;margin-bottom:12px;">'
+    + '<div class="card" style="flex:1;text-align:center;padding:9px;"><div style="font-size:14px;font-weight:800;color:var(--pp);">'+moyenne+'</div><div style="font-size:8px;color:var(--ink3);font-weight:700;">MOYENNE</div></div>'
+    + '<div class="card" style="flex:1;text-align:center;padding:9px;"><div style="font-size:14px;font-weight:800;color:var(--gold);">'+ecart+'</div><div style="font-size:8px;color:var(--ink3);font-weight:700;">ÉCART</div></div>'
+  + '</div>'
+  + SCORES.map(function(s,i){return '<div class="row card" style="margin-bottom:6px;padding:7px 10px;"><div style="width:20px;height:20px;border-radius:50%;background:'+(i===0?'var(--gold)':'var(--pp)')+';color:white;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;">'+(i+1)+'</div><span style="flex:1;font-size:11px;font-weight:700;">'+s.pseudo+'</span><span style="font-size:11px;font-weight:800;">'+s.pts+' pts</span></div>';}).join('');
+}
+
+// ---------- Mes classes ----------
+var CLASSES = [
+  {id:'c1', nom:'Tale Bac Pro Vente', code:'482 913'},
+  {id:'c2', nom:'1re Bac Pro Vente', code:'217 640'}
+];
+var PARTICIPANTS_PAR_CLASSE = {
+  c1: [
+    {pseudo:'Lilou', statut:'actif', pts:9800, progression:22, quizFaits:[
+      {titre:'Le jeu des puissances', score:'85%', pts:'+17 pts', quand:'Il y a 2 jours'},
+      {titre:'Institutions politiques', score:'92%', pts:'+18 pts', quand:'Il y a 6 jours'}
+    ]},
+    {pseudo:'Mailys', statut:'actif', pts:9200, progression:15, quizFaits:[
+      {titre:'Le jeu des puissances', score:'70%', pts:'+14 pts', quand:'Il y a 2 jours'}
+    ]},
+    {pseudo:'TestDefi1', statut:'actif', pts:8600, progression:-4, quizFaits:[
+      {titre:'Institutions politiques', score:'60%', pts:'+12 pts', quand:'Il y a 6 jours'}
+    ]},
+    {pseudo:'Noah', statut:'suspendu', pts:6100, progression:8, quizFaits:[]}
+  ],
+  c2: [
+    {pseudo:'Emma', statut:'actif', pts:7400, progression:18, quizFaits:[
+      {titre:'Le système de santé', score:'88%', pts:'+17 pts', quand:'Il y a 3 jours'}
+    ]},
+    {pseudo:'Léo', statut:'actif', pts:6900, progression:5, quizFaits:[]},
+    {pseudo:'Chloé', statut:'actif', pts:5200, progression:-2, quizFaits:[]}
+  ]
+};
+function screenClasses(){
+  return '<div class="h-title">Mes classes</div>'
+    + CLASSES.map(function(c){
+        var participants = PARTICIPANTS_PAR_CLASSE[c.id] || [];
+        var actifs = participants.filter(function(p){return p.statut==='actif';}).length;
+        return '<button onclick="selectScreen(\'detail-classe-'+c.id+'\')" class="card" style="width:100%;text-align:left;font-family:inherit;cursor:pointer;margin-bottom:8px;">'
+          + '<div class="row" style="justify-content:space-between;">'
+            + '<div style="font-weight:800;font-size:12.5px;">'+c.nom+'</div>'
+            + '<span class="badge" style="background:var(--grbg);color:var(--gr);">Room ouverte</span>'
+          + '</div>'
+          + '<div style="font-size:10px;color:var(--ink3);margin-top:2px;">'+actifs+' participant(s) actif(s) · Code '+c.code+'</div>'
+        + '</button>';
+      }).join('')
+    + '<button onclick="selectScreen(\'creer-classe\')" class="btn-outline" style="margin-top:4px;margin-bottom:8px;">+ Créer une classe</button>'
+    + '<button onclick="selectScreen(\'nouveau-quiz\')" class="btn">+ Nouveau quiz</button>';
+}
+var nomNouvelleClasse = '';
+function majNomClasse(v){ nomNouvelleClasse = v; }
+function creerClasse(){
+  if (!nomNouvelleClasse.trim()) return;
+  var id = 'c'+(CLASSES.length+1);
+  var code = Math.floor(100000+Math.random()*900000).toString().replace(/(\d{3})(\d{3})/,'$1 $2');
+  var nouvelleClasse = {id:id, nom:nomNouvelleClasse.trim(), code:code};
+  CLASSES.push(nouvelleClasse);
+  PARTICIPANTS_PAR_CLASSE[id] = [];
+  enregistrerEcransClasse(nouvelleClasse);
+  nomNouvelleClasse = '';
+  selectScreen('detail-classe-'+id);
+}
+var subScreens = {};
+subScreens['creer-classe'] = function(){
+  return '<div class="h-title">Créer une classe</div>'
+    + '<div style="font-size:11px;color:var(--ink3);margin-bottom:14px;">Une room s\'ouvre immédiatement — les élèves la rejoignent avec leur pseudo, en toute autonomie.</div>'
+    + '<span class="field-label">Nom de la classe</span>'
+    + '<input type="text" placeholder="Ex : Tale Bac Pro Commerce" oninput="majNomClasse(this.value)"/>'
+    + '<button onclick="creerClasse()" class="btn">Créer et ouvrir la room</button>';
+};
+
+function svgCourbe(series, labels, opts){
+  opts = opts || {};
+  var w = opts.w || 280, h = opts.h || 130, padL = 26, padB = 16, padT = 8, padR = 6;
+  var chartW = w - padL - padR, chartH = h - padT - padB;
+  var toutesValeurs = [];
+  series.forEach(function(s){ toutesValeurs = toutesValeurs.concat(s.valeurs); });
+  var maxV = Math.max.apply(null, toutesValeurs.concat([1])) * 1.15;
+  function px(i){ return padL + (labels.length>1 ? (i/(labels.length-1)) : 0.5) * chartW; }
+  function py(v){ return padT + chartH - (v/maxV) * chartH; }
+
+  var gridlines = '';
+  for (var g=0; g<=3; g++){
+    var val = Math.round((maxV/3)*g);
+    var yy = py(val);
+    gridlines += '<line x1="'+padL+'" y1="'+yy+'" x2="'+(w-padR)+'" y2="'+yy+'" stroke="#E4E3F0" stroke-width="1"/>';
+    gridlines += '<text x="'+(padL-4)+'" y="'+yy+'" font-size="7" fill="#6B7094" text-anchor="end" dominant-baseline="middle">'+val+'</text>';
+  }
+  var axeX = '<line x1="'+padL+'" y1="'+(padT+chartH)+'" x2="'+(w-padR)+'" y2="'+(padT+chartH)+'" stroke="#6B7094" stroke-width="1"/>';
+  var axeY = '<line x1="'+padL+'" y1="'+padT+'" x2="'+padL+'" y2="'+(padT+chartH)+'" stroke="#6B7094" stroke-width="1"/>';
+  var xLabels = labels.map(function(l,i){ return '<text x="'+px(i)+'" y="'+(h-3)+'" font-size="7" fill="#6B7094" text-anchor="middle">'+l+'</text>'; }).join('');
+
+  var lignes = series.map(function(s){
+    var pts = s.valeurs.map(function(v,i){ return px(i)+','+py(v); }).join(' ');
+    var pastilles = s.valeurs.map(function(v,i){ return '<circle cx="'+px(i)+'" cy="'+py(v)+'" r="2.5" fill="'+s.couleur+'"/>'; }).join('');
+    return '<polyline points="'+pts+'" fill="none" stroke="'+s.couleur+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' + pastilles;
+  }).join('');
+
+  return '<svg viewBox="0 0 '+w+' '+h+'" style="width:100%;height:auto;display:block;">' + gridlines + axeX + axeY + lignes + xLabels + '</svg>';
+}
+function svgSparkline(valeurs, couleur, w, h){
+  w = w || 100; h = h || 26;
+  var maxV = Math.max.apply(null, valeurs), minV = Math.min.apply(null, valeurs);
+  var range = (maxV - minV) || 1;
+  function px(i){ return valeurs.length>1 ? (i/(valeurs.length-1))*w : w/2; }
+  function py(v){ return h - ((v-minV)/range) * (h-4) - 2; }
+  var pts = valeurs.map(function(v,i){ return px(i)+','+py(v); }).join(' ');
+  return '<svg viewBox="0 0 '+w+' '+h+'" style="width:'+w+'px;height:'+h+'px;display:block;flex-shrink:0;"><polyline points="'+pts+'" fill="none" stroke="'+couleur+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+}
+function genererTendance(valeurFinale){
+  // Génère une petite série plausible de 4 points menant à la valeur actuelle (pas d'historique réel en mock)
+  var depart = valeurFinale - (8 + Math.abs(valeurFinale)*0.4);
+  return [depart, depart + (valeurFinale-depart)*0.4, depart + (valeurFinale-depart)*0.7, valeurFinale];
+}
+function ligneSparklineEleve(pseudo, sousLabel, valeur){
+  var couleur = valeur >= 0 ? 'var(--gr)' : 'var(--re)';
+  return '<div class="row" style="justify-content:space-between;margin-bottom:9px;">'
+    + '<div><div style="font-size:10.5px;font-weight:700;">'+pseudo+'</div><div style="font-size:9px;color:var(--ink3);">'+sousLabel+'</div></div>'
+    + '<div style="display:flex;align-items:center;gap:8px;">'+svgSparkline(genererTendance(valeur), couleur, 70, 22)+'<span style="font-size:10.5px;font-weight:800;color:'+couleur+';width:34px;text-align:right;">'+(valeur>=0?'+':'')+valeur+'%</span></div>'
+  + '</div>';
+}
+subScreens['statistiques'] = function(){
+  var toutesLesLignes = [];
+  Object.keys(PARTICIPANTS_PAR_CLASSE).forEach(function(cid){
+    var c = CLASSES.filter(function(x){return x.id===cid;})[0];
+    PARTICIPANTS_PAR_CLASSE[cid].filter(function(e){return e.statut==='actif';}).forEach(function(e){ toutesLesLignes.push({classe:c.nom, pseudo:e.pseudo, pts:e.pts, progression:e.progression}); });
+  });
+  toutesLesLignes.sort(function(a,b){return b.pts-a.pts;});
+  return '<div class="h-title">Statistiques</div>'
+    + '<div style="display:flex;gap:8px;margin-bottom:12px;">'
+      + '<div class="card" style="flex:1;text-align:center;padding:10px;"><div style="font-size:15px;font-weight:800;color:var(--pp);">'+STATS_PROF.quizPublies+'</div><div style="font-size:8px;color:var(--ink3);font-weight:700;">QUIZ PUBLIÉS</div></div>'
+      + '<div class="card" style="flex:1;text-align:center;padding:10px;"><div style="font-size:15px;font-weight:800;color:var(--bl);">'+CLASSES.length+'</div><div style="font-size:8px;color:var(--ink3);font-weight:700;">CLASSES</div></div>'
+      + '<div class="card" style="flex:1;text-align:center;padding:10px;"><div style="font-size:15px;font-weight:800;color:var(--gold);">'+toutesLesLignes.length+'</div><div style="font-size:8px;color:var(--ink3);font-weight:700;">ÉLÈVES SUIVIS</div></div>'
+    + '</div>'
+
+    + '<div class="card" style="margin-bottom:10px;">'
+      + '<div class="sec-title">Courbe de progression, toutes classes</div>'
+      + legende([['var(--pp)','Cette semaine'],['var(--ppln)','Semaine précédente']])
+      + svgCourbe([
+          {couleur:'#534AB7', valeurs:[40,55,48,70,62,74]},
+          {couleur:'#CECBF6', valeurs:[35,42,44,50,52,58]}
+        ], ['S1','S2','S3','S4','S5','S6'])
+    + '</div>'
+
+    + '<div class="card" style="margin-bottom:10px;">'
+      + '<div class="sec-title">Classement inter-classes (courbe)</div>'
+      + svgCourbe([{couleur:'#534AB7', valeurs:AUTRES_CLASSES.map(function(a){return a.score;})}], AUTRES_CLASSES.map(function(a){return a.moi?a.nom.split(' ')[0]+' (moi)':a.nom.split(' ')[0];}))
+    + '</div>'
+
+    + '<div class="card">'
+      + '<div class="sec-title">Progression par élève, toutes classes (courbe)</div>'
+      + toutesLesLignes.map(function(l){return ligneSparklineEleve(l.pseudo, l.classe, l.progression);}).join('')
+    + '</div>';
+};
+var editionApercuActive = false;
+function toggleEditionApercu(){ editionApercuActive = !editionApercuActive; selectScreen('apercu-banque'); }
+function enregistrerEditionApercu(){
+  var q = document.getElementById('apercu-edit-q').value;
+  var opts = BANQUE_GENERALE[apercuBanqueIndex].opts.map(function(o,i){ return document.getElementById('apercu-edit-opt-'+i).value; });
+  var bon = Number(document.querySelector('input[name=apercu-edit-bon]:checked').value);
+  BANQUE_GENERALE[apercuBanqueIndex].q = q;
+  BANQUE_GENERALE[apercuBanqueIndex].opts = opts;
+  BANQUE_GENERALE[apercuBanqueIndex].bon = bon;
+  editionApercuActive = false;
+  selectScreen('apercu-banque');
+}
+subScreens['apercu-banque'] = function(){
+  var b = BANQUE_GENERALE[apercuBanqueIndex];
+  if (editionApercuActive) {
+    return '<div class="h-title">Modifier la question</div>'
+      + '<div class="card" style="margin-bottom:14px;">'
+        + '<span class="field-label">Question</span><input type="text" id="apercu-edit-q" value="'+b.q+'"/>'
+        + '<span class="field-label">4 propositions (coche la bonne)</span>'
+        + b.opts.map(function(o,i){return '<div class="row" style="margin-bottom:6px;"><input type="radio" name="apercu-edit-bon" value="'+i+'" '+(i===b.bon?'checked':'')+'/><input type="text" id="apercu-edit-opt-'+i+'" value="'+o+'" style="margin-bottom:0;flex:1;"/></div>';}).join('')
+      + '</div>'
+      + '<button onclick="enregistrerEditionApercu()" class="btn" style="margin-bottom:8px;">Enregistrer dans la banque</button>'
+      + '<button onclick="toggleEditionApercu()" class="btn-outline">Annuler</button>';
+  }
+  return '<div class="h-title">Aperçu</div>'
+    + '<div class="card" style="margin-bottom:14px;">'
+      + '<div class="row" style="justify-content:space-between;margin-bottom:8px;">'
+        + '<span style="font-size:9.5px;font-weight:800;color:var(--pp);text-transform:uppercase;">'+b.mat+'</span>'
+        + '<button onclick="toggleEditionApercu()" style="border:none;background:none;cursor:pointer;color:var(--pp);">'+icon('M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z',{w:14,stroke:'var(--pp)'})+'</button>'
+      + '</div>'
+      + '<div style="font-size:13px;font-weight:800;margin-bottom:6px;">'+b.q+'</div>'
+      + '<div style="font-size:9.5px;font-weight:800;color:var(--ink3);text-transform:uppercase;margin-top:8px;">4 propositions</div>'
+      + afficheOptions(b.opts, b.bon)
+    + '</div>'
+    + '<button onclick="ajouterEtRevenirBanque('+apercuBanqueIndex+')" class="btn">Ajouter à ce quiz</button>';
+};
+function legende(paires){
+  return '<div style="display:flex;gap:14px;margin-bottom:8px;">' + paires.map(function(p){
+    return '<span style="display:flex;align-items:center;gap:5px;font-size:9.5px;font-weight:700;color:var(--ink3);"><span style="width:8px;height:8px;border-radius:3px;background:'+p[0]+';display:inline-block;"></span>'+p[1]+'</span>';
+  }).join('') + '</div>';
+}
+var AUTRES_CLASSES = [{nom:'Tale Bac Pro Vente', score:340, moi:true}, {nom:'Tale Bac Pro Commerce', score:298, moi:false}, {nom:'1re Bac Pro Vente', score:265, moi:false}];
+
+function toggleStatutParticipant(classeId, pseudo){
+  var p = PARTICIPANTS_PAR_CLASSE[classeId].filter(function(x){return x.pseudo===pseudo;})[0];
+  if (!p) return;
+  p.statut = p.statut === 'actif' ? 'suspendu' : 'actif';
+  selectScreen('detail-classe-'+classeId);
+}
+function supprimerParticipant(classeId, pseudo){
+  PARTICIPANTS_PAR_CLASSE[classeId] = PARTICIPANTS_PAR_CLASSE[classeId].filter(function(x){return x.pseudo!==pseudo;});
+  selectScreen('detail-classe-'+classeId);
+}
+function ouvrirFicheEleve(classeId, pseudo){ selectScreen('fiche-eleve-'+classeId+'-'+pseudo); }
+
+function enregistrerEcransClasse(c){
+  subScreens['detail-classe-'+c.id] = function(){
+    var participants = PARTICIPANTS_PAR_CLASSE[c.id] || [];
+    var actifs = participants.filter(function(p){return p.statut==='actif';});
+    var ecart = actifs.length ? Math.max.apply(null, actifs.map(function(e){return e.pts;})) - Math.min.apply(null, actifs.map(function(e){return e.pts;})) : 0;
+    var html = '<div class="h-title">'+c.nom+'</div>'
+
+      + '<div class="card" style="text-align:center;margin-bottom:12px;">'
+        + '<div style="font-size:10px;color:var(--ink3);margin-bottom:8px;">Room ouverte en continu — les élèves rejoignent avec ce code</div>'
+        + '<div style="border:1px solid var(--line);border-radius:12px;padding:8px;display:inline-block;margin-bottom:8px;"><svg viewBox="0 0 110 110" style="width:90px;height:90px;">'+qrPattern(c.id)+'</svg></div>'
+        + '<div style="font-family:monospace;font-size:14px;font-weight:800;letter-spacing:.1em;">'+c.code+'</div>'
+      + '</div>'
+
+      + '<div class="sec-title">Participants ('+actifs.length+' actif(s) sur '+participants.length+')</div>'
+      + participants.map(function(p){
+          var suspendu = p.statut === 'suspendu';
+          return '<div class="card row" style="margin-bottom:8px;'+(suspendu?'opacity:.55;':'')+'">'
+            + '<button onclick="ouvrirFicheEleve(\''+c.id+'\',\''+p.pseudo+'\')" style="flex:1;display:flex;align-items:center;gap:9px;border:none;background:none;padding:0;text-align:left;cursor:pointer;font-family:inherit;">'
+              + '<div class="icon-sq" style="width:28px;height:28px;background:'+(suspendu?'var(--ink3)':'var(--pp)')+';font-size:11px;font-weight:800;">'+p.pseudo[0]+'</div>'
+              + '<div><div style="font-size:11.5px;font-weight:700;">'+p.pseudo+'</div><div style="font-size:9.5px;color:var(--ink3);">'+p.pts+' pts'+(suspendu?' · suspendu':'')+'</div></div>'
+            + '</button>'
+            + '<button onclick="toggleStatutParticipant(\''+c.id+'\',\''+p.pseudo+'\')" title="'+(suspendu?'Réactiver':'Suspendre')+'" style="border:none;background:none;cursor:pointer;color:'+(suspendu?'var(--gr)':'var(--am)')+';padding:4px;">'+icon(suspendu?ICONS.check:'M10 15v-4M14 15v-4M4 7h16M6 7l1-3h10l1 3m-1 0v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7',{w:15})+'</button>'
+            + '<button onclick="supprimerParticipant(\''+c.id+'\',\''+p.pseudo+'\')" title="Supprimer" style="border:none;background:none;cursor:pointer;color:var(--re);padding:4px;">'+icon('M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6',{w:15})+'</button>'
+          + '</div>';
+        }).join('')
+      + (participants.length===0 ? '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:14px;">Personne n\'a encore rejoint cette room.</div>' : '')
+
+      + '<div class="card" style="margin-bottom:10px;margin-top:6px;">'
+        + '<div class="sec-title">Progression de la classe</div>'
+        + legende([['var(--pp)','Cette classe'],['var(--ppln)','Semaine précédente']])
+        + svgCourbe([
+            {couleur:'#534AB7', valeurs:[40,55,48,70,62,74]},
+            {couleur:'#CECBF6', valeurs:[35,42,44,50,52,58]}
+          ], ['S1','S2','S3','S4','S5','S6'])
+      + '</div>'
+
+      + '<div class="card" style="margin-bottom:10px;">'
+        + '<div class="sec-title">Écart entre élèves : '+ecart+' pts</div>'
+        + actifs.map(function(e){ return ligneSparklineEleve(e.pseudo, e.pts+' pts', e.progression); }).join('')
+      + '</div>'
+
+      + '<div class="card">'
+        + '<div class="sec-title">Cette classe parmi les autres</div>'
+        + AUTRES_CLASSES.map(function(a){
+            return '<div class="row" style="padding:5px 0;"><span style="flex:1;font-size:11px;font-weight:'+(a.moi?'800':'700')+';color:'+(a.moi?'var(--pp)':'var(--ink2)')+';">'+a.nom+(a.moi?' (cette classe)':'')+'</span><span style="font-size:11px;font-weight:800;">'+a.score+'</span></div>';
+          }).join('')
+      + '</div>';
+    return html;
+  };
+
+  (PARTICIPANTS_PAR_CLASSE[c.id] || []).forEach(function(p){
+    subScreens['fiche-eleve-'+c.id+'-'+p.pseudo] = function(){
+      var couleur = p.progression >= 0 ? 'var(--gr)' : 'var(--re)';
+      var html = '<div class="row" style="margin-bottom:14px;">'
+        + '<div class="icon-sq" style="width:40px;height:40px;background:var(--pp);font-size:15px;font-weight:800;">'+p.pseudo[0]+'</div>'
+        + '<div><div class="h-title" style="margin:0;font-size:16px;">'+p.pseudo+'</div><div style="font-size:10px;color:var(--ink3);">'+c.nom+' · '+p.statut+'</div></div>'
+      + '</div>'
+      + '<div style="display:flex;gap:8px;margin-bottom:12px;">'
+        + '<div class="card" style="flex:1;text-align:center;padding:10px;"><div class="kpi-v" style="font-size:15px;">'+p.pts+'</div><div class="kpi-l">POINTS</div></div>'
+        + '<div class="card" style="flex:1;text-align:center;padding:10px;"><div class="kpi-v" style="font-size:15px;color:'+couleur+';">'+(p.progression>=0?'+':'')+p.progression+'%</div><div class="kpi-l">PROGRESSION</div></div>'
+      + '</div>'
+      + '<div class="card" style="margin-bottom:10px;">'
+        + '<div class="sec-title">Courbe de progression</div>'
+        + svgCourbe([{couleur:'#534AB7', valeurs:genererTendance(p.progression)}], ['S1','S2','S3','S4'])
+      + '</div>'
+      + '<div class="card">'
+        + '<div class="sec-title">Quiz répondus</div>'
+        + (p.quizFaits.length ? p.quizFaits.map(function(q){
+            return '<div class="row" style="justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);"><div><div style="font-size:11px;font-weight:700;">'+q.titre+'</div><div style="font-size:9px;color:var(--ink3);">'+q.quand+'</div></div><div style="text-align:right;"><div style="font-size:10.5px;font-weight:800;">'+q.score+'</div><div style="font-size:9px;color:var(--gr);font-weight:700;">'+q.pts+'</div></div></div>';
+          }).join('') : '<div style="font-size:10.5px;color:var(--ink3);">Aucun quiz répondu pour l\'instant.</div>')
+      + '</div>';
+      return html;
+    };
+  });
+}
+CLASSES.forEach(enregistrerEcransClasse);
+subScreens['nouveau-quiz'] = screenNouveauQuiz;
+subScreens['publier-quiz'] = screenPublierQuiz;
+subScreens['room-ouverture'] = screenRoom;
+
+// ---------- Cagnotte : budget pur, rien d'autre ----------
+function screenCagnotte(){
+  var restant = CAGNOTTE_PROF.total - CAGNOTTE_PROF.depense;
+  var pct = Math.round((CAGNOTTE_PROF.depense / CAGNOTTE_PROF.total) * 100);
+  return '<div class="h-title">Cagnotte</div>'
+    + '<div class="card" style="margin-bottom:12px;">'
+      + '<div class="row" style="justify-content:space-between;margin-bottom:6px;"><span style="font-size:9.5px;font-weight:800;color:var(--ink3);text-transform:uppercase;">Budget global</span><span style="font-size:11px;font-weight:800;">'+restant+' / '+CAGNOTTE_PROF.total+' pts restants</span></div>'
+      + '<div style="height:8px;background:var(--bg);border-radius:99px;overflow:hidden;margin-bottom:6px;"><div style="height:100%;width:'+pct+'%;background:var(--pp);"></div></div>'
+      + '<div style="font-size:10px;color:var(--ink3);">Cette cagnotte est commune à toutes tes classes — pas une par élève.</div>'
+    + '</div>'
+    + '<div class="sec-title">Dépense par classe</div>'
+    + Object.keys(CAGNOTTE_PROF.parClasse).map(function(cid){
+        var c = CLASSES.filter(function(x){return x.id===cid;})[0];
+        if (!c) return '';
+        return '<div class="row card" style="margin-bottom:6px;padding:8px 11px;"><span style="flex:1;font-size:11px;font-weight:700;">'+c.nom+'</span><span style="font-size:11px;font-weight:800;color:var(--pp);">'+CAGNOTTE_PROF.parClasse[cid]+' pts</span></div>';
+      }).join('')
+    + '<button onclick="selectScreen(\'distribution-manuelle\')" class="btn-outline" style="margin-top:10px;">Distribution manuelle ponctuelle</button>';
+}
+
+// ---------- Accueil : gamifié, même esprit que le hub élève ----------
+var STATS_PROF = { quizPublies: 14, classesTouchees: 2 };
+function kpiCardProf(couleur, path, valeur, label, target){
+  return '<button onclick="selectScreen(\''+target+'\')" class="card kpi" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;font-family:inherit;cursor:pointer;padding:14px 8px;flex:1;">'
+    + '<div class="icon-sq" style="width:34px;height:34px;background:'+couleur+';">'+icon(path,{w:16,stroke:'white'})+'</div>'
+    + '<div class="kpi-v">'+valeur+'</div><div class="kpi-l">'+label+'</div></button>';
+}
+function screenAccueilProf(){
+  var restant = CAGNOTTE_PROF.total - CAGNOTTE_PROF.depense;
+  var activiteRecente = [
+    {titre:'Le mouvement ouvrier', classe:'Tale Bac Pro Vente', quand:'Il y a 2 jours', pts:'+280 pts distribués'},
+    {titre:'Institutions politiques', classe:'1re Bac Pro Vente', quand:'Il y a 5 jours', pts:'+310 pts distribués'},
+    {titre:'La sécurité alimentaire', classe:'Tale Bac Pro Vente', quand:'Il y a 1 semaine', pts:'+195 pts distribués'}
+  ];
+  return '<div class="h-greet">Bonjour</div>'
+    + '<div class="h-title">On publie ?</div>'
+    + '<div style="display:flex;gap:8px;margin-bottom:14px;">'
+      + kpiCardProf('var(--pp)', ICONS.quiz, STATS_PROF.quizPublies, 'QUIZ', 'statistiques')
+      + kpiCardProf('var(--bl)', ICONS.classe, CLASSES.length, 'CLASSES', 'classes')
+      + kpiCardProf('var(--gold)', ICONS.cagnotte, restant, 'CAGNOTTE', 'cagnotte')
+    + '</div>'
+    + '<button onclick="selectScreen(\'nouveau-quiz\')" class="btn" style="margin-bottom:10px;">'+icon(ICONS.plus,{w:14,stroke:'white'})+' Créer un défi</button>'
+    + '<button onclick="selectScreen(\'statistiques\')" class="btn-outline" style="margin-bottom:18px;">Voir les statistiques</button>'
+    + '<div class="sec-title">Activité récente</div>'
+    + activiteRecente.map(function(a){
+        return '<button onclick="selectScreen(\'statistiques\')" class="card" style="margin-bottom:8px;width:100%;text-align:left;font-family:inherit;cursor:pointer;">'
+          + '<div class="row" style="justify-content:space-between;margin-bottom:3px;"><span style="font-size:11.5px;font-weight:800;">'+a.titre+'</span><span style="font-size:9px;color:var(--ink3);">'+a.quand+'</span></div>'
+          + '<div style="font-size:10px;color:var(--ink3);">'+a.classe+' · <span style="color:var(--gr);font-weight:700;">'+a.pts+'</span></div>'
+        + '</button>';
+      }).join('');
+}
+subScreens['distribution-manuelle'] = function(){
+  return '<div class="h-title">Distribution manuelle</div>'
+    + '<div style="display:flex;gap:6px;margin-bottom:14px;">'
+      + '<button class="chip active" style="flex:1;justify-content:center;">Un élève</button>'
+      + '<button class="chip" style="flex:1;justify-content:center;">Toute la classe</button>'
+    + '</div>'
+    + '<span class="field-label">Pseudo</span><input type="text" placeholder="Ex : Mailys"/>'
+    + '<span class="field-label">Points</span><input type="text" placeholder="20"/>'
+    + '<button class="btn">Générer le QR de remise</button>';
+};
+var REGLES_JEU = { pointsBonneReponse: 10, bonusStreak: 2, nbReponsesParDefaut: 4, nbQuestionsParDefaut: 5, dureeParDefaut: 15 };
+var REGLES_DISTRIB = { parClasse: 500, ajustementEcart: 15, pointsProgression: 25 };
+function majRegleJeu(champ, val){ REGLES_JEU[champ] = Number(val); selectScreen('parametres'); }
+function majRegleDistrib(champ, val){ REGLES_DISTRIB[champ] = Number(val); selectScreen('parametres'); }
+function screenParametres(){
+  return '<div class="h-title">Réglages du jeu</div>'
+
+    + '<div class="sec-title" style="margin-top:2px;">Mécanique des quiz</div>'
+    + '<div class="card" style="margin-bottom:8px;"><span class="field-label">Points par bonne réponse</span><input type="text" value="'+REGLES_JEU.pointsBonneReponse+'" oninput="majRegleJeu(\'pointsBonneReponse\', this.value)"/></div>'
+    + '<div class="card" style="margin-bottom:8px;"><span class="field-label">Bonus streak</span><input type="text" value="'+REGLES_JEU.bonusStreak+'" oninput="majRegleJeu(\'bonusStreak\', this.value)"/></div>'
+    + '<div class="card" style="margin-bottom:8px;"><span class="field-label">Nombre de réponses par défaut</span><input type="text" value="'+REGLES_JEU.nbReponsesParDefaut+'" oninput="majRegleJeu(\'nbReponsesParDefaut\', this.value)"/></div>'
+    + '<div class="card" style="margin-bottom:8px;"><span class="field-label">Nombre de questions par défaut</span><input type="text" value="'+REGLES_JEU.nbQuestionsParDefaut+'" oninput="majRegleJeu(\'nbQuestionsParDefaut\', this.value)"/></div>'
+    + '<div class="card" style="margin-bottom:14px;"><span class="field-label">Durée par question (s)</span><input type="text" value="'+REGLES_JEU.dureeParDefaut+'" oninput="majRegleJeu(\'dureeParDefaut\', this.value)"/></div>'
+
+    + '<div class="sec-title">Règles de distribution de la cagnotte</div>'
+    + '<div class="card" style="margin-bottom:8px;">'
+      + '<div class="row" style="justify-content:space-between;"><span style="font-size:11px;font-weight:700;">Points alloués par classe</span><span style="font-size:11px;font-weight:800;color:var(--pp);">'+REGLES_DISTRIB.parClasse+' pts</span></div>'
+      + '<input type="range" min="0" max="1000" step="10" value="'+REGLES_DISTRIB.parClasse+'" oninput="majRegleDistrib(\'parClasse\', this.value)" style="width:100%;margin-top:6px;"/>'
+    + '</div>'
+    + '<div class="card" style="margin-bottom:8px;">'
+      + '<div class="row" style="justify-content:space-between;"><span style="font-size:11px;font-weight:700;">Ajustement selon l\'écart entre élèves</span><span style="font-size:11px;font-weight:800;color:var(--pp);">'+REGLES_DISTRIB.ajustementEcart+' pts</span></div>'
+      + '<div style="font-size:9.5px;color:var(--ink3);margin-top:2px;">Points bonus pour resserrer les écarts de la classe</div>'
+      + '<input type="range" min="0" max="100" step="5" value="'+REGLES_DISTRIB.ajustementEcart+'" oninput="majRegleDistrib(\'ajustementEcart\', this.value)" style="width:100%;margin-top:6px;"/>'
+    + '</div>'
+    + '<div class="card">'
+      + '<div class="row" style="justify-content:space-between;"><span style="font-size:11px;font-weight:700;">Points de progression</span><span style="font-size:11px;font-weight:800;color:var(--pp);">'+REGLES_DISTRIB.pointsProgression+' pts</span></div>'
+      + '<div style="font-size:9.5px;color:var(--ink3);margin-top:2px;">Récompense automatique quand un élève progresse</div>'
+      + '<input type="range" min="0" max="100" step="5" value="'+REGLES_DISTRIB.pointsProgression+'" oninput="majRegleDistrib(\'pointsProgression\', this.value)" style="width:100%;margin-top:6px;"/>'
+    + '</div>';
+}
+
+// ---------- Navigation ----------
+var items = [
+  {k:'accueil', label:'Accueil', icon:ICONS.home, render:screenAccueilProf},
+  {k:'classes', label:'Classes', icon:ICONS.classe, render:screenClasses},
+  {k:'cagnotte', label:'Cagnotte', icon:ICONS.cagnotte, render:screenCagnotte},
+  {k:'parametres', label:'Réglages', icon:ICONS.reglages, render:screenParametres}
+];
+var current='accueil', activeSub=null;
+function isMainItem(k){return items.some(function(i){return i.k===k;});}
+function findScreen(k){var it=items.filter(function(i){return i.k===k;})[0];if(it)return it;if(subScreens[k])return{k:k,render:subScreens[k]};return items[0];}
+function iconSvg(p,a){return icon(p,{w:15,stroke:a?'#534AB7':'#6B7094'});}
+function boutonDefiRaccourci(dense){
+  var actif = activeSub==='nouveau-quiz';
+  var classe = dense ? ('bnav-item'+(actif?' active':'')) : (actif?'active':'');
+  var styleDesktop = dense ? '' : 'display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:9px;border:none;text-align:left;cursor:pointer;width:100%;font-size:11.5px;font-weight:700;background:'+(actif?'var(--ppbg)':'transparent')+';color:'+(actif?'var(--pp)':'var(--ink2)')+';font-family:inherit;margin-bottom:1px;';
+  return '<button class="'+classe+'" onclick="selectScreen(\'nouveau-quiz\')" style="'+styleDesktop+'">'+iconSvg(ICONS.sword,actif)+'<span>Défi</span></button>';
+}
+function renderDesktopNav(){
+  var html = items.slice(0,2).map(function(it){var a=it.k===current&&!activeSub;return '<button class="'+(a?'active':'')+'" onclick="selectScreen(\''+it.k+'\')">'+iconSvg(it.icon,a)+'<span>'+it.label+'</span></button>';}).join('');
+  html += boutonDefiRaccourci(false);
+  html += items.slice(2).map(function(it){var a=it.k===current&&!activeSub;return '<button class="'+(a?'active':'')+'" onclick="selectScreen(\''+it.k+'\')">'+iconSvg(it.icon,a)+'<span>'+it.label+'</span></button>';}).join('');
+  document.getElementById('desktop-nav').innerHTML = html;
+}
+function renderDesktopScreen(){document.getElementById('desktop-screen').innerHTML=findScreen(activeSub||current).render();}
+function renderBottomNav(){
+  var html = items.slice(0,2).map(function(it){var a=it.k===current&&!activeSub;return '<button class="bnav-item'+(a?' active':'')+'" onclick="selectScreen(\''+it.k+'\')">'+iconSvg(it.icon,a)+'<span>'+it.label+'</span></button>';}).join('');
+  html += boutonDefiRaccourci(true);
+  html += items.slice(2).map(function(it){var a=it.k===current&&!activeSub;return '<button class="bnav-item'+(a?' active':'')+'" onclick="selectScreen(\''+it.k+'\')">'+iconSvg(it.icon,a)+'<span>'+it.label+'</span></button>';}).join('');
+  document.getElementById('bottom-nav').innerHTML = html;
+}
+function renderMobileScreenContent(){document.getElementById('mobile-screen').innerHTML=findScreen(activeSub||current).render();}
+function updateChrome(){var b=!!activeSub;document.getElementById('back-btn').style.display=b?'block':'none';document.getElementById('desktop-topbar').style.display=b?'flex':'none';}
+function goBack(){if(activeSub){activeSub=null;renderMobileScreenContent();renderDesktopScreen();updateChrome();}}
+function selectScreen(k){if(isMainItem(k)){current=k;activeSub=null;}else{activeSub=k;}renderDesktopNav();renderDesktopScreen();renderBottomNav();renderMobileScreenContent();updateChrome();}
+function setMode(m){document.getElementById('frame-mobile').style.display=m==='mobile'?'flex':'none';document.getElementById('frame-desktop').style.display=m==='desktop'?'block':'none';document.getElementById('btn-mobile').className=m==='mobile'?'active':'';document.getElementById('btn-desktop').className=m==='desktop'?'active':'';}
+
+renderDesktopNav();renderDesktopScreen();renderBottomNav();renderMobileScreenContent();updateChrome();setMode('mobile');
+</script>
+</body>
+</html>

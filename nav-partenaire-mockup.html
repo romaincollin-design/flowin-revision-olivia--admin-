@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flowin Révision — maquette espace partenaire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; min-width: 0; }
+  html { }
+  body { margin: 0; font-family: 'DM Sans', system-ui, sans-serif; background: #FAFAFC; color: var(--ink); padding: 16px 6px; min-height: 100vh; }
+  :root {
+    --pp: #534AB7; --ppbg: #EEEDFE; --ppln: #CECBF6;
+    --ink: #14162A; --ink2: #3D3F5C; --ink3: #6B7094;
+    --line: #E4E3F0; --bg: #F5F3FF; --gold: #E0A800; --am: #C27C0A; --ambg:#FBEEDA;
+    --gr: #0E9E6E; --grbg:#E3F7EF; --re: #D63050; --bl:#1E6FCC; --surf:#FDFBFF;
+  }
+  .wrap { max-width: 900px; width: 100%; box-sizing: border-box; margin: 0 auto; }
+  .title { font-size: 13px; font-weight: 700; color: var(--ink3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+  .subtitle { font-size: 20px; font-weight: 800; margin-bottom: 20px; }
+  .toggle { display: flex; gap: 8px; margin-bottom: 24px; max-width: 320px; }
+  .toggle button { flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid var(--line); background: white; color: var(--ink3); font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; }
+  .toggle button.active { border-color: var(--ppln); background: var(--ppbg); color: var(--pp); }
+
+  #phone-wrap { width: 100%; max-width: 300px; margin: 0 auto; }
+  #frame-mobile { width: 100%; aspect-ratio: 300 / 580; border: 7px solid var(--ink); border-radius: 36px; overflow: hidden; background: var(--bg); position: relative; box-shadow: 0 20px 50px -20px rgba(20,20,45,.3); display: flex; flex-direction: column; }
+  .notch { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 100px; height: 22px; background: var(--ink); border-radius: 12px; z-index: 5; }
+  .statusbar { padding: 14px 22px 3px; display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 700; background: white; flex-shrink: 0; }
+  .mtop { background: white; border-bottom: 1px solid var(--line); padding: 10px 14px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .mtop .brand { flex: 1; }
+  .brand { display: flex; align-items: center; gap: 7px; }
+  .brand-icon { width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(135deg,#5B52C9,#7F77DD); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .brand-name { font-weight: 700; font-size: 12px; }
+  #mobile-screen { padding: 14px 12px; flex: 1; overflow-y: auto; }
+  #bottom-nav { display: flex; background: white; border-top: 1px solid var(--line); flex-shrink: 0; padding: 5px 2px 8px; }
+  .bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; border: none; background: transparent; padding: 5px 2px; cursor: pointer; font-family: inherit; }
+  .bnav-item span { font-size: 8px; font-weight: 700; color: var(--ink3); }
+  .bnav-item.active span { color: var(--pp); }
+  .navlist-item { display: flex; align-items: center; gap: 12px; padding: 12px 10px; border-radius: 12px; border: none; background: transparent; width: 100%; text-align: left; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 700; color: var(--ink2); margin-bottom: 2px; }
+  .navlist-item.active { background: var(--ppbg); color: var(--pp); }
+
+  #frame-desktop { display: none; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 50px -20px rgba(20,20,45,.15); }
+  .dlayout { display: flex; min-height: 560px; }
+  .sidebar { width: 180px; background: white; border-right: 1px solid var(--line); padding: 16px 11px; display: flex; flex-direction: column; flex-shrink: 0; }
+  .sidebar .brand { padding: 0 7px 20px; }
+  #desktop-topbar { display:none; align-items:center; gap:8px; padding:16px 24px 0; }
+  #desktop-screen { padding: 24px; background: var(--bg); }
+  .desktop-footer { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 9px; }
+
+  nav button { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; border: none; text-align: left; cursor: pointer; width: 100%; font-size: 12.5px; font-weight: 700; background: transparent; color: var(--ink2); font-family: inherit; margin-bottom: 1px; }
+  nav button.active { background: var(--ppbg); color: var(--pp); }
+
+  .note { margin-top: 24px; font-size: 12.5px; color: var(--ink3); max-width: 700px; line-height: 1.6; }
+
+  .card { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 13px; }
+  .row { display: flex; align-items: center; gap: 9px; }
+  .icon-sq { border-radius: 11px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; }
+  .h-title { font-size: 18px; font-weight: 800; margin: 0 0 12px; }
+  .sec-title { font-size: 12.5px; font-weight: 800; margin-bottom: 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; border: 1.5px solid var(--line); border-radius: 999px; padding: 5px 11px; font-size: 10.5px; font-weight: 700; color: var(--ink2); background:white; font-family:inherit; cursor:pointer; }
+  .chip.active { border-color: var(--ppln); background: var(--ppbg); color: var(--pp); }
+  .badge { font-size: 9px; font-weight: 800; padding: 3px 9px; border-radius: 999px; }
+  .field-label { font-size: 9.5px; font-weight: 800; color: var(--ink3); text-transform: uppercase; margin-bottom: 4px; display:block; }
+  input[type=text], input[type=email], input[type=password], input[type=number], textarea {
+    width: 100%; border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 11px; font-size: 12px; font-family: inherit; margin-bottom: 12px;
+  }
+  .btn-primary { display:block; width:100%; background:var(--pp); color:white; font-weight:800; font-size:12.5px; padding:12px; border-radius:12px; border:none; font-family:inherit; cursor:pointer; }
+  .btn-outline { display:block; width:100%; border:1.5px solid var(--line); color:var(--ink2); background:transparent; font-weight:700; font-size:11.5px; padding:10px; border-radius:12px; font-family:inherit; cursor:pointer; }
+  svg.i { display: block; }
+  @keyframes popin { from { opacity:0; transform:scale(.92); } to { opacity:1; transform:scale(1); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title">Flowin Révision</div>
+  <div class="subtitle">Maquette navigable — espace partenaire</div>
+
+  <div class="toggle">
+    <button id="btn-mobile" class="active" onclick="setMode('mobile')">Mobile</button>
+    <button id="btn-desktop" onclick="setMode('desktop')">Desktop</button>
+  </div>
+
+  <div id="phone-wrap">
+  <div id="frame-mobile">
+    <div class="notch"></div>
+    <div class="statusbar">
+      <span>9:41</span>
+      <span style="display:flex; align-items:center; gap:4px;">
+        <svg viewBox="0 0 18 12" width="14" height="10"><rect x="0" y="7" width="3" height="5" rx="0.5" fill="var(--ink)"/><rect x="4.5" y="5" width="3" height="7" rx="0.5" fill="var(--ink)"/><rect x="9" y="3" width="3" height="9" rx="0.5" fill="var(--ink)"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="var(--ink)"/></svg>
+        <svg viewBox="0 0 24 12" width="18" height="9"><rect x="1" y="1" width="19" height="10" rx="2.5" stroke="var(--ink)" stroke-width="1" fill="none"/><rect x="2.5" y="2.5" width="15" height="7" rx="1.2" fill="var(--ink)"/></svg>
+      </span>
+    </div>
+    <div id="mtop-row" class="mtop">
+      <button id="back-btn" onclick="goBack()" aria-label="Retour" style="border:none;background:none;padding:4px;cursor:pointer;display:none;">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="brand" id="brand-block">
+        <div class="brand-icon"><svg viewBox="0 0 24 24" width="12" height="12" fill="white"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg></div>
+        <span class="brand-name">Partenaire</span>
+      </div>
+    </div>
+    <div id="mobile-screen"></div>
+    <div id="bottom-nav"></div>
+  </div>
+  </div>
+
+  <div id="frame-desktop">
+    <div class="dlayout">
+      <div class="sidebar">
+        <div class="brand"><div class="brand-icon"><svg viewBox="0 0 24 24" width="12" height="12" fill="white"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg></div><span class="brand-name">Partenaire</span></div>
+        <nav id="desktop-nav"></nav>
+        <div class="desktop-footer"><div class="icon-sq" style="width:26px;height:26px;background:var(--bl);font-size:10px;font-weight:800;">A</div><span style="font-size:11px;font-weight:700;">Aqua Splash</span></div>
+      </div>
+      <div style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+        <div id="desktop-topbar">
+          <button id="back-btn-desktop" onclick="goBack()" aria-label="Retour" style="border:none;background:var(--ppbg);color:var(--pp);padding:6px 10px;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;font-size:12px;display:flex;align-items:center;gap:5px;">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            Retour
+          </button>
+        </div>
+        <div id="desktop-screen" style="flex:1; overflow-y:auto;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">Reproduction fidèle de <code>PartenaireLotsView.tsx</code> et <code>ScanLotView.tsx</code> — les éléments marqués « nouveauté proposée » n'existent pas encore dans le vrai code.</div>
+</div>
+
+<script>
+function icon(path, extra) {
+  return '<svg class="i" viewBox="0 0 24 24" width="'+(extra&&extra.w||18)+'" height="'+(extra&&extra.w||18)+'" fill="none" stroke="'+(extra&&extra.stroke||'currentColor')+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="'+path+'"/></svg>';
+}
+function qrPattern(seed) {
+  var h = 0;
+  for (var i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  var cells = [];
+  for (var y = 0; y < 11; y++) for (var x = 0; x < 11; x++) {
+    var on = ((h >> ((x * y + x + y) % 24)) & 1) === 1 || (x < 3 && y < 3) || (x > 7 && y < 3) || (x < 3 && y > 7);
+    if (on) cells.push('<rect x="'+(x*10)+'" y="'+(y*10)+'" width="10" height="10" fill="#14162A"/>');
+  }
+  return cells.join('');
+}
+var ICONS = {
+  gift:'M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7',
+  scan:'M3 7V4a1 1 0 0 1 1-1h3M21 7V4a1 1 0 0 0-1-1h-3M3 17v3a1 1 0 0 0 1 1h3M21 17v3a1 1 0 0 1-1 1h-3M4 12h16',
+  home:'M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
+  user:'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+  chevron:'M9 18l6-6-6-6',
+  plus:'M12 5v14M5 12h14',
+  upload:'M12 16V4m0 0L7 9m5-5 5 5M5 20h14',
+  check:'M20 6 9 17l-5-5',
+  mail:'M4 4h16v16H4zM22 6l-10 7L2 6'
+};
+
+var RUBRIQUES = [
+  {key:'sport_sante', label:'Sport et santé', couleur:'var(--re)', icon:'M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5zM16 8 2 22M17.5 15H9'},
+  {key:'culture', label:'Culture', couleur:'var(--bl)', icon:'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z'},
+  {key:'restauration', label:'Restauration', couleur:'var(--am)', icon:'M3 2v7c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7'},
+  {key:'permis', label:'Permis de conduire', couleur:'var(--gr)', icon:'M5 17h14M5 17a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm14 0a2 2 0 1 1 0 4 2 2 0 0 1 0-4zM5 17l1.5-6h11L19 17M6.5 11l1-4h9l1 4'},
+  {key:'shopping', label:'Shopping', couleur:'#8B5CF6', icon:'M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0'}
+];
+
+// ---- État global mocké ----
+var partenaireConnecte = false;
+var logoUploade = false; // nouveauté proposée
+var PIN_ACTUEL = '1054';
+var LOTS = [
+  {id:'l1', titre:'Une entrée', categorie:'sport_sante', points:350, quantite:20, restant:14, statut:'valide'},
+  {id:'l2', titre:'Séance découverte', categorie:'sport_sante', points:500, quantite:10, restant:0, statut:'valide'},
+  {id:'l3', titre:'Bonnet de bain offert', categorie:'sport_sante', points:120, quantite:30, restant:30, statut:'attente'}
+];
+
+// ============ ÉCRAN : CONNEXION / INSCRIPTION ============
+var modeAuth = 'connexion'; // 'connexion' | 'inscription'
+function toggleModeAuth(m){ modeAuth = m; renderAll(); }
+function seConnecter(){ partenaireConnecte = true; current = 'mes-lots'; renderAll(); }
+function screenAuth(){
+  var onglet = '<div style="display:flex;gap:6px;margin-bottom:16px;">'
+    + '<button onclick="toggleModeAuth(\'connexion\')" class="chip'+(modeAuth==='connexion'?' active':'')+'" style="flex:1;justify-content:center;">Connexion</button>'
+    + '<button onclick="toggleModeAuth(\'inscription\')" class="chip'+(modeAuth==='inscription'?' active':'')+'" style="flex:1;justify-content:center;">Inscription</button>'
+  + '</div>';
+
+  if (modeAuth === 'connexion') {
+    return '<div class="h-title">Espace partenaire</div>' + onglet
+      + '<span class="field-label">Email</span><input type="email" placeholder="contact@aquasplash.fr" value="contact@aquasplash.fr"/>'
+      + '<span class="field-label">Mot de passe</span><input type="password" placeholder="••••••••" value="••••••••"/>'
+      + '<button onclick="seConnecter()" class="btn-primary">Se connecter</button>'
+      + '<div style="text-align:center;margin-top:10px;"><a style="font-size:11px;color:var(--pp);font-weight:700;cursor:pointer;" onclick="selectScreen(\'mdp-oublie\')">Mot de passe oublié ?</a></div>';
+  }
+  return '<div class="h-title">Devenir partenaire</div>' + onglet
+    + '<span class="field-label">Nom du commerce</span><input type="text" placeholder="Aqua Splash"/>'
+    + '<span class="field-label">Email de contact</span><input type="email" placeholder="contact@aquasplash.fr"/>'
+    + '<span class="field-label">Mot de passe</span><input type="password" placeholder="Choisis un mot de passe"/>'
+    + '<span class="field-label">Catégorie principale</span>'
+    + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">'
+      + RUBRIQUES.map(function(r){return '<span class="chip">'+r.label+'</span>';}).join('')
+    + '</div>'
+    + '<div style="font-size:10px;color:var(--ink3);background:var(--bg);border-radius:9px;padding:9px 10px;margin-bottom:12px;">Ton compte est créé immédiatement. Tes premiers lots devront être validés par la SA avant d\'être visibles des élèves.</div>'
+    + '<button onclick="seConnecter()" class="btn-primary">Créer mon compte</button>';
+}
+
+// ============ ÉCRAN : MDP OUBLIÉ (déjà validé côté élève, même logique) ============
+var mdpOublieEnvoye = false;
+function envoyerMdpOublie(){ mdpOublieEnvoye = true; selectScreen('mdp-oublie'); }
+function screenMdpOublie(){
+  if (mdpOublieEnvoye) {
+    return '<div class="card" style="text-align:center;padding:26px 16px;">'
+      + '<div style="width:44px;height:44px;border-radius:50%;background:var(--grbg);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">'+icon(ICONS.mail,{w:20,stroke:'var(--gr)'})+'</div>'
+      + '<div style="font-weight:800;font-size:12.5px;">Email envoyé</div>'
+      + '<div style="font-size:10.5px;color:var(--ink3);margin-top:4px;">Vérifie ta boîte mail — lien valable 1 heure.</div>'
+    + '</div>';
+  }
+  return '<div class="h-title">Mot de passe oublié</div>'
+    + '<span class="field-label">Ton email</span><input type="email" placeholder="contact@aquasplash.fr" value="contact@aquasplash.fr"/>'
+    + '<button onclick="envoyerMdpOublie()" class="btn-primary">Envoyer le lien</button>';
+}
+
+// ============ ÉCRAN : MES LOTS ============
+var STATUT_LABEL = {valide:'Publié', attente:'En attente', refuse:'Refusé'};
+var STATUT_BG = {valide:'var(--grbg)', attente:'var(--ambg)', refuse:'var(--line)'};
+var STATUT_FG = {valide:'var(--gr)', attente:'var(--am)', refuse:'var(--ink3)'};
+function lotCard(l){
+  var rub = RUBRIQUES.filter(function(r){return r.key===l.categorie;})[0];
+  var pct = Math.round((l.restant / l.quantite) * 100);
+  return '<button onclick="selectScreen(\'editer-lot-'+l.id+'\')" class="card" style="width:100%;text-align:left;font-family:inherit;cursor:pointer;margin-bottom:8px;">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
+      + '<span style="font-weight:800;font-size:12px;">'+l.titre+'</span>'
+      + '<span class="badge" style="background:'+STATUT_BG[l.statut]+';color:'+STATUT_FG[l.statut]+';">'+STATUT_LABEL[l.statut]+'</span>'
+    + '</div>'
+    + '<div style="font-size:10px;color:'+rub.couleur+';font-weight:700;margin-bottom:8px;">'+rub.label+' · '+l.points+' pts</div>'
+    + '<div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;margin-bottom:3px;"><span style="color:var(--ink3);">Stock</span><span style="color:var(--pp);">'+l.restant+' / '+l.quantite+'</span></div>'
+    + '<div style="height:6px;background:var(--bg);border-radius:99px;overflow:hidden;"><div style="height:100%;width:'+pct+'%;background:'+(l.restant===0?'var(--re)':'var(--pp)')+';"></div></div>'
+  + '</button>';
+}
+function screenMesLots(){
+  return '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'
+      + '<div class="h-title" style="margin:0;">Mes lots</div>'
+      + '<button onclick="selectScreen(\'creer-lot\')" style="width:32px;height:32px;border-radius:10px;background:var(--pp);color:white;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;">'+icon(ICONS.plus,{w:16,stroke:'white'})+'</button>'
+    + '</div>'
+    + LOTS.map(lotCard).join('');
+}
+
+// ============ ÉCRAN : CRÉER / ÉDITER UN LOT (avec upload logo) ============
+var lotFormTitre = '', lotFormCategorie = 'sport_sante', lotFormDesc = '', lotFormPoints = 300, lotFormQuantite = 10, lotFormSurprise = false, lotFormEditId = null;
+function ouvrirCreerLot(){ lotFormTitre=''; lotFormCategorie='sport_sante'; lotFormDesc=''; lotFormPoints=300; lotFormQuantite=10; lotFormSurprise=false; lotFormEditId=null; }
+function ouvrirEditerLot(id){
+  var l = LOTS.filter(function(x){return x.id===id;})[0];
+  if (!l) return;
+  lotFormEditId = id; lotFormTitre = l.titre; lotFormCategorie = l.categorie; lotFormDesc = ''; lotFormPoints = l.points; lotFormQuantite = l.quantite; lotFormSurprise = l.surprise || false;
+}
+function toggleLotSurpriseForm(){ lotFormSurprise = !lotFormSurprise; selectScreen(lotFormEditId ? 'editer-lot-'+lotFormEditId : 'creer-lot'); }
+function majLotForm(champ, val){ window['lotForm'+champ] = val; selectScreen(current === 'creer-lot' || activeSub === 'creer-lot' ? 'creer-lot' : 'editer-lot-'+lotFormEditId); }
+function toggleLogoUpload(){ logoUploade = !logoUploade; selectScreen(lotFormEditId ? 'editer-lot-'+lotFormEditId : 'creer-lot'); }
+function enregistrerLot(){
+  if (lotFormEditId) {
+    var l = LOTS.filter(function(x){return x.id===lotFormEditId;})[0];
+    l.titre = lotFormTitre || l.titre; l.categorie = lotFormCategorie; l.points = lotFormPoints; l.surprise = lotFormSurprise;
+    var delta = lotFormQuantite - l.quantite; l.quantite = lotFormQuantite; l.restant = Math.max(0, l.restant + delta);
+  } else {
+    LOTS.push({id:'l'+(LOTS.length+1), titre: lotFormTitre || 'Nouveau lot', categorie: lotFormCategorie, points: lotFormPoints, quantite: lotFormQuantite, restant: lotFormQuantite, surprise: lotFormSurprise, statut:'attente'});
+  }
+  selectScreen('mes-lots');
+}
+function screenLotForm(){
+  var titreEcran = lotFormEditId ? 'Modifier le lot' : 'Nouveau lot';
+  var html = '<div class="h-title">'+titreEcran+'</div>'
+    + '<span class="field-label">Logo du commerce <span style="color:var(--ink3);font-weight:400;text-transform:none;">— nouveauté proposée</span></span>'
+    + '<button onclick="toggleLogoUpload()" style="width:100%;border:1.5px dashed var(--ppln);background:var(--ppbg);border-radius:12px;padding:16px;text-align:center;font-family:inherit;cursor:pointer;margin-bottom:14px;">'
+      + (logoUploade
+          ? '<div style="width:44px;height:44px;border-radius:12px;background:var(--bl);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;margin:0 auto 6px;">A</div><span style="font-size:10.5px;font-weight:700;color:var(--gr);">Logo importé — touche pour changer</span>'
+          : icon(ICONS.upload,{w:20,stroke:'var(--pp)'}) + '<div style="font-size:10.5px;font-weight:700;color:var(--pp);margin-top:4px;">Toucher pour importer un logo</div><div style="font-size:9px;color:var(--ink3);margin-top:2px;">PNG carré, 512×512px conseillé</div>')
+    + '</button>'
+    + '<span class="field-label">Titre du lot</span><input type="text" value="'+lotFormTitre+'" oninput="lotFormTitre=this.value" placeholder="Ex : Une entrée"/>'
+    + '<span class="field-label">Catégorie</span>'
+    + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">'
+      + RUBRIQUES.map(function(r){return '<button onclick="majLotForm(\'Categorie\',\''+r.key+'\')" class="chip'+(lotFormCategorie===r.key?' active':'')+'">'+r.label+'</button>';}).join('')
+    + '</div>'
+    + '<span class="field-label">Description / conditions d\'utilisation</span><textarea rows="2" oninput="lotFormDesc=this.value" placeholder="Affiché sur le billet du gagnant">'+lotFormDesc+'</textarea>'
+    + '<div style="display:flex;gap:10px;">'
+      + '<div style="flex:1;"><span class="field-label">Points requis</span><input type="number" value="'+lotFormPoints+'" oninput="lotFormPoints=Number(this.value)"/></div>'
+      + '<div style="flex:1;"><span class="field-label">Quantité totale</span><input type="number" value="'+lotFormQuantite+'" oninput="lotFormQuantite=Number(this.value)"/></div>'
+    + '</div>'
+    + '<label style="display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:11px;color:var(--ink3);font-weight:700;cursor:pointer;">'
+      + '<input type="checkbox" onchange="toggleLotSurpriseForm()" '+(lotFormSurprise?'checked':'')+' style="accent-color:var(--pp);"/> Lot surprise (révélé seulement à la remise)'
+    + '</label>'
+    + '<button onclick="enregistrerLot()" class="btn-primary">'+(lotFormEditId ? 'Enregistrer les modifications' : 'Envoyer pour validation')+'</button>';
+  return html;
+}
+
+// ============ ÉCRAN : SCANNER (déstockage) ============
+var scanToken = '', scanPin = '', scanResultat = null, scanEnCours = false;
+function majScan(champ, val){ window['scan'+champ] = val; }
+function validerScan(){
+  scanEnCours = true;
+  selectScreen('scanner');
+  setTimeout(function(){
+    scanEnCours = false;
+    if (scanPin !== PIN_ACTUEL) {
+      scanResultat = {ok:false, erreur:'Code PIN incorrect.'};
+    } else if (scanToken.trim() === '') {
+      scanResultat = {ok:false, erreur:'QR invalide.'};
+    } else {
+      scanResultat = {ok:true, pseudo:'TestDefi1'};
+      var l = LOTS[0]; if (l.restant > 0) l.restant -= 1; // déstockage effectif au retrait, pas à l'attribution
+    }
+    selectScreen('scanner');
+  }, 700);
+}
+function nouveauScan(){ scanToken=''; scanPin=''; scanResultat=null; selectScreen('scanner'); }
+function screenScanner(){
+  if (scanEnCours) {
+    return '<div style="text-align:center;padding-top:50px;">'
+      + '<div style="width:44px;height:44px;border:3px solid var(--ppln);border-top-color:var(--pp);border-radius:50%;margin:0 auto;animation:spin .8s linear infinite;"></div>'
+      + '<style>@keyframes spin{to{transform:rotate(360deg)}}</style>'
+      + '<div style="font-size:11px;color:var(--ink3);margin-top:14px;">Vérification…</div>'
+    + '</div>';
+  }
+  if (scanResultat) {
+    if (scanResultat.ok) {
+      return '<div class="card" style="text-align:center;padding:26px 16px;animation:popin .2s ease;">'
+        + '<div style="width:48px;height:48px;border-radius:50%;background:var(--grbg);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">'+icon(ICONS.check,{w:22,stroke:'var(--gr)'})+'</div>'
+        + '<div style="font-weight:800;font-size:13px;">Lot remis à '+scanResultat.pseudo+'</div>'
+        + '<div style="font-size:10.5px;color:var(--ink3);margin-top:4px;">Stock décrémenté automatiquement.</div>'
+        + '<button onclick="nouveauScan()" class="btn-primary" style="margin-top:16px;">Scanner un autre QR</button>'
+      + '</div>';
+    }
+    return '<div class="card" style="text-align:center;padding:26px 16px;">'
+      + '<div style="width:48px;height:48px;border-radius:50%;background:#FCE4E8;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">'+icon('M18 6 6 18M6 6l12 12',{w:22,stroke:'var(--re)'})+'</div>'
+      + '<div style="font-weight:800;font-size:13px;color:var(--re);">'+scanResultat.erreur+'</div>'
+      + '<button onclick="nouveauScan()" class="btn-outline" style="margin-top:16px;">Réessayer</button>'
+    + '</div>';
+  }
+  return '<div class="h-title">Valider un lot</div>'
+    + '<span class="field-label">Code du billet (ou scan QR)</span><input type="text" placeholder="Colle ou scanne le code ici" oninput="scanToken=this.value"/>'
+    + '<span class="field-label">Ton code PIN</span><input type="text" placeholder="Code à 4 chiffres" oninput="scanPin=this.value"/>'
+    + '<button onclick="validerScan()" class="btn-primary">Valider et déstocker</button>';
+}
+
+// ============ ÉCRAN : PROFIL (PIN) ============
+var pinModalOuvert = false, nouveauPinSaisi = '';
+function ouvrirPinModal(){ pinModalOuvert = true; nouveauPinSaisi=''; selectScreen('profil'); }
+function fermerPinModal(){ pinModalOuvert = false; selectScreen('profil'); }
+function validerNouveauPin(){ if (nouveauPinSaisi.length>=4) { PIN_ACTUEL = nouveauPinSaisi; pinModalOuvert=false; selectScreen('profil'); } }
+function screenProfil(){
+  var html = '<div class="h-title">Aqua Splash</div>'
+    + '<div class="card" style="margin-bottom:10px;">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;">'
+        + '<div><div class="field-label" style="margin-bottom:2px;">Ton code PIN</div><div style="font-size:16px;font-weight:800;letter-spacing:.1em;">'+PIN_ACTUEL+'</div><div style="font-size:9.5px;color:var(--ink3);">Demandé à chaque décaissement</div></div>'
+        + '<button onclick="ouvrirPinModal()" style="border:none;background:none;color:var(--pp);font-weight:800;font-size:11px;cursor:pointer;font-family:inherit;">Changer</button>'
+      + '</div>'
+    + '</div>'
+    + '<button onclick="selectScreen(\'mdp-oublie\')" class="navlist-item" style="background:white;border:1px solid var(--line);margin-bottom:8px;">'+icon(ICONS.mail,{w:16})+'<span>Mot de passe oublié</span></button>'
+    + '<button onclick="deconnecter()" class="navlist-item" style="background:white;border:1px solid var(--line);color:var(--re);">'+icon('M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9',{w:16,stroke:'var(--re)'})+'<span>Se déconnecter</span></button>';
+
+  if (pinModalOuvert) {
+    html += '<div style="position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:0 20px;">'
+      + '<div style="position:absolute;inset:0;background:rgba(20,22,42,.55);" onclick="fermerPinModal()"></div>'
+      + '<div style="position:relative;width:100%;background:white;border-radius:16px;padding:18px;">'
+        + '<div style="font-weight:800;font-size:13px;margin-bottom:10px;">Nouveau code PIN</div>'
+        + '<input type="text" placeholder="4 à 6 chiffres" oninput="nouveauPinSaisi=this.value" autofocus/>'
+        + '<div style="display:flex;gap:8px;"><button onclick="fermerPinModal()" class="btn-outline" style="flex:1;">Annuler</button><button onclick="validerNouveauPin()" class="btn-primary" style="flex:1;">Valider</button></div>'
+      + '</div>'
+    + '</div>';
+  }
+  return html;
+}
+function deconnecter(){ partenaireConnecte = false; current = 'auth'; selectScreen('auth'); }
+
+// ============ NAVIGATION ============
+var items = [
+  {k:'mes-lots', label:'Mes lots', icon:ICONS.gift, render:screenMesLots},
+  {k:'scanner', label:'Scanner', icon:ICONS.scan, render:screenScanner},
+  {k:'profil', label:'Profil', icon:ICONS.user, render:screenProfil}
+];
+var subScreens = {
+  'auth': screenAuth,
+  'mdp-oublie': screenMdpOublie,
+  'creer-lot': function(){ if(lotFormEditId!==null) ouvrirCreerLot(); return screenLotForm(); }
+};
+LOTS.forEach(function(l){ subScreens['editer-lot-'+l.id] = function(){ if(lotFormEditId!==l.id) ouvrirEditerLot(l.id); return screenLotForm(); }; });
+
+var current = 'auth';
+var activeSub = null;
+function isMainItem(k){ return items.some(function(i){return i.k===k;}); }
+function findScreen(k){
+  var it = items.filter(function(i){return i.k===k;})[0];
+  if (it) return it;
+  if (subScreens[k]) return {k:k, render:subScreens[k]};
+  return {k:'auth', render:screenAuth};
+}
+function iconSvg(path, active){ return icon(path, {w:15, stroke: active ? '#534AB7' : '#6B7094'}); }
+
+function renderAll(){
+  renderDesktopNav(); renderDesktopScreen(); renderBottomNav(); renderMobileScreenContent(); updateChrome();
+}
+function renderDesktopNav(){
+  if (!partenaireConnecte) { document.getElementById('desktop-nav').innerHTML=''; return; }
+  document.getElementById('desktop-nav').innerHTML = items.map(function(it){
+    var active = it.k===current && !activeSub;
+    return '<button class="'+(active?'active':'')+'" onclick="selectScreen(\''+it.k+'\')">'+iconSvg(it.icon,active)+'<span>'+it.label+'</span></button>';
+  }).join('');
+}
+function renderDesktopScreen(){ document.getElementById('desktop-screen').innerHTML = findScreen(partenaireConnecte ? (activeSub||current) : 'auth').render(); }
+function renderBottomNav(){
+  var el = document.getElementById('bottom-nav');
+  if (!partenaireConnecte) { el.innerHTML=''; el.style.display='none'; return; }
+  el.style.display='flex';
+  el.innerHTML = items.map(function(it){
+    var active = it.k===current && !activeSub;
+    return '<button class="bnav-item'+(active?' active':'')+'" onclick="selectScreen(\''+it.k+'\')">'+iconSvg(it.icon,active)+'<span>'+it.label+'</span></button>';
+  }).join('');
+}
+function renderMobileScreenContent(){ document.getElementById('mobile-screen').innerHTML = findScreen(partenaireConnecte ? (activeSub||current) : 'auth').render(); }
+function updateChrome(){
+  var showBack = partenaireConnecte && !!activeSub;
+  document.getElementById('back-btn').style.display = showBack ? 'block' : 'none';
+  document.getElementById('desktop-topbar').style.display = showBack ? 'flex' : 'none';
+  document.getElementById('brand-block').style.display = partenaireConnecte ? 'flex' : (showBack ? 'none' : 'flex');
+}
+function goBack(){
+  if (activeSub){ activeSub=null; renderMobileScreenContent(); renderDesktopScreen(); updateChrome(); }
+}
+function selectScreen(k){
+  if (isMainItem(k)) { current=k; activeSub=null; }
+  else { activeSub=k; }
+  renderDesktopNav(); renderDesktopScreen(); renderBottomNav(); renderMobileScreenContent(); updateChrome();
+}
+function setMode(m){
+  document.getElementById('frame-mobile').style.display = m==='mobile' ? 'flex' : 'none';
+  document.getElementById('frame-desktop').style.display = m==='desktop' ? 'block' : 'none';
+  document.getElementById('btn-mobile').className = m==='mobile' ? 'active' : '';
+  document.getElementById('btn-desktop').className = m==='desktop' ? 'active' : '';
+}
+
+renderAll();
+setMode('mobile');
+</script>
+</body>
+</html>

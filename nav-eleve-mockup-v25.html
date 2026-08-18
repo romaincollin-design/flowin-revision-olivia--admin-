@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flowin Révision — maquette navigation élève</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --pp: #534AB7; --ppbg: #EEEDFE; --ppln: #CECBF6;
+    --ink: #14162A; --ink2: #3D3F5C; --ink3: #6B7094;
+    --line: #E4E3F0; --bg: #F5F3FF; --gold: #E0A800; --am: #C27C0A; --ambg:#FBEEDA;
+    --gr: #0E9E6E; --grbg:#E3F7EF; --re: #D63050; --bl:#1E6FCC; --surf:#FDFBFF;
+  }
+  * { box-sizing: border-box; min-width: 0; }
+  body { margin: 0; font-family: 'DM Sans', system-ui, sans-serif; background: #FAFAFC; color: var(--ink); padding: 16px 6px; min-height: 100vh; }
+  .wrap { max-width: 900px; width: 100%; box-sizing: border-box; margin: 0 auto; }
+  .title { font-size: 13px; font-weight: 700; color: var(--ink3); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+  .subtitle { font-size: 20px; font-weight: 800; margin-bottom: 20px; }
+  .toggle { display: flex; gap: 8px; margin-bottom: 24px; max-width: 320px; }
+  .toggle button { flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid var(--line); background: white; color: var(--ink3); font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; }
+  .toggle button.active { border-color: var(--ppln); background: var(--ppbg); color: var(--pp); }
+
+  #phone-wrap { width: 100%; max-width: 300px; margin: 0 auto; }
+  #frame-mobile { width: 100%; aspect-ratio: 300 / 580; border: 7px solid var(--ink); border-radius: 36px; overflow: hidden; background: var(--bg); position: relative; box-shadow: 0 20px 50px -20px rgba(20,20,45,.3); display: flex; flex-direction: column; }
+  .notch { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 120px; height: 26px; background: var(--ink); border-radius: 14px; z-index: 5; }
+  .statusbar { padding: 16px 26px 4px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 700; background: white; flex-shrink: 0; }
+  .mtop { background: white; border-bottom: 1px solid var(--line); padding: 12px 16px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .mtop .brand { flex: 1; }
+  .brand { display: flex; align-items: center; gap: 7px; }
+  .brand-icon { width: 24px; height: 24px; border-radius: 7px; background: linear-gradient(135deg,#5B52C9,#7F77DD); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .brand-name { font-weight: 700; font-size: 13px; }
+  #mobile-screen { padding: 18px 14px; flex: 1; overflow-y: auto; }
+  #bottom-nav { display: flex; background: white; border-top: 1px solid var(--line); flex-shrink: 0; padding: 6px 2px 10px; }
+  .navlist-item { display: flex; align-items: center; gap: 12px; padding: 13px 10px; border-radius: 12px; border: none; background: transparent; width: 100%; text-align: left; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 700; color: var(--ink2); margin-bottom: 2px; }
+  .navlist-item.active { background: var(--ppbg); color: var(--pp); }
+  .bnav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; border: none; background: transparent; padding: 6px 2px; cursor: pointer; font-family: inherit; }
+  .bnav-item span { font-size: 8.5px; font-weight: 700; color: var(--ink3); }
+  .bnav-item.active span { color: var(--pp); }
+  .desktop-footer { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 9px; }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--gold); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .pseudo { font-size: 13px; font-weight: 700; }
+
+  #frame-desktop { display: none; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 50px -20px rgba(20,20,45,.15); }
+  .dlayout { display: flex; min-height: 560px; }
+  .sidebar { width: 190px; background: white; border-right: 1px solid var(--line); padding: 16px 11px; display: flex; flex-direction: column; flex-shrink: 0; }
+  .sidebar .brand { padding: 0 7px 20px; }
+  #desktop-screen { padding: 24px; background: var(--bg); }
+
+  nav button { display: flex; align-items: center; gap: 10px; padding: 10px 11px; border-radius: 10px; border: none; text-align: left; cursor: pointer; width: 100%; font-size: 13px; font-weight: 700; background: transparent; color: var(--ink2); font-family: inherit; margin-bottom: 1px; }
+  nav button.active { background: var(--ppbg); color: var(--pp); }
+
+  .note { margin-top: 24px; font-size: 12.5px; color: var(--ink3); max-width: 700px; line-height: 1.6; }
+
+  /* --- styles réutilisés pour reproduire fidèlement les écrans réels --- */
+  .card { background: white; border: 1px solid var(--line); border-radius: 16px; padding: 14px; }
+  .row { display: flex; align-items: center; gap: 10px; }
+  .icon-sq { border-radius: 11px; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; }
+  .kpi-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  .kpi { flex: 1; }
+  .kpi .v { font-size: 17px; font-weight: 800; line-height: 1; }
+  .kpi .l { font-size: 9px; font-weight: 700; color: var(--ink3); text-transform: uppercase; margin-top: 4px; }
+  .h-greet { color: var(--ink3); font-size: 13px; }
+  .h-title { font-size: 20px; font-weight: 800; margin: 2px 0 16px; }
+  .sec-title { font-size: 14px; font-weight: 800; margin-bottom: 10px; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; border: 1.5px solid var(--line); border-radius: 999px; padding: 5px 11px; font-size: 11px; font-weight: 700; color: var(--ink2); }
+  .chip.active { border-color: var(--ppln); background: var(--ppbg); color: var(--pp); }
+  .tile { border-radius: 14px; padding: 10px; background: white; border: 1px solid var(--line); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .badge { font-size: 9px; font-weight: 800; padding: 3px 9px; border-radius: 999px; }
+  svg.i { display: block; }
+  @keyframes popin { from { opacity:0; transform:scale(.9); } to { opacity:1; transform:scale(1); } }
+  @keyframes cardspin {
+    0% { transform: rotate(0deg) scale(1); opacity:1; }
+    60% { transform: rotate(360deg) scale(1.06); opacity:1; }
+    100% { transform: rotate(720deg) scale(.5) translateY(-40px); opacity:0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="title">Flowin Révision</div>
+  <div class="subtitle">Maquette navigable — espace élève (vrai contenu)</div>
+
+  <div class="toggle">
+    <button id="btn-mobile" class="active" onclick="setMode('mobile')">Mobile</button>
+    <button id="btn-desktop" onclick="setMode('desktop')">Desktop</button>
+  </div>
+
+  <div id="phone-wrap">
+  <div id="frame-mobile">
+    <div class="notch"></div>
+    <div class="statusbar">
+      <span>9:41</span>
+      <span style="display:flex; align-items:center; gap:4px;">
+        <svg viewBox="0 0 18 12" width="16" height="11"><rect x="0" y="7" width="3" height="5" rx="0.5" fill="var(--ink)"/><rect x="4.5" y="5" width="3" height="7" rx="0.5" fill="var(--ink)"/><rect x="9" y="3" width="3" height="9" rx="0.5" fill="var(--ink)"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="var(--ink)"/></svg>
+        <svg viewBox="0 0 24 12" width="21" height="11"><rect x="1" y="1" width="19" height="10" rx="2.5" stroke="var(--ink)" stroke-width="1" fill="none"/><rect x="2.5" y="2.5" width="15" height="7" rx="1.2" fill="var(--ink)"/><rect x="21" y="4" width="1.5" height="4" rx="0.7" fill="var(--ink)"/></svg>
+      </span>
+    </div>
+    <div id="mtop-row" class="mtop">
+      <button id="back-btn" onclick="goBack()" aria-label="Retour" style="border:none;background:none;padding:4px;cursor:pointer;display:none;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="brand" id="brand-block">
+        <div class="brand-icon"><svg viewBox="0 0 24 24" width="13" height="13" fill="white"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg></div>
+        <span class="brand-name">Flowin Révision</span>
+      </div>
+      <button id="burger-btn" onclick="openMoreMenu()" aria-label="Plus" style="border:none;background:none;padding:4px;cursor:pointer;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+    <div id="mobile-screen"></div>
+    <div id="bottom-nav"></div>
+  </div>
+  </div>
+
+  <div id="frame-desktop">
+    <div class="dlayout">
+      <div class="sidebar">
+        <div class="brand"><div class="brand-icon"><svg viewBox="0 0 24 24" width="13" height="13" fill="white"><path d="M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z"/></svg></div><span class="brand-name">Flowin Révision</span></div>
+        <nav id="desktop-nav"></nav>
+        <div class="desktop-footer"><div class="avatar">T</div><span class="pseudo">TestDefi1</span></div>
+      </div>
+      <div style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+        <div id="desktop-topbar" style="display:none; align-items:center; gap:8px; padding:16px 24px 0;">
+          <button id="back-btn-desktop" onclick="goBack()" aria-label="Retour" style="border:none;background:var(--ppbg);color:var(--pp);padding:6px 10px;border-radius:9px;cursor:pointer;font-family:inherit;font-weight:700;font-size:12px;display:flex;align-items:center;gap:5px;">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            Retour
+          </button>
+        </div>
+        <div id="desktop-screen" style="flex:1; overflow-y:auto;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">Reproduction fidèle des écrans réellement construits — couleurs, icônes et structure identiques à l'app.</div>
+</div>
+
+<script>
+function icon(path, extra) {
+  return '<svg class="i" viewBox="0 0 24 24" width="'+(extra&&extra.w||18)+'" height="'+(extra&&extra.w||18)+'" fill="none" stroke="'+(extra&&extra.stroke||'currentColor')+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="'+path+'"/></svg>';
+}
+function qrPattern(seed) {
+  var h = 0;
+  for (var i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  var cells = [];
+  for (var y = 0; y < 11; y++) {
+    for (var x = 0; x < 11; x++) {
+      var on = ((h >> ((x * y + x + y) % 24)) & 1) === 1 || (x < 3 && y < 3) || (x > 7 && y < 3) || (x < 3 && y > 7);
+      if (on) cells.push('<rect x="'+(x*10)+'" y="'+(y*10)+'" width="10" height="10" fill="#14162A"/>');
+    }
+  }
+  return cells.join('');
+}
+function palierMois(rang, titre, partenaire, couleur) {
+  return '<div class="row" style="padding:7px 0;'+(rang<3?'border-bottom:1px solid var(--line);':'')+'">'
+    + '<div style="width:24px;height:24px;border-radius:50%;background:'+couleur+';color:white;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;">'+rang+'</div>'
+    + '<div style="flex:1;"><div style="font-size:11.5px;font-weight:800;">'+titre+'</div><div style="font-size:10px;color:var(--ink3);">'+partenaire+'</div></div>'
+  + '</div>';
+}
+
+var ICONS = {
+  home:'M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
+  book:'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z',
+  star:'M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z',
+  sword:'M21 3v5l-11 9-4 4-3-3 4-4 9-11zM5 13l6 6M14.3 17.3l3.7 3.7 3-3-3.7-3.7M10 5.5 8 3H3v5l3 2.5',
+  people:'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
+  trophy:'M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 4H4v2a3 3 0 0 0 3 3M17 4h3v2a3 3 0 0 1-3 3',
+  user:'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+  coin:'M14.5 9.5A2.5 2.5 0 0 0 12 8.5h-1.5a2 2 0 0 0 0 4H13a2 2 0 0 1 0 4h-1.5A2.5 2.5 0 0 1 9 15M12 8V6m0 14v-2',
+  flame:'M12 12c2-2.96 0-7-1-8 0 3.038-1.773 4.741-3 6-1.226 1.26-2 3.24-2 5a6 6 0 1 0 12 0c0-1.532-1.056-3.94-2-5-1.786 3-2.791 3-4 2z',
+  chevron:'M9 18l6-6-6-6',
+  gift:'M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7',
+  wheel_pointer:'M4 21l7-7M14 10l7-7M14 10l-2.5-2.5L18 1l3 3-6.5 6.5L14 10zM10 14l2.5 2.5L6 23l-3-3 6.5-6.5L10 14z',
+  check:'M20 6 9 17l-5-5'
+};
+
+// ---- QUIZ EN DIRECT (room ouverte par la prof — pendant côté élève de nav-prof-mockup.html) ----
+var ROOM_QUIZ = { actif: true, titre: 'Quiz du jour', matiere: 'Histoire', classe: 'Tale Bac Pro Vente' };
+var etapeEleveRoom = 'landing'; // landing -> attente -> question -> resultats
+var joueursConnectesRoom = ['Mailys','Lilou','TestDefi1'];
+var questionActuelleRoom = 0, TOTAL_Q_ROOM = 5, DUREE_Q_ROOM = 15, tempsRestantRoom = DUREE_Q_ROOM, minuteurRoomId = null, animationValidationRoom = false;
+var SCORES_ROOM = [{pseudo:'Lilou',pts:85},{pseudo:'Mailys',pts:80},{pseudo:'TestDefi1',pts:62},{pseudo:'Noah',pts:40}];
+function eleveValiderEntreeRoom(){
+  animationValidationRoom = true;
+  selectScreen('quiz-room');
+  setTimeout(function(){ animationValidationRoom=false; etapeEleveRoom='attente'; selectScreen('quiz-room'); }, 900);
+}
+function demarrerMinuteurRoom(){
+  arreterMinuteurRoom();
+  tempsRestantRoom = DUREE_Q_ROOM;
+  minuteurRoomId = setInterval(function(){
+    tempsRestantRoom--;
+    if (tempsRestantRoom <= 0) arreterMinuteurRoom();
+    if (activeSub==='quiz-room') selectScreen('quiz-room');
+  }, 1000);
+}
+function arreterMinuteurRoom(){ if (minuteurRoomId) { clearInterval(minuteurRoomId); minuteurRoomId=null; } }
+function eleveRepondreRoom(){ /* simule une réponse, score déjà mocké — cohérent avec la vue prof de nav-prof-mockup.html */ }
+// Fonction de démo uniquement : simule côté élève que la prof vient de lancer le quiz (dans le vrai produit, ceci arrive via le realtime)
+function demoProfLanceQuiz(){ etapeEleveRoom='question'; questionActuelleRoom=1; demarrerMinuteurRoom(); selectScreen('quiz-room'); }
+function screenQuizRoom(){
+  if (etapeEleveRoom === 'landing') {
+    return '<div class="card" style="text-align:center;padding:20px 14px;'+(animationValidationRoom?'animation:popflip .9s ease;':'')+'">'
+      + '<style>@keyframes popflip{0%{transform:scale(1) rotateY(0);}50%{transform:scale(1.08) rotateY(180deg);}100%{transform:scale(1) rotateY(360deg);}}</style>'
+      + '<div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--re),#B02540);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">'+icon(ICONS.sword,{w:22,stroke:'white'})+'</div>'
+      + '<div style="font-weight:800;font-size:14px;">'+ROOM_QUIZ.titre+'</div>'
+      + '<div style="font-size:10px;color:var(--ink3);margin:2px 0 14px;">'+ROOM_QUIZ.matiere+' · '+ROOM_QUIZ.classe+'</div>'
+      + '<div style="display:flex;justify-content:center;gap:16px;margin-bottom:16px;">'
+        + '<div><div style="font-weight:800;font-size:13px;">'+TOTAL_Q_ROOM+'</div><div style="font-size:8px;color:var(--ink3);font-weight:700;">QUESTIONS</div></div>'
+        + '<div><div style="font-weight:800;font-size:13px;">'+DUREE_Q_ROOM+'s</div><div style="font-size:8px;color:var(--ink3);font-weight:700;">PAR QUESTION</div></div>'
+      + '</div>'
+      + '<div style="font-size:10px;color:var(--ink3);background:var(--bg);border-radius:9px;padding:9px 10px;margin-bottom:14px;">Ta prof ne voit que ton pseudo — jamais ton identité réelle.</div>'
+      + '<button onclick="eleveValiderEntreeRoom()" style="display:block;width:100%;background:var(--pp);color:white;font-weight:800;font-size:12.5px;padding:12px;border-radius:12px;border:none;font-family:inherit;cursor:pointer;">Valider — le chrono démarre</button>'
+    + '</div>';
+  }
+  if (etapeEleveRoom === 'attente') {
+    return '<div class="card" style="text-align:center;padding:24px 14px;">'
+      + '<div style="width:40px;height:40px;border-radius:50%;border:3px solid var(--ppln);border-top-color:var(--pp);margin:0 auto 12px;animation:spin .9s linear infinite;"></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>'
+      + '<div style="font-weight:800;font-size:12px;">Tu es dans la room</div>'
+      + '<div style="font-size:10px;color:var(--ink3);margin-top:4px;">En attente que le prof lance le quiz…</div>'
+      + '<div class="sec-title" style="margin-top:16px;text-align:left;">'+joueursConnectesRoom.length+' élève(s) connecté(s)</div>'
+      + joueursConnectesRoom.map(function(p){return '<div class="row card" style="margin-bottom:6px;padding:8px 11px;text-align:left;"><div style="width:20px;height:20px;border-radius:50%;background:var(--pp);color:white;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;">'+p[0]+'</div><span style="font-size:11px;font-weight:700;">'+p+'</span></div>';}).join('')
+      + '<button onclick="demoProfLanceQuiz()" class="btn" style="margin-top:10px;display:block;width:100%;background:var(--pp);color:white;font-weight:800;font-size:12.5px;padding:12px;border-radius:12px;border:none;font-family:inherit;cursor:pointer;">Simuler : la prof lance le quiz</button>'
+    + '</div>';
+  }
+  if (etapeEleveRoom === 'question') {
+    var options = ['Paris','Lyon','Marseille','Lille'];
+    var couleurTemps = tempsRestantRoom <= 5 ? 'var(--re)' : 'var(--pp)';
+    return '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
+        + '<span style="font-size:10px;color:var(--ink3);">Question '+questionActuelleRoom+' sur '+TOTAL_Q_ROOM+'</span>'
+        + '<span style="font-weight:800;font-size:12px;color:'+couleurTemps+';">'+tempsRestantRoom+'s</span>'
+      + '</div>'
+      + '<div class="card" style="text-align:center;margin-bottom:10px;"><div style="font-weight:800;font-size:12.5px;">Quelle est la capitale ?</div></div>'
+      + options.map(function(o){return '<button onclick="eleveRepondreRoom()" class="card" style="width:100%;text-align:left;font-family:inherit;cursor:pointer;margin-bottom:7px;font-weight:700;font-size:11.5px;">'+o+'</button>';}).join('')
+      + '<div style="font-size:10px;color:var(--ink3);text-align:center;margin-top:6px;">Toute la classe répond en même temps.</div>';
+  }
+  var moyenne = Math.round(SCORES_ROOM.reduce(function(a,s){return a+s.pts;},0)/SCORES_ROOM.length);
+  return '<div class="card" style="text-align:center;padding:20px 14px;margin-bottom:12px;">'
+    + '<div style="width:56px;height:56px;border-radius:50%;background:var(--grbg);color:var(--gr);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">'+icon(ICONS.check,{w:26,stroke:'var(--gr)'})+'</div>'
+    + '<div style="font-weight:800;font-size:14px;">Envoyé !</div>'
+    + '<div style="font-size:10px;color:var(--ink3);margin-top:4px;">Points en attente du classement final.</div>'
+  + '</div>'
+  + SCORES_ROOM.map(function(s,i){return '<div class="row card" style="margin-bottom:6px;padding:7px 10px;"><div style="width:20px;height:20px;border-radius:50%;background:'+(i===0?'var(--gold)':'var(--pp)')+';color:white;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;">'+(i+1)+'</div><span style="flex:1;font-size:11px;font-weight:700;">'+s.pseudo+'</span><span style="font-size:11px;font-weight:800;">'+s.pts+' pts</span></div>';}).join('')
+  + '<div style="font-size:10px;color:var(--ink3);background:var(--bg);border-radius:9px;padding:9px 10px;margin-top:10px;">Les points sont crédités automatiquement par pseudo dès que ta prof clôt le quiz — aucune remise individuelle.</div>';
+}
+
+// ---- ACCUEIL ----
+function kpiCard(couleur, path, valeur, label, target) {
+  return '<button onclick="selectScreen(\''+target+'\')" class="card kpi" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;font-family:inherit;cursor:pointer;padding:14px 8px;">'
+    + '<div class="icon-sq" style="width:34px;height:34px;background:'+couleur+';">'+icon(path,{w:16})+'</div>'
+    + '<div class="v">'+valeur+'</div><div class="l">'+label+'</div></button>';
+}
+function screenAccueil() {
+  return '<div class="h-greet">Bonsoir TestDefi1</div><div class="h-title">On révise ?</div>'
+  + (ROOM_QUIZ.actif ? '<button onclick="selectScreen(\'quiz-room\')" class="card" style="display:flex;align-items:center;gap:11px;width:100%;text-align:left;font-family:inherit;cursor:pointer;border:1.5px solid var(--ppln);background:var(--ppbg);margin-bottom:10px;">'
+    + '<div class="icon-sq" style="width:38px;height:38px;background:var(--pp);">'+icon(ICONS.sword,{w:17,stroke:'white'})+'</div>'
+    + '<div style="flex:1;"><div style="font-weight:800;font-size:12.5px;color:var(--pp);">Ta prof a lancé un quiz</div><div style="font-size:11px;color:var(--ink3);">'+ROOM_QUIZ.titre+' · en direct — touche pour rejoindre</div></div>'
+    + '<span class="badge" style="background:var(--pp);color:white;flex-shrink:0;">En direct</span>'
+  + '</button>' : '')
+  + '<div class="kpi-row">'
+    + kpiCard('var(--gold)', ICONS.coin, 9600, 'Points', 'profil')
+    + kpiCard('#F97316', ICONS.flame, 4, 'Streak', 'profil')
+    + kpiCard('var(--pp)', ICONS.star, 12, 'Quiz', 'quiz-history')
+  + '</div>'
+  + '<div class="card" style="margin-bottom:10px;">'
+    + '<div class="sec-title">Tu révises, tu gagnes des points</div>'
+    + brique('var(--pp)', ICONS.book, 'Réviser mes cours', "23 fiches t'attendent", 'reviser')
+    + brique('var(--am)', ICONS.star, 'Quiz · Révise & Gagne', 'Tourne la roue, gagne des points', 'quiz')
+    + brique('var(--re)', ICONS.sword, 'Défis multi-joueurs', 'Parie tes points, rafle la mise', 'defis')
+  + '</div>'
+  + '<div style="font-size:10.5px;font-weight:800;color:var(--ink3);text-transform:uppercase;margin-bottom:6px;">3 lots à gagner ce mois-ci</div>'
+  + lotTicketMini('Une entrée', 'Aqua Splash', '#1E6FCC', 'lot-detail');
+}
+function lotTicketMini(titre, partenaire, couleur, target) {
+  return '<button onclick="selectScreen(\''+target+'\')" style="display:block;width:100%;text-align:left;font-family:inherit;cursor:pointer;border:none;border-radius:16px;overflow:hidden;background:white;box-shadow:0 4px 14px -6px rgba(20,20,45,.15);margin-bottom:10px;">'
+    + '<div class="row" style="background:linear-gradient(120deg,'+couleur+','+couleur+'CC);padding:13px;color:white;">'
+      + '<div style="width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;">'+partenaire[0]+'</div>'
+      + '<div style="flex:1;min-width:0;"><div style="font-weight:800;font-size:12.5px;">'+titre+'</div><div style="font-size:10.5px;opacity:.85;">'+partenaire+'</div></div>'
+    + '</div>'
+    + '<div style="position:relative;display:flex;align-items:center;justify-content:space-between;padding:9px 13px;border-top:1px dashed var(--line);">'
+      + '<div style="position:absolute;left:-7px;top:-7px;width:14px;height:14px;border-radius:50%;background:var(--bg);"></div>'
+      + '<div style="position:absolute;right:-7px;top:-7px;width:14px;height:14px;border-radius:50%;background:var(--bg);"></div>'
+      + '<span style="display:inline-flex;align-items:center;gap:5px;">'+icon(ICONS.star,{w:11,stroke:'var(--pp)'})+'<span style="font-size:9px;font-weight:800;color:var(--ink3);text-transform:uppercase;">Flowin Révision</span></span>'
+      + '<span style="font-size:9px;font-weight:800;background:var(--ppbg);color:var(--pp);padding:4px 9px;border-radius:999px;">Toucher pour présenter</span>'
+    + '</div>'
+  + '</button>';
+}
+function brique(couleur, path, titre, desc, target) {
+  return '<button onclick="selectScreen(\''+target+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 4px;width:100%;border:none;background:transparent;text-align:left;cursor:pointer;font-family:inherit;">'
+    + '<div class="icon-sq" style="width:38px;height:38px;background:'+couleur+';">'+icon(path,{w:17})+'</div>'
+    + '<div style="flex:1;"><div style="font-weight:800;font-size:12.5px;">'+titre+'</div><div style="font-size:11px;color:var(--ink3);">'+desc+'</div></div>'
+    + icon(ICONS.chevron,{w:13,stroke:'var(--ink3)'})
+  + '</button>';
+}
+
+// ---- REVISER ----
+var revisierFiltre = 'Tout';
+function filtrerReviser(mat) {
+  revisierFiltre = mat;
+  selectScreen('reviser'); // re-render de l'écran courant avec le nouveau filtre
+}
+function screenReviser() {
+  var rubs = [
+    {id:'t1', mat:'Histoire', c:'#8B5CF6', t:'Le jeu des puissances depuis 1945'}, {id:'t9', mat:'Géo', c:'#1E6FCC', t:"L'accès aux ressources"},
+    {id:'t13', mat:'EMC', c:'#0E9E6E', t:'La révolution numérique et les libertés'}, {id:'pse1', mat:'PSE', c:'#C27C0A', t:'Le système de santé'}
+  ];
+  var chips = ['Tout','Histoire','Géo','EMC','PSE'];
+  var visibles = revisierFiltre === 'Tout' ? rubs : rubs.filter(function(r){ return r.mat === revisierFiltre; });
+  return '<div class="h-title" style="margin-bottom:12px;">Réviser</div>'
+  + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">'
+    + chips.map(function(c){return '<button onclick="filtrerReviser(\''+c+'\')" class="chip'+(revisierFiltre===c?' active':'')+'" style="border:1.5px solid '+(revisierFiltre===c?'var(--ppln)':'var(--line)')+';font-family:inherit;cursor:pointer;">'+c+'</button>';}).join('')
+  + '</div>'
+  + '<div class="grid2">'
+    + visibles.map(function(r){return '<button onclick="selectScreen(\'fiche-'+r.id+'\')" class="tile" style="text-align:left;font-family:inherit;cursor:pointer;width:100%;"><div style="width:32px;height:32px;border-radius:9px;background:'+r.c+';margin-bottom:8px;"></div><div style="font-size:11.5px;font-weight:800;line-height:1.3;">'+r.t+'</div><div style="font-size:10px;color:var(--ink3);margin-top:4px;">8 questions</div></button>';}).join('')
+  + '</div>'
+  + (visibles.length===0 ? '<div style="font-size:11.5px;color:var(--ink3);margin-top:10px;">Aucune fiche dans cette matière pour l\'instant.</div>' : '');
+}
+
+// ---- QUIZ ----
+var quizMatieres = {Histoire:true, 'Géo':true, EMC:true, PSE:true};
+function toggleQuizMatiere(m) {
+  var actives = Object.keys(quizMatieres).filter(function(k){return quizMatieres[k];});
+  if (quizMatieres[m] && actives.length <= 1) return; // toujours garder au moins une matière
+  quizMatieres[m] = !quizMatieres[m];
+  selectScreen('quiz');
+}
+function lancerSpin() {
+  var actives = Object.keys(quizMatieres).filter(function(k){return quizMatieres[k];});
+  var tirage = actives[Math.floor(Math.random()*actives.length)];
+  document.querySelectorAll('[id="spin-resultat"]').forEach(function(el){
+    el.innerHTML = 'Thème tiré : <b style="color:var(--pp);">'+tirage+'</b> !';
+  });
+}
+function genererGradientRoue(actives, couleurs){
+  if (actives.length === 0) return 'var(--line)';
+  var segment = 360 / actives.length;
+  var parts = actives.map(function(m, i){
+    var debut = Math.round(i * segment);
+    var fin = Math.round((i + 1) * segment);
+    return couleurs[m] + ' ' + debut + 'deg ' + fin + 'deg';
+  });
+  return 'conic-gradient(' + parts.join(', ') + ')';
+}
+function screenQuiz() {
+  var couleurs = {Histoire:'var(--re)','Géo':'var(--bl)',EMC:'var(--am)',PSE:'var(--gr)'};
+  var actives = Object.keys(quizMatieres).filter(function(m){return quizMatieres[m];});
+  var chipsHtml = Object.keys(quizMatieres).map(function(m){
+    var active = quizMatieres[m];
+    return '<button onclick="toggleQuizMatiere(\''+m+'\')" class="chip'+(active?' active':'')+'" style="border:1.5px solid '+(active?'var(--ppln)':'var(--line)')+';font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:5px;">'
+      + '<span style="width:8px;height:8px;border-radius:50%;background:'+couleurs[m]+';display:inline-block;"></span>'+m+'</button>';
+  }).join('');
+  return '<div class="h-title" style="margin-bottom:4px;">Quiz</div>'
+  + (ROOM_QUIZ.actif ? '<button onclick="selectScreen(\'quiz-room\')" class="card" style="display:flex;align-items:center;gap:11px;width:100%;text-align:left;font-family:inherit;cursor:pointer;border:1.5px solid var(--ppln);background:var(--ppbg);margin-bottom:14px;">'
+    + '<div class="icon-sq" style="width:36px;height:36px;background:var(--pp);">'+icon(ICONS.sword,{w:16,stroke:'white'})+'</div>'
+    + '<div style="flex:1;"><div style="font-weight:800;font-size:12px;color:var(--pp);">Quiz de ta prof — en direct</div><div style="font-size:10.5px;color:var(--ink3);">'+ROOM_QUIZ.titre+'</div></div>'
+    + '<span class="badge" style="background:var(--pp);color:white;flex-shrink:0;">Rejoindre</span>'
+  + '</button>' : '')
+  + '<div style="font-size:12px;color:var(--ink3);margin-bottom:16px;">Ou révise en solo : choisis tes matières, puis tourne la roue.</div>'
+  + '<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;">' + chipsHtml + '</div>'
+  + '<div style="display:flex;justify-content:center;margin-bottom:16px;">'
+    + '<div style="width:170px;height:170px;border-radius:50%;background:'+genererGradientRoue(actives, couleurs)+';border:6px solid white;box-shadow:0 12px 30px -10px rgba(83,74,183,.4);position:relative;display:flex;align-items:center;justify-content:center;">'
+      + '<div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(160deg,#5B52C9,#7F77DD);color:white;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;">SPIN</div>'
+    + '</div>'
+  + '</div>'
+  + '<div style="display:flex;justify-content:center;margin-bottom:10px;"><button onclick="lancerSpin()" style="background:var(--pp);color:white;font-weight:800;font-size:12px;padding:10px 22px;border-radius:11px;border:none;font-family:inherit;cursor:pointer;">Tourner la roue</button></div>'
+  + '<div id="spin-resultat" style="text-align:center;font-size:12px;font-weight:700;min-height:18px;"></div>';
+}
+
+// ---- DEFIS ----
+var DEFIS_DATA = [
+  {id:'defi-1025', createur:'TestDefi1', numero:1025, statut:'attente', couleur:'var(--bl)', mise:20, theme:'Histoire', nbJoueurs:4, participants:['TestDefi1','TestDefi3'], invite:null, gagnant:null, cagnotte:null},
+  {id:'defi-1022', createur:'TestDefi2', numero:1022, statut:'attente', couleur:'var(--re)', mise:30, theme:'Géo', nbJoueurs:2, participants:['TestDefi2'], invite:'TestDefi1', gagnant:null, cagnotte:null},
+  {id:'defi-1020', createur:'TestDefi1', numero:1020, statut:'encours', couleur:'var(--gr)', mise:15, theme:'EMC', nbJoueurs:3, participants:['TestDefi1','TestDefi2','TestDefi4'], invite:null, gagnant:null, cagnotte:45},
+  {id:'defi-1017', createur:'TestDefi1', numero:1017, statut:'termine', couleur:'var(--am)', mise:20, theme:'Histoire', nbJoueurs:2, participants:['TestDefi1','TestDefi2'], invite:null, gagnant:'TestDefi1', cagnotte:40}
+];
+function defiCard(d) {
+  var statutLabel = {attente:'En attente', encours:'En cours', termine: d.gagnant==='TestDefi1' ? 'Gagné' : 'Perdu'};
+  var statutBg = {attente:'var(--ambg)', encours:'var(--grbg)', termine: d.gagnant==='TestDefi1' ? 'var(--grbg)' : 'var(--line)'};
+  var statutFg = {attente:'var(--am)', encours:'var(--gr)', termine: d.gagnant==='TestDefi1' ? 'var(--gr)' : 'var(--ink3)'};
+  var sousTitre = d.statut === 'attente'
+    ? d.participants.length + '/' + d.nbJoueurs + ' ont rejoint' + (d.invite ? ' · Défie ' + d.invite : '')
+    : d.participants.join(' vs ');
+  return '<button onclick="selectScreen(\''+d.id+'\')" class="card" style="margin-bottom:8px;padding:11px;width:100%;text-align:left;font-family:inherit;cursor:pointer;">'
+    + '<div class="row" style="align-items:flex-start;">'
+      + '<div class="icon-sq" style="width:34px;height:34px;background:'+d.couleur+';flex-shrink:0;">'+icon(ICONS.sword,{w:15})+'</div>'
+      + '<div style="flex:1;min-width:0;">'
+        + '<div style="display:flex;justify-content:space-between;gap:6px;">'
+          + '<div style="font-weight:800;font-size:12px;">Défi de '+d.createur+' <span style="color:var(--ink3);">#'+d.numero+'</span></div>'
+          + '<span class="badge" style="background:'+statutBg[d.statut]+';color:'+statutFg[d.statut]+';flex-shrink:0;">'+statutLabel[d.statut]+'</span>'
+        + '</div>'
+        + '<div style="font-size:10.5px;color:var(--ink3);margin-top:2px;">'+sousTitre+'</div>'
+        + '<div style="font-size:11px;color:var(--ink3);margin-top:5px;">Mise : <b style="color:var(--ink);">'+d.mise+' pts</b> · '+d.theme+(d.cagnotte ? ' · Cagnotte : '+d.cagnotte+' pts' : '')+'</div>'
+        + (d.gagnant ? '<div style="font-size:11px;color:var(--pp);font-weight:700;margin-top:2px;">Gagnant : '+d.gagnant+'</div>' : '')
+      + '</div>'
+    + '</div></button>';
+}
+function screenDefis() {
+  var ouverts = DEFIS_DATA.filter(function(d){return d.statut==='attente';});
+  var encours = DEFIS_DATA.filter(function(d){return d.statut==='encours';});
+  var historique = DEFIS_DATA.filter(function(d){return d.statut==='termine';});
+  var html = '<div class="h-title" style="margin-bottom:4px;">Défis</div>'
+  + '<div style="font-size:12px;color:var(--ink3);margin-bottom:14px;">Mise tes points contre un autre pseudo — le gagnant rafle la cagnotte.</div>'
+  + '<button onclick="selectScreen(\'defi-creation\')" style="display:block;width:100%;background:var(--pp);color:white;text-align:center;font-weight:800;font-size:12.5px;padding:11px;border-radius:13px;margin-bottom:16px;border:none;font-family:inherit;cursor:pointer;">Lancer un défi</button>';
+  if (ouverts.length) html += '<div class="sec-title">Ouverts</div>' + ouverts.map(defiCard).join('');
+  if (encours.length) html += '<div class="sec-title" style="margin-top:10px;">En cours</div>' + encours.map(defiCard).join('');
+  if (historique.length) html += '<div class="sec-title" style="margin-top:10px;">Historique</div>' + historique.map(defiCard).join('');
+  return html;
+}
+
+// ---- MA CLASSE ----
+function screenClasse() {
+  function kpi(v,l,c,path,target){return '<button onclick="selectScreen(\''+target+'\')" class="card" style="text-align:center;flex:1;padding:12px 8px;cursor:pointer;border:1px solid var(--line);font-family:inherit;">'
+    +'<div class="icon-sq" style="width:30px;height:30px;background:'+c+';margin:0 auto 8px;">'+icon(path,{w:14})+'</div>'
+    +'<div style="font-size:16px;font-weight:800;">'+v+'</div><div style="font-size:9px;color:var(--ink3);font-weight:700;text-transform:uppercase;margin-top:2px;">'+l+'</div></button>';}
+  return '<div class="h-title" style="margin-bottom:12px;">Ma classe</div>'
+  + '<div style="display:flex;gap:8px;margin-bottom:14px;">'
+    + kpi(19,'Total classe','var(--pp)',ICONS.people,'classe-detail-total') + kpi(340,'Moyenne','var(--am)','M3 3v18h18M8 17V10M13 17V6M18 17v-4','classe-detail-moyenne') + kpi(85,'Écart','var(--bl)',ICONS.wheel_pointer,'classe-detail-ecart')
+  + '</div>'
+  + '<div style="font-size:10px;color:var(--ink3);margin:-8px 0 14px;padding:0 2px;">Touche une carte pour le détail par matière →</div>'
+  + '<div class="card" style="margin-bottom:10px;">'
+    + '<div class="sec-title" style="margin-bottom:2px;">Ta progression vs la classe</div>'
+    + legende([['var(--pp)','Toi'],['var(--ppln)','Classe']])
+    + dualBarChart([40,55,35,70,50,90,65],[50,52,48,58,55,62,60],'var(--pp)','var(--ppln)')
+  + '</div>'
+  + '<div class="card" style="margin-bottom:10px;">'
+    + '<div class="sec-title" style="margin-bottom:8px;">Ton niveau dans la classe</div>'
+    + '<div class="row"><div class="avatar" style="background:var(--gold);width:34px;height:34px;">3</div>'
+      + '<div style="flex:1;"><div style="font-weight:800;font-size:12.5px;">3e sur 19</div><div style="font-size:10.5px;color:var(--ink3);">9600 pts · top 16%</div></div></div>'
+  + '</div>'
+  + '<div class="card" style="margin-bottom:10px;">'
+    + '<div class="sec-title" style="margin-bottom:8px;">Score interclasse</div>'
+    + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:8px;">Ta classe comparée aux autres classes de l\'établissement</div>'
+    + interclasseRow('Tale Bac Pro Vente', 340, true) + interclasseRow('Tale Bac Pro Commerce', 298, false) + interclasseRow('1re Bac Pro Vente', 265, false)
+  + '</div>'
+  + '<div class="card" style="margin-bottom:10px;">'
+    + '<div class="sec-title" style="margin-bottom:6px;">Quiz faits</div>'
+    + quizRow('Histoire · Le mouvement ouvrier', '85%', '+17 pts')
+    + quizRow('PSE · Alimentation & santé', '70%', '+14 pts')
+    + quizRow('EMC · Institutions', '92%', '+18 pts')
+  + '</div>'
+  + '<div class="card"><div class="sec-title" style="margin-bottom:2px;"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gr);margin-right:5px;"></span>En ligne maintenant</div>'
+    + '<div class="row" style="padding:8px 0;"><div class="avatar" style="background:var(--pp);">T</div><span style="font-size:12px;font-weight:700;">TestDefi1 · 9600 pts</span></div>'
+    + '<div class="row" style="padding:8px 0;"><div class="avatar" style="background:var(--gold);">T</div><span style="font-size:12px;font-weight:700;">TestDefi2 · 10000 pts</span></div>'
+  + '</div>';
+}
+function interclasseRow(nom, score, isMine){
+  return '<div class="row" style="padding:6px 0;">'
+    + '<span style="flex:1;font-size:11.5px;font-weight:'+(isMine?'800':'700')+';color:'+(isMine?'var(--pp)':'var(--ink2)')+';">'+nom+(isMine?' (toi)':'')+'</span>'
+    + '<span style="font-size:11.5px;font-weight:800;">'+score+'</span></div>';
+}
+function quizRow(titre, score, pts){
+  return '<div class="row" style="padding:7px 0;border-bottom:1px solid var(--line);">'
+    + '<span style="flex:1;font-size:11px;font-weight:700;color:var(--ink2);">'+titre+'</span>'
+    + '<span style="font-size:10.5px;color:var(--ink3);margin-right:6px;">'+score+'</span>'
+    + '<span style="font-size:10.5px;font-weight:800;color:var(--gr);">'+pts+'</span></div>';
+}
+function legende(paires){
+  return '<div style="display:flex;gap:14px;margin-bottom:10px;">' + paires.map(function(p){
+    return '<span style="display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:var(--ink3);">'
+      + '<span style="width:9px;height:9px;border-radius:3px;background:'+p[0]+';display:inline-block;"></span>'+p[1]+'</span>';
+  }).join('') + '</div>';
+}
+function dualBarChart(seriesA, seriesB, colorA, colorB){
+  var labels = ['S1','S2','S3','S4','S5','S6','S7'];
+  var cols = seriesA.map(function(a,i){
+    var b = seriesB[i];
+    return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">'
+      + '<div style="display:flex;align-items:flex-end;gap:2px;height:70px;">'
+        + '<div style="width:8px;height:'+a+'px;border-radius:3px 3px 0 0;background:'+colorA+';"></div>'
+        + '<div style="width:8px;height:'+b+'px;border-radius:3px 3px 0 0;background:'+colorB+';"></div>'
+      + '</div>'
+      + '<span style="font-size:8px;color:var(--ink3);">'+labels[i]+'</span></div>';
+  }).join('');
+  return '<div style="display:flex;align-items:flex-end;gap:4px;">' + cols + '</div>';
+}
+
+var MATIERES_DETAIL = [
+  {mat:'Histoire', couleur:'var(--re)', eleve:88, classe:74, ecart:14},
+  {mat:'Géo', couleur:'var(--bl)', eleve:79, classe:81, ecart:-2},
+  {mat:'EMC', couleur:'var(--am)', eleve:92, classe:70, ecart:22},
+  {mat:'PSE', couleur:'var(--gr)', eleve:70, classe:76, ecart:-6}
+];
+function matiereDetailRow(m){
+  var ecartCouleur = m.ecart >= 10 ? 'var(--gr)' : (m.ecart < 0 ? 'var(--re)' : 'var(--am)');
+  return '<div class="row" style="padding:8px 0;border-bottom:1px solid var(--line);">'
+    + '<span style="width:8px;height:8px;border-radius:50%;background:'+m.couleur+';flex-shrink:0;"></span>'
+    + '<span style="flex:1;font-size:11.5px;font-weight:700;">'+m.mat+'</span>'
+    + '<span style="font-size:10.5px;color:var(--ink3);margin-right:8px;">toi '+m.eleve+'% · classe '+m.classe+'%</span>'
+    + '<span style="font-size:10.5px;font-weight:800;color:'+ecartCouleur+';">'+(m.ecart>0?'+':'')+m.ecart+' pts</span></div>';
+}
+var subScreens = {
+  'classe-detail-total': function(){
+    return '<div class="h-title" style="margin-bottom:4px;">Total classe</div>'
+    + '<div style="font-size:11px;color:var(--ink3);margin-bottom:14px;">19 élèves — répartition par matière</div>'
+    + '<div class="card">' + MATIERES_DETAIL.map(matiereDetailRow).join('') + '</div>';
+  },
+  'classe-detail-moyenne': function(){
+    return '<div class="h-title" style="margin-bottom:4px;">Moyenne</div>'
+    + '<div style="font-size:11px;color:var(--ink3);margin-bottom:14px;">Toi vs la classe, matière par matière</div>'
+    + '<div class="card" style="margin-bottom:10px;">' + legende([['var(--pp)','Toi'],['var(--ppln)','Classe']])
+      + dualBarChart([88,79,92,70],[74,81,70,76],'var(--pp)','var(--ppln)') + '</div>'
+    + '<div class="card">' + MATIERES_DETAIL.map(matiereDetailRow).join('') + '</div>';
+  },
+  'classe-detail-ecart': function(){
+    return '<div class="h-title" style="margin-bottom:4px;">Écart</div>'
+    + '<div style="font-size:11px;color:var(--ink3);margin-bottom:14px;">Un écart par matière, constant dans le temps — objectif : le réduire.</div>'
+    + '<div class="card">' + MATIERES_DETAIL.map(matiereDetailRow).join('') + '</div>';
+  }
+};
+subScreens['quiz-room'] = screenQuizRoom;
+subScreens['lot-detail'] = function(){
+    var couleur = '#1E6FCC', partenaire = 'Aqua Splash', titre = 'Une entrée';
+    var estSurprise = false; // décidé par le partenaire à la création du lot, pas par l'élève
+    var titreAffiche = estSurprise ? 'Lot surprise' : titre;
+    var partenaireAffiche = estSurprise ? 'Révélé à la remise' : partenaire;
+    var monogramme = estSurprise ? '?' : partenaire[0];
+    return '<div style="border-radius:22px;overflow:hidden;box-shadow:0 20px 45px -18px rgba(0,0,0,.3);margin-bottom:14px;">'
+      + '<div style="background:linear-gradient(135deg,'+couleur+','+couleur+'CC);padding:22px 20px;color:white;text-align:center;">'
+        + '<div style="margin-bottom:12px;">'+icon(ICONS.star,{w:26,stroke:'white'})+'</div>'
+        + '<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;">'
+          + '<div style="width:48px;height:48px;border-radius:15px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;">'+monogramme+'</div>'
+          + '<div style="width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;">'+icon(estSurprise ? 'M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.5.5 1 1.5 1 2.5h6c0-1 .5-2 1-2.5A6 6 0 0 0 12 3z' : ICONS.gift,{w:19,stroke:'white'})+'</div>'
+        + '</div>'
+        + '<div style="font-weight:800;font-size:17px;">'+titreAffiche+'</div>'
+        + '<div style="font-size:11px;opacity:.9;margin-top:2px;">'+partenaireAffiche+'</div>'
+        + '<div style="font-size:9px;opacity:.75;margin-top:8px;text-transform:uppercase;letter-spacing:.05em;">Gagné par TestDefi1</div>'
+      + '</div>'
+      + '<div style="background:white;padding:22px;text-align:center;">'
+        + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:10px;">Montre ce QR au partenaire</div>'
+        + '<div style="border:1px solid var(--line);border-radius:14px;padding:10px;display:inline-block;margin-bottom:10px;">'
+          + '<svg viewBox="0 0 110 110" style="width:140px;height:140px;">'+qrPattern('t1025mock')+'</svg>'
+        + '</div>'
+        + '<div style="display:flex;justify-content:center;gap:14px;margin-bottom:14px;">'
+          + '<div><div style="font-size:8.5px;font-weight:800;color:var(--ink3);text-transform:uppercase;">N° billet</div><div style="font-family:monospace;font-size:11px;font-weight:700;">#00142</div></div>'
+          + '<div><div style="font-size:8.5px;font-weight:800;color:var(--ink3);text-transform:uppercase;">Jeton</div><div style="font-family:monospace;font-size:11px;font-weight:700;">A1B2C3D4</div></div>'
+        + '</div>'
+        + '<div style="text-align:left;background:var(--bg);border-radius:12px;padding:11px;">'
+          + '<div style="font-size:9.5px;font-weight:800;color:var(--ink3);text-transform:uppercase;margin-bottom:4px;">Règles d\'utilisation</div>'
+          + '<div style="font-size:10.5px;color:var(--ink3);line-height:1.5;">Lot valable une fois, à présenter au partenaire. Non échangeable, non remboursable.</div>'
+        + '</div>'
+      + '</div>'
+    + '</div>'
+    + '<div class="card">'
+      + '<div class="sec-title" style="margin-bottom:8px;">3 lots à gagner ce mois-ci</div>'
+      + palierMois(1,'Une entrée','Aqua Splash','var(--gold)')
+      + palierMois(2,'Café offert','Nook Café','#B0B4D6')
+      + palierMois(3,'Place de cinéma','Cinéma Mercury','#C98A4E')
+      + '<div style="font-size:10px;color:var(--ink3);margin-top:8px;">Top 3 de la classe à la fin du mois — les lots sont ensuite remis en main propre.</div>'
+    + '</div>';
+  };
+subScreens['more-menu'] = function(){
+    var html = '<div class="h-title" style="margin-bottom:14px;">Plus</div>';
+    html += moreItems.map(function(it){
+      return '<button class="navlist-item" onclick="selectScreen(\''+it.k+'\')">' + iconSvg(it.icon, false) + '<span>' + it.label + '</span></button>';
+    }).join('');
+    return html;
+  };
+subScreens['quiz-history'] = function(){
+    function row(mat, titre, score, pts, ficheId){
+      return '<button onclick="selectScreen(\'fiche-'+ficheId+'\')" class="card row" style="width:100%;text-align:left;font-family:inherit;cursor:pointer;margin-bottom:8px;">'
+        + '<div style="flex:1;"><div style="font-weight:800;font-size:12px;">'+mat+' · '+titre+'</div><div style="font-size:10.5px;color:var(--ink3);">'+score+' · '+pts+'</div></div>'
+        + icon(ICONS.chevron,{w:13,stroke:'var(--ink3)'})
+      + '</button>';
+    }
+    return '<div class="h-title" style="margin-bottom:4px;">Quiz faits</div>'
+    + '<div style="font-size:11px;color:var(--ink3);margin-bottom:14px;">Touche un quiz pour revoir le cours et les questions.</div>'
+    + row('Histoire','Le jeu des puissances','85%','+17 pts','t1')
+    + row('PSE','Le système de santé','70%','+14 pts','pse1')
+    + row('EMC','La révolution numérique','92%','+18 pts','t13');
+  };
+
+// ---- FICHE DE COURS (le vrai contenu, accessible depuis chaque tuile Réviser) ----
+var FICHES = {
+  't1': {titre:'Le jeu des puissances depuis 1945', couleur:'#8B5CF6', mat:'Histoire',
+    essentiel:"Depuis 1945, le monde a connu <b>trois grandes périodes</b> dans le jeu des puissances : d'abord un monde <b>bipolaire</b> dominé par les États-Unis et l'URSS (guerre froide 1947-1991), puis une <b>hyperpuissance américaine</b> après la chute de l'URSS (1991), enfin un monde <b>multipolaire</b> où émergent de nouvelles puissances (Chine, UE, BRICS).",
+    chrono:[['1945–1991','<b>Monde bipolaire :</b> les États-Unis et l\'URSS se font face. C\'est la guerre froide, un <b>« équilibre de la terreur »</b>.'],['1991','<b>Fin de la guerre froide :</b> chute du mur de Berlin, démission de Gorbatchev. Les USA deviennent la seule <b>« hyperpuissance »</b>.'],['Aujourd\'hui','<b>Monde multipolaire :</b> États-Unis, Chine, UE, Russie, <b>BRICS</b>. La Chine est la 2e puissance économique mondiale.']],
+    vocab:[['Superpuissance','État qui dépasse en importance les autres puissances mondiales.'],['Multipolarité','Présence de plusieurs pôles de puissances dans le monde.'],['OTAN','Organisation du Traité de l\'Atlantique Nord (1949).']]
+  },
+  't9': {titre:"L'accès aux ressources", couleur:'#1E6FCC', mat:'Géographie',
+    essentiel:"Depuis le XXe siècle, les besoins de l'humanité en ressources ont explosé. Ces ressources sont <b>inégalement réparties</b> et leur exploitation cause des <b>tensions géopolitiques</b> et des problèmes environnementaux.",
+    chrono:[],
+    vocab:[['Ressources','Potentialités à mettre en valeur pour créer de la richesse.'],['Conflit d\'usage','Conflit entre acteurs qui veulent utiliser une même ressource différemment.'],['Stress hydrique','Situation où la demande en eau dépasse les ressources disponibles.'],['Terres rares','17 métaux stratégiques utilisés dans les hautes technologies.']]
+  },
+  't13': {titre:'La révolution numérique et les libertés', couleur:'#0E9E6E', mat:'EMC',
+    essentiel:"Internet a été perçu comme un facteur de <b>liberté de communication</b> et de démocratisation des savoirs. Mais l'inégal accès crée une <b>« fracture numérique »</b>. Le numérique pose aussi des questions sur les libertés (vie privée, données personnelles) et la sécurité.",
+    chrono:[],
+    vocab:[['Identité numérique','Ensemble des informations laissées sur Internet.'],['CNIL','Commission Nationale de l\'Informatique et des Libertés.'],['Fracture numérique','Inégalité d\'accès et de maîtrise du numérique.']]
+  },
+  'pse1': {titre:'Le système de santé', couleur:'#C27C0A', mat:'PSE',
+    essentiel:"La <b>santé</b> selon l'OMS : bien-être <b>physique, mental et social</b>. La <b>Sécurité sociale</b> repose sur la <b>solidarité</b>. Déclarer un <b>médecin traitant</b> dès 16 ans : <b>70%</b> de remboursement en parcours coordonné, <b>30%</b> hors parcours.",
+    chrono:[['Dès 16 ans','Obligation de déclarer un médecin traitant'],['Parcours coordonné','Remboursement 70% −1€'],['Hors parcours','Remboursement 30% −1€'],['DMP','Dossier Médical Partagé — monespacesante.fr']],
+    vocab:[['Capital santé','Facteurs influençant la santé : comportements, environnement, génétique, soins'],['Médecin traitant','Déclaré dès 16 ans, coordonne les soins'],['Solidarité','Chacun cotise selon ses moyens et est couvert selon ses besoins']]
+  }
+};
+function melanger(tableau){
+  var copie = tableau.slice();
+  for (var i = copie.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = copie[i]; copie[i] = copie[j]; copie[j] = tmp;
+  }
+  return copie;
+}
+var reponseSelectionnee = {}; // par index de question, dans l'écran quiz-fiche courant
+var quizFicheCache = {}; // tirage figé par fiche, généré une seule fois à l'entrée
+function selectionnerReponseQCM(qIndex, optIndex){
+  reponseSelectionnee[qIndex] = optIndex;
+  selectScreen(activeSub);
+}
+Object.keys(FICHES).forEach(function(id){
+  subScreens['fiche-'+id] = function(){
+    var f = FICHES[id];
+    var html = '<div class="row" style="margin-bottom:14px;">'
+        + '<div class="icon-sq" style="width:40px;height:40px;background:'+f.couleur+';">'+icon(ICONS.book,{w:19})+'</div>'
+        + '<div><div style="font-size:10px;font-weight:800;color:'+f.couleur+';text-transform:uppercase;">'+f.mat+'</div><div class="h-title" style="margin:0;font-size:16px;line-height:1.25;">'+f.titre+'</div></div>'
+      + '</div>';
+    if (f.essentiel) {
+      html += '<div class="card" style="margin-bottom:10px;">'
+        + '<div class="sec-title">L\'essentiel</div>'
+        + '<div style="font-size:11.5px;color:var(--ink2);line-height:1.6;">'+f.essentiel+'</div>'
+      + '</div>';
+    }
+    if (f.chrono.length > 0) {
+      html += '<div class="card" style="margin-bottom:10px;">'
+        + '<div class="sec-title">Frise chronologique</div>'
+        + f.chrono.map(function(c){return '<div class="row" style="align-items:flex-start;margin-bottom:8px;"><div style="font-size:10px;font-weight:800;color:var(--pp);width:70px;flex-shrink:0;padding-top:1px;">'+c[0]+'</div><div style="font-size:11px;color:var(--ink2);line-height:1.5;">'+c[1]+'</div></div>';}).join('')
+      + '</div>';
+    }
+    if (f.vocab.length > 0) {
+      html += '<div class="card" style="margin-bottom:12px;">'
+        + '<div class="sec-title">Vocabulaire</div>'
+        + f.vocab.map(function(v){return '<div style="margin-bottom:7px;"><div style="font-size:11.5px;font-weight:800;">'+v[0]+'</div><div style="font-size:10.5px;color:var(--ink3);">'+v[1]+'</div></div>';}).join('')
+      + '</div>';
+    }
+    html += '<button onclick="selectScreen(\'quiz-fiche-'+id+'\')" style="display:block;width:100%;background:var(--pp);color:white;font-weight:800;font-size:12px;padding:12px;border-radius:12px;border:none;font-family:inherit;cursor:pointer;">Quiz de révision sur cette fiche</button>';
+    return html;
+  };
+
+  // Quiz de révision propre à CETTE fiche : questions tirées du vocabulaire réel,
+  // pas la roulette à points (qui reste accessible séparément via l'onglet Quiz).
+  subScreens['quiz-fiche-'+id] = function(){
+    var f = FICHES[id];
+    if (f.vocab.length < 2) {
+      return '<div class="h-title" style="margin-bottom:10px;">Quiz de révision</div>'
+        + '<div style="font-size:12px;color:var(--ink3);">Pas encore assez de vocabulaire pour ce quiz.</div>';
+    }
+    if (!quizFicheCache[id]) {
+      var toutesLesDefinitions = f.vocab.map(function(v){return v[1];});
+      quizFicheCache[id] = melanger(f.vocab).slice(0, 4).map(function(q){
+        var distracteurs = melanger(toutesLesDefinitions.filter(function(d){return d !== q[1];})).slice(0, 3);
+        var options = melanger([q[1]].concat(distracteurs));
+        return {terme:q[0], bonneReponse:q[1], options:options};
+      });
+    }
+    var questions = quizFicheCache[id];
+    var html = '<div class="h-title" style="margin-bottom:2px;font-size:17px;">Quiz de révision</div>'
+      + '<div style="font-size:11px;color:var(--ink3);margin-bottom:4px;">'+f.titre+' — uniquement sur cette fiche.</div>'
+      + '<div style="font-size:10px;color:var(--ink3);background:var(--bg);border-radius:9px;padding:7px 10px;display:inline-block;margin-bottom:14px;">Pas de points ici — juste pour t\'entraîner</div>';
+    questions.forEach(function(q, i){
+      var choisi = reponseSelectionnee[i];
+      html += '<div class="card" style="margin-bottom:10px;">'
+        + '<div style="font-size:10px;font-weight:800;color:var(--ink3);text-transform:uppercase;margin-bottom:6px;">Question '+(i+1)+'</div>'
+        + '<div style="font-size:12.5px;font-weight:800;margin-bottom:8px;">C\'est quoi : '+q.terme+' ?</div>'
+        + q.options.map(function(opt, oi){
+            var estChoisi = choisi === oi;
+            var estBonne = opt === q.bonneReponse;
+            var couleur = choisi===undefined ? 'var(--ink2)' : (estBonne ? 'var(--gr)' : (estChoisi ? 'var(--re)' : 'var(--ink3)'));
+            var fond = choisi===undefined ? 'white' : (estBonne ? 'var(--grbg)' : (estChoisi ? '#FCE4E8' : 'white'));
+            return '<button onclick="selectionnerReponseQCM('+i+','+oi+')" style="display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:'+fond+';color:'+couleur+';font-weight:700;font-size:11px;padding:8px 10px;border-radius:9px;margin-bottom:6px;font-family:inherit;cursor:pointer;">'+opt+'</button>';
+          }).join('')
+      + '</div>';
+    });
+    html += '<div class="card" style="text-align:center;background:linear-gradient(135deg,var(--ppbg),white);border-color:var(--ppln);margin-top:6px;">'
+      + '<div style="font-weight:800;font-size:12.5px;margin-bottom:3px;">Envie de t\'améliorer en jouant ?</div>'
+      + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:10px;">Tourne la roue et gagne des points sur ce que tu viens de réviser.</div>'
+      + '<button onclick="selectScreen(\'quiz\')" style="display:block;width:100%;background:var(--pp);color:white;font-weight:800;font-size:12px;padding:11px;border-radius:12px;border:none;font-family:inherit;cursor:pointer;">Tenter la roulette</button>'
+    + '</div>'
+    + '<button onclick="reponseSelectionnee={};quizFicheCache={};selectScreen(\'reviser\')" style="display:block;width:100%;border:1.5px solid var(--line);color:var(--ink3);background:transparent;font-weight:700;font-size:11.5px;padding:10px;border-radius:12px;font-family:inherit;cursor:pointer;margin-top:8px;">Retour aux fiches</button>';
+    return html;
+  };
+});
+
+// ---- DÉFIS : création (formulaire réel) + carte d'envoi (vrai partage) ----
+var defiCreationMise = 20, defiCreationTheme = 'Histoire', defiCreationNbJoueurs = 2, defiCreationAdversaire = '';
+var defiEtapeEnvoi = false; // false = formulaire, true = carte de partage
+var defiEnvoiCanal = null; // null = pas encore envoyé, sinon 'whatsapp'/'sms'/'qr'/'copier' -> déclenche l'animation
+var defiInvitesRoom = []; // invitations ciblées en mode room (nouveauté proposée, absente du vrai code actuel)
+function toggleInviteRoom(p){
+  var i = defiInvitesRoom.indexOf(p);
+  if (i === -1) defiInvitesRoom.push(p); else defiInvitesRoom.splice(i, 1);
+  selectScreen('defi-creation');
+}
+var JOUEURS_EN_LIGNE = ['TestDefi2', 'TestDefi3'];
+
+function choisirMiseDefi(m){ defiCreationMise = m; selectScreen('defi-creation'); }
+function choisirThemeDefi(t){ defiCreationTheme = t; selectScreen('defi-creation'); }
+function choisirNbJoueursDefi(n){ defiCreationNbJoueurs = n; if (n !== 2) defiCreationAdversaire = ''; selectScreen('defi-creation'); }
+function choisirAdversaireDefi(p){ defiCreationAdversaire = p; selectScreen('defi-creation'); }
+
+function creerDefi(){
+  defiEtapeEnvoi = true;
+  defiEnvoiCanal = null;
+  selectScreen('defi-creation');
+}
+var CANAL_LABEL = {whatsapp:'Envoyé sur WhatsApp !', sms:'Envoyé par SMS !', qr:'QR code affiché !', copier:'Lien copié !'};
+function envoyerDefiVia(canal){
+  defiEnvoiCanal = canal;
+  selectScreen('defi-creation');
+  setTimeout(function(){ retourApresEnvoiDefi(); }, 1100);
+}
+function retourApresEnvoiDefi(){
+  defiEtapeEnvoi = false;
+  defiEnvoiCanal = null;
+  defiCreationMise = 20; defiCreationTheme = 'Histoire'; defiCreationNbJoueurs = 2; defiCreationAdversaire = ''; defiInvitesRoom = [];
+  selectScreen('defis');
+}
+
+subScreens['defi-creation'] = function(){
+  var couleurTheme = {Histoire:'#D63050','Géo':'#1E6FCC',EMC:'#C27C0A',PSE:'#0E9E6E'}[defiCreationTheme] || 'var(--pp)';
+
+  if (defiEnvoiCanal) {
+    return '<div style="display:flex;flex-direction:column;align-items:center;padding-top:30px;">'
+      + '<div style="width:150px;height:100px;border-radius:16px;background:linear-gradient(150deg,'+couleurTheme+','+couleurTheme+'CC);display:flex;align-items:center;justify-content:center;color:white;box-shadow:0 20px 40px -12px rgba(0,0,0,.35);animation:cardspin 1.1s ease forwards;">'
+        + icon(ICONS.sword,{w:30,stroke:'white'})
+      + '</div>'
+      + '<div style="font-weight:800;font-size:13px;margin-top:22px;">'+CANAL_LABEL[defiEnvoiCanal]+'</div>'
+    + '</div>';
+  }
+
+  if (defiEtapeEnvoi) {
+    var cagnotteMax = defiCreationMise * defiCreationNbJoueurs;
+    return '<div class="card" style="margin-bottom:0;">'
+      + '<div class="sec-title" style="margin-bottom:8px;">Ton défi est prêt</div>'
+      + '<div class="row" style="background:linear-gradient(150deg,'+couleurTheme+','+couleurTheme+'CC);border-radius:16px;padding:18px;margin-bottom:6px;color:white;justify-content:space-between;">'
+        + '<div><div style="font-weight:800;font-size:17px;">'+defiCreationMise+' pts <span style="font-size:11px;font-weight:600;opacity:.85;">/ joueur</span></div><div style="font-size:11.5px;opacity:.9;">'+defiCreationTheme+' · '+(defiCreationAdversaire ? 'défie '+defiCreationAdversaire : 'Ouvert à tous')+'</div></div>'
+        + icon(ICONS.sword,{w:26,stroke:'white'})
+      + '</div>'
+      + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:14px;">Chaque joueur qui rejoint mise '+defiCreationMise+' pts — jusqu\'à '+cagnotteMax+' pts en jeu si les '+defiCreationNbJoueurs+' places se remplissent.</div>'
+      + '<div class="sec-title" style="margin-bottom:8px;">Envoyer maintenant</div>'
+      + '<div class="grid2" style="grid-template-columns:repeat(4,1fr);gap:6px;">'
+        + canalBtn('#25D36622','#1DA851','M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z','WhatsApp','whatsapp')
+        + canalBtn('var(--ambg)','var(--bl)','M2 4h20v16H2zM22 7l-10 5L2 7','SMS','sms')
+        + canalBtn('var(--line)','var(--ink)','M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h-3zM19 14v2M14 19h2M19 19h2v2','QR code','qr')
+        + canalBtn('var(--ppbg)','var(--pp)','M21.44 11.05 12.25 20.2a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66L9.41 17.4a2 2 0 0 1-2.83-2.83l8.49-8.48','Copier','copier')
+      + '</div>'
+    + '</div>';
+  }
+
+  var mises = [10,20,30,50], themes = ['Histoire','Géo','EMC','PSE'], nbOptions = [2,3,4,5,6,8];
+  var html = '<div class="h-title" style="margin-bottom:14px;">Lancer un défi</div>'
+  + '<div class="card" style="margin-bottom:12px;">'
+    + '<div class="sec-title">Ta mise</div>'
+    + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">'
+      + mises.map(function(m){return '<button onclick="choisirMiseDefi('+m+')" class="chip'+(defiCreationMise===m?' active':'')+'" style="border:1.5px solid '+(defiCreationMise===m?'var(--ppln)':'var(--line)')+';font-family:inherit;cursor:pointer;">'+m+' pts</button>';}).join('')
+    + '</div>'
+    + '<div class="sec-title">Thème</div>'
+    + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">'
+      + themes.map(function(t){return '<button onclick="choisirThemeDefi(\''+t+'\')" class="chip'+(defiCreationTheme===t?' active':'')+'" style="border:1.5px solid '+(defiCreationTheme===t?'var(--ppln)':'var(--line)')+';font-family:inherit;cursor:pointer;">'+t+'</button>';}).join('')
+    + '</div>'
+    + '<div class="sec-title">Nombre de joueurs</div>'
+    + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">'
+      + nbOptions.map(function(n){return '<button onclick="choisirNbJoueursDefi('+n+')" class="chip'+(defiCreationNbJoueurs===n?' active':'')+'" style="border:1.5px solid '+(defiCreationNbJoueurs===n?'var(--ppln)':'var(--line)')+';font-family:inherit;cursor:pointer;width:36px;height:36px;padding:0;border-radius:50%;justify-content:center;">'+n+'</button>';}).join('')
+    + '</div>';
+
+  if (defiCreationNbJoueurs === 2) {
+    html += '<div class="sec-title">Adversaire (optionnel)</div>'
+      + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">'
+        + JOUEURS_EN_LIGNE.map(function(p){return '<button onclick="choisirAdversaireDefi(\''+p+'\')" class="chip'+(defiCreationAdversaire===p?' active':'')+'" style="border:1.5px solid '+(defiCreationAdversaire===p?'var(--ppln)':'var(--line)')+';font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--gr);"></span>'+p+'</button>';}).join('')
+      + '</div>'
+      + '<input value="'+defiCreationAdversaire+'" oninput="defiCreationAdversaire=this.value;" placeholder="Pseudo précis — laisse vide pour un défi ouvert" style="width:100%;border:1.5px solid var(--line);border-radius:11px;padding:10px 12px;font-size:12px;font-family:inherit;margin-bottom:14px;" />';
+  } else {
+    html += '<div style="font-size:11px;color:var(--ink3);background:var(--bg);border-radius:11px;padding:11px;margin-bottom:10px;">Défi ouvert à '+defiCreationNbJoueurs+' joueurs — n\'importe qui peut rejoindre jusqu\'à ce que la room soit complète.</div>'
+      + '<div class="sec-title">Inviter directement (optionnel)</div>'
+      + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">'
+        + JOUEURS_EN_LIGNE.map(function(p){
+            var invite = defiInvitesRoom.indexOf(p) !== -1;
+            return '<button onclick="toggleInviteRoom(\''+p+'\')" class="chip'+(invite?' active':'')+'" style="border:1.5px solid '+(invite?'var(--ppln)':'var(--line)')+';font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--gr);"></span>'+p+'</button>';
+          }).join('')
+      + '</div>';
+  }
+  html += '</div>'
+  + '<button onclick="creerDefi()" style="display:block;width:100%;background:var(--pp);color:white;font-weight:800;font-size:13px;padding:13px;border-radius:13px;border:none;font-family:inherit;cursor:pointer;">Créer le défi</button>';
+  return html;
+};
+function canalBtn(bg, fg, path, label, canal){
+  return '<button onclick="envoyerDefiVia(\''+canal+'\')" style="display:flex;flex-direction:column;align-items:center;gap:5px;background:'+bg+';color:'+fg+';border:none;border-radius:11px;padding:11px 4px;font-family:inherit;cursor:pointer;">'
+    + icon(path,{w:18}) + '<span style="font-size:9px;font-weight:800;">'+label+'</span></button>';
+}
+
+
+function relancerDefi(id){
+  var d = DEFIS_DATA.filter(function(x){return x.id===id;})[0];
+  if (!d) return;
+  defiCreationMise = d.mise;
+  defiCreationTheme = d.theme;
+  defiCreationNbJoueurs = d.nbJoueurs;
+  var autres = d.participants.filter(function(p){return p !== 'TestDefi1';});
+  defiCreationAdversaire = d.nbJoueurs === 2 ? (autres[0] || '') : '';
+  defiEtapeEnvoi = false;
+  defiEnvoiCanal = null;
+  selectScreen('defi-creation');
+}
+DEFIS_DATA.forEach(function(d){
+  subScreens[d.id] = function(){
+    var statutLabel = {attente:'En attente', encours:'En cours', termine: d.gagnant==='TestDefi1' ? 'Gagné' : 'Perdu'};
+    var typeRoom = d.nbJoueurs === 2 ? '1 contre 1' : 'Room à ' + d.nbJoueurs + ' joueurs';
+    var html = '<div class="row" style="margin-bottom:14px;">'
+      + '<div class="icon-sq" style="width:44px;height:44px;background:'+d.couleur+';">'+icon(ICONS.sword,{w:20})+'</div>'
+      + '<div><div class="h-title" style="margin:0;font-size:16px;">Défi de '+d.createur+' <span style="color:var(--ink3);font-weight:700;">#'+d.numero+'</span></div>'
+        + '<div style="font-size:10.5px;color:var(--ink3);">'+typeRoom+'</div></div>'
+    + '</div>';
+
+    html += '<div class="card" style="margin-bottom:10px;">'
+      + '<div class="sec-title" style="margin-bottom:8px;">Détails</div>'
+      + '<div class="row" style="padding:4px 0;"><span style="flex:1;font-size:11.5px;color:var(--ink3);">Mise</span><span style="font-size:11.5px;font-weight:800;">'+d.mise+' pts</span></div>'
+      + '<div class="row" style="padding:4px 0;"><span style="flex:1;font-size:11.5px;color:var(--ink3);">Thème</span><span style="font-size:11.5px;font-weight:800;">'+d.theme+'</span></div>'
+      + (d.cagnotte ? '<div class="row" style="padding:4px 0;"><span style="flex:1;font-size:11.5px;color:var(--ink3);">Cagnotte</span><span style="font-size:11.5px;font-weight:800;color:var(--pp);">'+d.cagnotte+' pts</span></div>' : '')
+      + '<div class="row" style="padding:4px 0;"><span style="flex:1;font-size:11.5px;color:var(--ink3);">Statut</span><span class="badge" style="background:var(--ambg);color:var(--am);">'+statutLabel[d.statut]+'</span></div>'
+    + '</div>';
+
+    html += '<div class="card" style="margin-bottom:10px;">'
+      + '<div class="sec-title" style="margin-bottom:8px;">Joueurs — '+d.participants.length+'/'+d.nbJoueurs+'</div>'
+      + d.participants.map(function(p){
+          var estGagnant = d.gagnant === p;
+          return '<div class="row" style="padding:5px 0;">'
+            + '<div class="avatar" style="width:24px;height:24px;font-size:10px;background:'+(estGagnant?'var(--gold)':'var(--pp)')+';">'+p[0]+'</div>'
+            + '<span style="flex:1;font-size:11.5px;font-weight:700;">'+p+'</span>'
+            + (estGagnant ? '<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:800;color:var(--gold);">'+icon(ICONS.trophy,{w:11,stroke:'var(--gold)'})+'Gagnant</span>' : '')
+          + '</div>';
+        }).join('')
+      + (d.participants.length < d.nbJoueurs ? '<div style="font-size:10.5px;color:var(--ink3);margin-top:6px;">'+(d.nbJoueurs-d.participants.length)+' place(s) encore libre(s)</div>' : '')
+    + '</div>';
+
+    if (d.statut === 'termine') {
+      html += '<button onclick="relancerDefi(\''+d.id+'\')" style="display:block;width:100%;background:var(--pp);color:white;font-weight:800;font-size:12.5px;padding:12px;border-radius:12px;border:none;font-family:inherit;cursor:pointer;">Relancer ce défi</button>';
+    }
+    return html;
+  };
+});
+
+// ---- LOTS ----
+subScreens['lots-liste'] = function(){
+  function lot(titre, partenaire, pts){
+    return '<button onclick="selectScreen(\'lot-detail\')" class="card row" style="width:100%;text-align:left;font-family:inherit;cursor:pointer;margin-bottom:8px;">'
+      + '<div class="icon-sq" style="width:38px;height:38px;background:linear-gradient(135deg,#FBBF24,#E0A800);">'+icon(ICONS.gift,{w:17})+'</div>'
+      + '<div style="flex:1;"><div style="font-weight:800;font-size:12px;">'+titre+'</div><div style="font-size:10.5px;color:var(--ink3);">'+partenaire+' · '+pts+' pts</div></div>'
+      + icon(ICONS.chevron,{w:13,stroke:'var(--ink3)'})
+    + '</button>';
+  }
+  return '<div class="h-title" style="margin-bottom:4px;">Mes lots</div>'
+  + '<div style="font-size:11px;color:var(--ink3);margin-bottom:14px;">Tu as 9600 points. Échange-les contre des récompenses.</div>'
+  + lot('Une entrée','Cos Flash',350) + lot('Café gourmand offert','Nook Café',120) + lot('Place de cinéma','Cinéma Mercury',200);
+};
+
+// ---- INSTALLER L'APP ----
+subScreens['install-app'] = function(){
+  function etape(n, texte){
+    return '<div class="row" style="align-items:flex-start;margin-bottom:12px;">'
+      + '<div style="width:22px;height:22px;border-radius:50%;background:var(--ppbg);color:var(--pp);font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">'+n+'</div>'
+      + '<div style="font-size:11.5px;color:var(--ink2);padding-top:2px;">'+texte+'</div>'
+    + '</div>';
+  }
+  return '<div class="h-title" style="margin-bottom:14px;">Installer sur iPhone</div>'
+  + '<div class="card">'
+    + etape(1, 'Touche <b>Partager</b> en bas de Safari')
+    + etape(2, 'Choisis <b>Sur l\'écran d\'accueil</b>')
+    + etape(3, 'Confirme avec <b>Ajouter</b>')
+  + '</div>';
+};
+
+
+// ---- LIGUE ----
+function screenLigue() {
+  return '<div class="h-title" style="margin-bottom:12px;">Ma ligue</div>'
+  + '<div class="card" style="text-align:center;background:linear-gradient(150deg,#534AB7,#534AB7CC);color:white;margin-bottom:16px;">'
+    + icon(ICONS.trophy,{w:30,stroke:'white'})
+    + '<div style="font-size:10px;font-weight:700;opacity:.8;text-transform:uppercase;margin-top:4px;">Palier actuel</div>'
+    + '<div style="font-size:19px;font-weight:800;">Platine</div><div style="font-size:12px;opacity:.9;">9600 pts</div>'
+  + '</div>'
+  + '<div style="display:flex;align-items:flex-end;justify-content:center;gap:10px;margin-bottom:16px;">'
+    + podiumCol('#B0B4D6',44,'2','TestDefi3','8200')
+    + podiumCol('var(--gold)',58,'1','TestDefi1','9600')
+    + podiumCol('#C98A4E',34,'3','TestDefi4','7100')
+  + '</div>'
+  + '<div class="card" style="padding:0;overflow:hidden;">'
+    + ligRow(4,'TestDefi5',6400) + ligRow(5,'TestDefi6',5900)
+  + '</div>';
+}
+function podiumCol(bg,h,rank,name,pts){
+  return '<div style="text-align:center;width:70px;">'
+    + '<div class="avatar" style="background:'+bg+';margin:0 auto 4px;">'+name[0]+'</div>'
+    + '<div style="font-size:10px;font-weight:800;">'+name+'</div><div style="font-size:9px;color:var(--ink3);margin-bottom:4px;">'+pts+' pts</div>'
+    + '<div style="height:'+h+'px;background:'+bg+';border-radius:10px 10px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:4px;color:white;font-weight:800;font-size:13px;">'+rank+'</div>'
+  + '</div>';
+}
+function ligRow(rank,name,pts){
+  return '<div class="row" style="padding:9px 11px;border-bottom:1px solid var(--line);">'
+    + '<span style="font-size:10px;font-weight:700;color:var(--ink3);width:14px;">'+rank+'</span>'
+    + '<div class="avatar" style="background:var(--pp);width:24px;height:24px;font-size:9px;">'+name[0]+'</div>'
+    + '<span style="flex:1;font-size:11.5px;font-weight:700;">'+name+'</span><span style="font-size:11.5px;font-weight:800;">'+pts+' pts</span>'
+  + '</div>';
+}
+
+// ---- PROFIL ----
+function screenProfil() {
+  return '<div class="h-title" style="margin-bottom:14px;">Mon profil</div>'
+  + '<div class="card row" style="margin-bottom:6px;">'
+    + '<div class="avatar" style="width:46px;height:46px;background:var(--pp);font-size:16px;">T</div>'
+    + '<div><div style="font-weight:800;font-size:14px;">TestDefi1</div><div style="font-size:11px;color:var(--ink3);">Tale Bac Pro Vente · anonyme côté prof</div></div>'
+  + '</div>'
+  + '<div style="font-size:10px;color:var(--ink3);margin-bottom:12px;padding:0 2px;">100% anonyme : ton prof ne voit que ce pseudo, jamais ton identité réelle.</div>'
+  + '<div style="display:flex;gap:8px;margin-bottom:12px;">'
+    + '<div class="card" style="flex:1;text-align:center;"><div style="font-size:17px;font-weight:800;color:var(--pp);">9600</div><div style="font-size:9px;color:var(--ink3);font-weight:700;">POINTS</div></div>'
+    + '<div class="card" style="flex:1;text-align:center;"><div style="font-size:17px;font-weight:800;color:var(--pp);">4</div><div style="font-size:9px;color:var(--ink3);font-weight:700;">STREAK</div></div>'
+    + '<div class="card" style="flex:1;text-align:center;background:var(--pp);color:white;"><div style="font-size:15px;font-weight:800;">Platine</div><div style="font-size:9px;font-weight:700;opacity:.85;">LIGUE</div></div>'
+  + '</div>'
+  + '<div class="card" style="margin-bottom:10px;">'
+    + '<div class="sec-title" style="margin-bottom:6px;">Points reçus par attribution</div>'
+    + quizRow('Prof — QR classe entière', '+20 pts', '12 juin')
+    + quizRow('Prof — remise individuelle', '+15 pts', '3 juin')
+  + '</div>'
+  + menuRow('var(--gold)',ICONS.gift,'Mes lots','Échange tes points','lots-liste')
+  + menuRow('var(--bl)','M12 3v13m0 0-4-4m4 4 4-4M5 21h14','Installer l\'app','Accès direct écran d\'accueil','install-app');
+}
+function menuRow(c,path,titre,desc,target){
+  return '<button onclick="selectScreen(\''+target+'\')" class="card row" style="margin-bottom:8px;width:100%;text-align:left;font-family:inherit;cursor:pointer;">'
+    + '<div class="icon-sq" style="width:38px;height:38px;background:'+c+';">'+icon(path,{w:17})+'</div>'
+    + '<div style="flex:1;"><div style="font-weight:800;font-size:12.5px;">'+titre+'</div><div style="font-size:10.5px;color:var(--ink3);">'+desc+'</div></div>'
+    + icon(ICONS.chevron,{w:13,stroke:'var(--ink3)'})
+  + '</button>';
+}
+
+var items = [
+  {k:'accueil', label:'Accueil', icon:ICONS.home, render:screenAccueil},
+  {k:'reviser', label:'Réviser', icon:ICONS.book, render:screenReviser},
+  {k:'quiz', label:'Quiz', icon:ICONS.star, render:screenQuiz},
+  {k:'defis', label:'Défis', icon:ICONS.sword, render:screenDefis},
+  {k:'classe', label:'Ma classe', icon:ICONS.people, render:screenClasse},
+  {k:'ligue', label:'Ligue', icon:ICONS.trophy, render:screenLigue},
+  {k:'profil', label:'Profil', icon:ICONS.user, render:screenProfil}
+];
+var BOTTOM_KEYS = ['accueil','reviser','quiz','defis']; // barre du bas : 4 fonctions coeur seulement
+var bottomItems = items.filter(function (i) { return BOTTOM_KEYS.indexOf(i.k) !== -1; });
+var moreItems = items.filter(function (i) { return BOTTOM_KEYS.indexOf(i.k) === -1; }); // accessibles via le burger
+
+var current = 'accueil';   // onglet principal actif (barre du bas / sidebar desktop)
+var activeSub = null;      // sous-écran ouvert par-dessus (détail, ou le menu "plus" du burger)
+
+function iconSvg(path, active) {
+  return icon(path, {w:16, stroke: active ? '#534AB7' : '#6B7094'});
+}
+function isMainItem(k) { return items.some(function (i) { return i.k === k; }); }
+
+function findScreen(k) {
+  var it = items.filter(function (i) { return i.k === k; })[0];
+  if (it) return it;
+  if (subScreens[k]) return { k: k, render: subScreens[k] };
+  return items[0]; // filet de sécurité : jamais de crash sur une clé inconnue
+}
+
+// --- Sidebar desktop (toujours visible, les 7 items - pas de contrainte d'espace) ---
+function renderDesktopNav() {
+  var el = document.getElementById('desktop-nav');
+  el.innerHTML = items.map(function (it) {
+    var active = it.k === current;
+    return '<button class="' + (active ? 'active' : '') + '" onclick="selectScreen(\'' + it.k + '\')">' + iconSvg(it.icon, active) + '<span>' + it.label + '</span></button>';
+  }).join('');
+}
+function renderDesktopScreen() {
+  document.getElementById('desktop-screen').innerHTML = findScreen(activeSub || current).render();
+}
+
+// --- Mobile : barre du bas = 4 fonctions coeur, burger en haut = le reste ---
+function renderBottomNav() {
+  var el = document.getElementById('bottom-nav');
+  el.innerHTML = bottomItems.map(function (it) {
+    var active = it.k === current && !activeSub;
+    return '<button class="bnav-item' + (active ? ' active' : '') + '" onclick="selectScreen(\'' + it.k + '\')">' + iconSvg(it.icon, active) + '<span>' + it.label + '</span></button>';
+  }).join('');
+}
+function renderMobileScreenContent() {
+  document.getElementById('mobile-screen').innerHTML = findScreen(activeSub || current).render();
+}
+function updateMobileChrome() {
+  document.getElementById('back-btn').style.display = activeSub ? 'block' : 'none';
+  document.getElementById('burger-btn').style.display = activeSub ? 'none' : 'block';
+  document.getElementById('desktop-topbar').style.display = activeSub ? 'flex' : 'none';
+}
+function openMoreMenu() {
+  activeSub = 'more-menu';
+  renderMobileScreenContent();
+  updateMobileChrome();
+}
+function goBack() {
+  if (activeSub) {
+    activeSub = null;
+    renderMobileScreenContent();
+    renderDesktopScreen();
+    updateMobileChrome();
+  }
+}
+
+function selectScreen(k) {
+  if (isMainItem(k)) {
+    current = k;
+    activeSub = null;
+  } else {
+    activeSub = k; // sous-écran de détail : l'onglet du bas reste sur la page d'où on vient
+  }
+  renderDesktopNav();
+  renderDesktopScreen();
+  renderBottomNav();
+  renderMobileScreenContent();
+  updateMobileChrome();
+}
+
+function setMode(m) {
+  document.getElementById('frame-mobile').style.display = m === 'mobile' ? 'flex' : 'none';
+  document.getElementById('frame-desktop').style.display = m === 'desktop' ? 'block' : 'none';
+  document.getElementById('btn-mobile').className = m === 'mobile' ? 'active' : '';
+  document.getElementById('btn-desktop').className = m === 'desktop' ? 'active' : '';
+}
+
+renderDesktopNav();
+renderDesktopScreen();
+renderBottomNav();
+renderMobileScreenContent();
+updateMobileChrome();
+setMode('mobile');
+</script>
+</body>
+</html>
