@@ -106,19 +106,58 @@ var MAT=[{k:'histoire',n:'Histoire',c:'#D63050'},{k:'geo',n:'Géo',c:'#1E6FCC'},
 var wheelState={enabled:{histoire:true,geo:true,emc:true,pse:true},rot:0,spinning:false};
 
 var CURROOM=0;
-function openRoom(i){CURROOM=i;go('room');}
+var JOIN_REQUESTS=[];
+function openRoom(i){CURROOM=i;JOIN_REQUESTS=[];go('room');}
+function qrSvg(){var r='';for(var y=0;y<11;y++)for(var x=0;x<11;x++){if((x*y+x+y)%3===0||(x<3&&y<3)||(x>7&&y<3)||(x<3&&y>7))r+='<rect x="'+(x*10)+'" y="'+(y*10)+'" width="10" height="10" fill="#111"/>';}return '<svg viewBox="0 0 110 110" style="width:120px;height:120px">'+r+'</svg>';}
+var CLASSMATES=['Lilou','Marc','Tom','In\u00e8s','Nadir','Lucas','Emma'];
 var ROOMS=[
-  {nom:'Sophie',mise:45,joueursActuels:2,joueursTotal:4,type:'Publique',couleur:'var(--pp)',theme:'Al\u00e9atoire'},
-  {nom:'Nadir',mise:25,joueursActuels:1,joueursTotal:3,type:'Priv\u00e9e',couleur:'var(--am)',theme:'Histoire'},
-  {nom:'In\u00e8s',mise:100,joueursActuels:6,joueursTotal:8,type:'Live',couleur:'var(--gr)',theme:'G\u00e9o'}
+  {titre:'Room de Sophie',createur:'Sophie',mise:45,joueursActuels:2,joueursTotal:4,type:'Publique',couleur:'var(--pp)',theme:'Al\u00e9atoire',participants:['Sophie','Lilou'],statut:'attente',gagnant:null,scores:null},
+  {titre:'Room de Nadir',createur:'Nadir',mise:25,joueursActuels:1,joueursTotal:3,type:'Priv\u00e9e',couleur:'var(--am)',theme:'Histoire',participants:['Nadir'],statut:'attente',gagnant:null,scores:null},
+  {titre:'Room de In\u00e8s',createur:'In\u00e8s',mise:100,joueursActuels:6,joueursTotal:8,type:'Live',couleur:'var(--gr)',theme:'G\u00e9o',participants:['In\u00e8s','Lilou','Marc','Tom','Nadir','Lucas'],statut:'attente',gagnant:null,scores:null}
 ];
-var DEFICREATE_STATE={mise:45,joueurs:2,theme:'Al\u00e9atoire',type:'Publique'};
+var DEFICREATE_STATE={titre:'',mise:45,joueurs:2,theme:'Al\u00e9atoire',type:'Publique',invites:[]};
 function setDefiField(field,value){DEFICREATE_STATE[field]=value;}
+function pickRoomType(t){DEFICREATE_STATE.type=t;go('deficreate');}
+function toggleInvite(p){var i=DEFICREATE_STATE.invites.indexOf(p);if(i===-1)DEFICREATE_STATE.invites.push(p);else DEFICREATE_STATE.invites.splice(i,1);go('deficreate');}
 function creerRoomDefi(){
+  var input=document.getElementById('roomTitreInput');
+  if(input) DEFICREATE_STATE.titre=input.value.trim();
   var couleurs={Publique:'var(--pp)','Priv\u00e9e':'var(--am)',Live:'var(--gr)'};
-  ROOMS.unshift({nom:'Soso (toi)',mise:DEFICREATE_STATE.mise,joueursActuels:1,joueursTotal:DEFICREATE_STATE.joueurs,type:DEFICREATE_STATE.type,couleur:couleurs[DEFICREATE_STATE.type]||'var(--pp)',theme:DEFICREATE_STATE.theme});
-  toast('Room cr\u00e9\u00e9e \u2014 en attente de joueurs');
-  go('defis');
+  var titre=DEFICREATE_STATE.titre||'Room de Soso';
+  var participants=['Soso (toi)'].concat(DEFICREATE_STATE.type==='Priv\u00e9e'?DEFICREATE_STATE.invites.slice():[]);
+  ROOMS.unshift({titre:titre,createur:'Soso (toi)',mise:DEFICREATE_STATE.mise,joueursActuels:participants.length,joueursTotal:DEFICREATE_STATE.joueurs,type:DEFICREATE_STATE.type,couleur:couleurs[DEFICREATE_STATE.type]||'var(--pp)',theme:DEFICREATE_STATE.theme,participants:participants,statut:'attente',gagnant:null,scores:null});
+  CURROOM=0;JOIN_REQUESTS=[];
+  var typeCree=DEFICREATE_STATE.type;
+  DEFICREATE_STATE={titre:'',mise:45,joueurs:2,theme:'Al\u00e9atoire',type:'Publique',invites:[]};
+  if(typeCree==='Live'){toast('Room cr\u00e9\u00e9e \u2014 diffuse le QR');go('roomqr');}
+  else if(typeCree==='Priv\u00e9e'){toast('Room cr\u00e9\u00e9e \u2014 invitations pr\u00eates');go('roomlien');}
+  else{toast('Room cr\u00e9\u00e9e \u2014 visible dans le lobby');go('room');}
+}
+function simulerScanDefi(){
+  var r=ROOMS[CURROOM];var pool=CLASSMATES.filter(function(p){return r.participants.indexOf(p)===-1;});
+  if(!pool.length||r.joueursActuels>=r.joueursTotal){toast('La room est compl\u00e8te');return;}
+  var p=pool[Math.floor(Math.random()*pool.length)];r.participants.push(p);r.joueursActuels++;
+  toast(p+' a flash\u00e9 le QR');go('roomqr');
+}
+function copierLienDefi(lien){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(lien).catch(function(){});}toast('Lien copi\u00e9');}
+function simulerDemandeRejoindre(){
+  var r=ROOMS[CURROOM];var pool=CLASSMATES.filter(function(p){return r.participants.indexOf(p)===-1&&JOIN_REQUESTS.indexOf(p)===-1;});
+  if(!pool.length){toast('Plus personne \u00e0 inviter');return;}
+  JOIN_REQUESTS.push(pool[Math.floor(Math.random()*pool.length)]);go('room');
+}
+function admettreJoueur(p){
+  var r=ROOMS[CURROOM];var i=JOIN_REQUESTS.indexOf(p);if(i!==-1)JOIN_REQUESTS.splice(i,1);
+  if(r.participants.indexOf(p)===-1&&r.joueursActuels<r.joueursTotal){r.participants.push(p);r.joueursActuels++;}
+  toast(p+' a rejoint la room');go('room');
+}
+function lancerManche(){
+  var r=ROOMS[CURROOM];
+  if(r.joueursActuels<2){toast('Il faut au moins 2 joueurs pour lancer');return;}
+  if(!r.scores)r.scores=r.participants.map(function(p){return {pseudo:p,pts:Math.floor(Math.random()*40)+55};});
+  r.statut='encours';go('roomlive');
+}
+function validerManche(){
+  var r=ROOMS[CURROOM];r.scores.sort(function(a,b){return b.pts-a.pts;});r.gagnant=r.scores[0].pseudo;r.statut='termine';go('roomresult');
 }
 var PROFQUIZ={actif:true,titre:'Le jeu des puissances',matiere:'Histoire',classe:'Terminale Bac Pro'};
 var CLASSPERIOD='trimestre';
@@ -172,26 +211,61 @@ var PAGES={
    +'<div id="spinRes" style="margin-top:10px;font-weight:600;min-height:20px"></div>'
   +'</div>';
  },
- defis:function(){return ''
+ defis:function(){var actifs=ROOMS.filter(function(r){return r.statut!=='termine';});var termines=ROOMS.filter(function(r){return r.statut==='termine';});
+  return ''
   +'<div class="topbar"><div class="h1">D\u00e9fis</div><button class="btn" onclick="go(\'deficreate\')">'+ICON.defi+' Cr\u00e9er un d\u00e9fi</button></div>'
-  +'<div class="grid3">'+ROOMS.map(function(r,i){return '<div class="card"><div style="display:flex;align-items:center;gap:11px;margin-bottom:10px"><div class="av" style="background:'+r.couleur+'">'+r.nom[0]+'</div><div><div style="font-weight:700;font-size:14px">Room de '+r.nom+'<span class="pill" style="margin-left:6px;font-size:9px">'+r.type+'</span></div><div class="sub" style="margin:0">'+r.joueursActuels+'/'+r.joueursTotal+' joueurs \u00b7 '+r.theme+'</div></div></div><div style="font-weight:800;color:var(--pp);font-size:20px;margin-bottom:10px">'+r.mise+' pts</div><button class="btn sec" style="width:100%;justify-content:center" onclick="openRoom('+i+')">Voir la room</button></div>';}).join('')+'</div>';
+  +'<div class="grid3">'+actifs.map(function(r){var i=ROOMS.indexOf(r);return '<div class="card"><div style="display:flex;align-items:center;gap:11px;margin-bottom:10px"><div class="av" style="background:'+r.couleur+'">'+r.createur[0]+'</div><div><div style="font-weight:700;font-size:14px">'+r.titre+'<span class="pill" style="margin-left:6px;font-size:9px">'+r.type+'</span></div><div class="sub" style="margin:0">'+r.joueursActuels+'/'+r.joueursTotal+' joueurs \u00b7 '+r.theme+'</div></div></div><div style="font-weight:800;color:var(--pp);font-size:20px;margin-bottom:10px">'+r.mise+' pts</div><button class="btn sec" style="width:100%;justify-content:center" onclick="openRoom('+i+')">Voir la room</button></div>';}).join('')+'</div>'
+  +(termines.length?'<h3 style="margin:22px 0 12px;font-size:15px;font-weight:800">D\u00e9fis gagn\u00e9s</h3>'+termines.map(function(r){var net=r.mise*r.joueursActuels-r.mise;return '<div class="row card" style="margin-bottom:8px"><div class="av" style="background:var(--gold);font-size:14px">'+ICON.trophy+'</div><div style="flex:1"><div style="font-weight:700;font-size:13.5px">'+r.gagnant+' \u00b7 '+r.titre+'</div><div class="sub" style="margin:0">a rafl\u00e9 la cagnotte</div></div><span style="font-weight:800;color:var(--gr)">+'+net+'</span></div>';}).join(''):'');
  },
  deficreate:function(){return ''
   +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'defis\')">'+ICON.back+'</button><div class="h1">Cr\u00e9er un d\u00e9fi</div></div></div>'
-  +'<div class="card" style="max-width:520px"><div class="sub" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;font-size:11px">Ta mise (par joueur)</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">'+[15,25,35,45,65,100].map(function(v){return '<span class="chip'+(v===DEFICREATE_STATE.mise?' on':'')+'" onclick="chipPick(this);setDefiField(\'mise\','+v+')">'+v+' pts</span>';}).join('')+'</div>'
+  +'<div class="card" style="max-width:520px"><div class="sub" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;font-size:11px">Nom de la room</div><input id="roomTitreInput" value="'+DEFICREATE_STATE.titre+'" oninput="DEFICREATE_STATE.titre=this.value" placeholder="Room de Soso" style="width:100%;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-family:inherit;font-size:13px;margin-bottom:16px;box-sizing:border-box">'
+   +'<div class="sub" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;font-size:11px">Ta mise (par joueur)</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">'+[15,25,35,45,65,100].map(function(v){return '<span class="chip'+(v===DEFICREATE_STATE.mise?' on':'')+'" onclick="chipPick(this);setDefiField(\'mise\','+v+')">'+v+' pts</span>';}).join('')+'</div>'
    +'<div class="sub" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;font-size:11px">Nombre de joueurs</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">'+[2,3,5,6,8,10].map(function(v){return '<span class="chip'+(v===DEFICREATE_STATE.joueurs?' on':'')+'" onclick="chipPick(this);setDefiField(\'joueurs\','+v+')">'+v+'</span>';}).join('')+'</div>'
    +'<div class="sub" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;font-size:11px">Th\u00e8me</div><div style="display:flex;gap:6px;margin-bottom:16px">'+['Al\u00e9atoire','Une mati\u00e8re'].map(function(t){return '<span class="chip'+(t===DEFICREATE_STATE.theme?' on':'')+'" onclick="chipPick(this);setDefiField(\'theme\',\''+t+'\')">'+t+'</span>';}).join('')+'</div>'
-   +'<div class="sub" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;font-size:11px">Type de room</div><div style="display:flex;gap:6px;margin-bottom:20px">'+['Publique','Priv\u00e9e','Live'].map(function(t){return '<span class="chip'+(t===DEFICREATE_STATE.type?' on':'')+'" onclick="chipPick(this);setDefiField(\'type\',\''+t+'\')">'+t+'</span>';}).join('')+'</div>'
+   +'<div class="sub" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;font-size:11px">Type de room</div><div style="display:flex;gap:6px;margin-bottom:'+(DEFICREATE_STATE.type==='Priv\u00e9e'?'14px':'20px')+'">'+[['Publique','Visible dans le lobby, tout le monde rejoint'],['Priv\u00e9e','Tu choisis qui inviter, lien \u00e0 partager'],['Live','QR \u00e0 projeter ou faire circuler']].map(function(t){return '<span class="chip'+(t[0]===DEFICREATE_STATE.type?' on':'')+'" title="'+t[1]+'" onclick="pickRoomType(\''+t[0]+'\')">'+t[0]+'</span>';}).join('')+'</div>'
+   +(DEFICREATE_STATE.type==='Priv\u00e9e'?'<div class="sub" style="margin-bottom:6px;font-weight:700;text-transform:uppercase;font-size:11px">Qui inviter</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px">'+CLASSMATES.map(function(p){var on=DEFICREATE_STATE.invites.indexOf(p)!==-1;return '<span class="chip'+(on?' on':'')+'" onclick="toggleInvite(\''+p+'\')">'+p+'</span>';}).join('')+'</div><div class="sub" style="margin-bottom:16px">'+DEFICREATE_STATE.invites.length+' invit\u00e9(s) s\u00e9lectionn\u00e9(s)</div>':'')
    +'<button class="btn" style="width:100%;justify-content:center" onclick="creerRoomDefi()">Cr\u00e9er la room</button></div>';
  },
  room:function(){var r=ROOMS[CURROOM||0];var cagnotte=r.mise*r.joueursTotal;
   return ''
-  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'defis\')">'+ICON.back+'</button><div><div class="sub">Room \u00b7 '+r.theme+'</div><div class="h1">Room de '+r.nom+'</div></div></div></div>'
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'defis\')">'+ICON.back+'</button><div><div class="sub">Room \u00b7 '+r.theme+' \u00b7 '+r.type+'</div><div class="h1">'+r.titre+'</div></div></div></div>'
   +'<div class="grid2">'
-   +'<div class="card"><h3>Cagnotte en jeu</h3><div style="font-size:34px;font-weight:800;color:var(--pp);margin-bottom:4px">'+cagnotte+' pts</div><div class="sub">'+r.joueursTotal+' joueurs \u00d7 '+r.mise+' pts \u00b7 le gagnant rafle tout</div></div>'
-   +'<div class="card"><h3>Joueurs</h3>'+['Soso (toi)','Marc','Lilou','Tom','In\u00e8s','Nadir','Lucas','Emma'].slice(0,r.joueursTotal).map(function(n,i){return '<div class="row"><div class="av">'+n[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+n+'</div><span class="pill">'+(i<r.joueursActuels?'pr\u00eat':'en attente')+'</span></div>';}).join('')+'</div>'
+   +'<div class="card"><h3>Cagnotte en jeu</h3><div style="font-size:34px;font-weight:800;color:var(--pp);margin-bottom:4px">'+(r.mise*r.joueursActuels)+' <span style="font-size:15px;color:var(--ink3)">/ '+cagnotte+' pts</span></div><div class="sub">'+r.joueursActuels+' / '+r.joueursTotal+' joueurs \u00b7 '+r.mise+' pts chacun \u00b7 le gagnant rafle tout</div>'+(r.type==='Live'?'<button class="btn sec" style="margin-top:10px;width:100%;justify-content:center" onclick="go(\'roomqr\')">Revoir le QR</button>':(r.type==='Priv\u00e9e'?'<button class="btn sec" style="margin-top:10px;width:100%;justify-content:center" onclick="go(\'roomlien\')">Revoir le lien</button>':''))+'</div>'
+   +'<div class="card"><h3>Joueurs<span class="pill">'+r.joueursActuels+'/'+r.joueursTotal+'</span></h3>'+r.participants.map(function(p){return '<div class="row"><div class="av">'+p[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+p+'</div><span class="pill" style="background:var(--grbg);color:var(--gr)">pr\u00eat</span></div>';}).join('')+Array(Math.max(0,r.joueursTotal-r.participants.length)).fill(0).map(function(){return '<div class="row"><div class="av" style="background:var(--line);color:var(--ink3)">?</div><div style="flex:1;font-weight:700;font-size:13.5px;color:var(--ink3)">En attente\u2026</div></div>';}).join('')+'</div>'
   +'</div>'
-  +'<button class="btn" style="margin-top:16px" onclick="toast(\'Demande envoy\u00e9e \u2014 en attente de validation de l\'organisateur\')">Rejoindre la room</button>';
+  +(r.type==='Publique'?'<div class="card" style="margin-top:16px"><h3>Demandes \u00e0 valider<span class="pill">'+JOIN_REQUESTS.length+'</span></h3>'+(JOIN_REQUESTS.length?JOIN_REQUESTS.map(function(p){return '<div class="row"><div class="av" style="background:var(--am)">'+p[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+p+'</div><button class="btn sec" style="width:auto;padding:8px 14px" onclick="admettreJoueur(\''+p+'\')">Admettre</button></div>';}).join(''):'<div class="sub">Aucune demande pour l\'instant.</div>')+'<button class="btn sec" style="margin-top:10px" onclick="simulerDemandeRejoindre()">Simuler une demande</button></div>':'')
+  +'<button class="btn" style="margin-top:16px" onclick="lancerManche()">Lancer la manche</button>'
+  +(r.joueursActuels<2?'<div class="sub" style="margin-top:8px">Il faut au moins 2 joueurs pour lancer.</div>':'');
+ },
+ roomqr:function(){var r=ROOMS[CURROOM];
+  return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'defis\')">'+ICON.back+'</button><div><div class="sub">'+r.theme+' \u00b7 '+r.mise+' pts</div><div class="h1">'+r.titre+'</div></div></div></div>'
+  +'<div class="card" style="max-width:460px;text-align:center"><h3 style="justify-content:center">Tes amis flashent pour rejoindre</h3><div style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;display:inline-block">'+qrSvg()+'</div><div class="sub" style="margin-top:10px">Mise '+r.mise+' pts \u00b7 projette cet \u00e9cran, ou fais circuler ton t\u00e9l\u00e9phone.</div><button class="btn sec" style="margin-top:14px;width:100%;justify-content:center" onclick="simulerScanDefi()">Simuler un scan \u00e9l\u00e8ve</button></div>'
+  +'<div class="card" style="max-width:460px;margin-top:16px"><h3>Ont flash\u00e9<span class="pill">'+r.joueursActuels+' / '+r.joueursTotal+'</span></h3>'+r.participants.map(function(p){return '<div class="row"><div class="av">'+p[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+p+'</div><span class="pill" style="background:var(--grbg);color:var(--gr)">flash\u00e9</span></div>';}).join('')+'</div>'
+  +'<button class="btn" style="margin-top:16px;max-width:460px" onclick="go(\'room\')">Voir la room</button>';
+ },
+ roomlien:function(){var r=ROOMS[CURROOM];var lien='flowrevis.app/room/'+r.titre.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,24)+'-'+Math.floor(Math.random()*900+100);
+  return ''
+  +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'defis\')">'+ICON.back+'</button><div><div class="sub">'+r.theme+' \u00b7 '+r.mise+' pts</div><div class="h1">'+r.titre+'</div></div></div></div>'
+  +'<div class="card" style="max-width:520px"><h3>Lien de la room</h3><div style="background:var(--bg);border:1px dashed var(--ppln);border-radius:10px;padding:10px 12px;font-size:12.5px;color:var(--pp);font-weight:700;margin-bottom:10px;word-break:break-all">'+lien+'</div><button class="btn sec" style="width:100%;justify-content:center" onclick="copierLienDefi(\''+lien+'\')">Copier le lien</button><div class="sub" style="margin-top:10px">Transmets-le par le canal de ton choix (messagerie, ENT\u2026).</div></div>'
+  +'<div class="card" style="max-width:520px;margin-top:16px"><h3>Invit\u00e9(s)<span class="pill">'+(r.participants.length-1)+'</span></h3>'+(r.participants.length>1?r.participants.slice(1).map(function(p){return '<div class="row"><div class="av" style="background:var(--am)">'+p[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+p+'</div><span class="pill" style="background:var(--ambg);color:var(--am)">invit\u00e9</span></div>';}).join(''):'<div class="sub">Aucun invit\u00e9 s\u00e9lectionn\u00e9.</div>')+'</div>'
+  +'<button class="btn" style="margin-top:16px;max-width:520px" onclick="go(\'room\')">Voir la room</button>';
+ },
+ roomlive:function(){var r=ROOMS[CURROOM];var tri=r.scores.slice().sort(function(a,b){return b.pts-a.pts;});
+  return ''
+  +'<div class="topbar"><div><div class="sub">Manche en cours \u00b7 '+r.theme+'</div><div class="h1">'+r.titre+'</div></div></div>'
+  +'<div class="card" style="max-width:460px;text-align:center;margin-bottom:16px"><div class="sub">Cagnotte en jeu</div><div style="font-size:30px;font-weight:800;color:var(--pp)">'+(r.mise*r.joueursActuels)+' pts</div></div>'
+  +'<div style="max-width:460px">'+tri.map(function(s,i){var med=i===0?'var(--gold)':'var(--pp)';return '<div class="row card" style="margin-bottom:8px;padding:10px 12px"><div style="width:24px;height:24px;border-radius:50%;background:'+med+';color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px">'+(i+1)+'</div><div class="av">'+s.pseudo[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+s.pseudo+'</div><b style="color:var(--pp)">'+s.pts+' pts</b></div>';}).join('')+'</div>'
+  +'<button class="btn" style="margin-top:12px;max-width:460px" onclick="validerManche()">Valider la manche</button>'
+  +'<div class="sub" style="margin-top:8px">L\'organisateur valide quand tous ont r\u00e9pondu.</div>';
+ },
+ roomresult:function(){var r=ROOMS[CURROOM];var cagnotte=r.mise*r.joueursActuels;
+  return ''
+  +'<div class="card" style="max-width:460px;text-align:center;padding:26px 20px"><div style="width:60px;height:60px;border-radius:50%;background:#FDF3D0;color:var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:26px">'+ICON.trophy+'</div><div class="h1" style="font-size:18px">'+r.gagnant+' remporte !</div><div style="font-size:34px;font-weight:800;color:var(--pp);margin:6px 0">+'+(cagnotte-r.mise)+'</div><div class="sub">la cagnotte enti\u00e8re (moins sa propre mise)</div></div>'
+  +'<div class="card" style="max-width:460px"><h3>R\u00e9partition</h3>'+r.participants.map(function(p){var gagne=p===r.gagnant;return '<div class="row"><div class="av">'+p[0]+'</div><div style="flex:1;font-weight:700;font-size:13.5px">'+p+'</div><span style="font-weight:800;color:'+(gagne?'var(--gr)':'var(--re)')+'">'+(gagne?'+'+(cagnotte-r.mise):'-'+r.mise)+'</span></div>';}).join('')+'</div>'
+  +'<div class="sub" style="max-width:460px;margin-top:8px">Mises d\u00e9bit\u00e9es \u00b7 cagnotte cr\u00e9dit\u00e9e au gagnant.</div>'
+  +'<button class="btn" style="margin-top:14px;max-width:460px" onclick="go(\'defis\')">Retour aux d\u00e9fis</button>';
  },
  quizroomjoin:function(){return ''
   +'<div class="topbar"><div style="display:flex;align-items:center;gap:14px"><button class="back" onclick="go(\'hub\')">'+ICON.back+'</button><div><div class="sub">'+PROFQUIZ.matiere+' \u00b7 '+PROFQUIZ.classe+'</div><div class="h1">'+PROFQUIZ.titre+'</div></div></div></div>'
