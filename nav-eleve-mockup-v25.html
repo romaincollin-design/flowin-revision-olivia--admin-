@@ -568,6 +568,8 @@ subScreens['more-menu'] = function(){
     html += moreItems.map(function(it){
       return '<button class="navlist-item" onclick="selectScreen(\''+it.k+'\')">' + iconSvg(it.icon, false) + '<span>' + it.label + '</span></button>';
     }).join('');
+    html += '<button class="navlist-item" onclick="selectScreen(\'lots-liste\')">' + iconSvg(ICONS.gift, false) + '<span>Mes lots</span></button>';
+    html += '<button class="navlist-item" onclick="selectScreen(\'install-app\')">' + iconSvg('M12 3v13m0 0-4-4m4 4 4-4M5 21h14', false) + '<span>Installer l\'app</span></button>';
     return html;
   };
 subScreens['quiz-history'] = function(){
@@ -895,6 +897,44 @@ function relancerDefi(id){
   defiEnvoiCanal = null;
   selectScreen('defi-creation');
 }
+function rejoindreDefi(id){
+  var d = DEFIS_DATA.filter(function(x){return x.id===id;})[0];
+  if (!d || d.participants.indexOf('TestDefi1') !== -1 || d.participants.length >= d.nbJoueurs) return;
+  d.participants.push('TestDefi1');
+  if (d.participants.length >= d.nbJoueurs) {
+    d.statut = 'encours';
+    d.cagnotte = d.mise * d.nbJoueurs;
+  }
+  selectScreen(id);
+}
+var defiInvitationEnCours = null; // id du défi existant pour lequel on invite des joueurs en plus
+function ouvrirInvitationFlowinDefi(id){ defiInvitationEnCours = id; defiInvitesFlowin = []; selectScreen('invite-defi-existant'); }
+subScreens['invite-defi-existant'] = function(){
+  var d = DEFIS_DATA.filter(function(x){return x.id===defiInvitationEnCours;})[0];
+  if (!d) return '<div class="h-title">Défi introuvable</div>';
+  var dejaDedans = d.participants;
+  var disponibles = JOUEURS_ETABLISSEMENT.filter(function(p){ return dejaDedans.indexOf(p) === -1; });
+  return '<div class="row" style="margin-bottom:10px;"><button onclick="selectScreen(\''+d.id+'\')" style="border:none;background:transparent;cursor:pointer;padding:4px;">'+icon(ICONS.chevron,{w:16})+'</button><div class="sec-title" style="margin:0;">Inviter au défi #'+d.numero+'</div></div>'
+    + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:12px;">'+(d.nbJoueurs-d.participants.length)+' place(s) encore libre(s) — sélectionne qui inviter.</div>'
+    + '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">'
+      + (disponibles.length ? disponibles.map(function(p){
+          var choisi = defiInvitesFlowin.indexOf(p) !== -1;
+          return '<button onclick="toggleInviteFlowinEnvoi(\''+p+'\')" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1.5px solid '+(choisi?'var(--ppln)':'var(--line)')+';background:'+(choisi?'var(--ppbg)':'white')+';border-radius:11px;padding:9px 12px;font-family:inherit;cursor:pointer;">'
+            + '<div style="width:26px;height:26px;border-radius:50%;background:var(--pp);color:white;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">'+p[0]+'</div>'
+            + '<span style="flex:1;font-weight:700;font-size:12px;">'+p+'</span>'
+            + (choisi ? icon(ICONS.check,{w:16,stroke:'var(--pp)'}) : '')
+          + '</button>';
+        }).join('') : '<div style="font-size:10.5px;color:var(--ink3);">Tout le monde est déjà dans la room, ou a déjà été invité.</div>')
+    + '</div>'
+    + '<button onclick="confirmerInvitationDefiExistant()" style="display:block;width:100%;background:var(--pp);color:white;font-weight:800;font-size:13px;padding:13px;border-radius:13px;border:none;font-family:inherit;cursor:pointer;">Envoyer l\'invitation'+(defiInvitesFlowin.length?' ('+defiInvitesFlowin.length+')':'')+'</button>';
+};
+function confirmerInvitationDefiExistant(){
+  if (!defiInvitesFlowin.length){ alert('Sélectionne au moins un joueur à inviter.'); return; }
+  var d = DEFIS_DATA.filter(function(x){return x.id===defiInvitationEnCours;})[0];
+  d.invitesEnvoyes = (d.invitesEnvoyes || []).concat(defiInvitesFlowin);
+  defiInvitesFlowin = [];
+  selectScreen(d.id);
+}
 DEFIS_DATA.forEach(function(d){
   subScreens[d.id] = function(){
     var statutLabel = {attente:'En attente', encours:'En cours', termine: d.gagnant==='TestDefi1' ? 'Gagné' : 'Perdu'};
@@ -925,6 +965,23 @@ DEFIS_DATA.forEach(function(d){
         }).join('')
       + (d.participants.length < d.nbJoueurs ? '<div style="font-size:10.5px;color:var(--ink3);margin-top:6px;">'+(d.nbJoueurs-d.participants.length)+' place(s) encore libre(s)</div>' : '')
     + '</div>';
+
+    var jeSuisDedans = d.participants.indexOf('TestDefi1') !== -1;
+    var placesLibres = d.nbJoueurs - d.participants.length;
+
+    if (d.statut === 'attente' && !jeSuisDedans && placesLibres > 0) {
+      html += '<div class="card" style="background:var(--ppbg);border-color:var(--ppln);margin-bottom:10px;text-align:center;">'
+        + '<div style="font-weight:800;font-size:12.5px;color:var(--pp);margin-bottom:4px;">'+(d.invite==='TestDefi1' ? 'Tu es invité(e) à ce défi' : 'Défi ouvert — rejoins-le')+'</div>'
+        + '<div style="font-size:10.5px;color:var(--ink3);">Ta mise sera de '+d.mise+' pts — le gagnant rafle toute la cagnotte.</div>'
+      + '</div>'
+      + '<button onclick="rejoindreDefi(\''+d.id+'\')" style="display:block;width:100%;background:var(--pp);color:white;font-weight:800;font-size:12.5px;padding:13px;border-radius:12px;border:none;font-family:inherit;cursor:pointer;">Rejoindre — miser '+d.mise+' pts</button>';
+    } else if (d.statut === 'attente' && jeSuisDedans && placesLibres > 0) {
+      html += '<div class="card" style="text-align:center;margin-bottom:10px;">'
+        + '<div style="font-size:11px;color:var(--ink3);margin-bottom:10px;">En attente que '+placesLibres+' joueur'+(placesLibres>1?'s':'')+' de plus rejoigne'+(placesLibres>1?'nt':'')+'.</div>'
+        + (d.invitesEnvoyes && d.invitesEnvoyes.length ? '<div style="font-size:10px;color:var(--gr);font-weight:700;margin-bottom:10px;">Invitation envoyée à '+d.invitesEnvoyes.join(', ')+'</div>' : '')
+        + '<button onclick="ouvrirInvitationFlowinDefi(\''+d.id+'\')" style="display:block;width:100%;border:1.5px solid var(--ppln);color:var(--pp);background:var(--ppbg);font-weight:800;font-size:12px;padding:11px;border-radius:12px;font-family:inherit;cursor:pointer;">Inviter d\'autres joueurs FlowIn</button>'
+      + '</div>';
+    }
 
     if (d.statut === 'termine') {
       html += '<button onclick="relancerDefi(\''+d.id+'\')" style="display:block;width:100%;background:var(--pp);color:white;font-weight:800;font-size:12.5px;padding:12px;border-radius:12px;border:none;font-family:inherit;cursor:pointer;">Relancer ce défi</button>';
