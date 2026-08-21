@@ -617,9 +617,28 @@ function melanger(tableau){
 }
 var reponseSelectionnee = {}; // par index de question, dans l'écran quiz-fiche courant
 var quizFicheCache = {}; // tirage figé par fiche, généré une seule fois à l'entrée
+var quizFicheIndex = {}; // index de la question affichée, par fiche
+var quizFicheScore = {}; // nombre de bonnes réponses, par fiche
 function selectionnerReponseQCM(qIndex, optIndex){
   reponseSelectionnee[qIndex] = optIndex;
   selectScreen(activeSub);
+}
+function avancerQuestionFiche(id){
+  var idx = quizFicheIndex[id] || 0;
+  var q = quizFicheCache[id] && quizFicheCache[id][idx];
+  if (!q) { return; }
+  if (reponseSelectionnee[idx] !== undefined && q.options[reponseSelectionnee[idx]] === q.bonneReponse) {
+    quizFicheScore[id] = (quizFicheScore[id] || 0) + 1;
+  }
+  quizFicheIndex[id] = idx + 1;
+  selectScreen(activeSub);
+}
+function rejouerQuizFiche(id){
+  quizFicheCache[id] = null;
+  quizFicheIndex[id] = 0;
+  quizFicheScore[id] = 0;
+  reponseSelectionnee = {};
+  selectScreen('quiz-fiche-'+id);
 }
 Object.keys(FICHES).forEach(function(id){
   subScreens['fiche-'+id] = function(){
@@ -652,6 +671,7 @@ Object.keys(FICHES).forEach(function(id){
 
   // Quiz de révision propre à CETTE fiche : questions tirées du vocabulaire réel,
   // pas la roulette à points (qui reste accessible séparément via l'onglet Quiz).
+  // Fonctionne question par question : on répond, on valide, on avance — pas tout affiché d'un coup.
   subScreens['quiz-fiche-'+id] = function(){
     var f = FICHES[id];
     if (f.vocab.length < 2) {
@@ -665,34 +685,53 @@ Object.keys(FICHES).forEach(function(id){
         var options = melanger([q[1]].concat(distracteurs));
         return {terme:q[0], bonneReponse:q[1], options:options};
       });
+      quizFicheIndex[id] = 0;
+      quizFicheScore[id] = 0;
     }
     var questions = quizFicheCache[id];
-    var html = '<div class="h-title" style="margin-bottom:2px;font-size:17px;">Quiz de révision</div>'
+    var idx = quizFicheIndex[id] || 0;
+    var entete = '<div class="h-title" style="margin-bottom:2px;font-size:17px;">Quiz de révision</div>'
       + '<div style="font-size:11px;color:var(--ink3);margin-bottom:4px;">'+f.titre+' — uniquement sur cette fiche.</div>'
       + '<div style="font-size:10px;color:var(--ink3);background:var(--bg);border-radius:9px;padding:7px 10px;display:inline-block;margin-bottom:14px;">Pas de points ici — juste pour t\'entraîner</div>';
-    questions.forEach(function(q, i){
-      var choisi = reponseSelectionnee[i];
-      html += '<div class="card" style="margin-bottom:10px;">'
-        + '<div style="font-size:10px;font-weight:800;color:var(--ink3);text-transform:uppercase;margin-bottom:6px;">Question '+(i+1)+'</div>'
+
+    if (idx >= questions.length) {
+      var score = quizFicheScore[id] || 0;
+      return entete
+        + '<div class="card" style="text-align:center;padding:26px 16px;">'
+          + '<div style="font-size:38px;font-weight:800;color:var(--pp);margin-bottom:4px;">'+score+'/'+questions.length+'</div>'
+          + '<div style="font-size:11.5px;color:var(--ink3);">bonne'+(score>1?'s':'')+' réponse'+(score>1?'s':'')+' sur cette fiche</div>'
+        + '</div>'
+        + '<button onclick="rejouerQuizFiche(\''+id+'\')" style="display:block;width:100%;border:1.5px solid var(--line);color:var(--ink2);background:transparent;font-weight:700;font-size:11.5px;padding:10px;border-radius:12px;font-family:inherit;cursor:pointer;margin-top:6px;">Rejouer ce quiz</button>'
+        + '<div class="card" style="text-align:center;background:linear-gradient(135deg,var(--ppbg),white);border-color:var(--ppln);margin-top:10px;">'
+          + '<div style="font-weight:800;font-size:12.5px;margin-bottom:3px;">Envie de t\'améliorer en jouant ?</div>'
+          + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:10px;">Tourne la roue et gagne des points sur ce que tu viens de réviser.</div>'
+          + '<button onclick="selectScreen(\'quiz\')" style="display:block;width:100%;background:var(--pp);color:white;font-weight:800;font-size:12px;padding:11px;border-radius:12px;border:none;font-family:inherit;cursor:pointer;">Tenter la roulette</button>'
+        + '</div>'
+        + '<button onclick="reponseSelectionnee={};quizFicheCache={};selectScreen(\'reviser\')" style="display:block;width:100%;border:1.5px solid var(--line);color:var(--ink3);background:transparent;font-weight:700;font-size:11.5px;padding:10px;border-radius:12px;font-family:inherit;cursor:pointer;margin-top:8px;">Retour aux fiches</button>';
+    }
+
+    var q = questions[idx];
+    var choisi = reponseSelectionnee[idx];
+    var html = entete
+      + '<div style="display:flex;gap:4px;margin-bottom:12px;">' + questions.map(function(_,qi){return '<div style="flex:1;height:4px;border-radius:2px;background:'+(qi<idx?'var(--gr)':(qi===idx?'var(--pp)':'var(--line)'))+';"></div>';}).join('') + '</div>'
+      + '<div class="card" style="margin-bottom:10px;">'
+        + '<div style="font-size:10px;font-weight:800;color:var(--ink3);text-transform:uppercase;margin-bottom:6px;">Question '+(idx+1)+' / '+questions.length+'</div>'
         + '<div style="font-size:12.5px;font-weight:800;margin-bottom:8px;">C\'est quoi : '+q.terme+' ?</div>'
         + q.options.map(function(opt, oi){
             var estChoisi = choisi === oi;
             var estBonne = opt === q.bonneReponse;
             var couleur = choisi===undefined ? 'var(--ink2)' : (estBonne ? 'var(--gr)' : (estChoisi ? 'var(--re)' : 'var(--ink3)'));
             var fond = choisi===undefined ? 'white' : (estBonne ? 'var(--grbg)' : (estChoisi ? '#FCE4E8' : 'white'));
-            return '<button onclick="selectionnerReponseQCM('+i+','+oi+')" style="display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:'+fond+';color:'+couleur+';font-weight:700;font-size:11px;padding:8px 10px;border-radius:9px;margin-bottom:6px;font-family:inherit;cursor:pointer;">'+opt+'</button>';
+            return '<button '+(choisi!==undefined?'disabled':'')+' onclick="selectionnerReponseQCM('+idx+','+oi+')" style="display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:'+fond+';color:'+couleur+';font-weight:700;font-size:11px;padding:8px 10px;border-radius:9px;margin-bottom:6px;font-family:inherit;cursor:pointer;">'+opt+'</button>';
           }).join('')
       + '</div>';
-    });
-    html += '<div class="card" style="text-align:center;background:linear-gradient(135deg,var(--ppbg),white);border-color:var(--ppln);margin-top:6px;">'
-      + '<div style="font-weight:800;font-size:12.5px;margin-bottom:3px;">Envie de t\'améliorer en jouant ?</div>'
-      + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:10px;">Tourne la roue et gagne des points sur ce que tu viens de réviser.</div>'
-      + '<button onclick="selectScreen(\'quiz\')" style="display:block;width:100%;background:var(--pp);color:white;font-weight:800;font-size:12px;padding:11px;border-radius:12px;border:none;font-family:inherit;cursor:pointer;">Tenter la roulette</button>'
-    + '</div>'
-    + '<button onclick="reponseSelectionnee={};quizFicheCache={};selectScreen(\'reviser\')" style="display:block;width:100%;border:1.5px solid var(--line);color:var(--ink3);background:transparent;font-weight:700;font-size:11.5px;padding:10px;border-radius:12px;font-family:inherit;cursor:pointer;margin-top:8px;">Retour aux fiches</button>';
+    if (choisi !== undefined) {
+      html += '<button onclick="avancerQuestionFiche(\''+id+'\')" style="display:block;width:100%;background:var(--pp);color:white;font-weight:800;font-size:12px;padding:12px;border-radius:12px;border:none;font-family:inherit;cursor:pointer;">'+(idx+1<questions.length?'Question suivante →':'Voir mon résultat')+'</button>';
+    }
     return html;
   };
 });
+
 
 // ---- DÉFIS : création (formulaire réel) + carte d'envoi (vrai partage) ----
 var defiCreationMise = 20, defiCreationTheme = 'Histoire', defiCreationNbJoueurs = 2, defiCreationAdversaire = '';
