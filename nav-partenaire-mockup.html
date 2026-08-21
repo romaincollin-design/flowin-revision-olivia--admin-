@@ -161,19 +161,62 @@ var RUBRIQUES = [
   {key:'shopping', label:'Shopping', couleur:'#8B5CF6', icon:'M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0'}
 ];
 
+// Établissements utilisant FlowIn — un partenaire peut publier ses lots sur un ou plusieurs à la fois.
+var ETABLISSEMENTS_DISPONIBLES = [
+  {id:'etab1', nom:'Lycée de Vence', ville:'Vence'},
+  {id:'etab2', nom:'Lycée Les Coteaux', ville:'Cagnes-sur-Mer'},
+  {id:'etab3', nom:"Lycée Estienne d'Orves", ville:'Nice'},
+  {id:'etab4', nom:'Lycée Léonard de Vinci', ville:'Antibes'}
+];
+
 // ---- État global mocké ----
 var partenaireConnecte = false;
 var logoUploade = false; // nouveauté proposée
 var PIN_ACTUEL = '1054';
+var NOM_ENTREPRISE = 'Aqua Splash';
 var LOTS = [
-  {id:'l1', titre:'Une entrée', categorie:'sport_sante', points:350, quantite:20, restant:14, statut:'valide'},
-  {id:'l2', titre:'Séance découverte', categorie:'sport_sante', points:500, quantite:10, restant:0, statut:'valide'},
-  {id:'l3', titre:'Bonnet de bain offert', categorie:'sport_sante', points:120, quantite:30, restant:30, statut:'attente'}
+  {id:'l1', titre:'Une entrée', categorie:'sport_sante', points:350, quantite:20, restant:14, statut:'valide', etablissements:['etab1']},
+  {id:'l2', titre:'Séance découverte', categorie:'sport_sante', points:500, quantite:10, restant:0, statut:'valide', etablissements:['etab1','etab2']},
+  {id:'l3', titre:'Bonnet de bain offert', categorie:'sport_sante', points:120, quantite:30, restant:30, statut:'attente', etablissements:['etab1']}
 ];
+
+// ---- Souscription (inscription) en plusieurs étapes : compte -> logo -> établissements -> conditions ----
+var inscriptionEtape = 1;
+var inscriptionNom = '', inscriptionEmail = '', inscriptionMdp = '', inscriptionCategorie = 'sport_sante';
+var entrepriseLogoUploade = false;
+var etablissementsChoisis = [];
+var conditionsAcceptees = false;
+function majInscription(champ, val){ window['inscription'+champ] = val; }
+function inscriptionSuivant(){
+  if (inscriptionEtape === 1 && (!inscriptionNom.trim() || !inscriptionEmail.trim() || !inscriptionMdp.trim())){
+    alert('Remplis le nom du commerce, l\'email et le mot de passe avant de continuer.'); return;
+  }
+  if (inscriptionEtape === 3 && !etablissementsChoisis.length){
+    alert('Choisis au moins un établissement où publier tes lots.'); return;
+  }
+  inscriptionEtape++;
+  selectScreen('auth');
+}
+function inscriptionRetour(){ inscriptionEtape = Math.max(1, inscriptionEtape - 1); selectScreen('auth'); }
+function toggleEntrepriseLogo(){ entrepriseLogoUploade = !entrepriseLogoUploade; selectScreen('auth'); }
+function toggleEtablissementInscription(id){
+  var i = etablissementsChoisis.indexOf(id);
+  if (i === -1) etablissementsChoisis.push(id); else etablissementsChoisis.splice(i, 1);
+  selectScreen('auth');
+}
+function toggleConditionsAcceptees(){ conditionsAcceptees = !conditionsAcceptees; selectScreen('auth'); }
+function finaliserInscription(){
+  if (!conditionsAcceptees){ alert('Tu dois accepter les conditions d\'utilisation partenaire pour continuer.'); return; }
+  NOM_ENTREPRISE = inscriptionNom.trim() || 'Mon commerce';
+  logoUploade = entrepriseLogoUploade;
+  partenaireConnecte = true;
+  current = 'mes-lots';
+  selectScreen('mes-lots');
+}
 
 // ============ ÉCRAN : CONNEXION / INSCRIPTION ============
 var modeAuth = 'connexion'; // 'connexion' | 'inscription'
-function toggleModeAuth(m){ modeAuth = m; renderAll(); }
+function toggleModeAuth(m){ modeAuth = m; if (m === 'inscription') inscriptionEtape = 1; renderAll(); }
 function seConnecter(){ partenaireConnecte = true; current = 'mes-lots'; renderAll(); }
 function screenAuth(){
   var onglet = '<div style="display:flex;gap:6px;margin-bottom:16px;">'
@@ -188,16 +231,65 @@ function screenAuth(){
       + '<button onclick="seConnecter()" class="btn-primary">Se connecter</button>'
       + '<div style="text-align:center;margin-top:10px;"><a style="font-size:11px;color:var(--pp);font-weight:700;cursor:pointer;" onclick="selectScreen(\'mdp-oublie\')">Mot de passe oublié ?</a></div>';
   }
-  return '<div class="h-title">Devenir partenaire</div>' + onglet
-    + '<span class="field-label">Nom du commerce</span><input type="text" placeholder="Aqua Splash"/>'
-    + '<span class="field-label">Email de contact</span><input type="email" placeholder="contact@aquasplash.fr"/>'
-    + '<span class="field-label">Mot de passe</span><input type="password" placeholder="Choisis un mot de passe"/>'
-    + '<span class="field-label">Catégorie principale</span>'
-    + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">'
-      + RUBRIQUES.map(function(r){return '<span class="chip">'+r.label+'</span>';}).join('')
-    + '</div>'
-    + '<div style="font-size:10px;color:var(--ink3);background:var(--bg);border-radius:9px;padding:9px 10px;margin-bottom:12px;">Ton compte est créé immédiatement. Tes premiers lots devront être validés par la SA avant d\'être visibles des élèves.</div>'
-    + '<button onclick="seConnecter()" class="btn-primary">Créer mon compte</button>';
+  if (modeAuth === 'inscription') {
+    var etapesLabel = ['Compte', 'Logo', 'Établissements', 'Conditions'];
+    var progression = '<div style="display:flex;gap:4px;margin-bottom:16px;">' + etapesLabel.map(function(_, i){
+      return '<div style="flex:1;height:4px;border-radius:2px;background:'+(i+1<inscriptionEtape?'var(--gr)':(i+1===inscriptionEtape?'var(--pp)':'var(--line)'))+';"></div>';
+    }).join('') + '</div>';
+
+    if (inscriptionEtape === 1) {
+      return '<div class="h-title">Devenir partenaire</div>' + onglet + progression
+        + '<div class="sec-title">Étape 1 · Ton compte</div>'
+        + '<span class="field-label">Nom du commerce</span><input type="text" value="'+inscriptionNom+'" oninput="majInscription(\'Nom\',this.value)" placeholder="Aqua Splash"/>'
+        + '<span class="field-label">Email de contact</span><input type="email" value="'+inscriptionEmail+'" oninput="majInscription(\'Email\',this.value)" placeholder="contact@aquasplash.fr"/>'
+        + '<span class="field-label">Mot de passe</span><input type="password" value="'+inscriptionMdp+'" oninput="majInscription(\'Mdp\',this.value)" placeholder="Choisis un mot de passe"/>'
+        + '<span class="field-label">Catégorie principale</span>'
+        + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">'
+          + RUBRIQUES.map(function(r){return '<button onclick="majInscription(\'Categorie\',\''+r.key+'\')" class="chip'+(inscriptionCategorie===r.key?' active':'')+'">'+r.label+'</button>';}).join('')
+        + '</div>'
+        + '<button onclick="inscriptionSuivant()" class="btn-primary">Continuer</button>';
+    }
+
+    if (inscriptionEtape === 2) {
+      return '<div class="h-title">Devenir partenaire</div>' + progression
+        + '<div class="sec-title">Étape 2 · Logo de ton entreprise</div>'
+        + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:12px;">Affiché sur tes lots et sur le billet remis aux élèves.</div>'
+        + '<button onclick="toggleEntrepriseLogo()" style="width:100%;border:1.5px dashed var(--ppln);background:var(--ppbg);border-radius:12px;padding:20px;text-align:center;font-family:inherit;cursor:pointer;margin-bottom:16px;">'
+          + (entrepriseLogoUploade
+              ? '<div style="width:48px;height:48px;border-radius:12px;background:var(--bl);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;margin:0 auto 8px;">'+(inscriptionNom?inscriptionNom[0]:'A')+'</div><span style="font-size:11px;font-weight:700;color:var(--gr);">Logo importé — touche pour changer</span>'
+              : icon(ICONS.upload,{w:22,stroke:'var(--pp)'}) + '<div style="font-size:11px;font-weight:700;color:var(--pp);margin-top:6px;">Toucher pour importer un logo</div><div style="font-size:9px;color:var(--ink3);margin-top:2px;">PNG carré, 512×512px conseillé</div>')
+        + '</button>'
+        + '<div style="display:flex;gap:8px;"><button onclick="inscriptionRetour()" class="btn-outline" style="flex:1;">Retour</button><button onclick="inscriptionSuivant()" class="btn-primary" style="flex:1;">Continuer</button></div>';
+    }
+
+    if (inscriptionEtape === 3) {
+      return '<div class="h-title">Devenir partenaire</div>' + progression
+        + '<div class="sec-title">Étape 3 · Où publier tes lots ?</div>'
+        + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:12px;">Choisis un ou plusieurs établissements FlowIn — tu pourras en ajouter d\'autres plus tard depuis ton profil.</div>'
+        + '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">'
+          + ETABLISSEMENTS_DISPONIBLES.map(function(e){
+              var choisi = etablissementsChoisis.indexOf(e.id) !== -1;
+              return '<button onclick="toggleEtablissementInscription(\''+e.id+'\')" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1.5px solid '+(choisi?'var(--ppln)':'var(--line)')+';background:'+(choisi?'var(--ppbg)':'white')+';border-radius:11px;padding:10px 12px;font-family:inherit;cursor:pointer;">'
+                + '<div style="flex:1;"><div style="font-weight:800;font-size:12px;">'+e.nom+'</div><div style="font-size:10px;color:var(--ink3);">'+e.ville+'</div></div>'
+                + (choisi ? icon(ICONS.check,{w:16,stroke:'var(--pp)'}) : '')
+              + '</button>';
+            }).join('')
+        + '</div>'
+        + '<div style="display:flex;gap:8px;"><button onclick="inscriptionRetour()" class="btn-outline" style="flex:1;">Retour</button><button onclick="inscriptionSuivant()" class="btn-primary" style="flex:1;">Continuer</button></div>';
+    }
+
+    // Étape 4 · Conditions d'utilisation
+    return '<div class="h-title">Devenir partenaire</div>' + progression
+      + '<div class="sec-title">Étape 4 · Conditions d\'utilisation</div>'
+      + '<div class="card" style="max-height:160px;overflow-y:auto;font-size:10.5px;color:var(--ink2);line-height:1.6;margin-bottom:12px;">'
+        + '<b>Engagement partenaire FlowIn</b><br/>En publiant des lots, tu t\'engages à honorer les récompenses affichées, à maintenir ton stock à jour, et à ne diffuser aucun contenu inapproprié pour un public scolaire. Tes premiers lots sont soumis à validation avant publication. FlowIn se réserve le droit de retirer un lot ou un compte ne respectant pas ces conditions.'
+      + '</div>'
+      + '<label style="display:flex;align-items:flex-start;gap:8px;margin-bottom:14px;font-size:11px;color:var(--ink2);font-weight:700;cursor:pointer;">'
+        + '<input type="checkbox" onchange="toggleConditionsAcceptees()" '+(conditionsAcceptees?'checked':'')+' style="accent-color:var(--pp);margin-top:2px;"/> J\'ai lu et j\'accepte les conditions d\'utilisation partenaire'
+      + '</label>'
+      + '<div style="font-size:10px;color:var(--ink3);background:var(--bg);border-radius:9px;padding:9px 10px;margin-bottom:12px;">Ton compte est créé immédiatement. Tes premiers lots devront être validés par la SA avant d\'être visibles des élèves.</div>'
+      + '<div style="display:flex;gap:8px;"><button onclick="inscriptionRetour()" class="btn-outline" style="flex:1;">Retour</button><button onclick="finaliserInscription()" class="btn-primary" style="flex:1;">Créer mon compte</button></div>';
+  }
 }
 
 // ============ ÉCRAN : MDP OUBLIÉ (déjà validé côté élève, même logique) ============
@@ -223,12 +315,14 @@ var STATUT_FG = {valide:'var(--gr)', attente:'var(--am)', refuse:'var(--ink3)'};
 function lotCard(l){
   var rub = RUBRIQUES.filter(function(r){return r.key===l.categorie;})[0];
   var pct = Math.round((l.restant / l.quantite) * 100);
+  var noms = (l.etablissements || []).map(function(id){var e=ETABLISSEMENTS_DISPONIBLES.filter(function(x){return x.id===id;})[0]; return e?e.nom:null;}).filter(Boolean);
   return '<button onclick="selectScreen(\'editer-lot-'+l.id+'\')" class="card" style="width:100%;text-align:left;font-family:inherit;cursor:pointer;margin-bottom:8px;">'
     + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
       + '<span style="font-weight:800;font-size:12px;">'+l.titre+'</span>'
       + '<span class="badge" style="background:'+STATUT_BG[l.statut]+';color:'+STATUT_FG[l.statut]+';">'+STATUT_LABEL[l.statut]+'</span>'
     + '</div>'
-    + '<div style="font-size:10px;color:'+rub.couleur+';font-weight:700;margin-bottom:8px;">'+rub.label+' · '+l.points+' pts</div>'
+    + '<div style="font-size:10px;color:'+rub.couleur+';font-weight:700;margin-bottom:6px;">'+rub.label+' · '+l.points+' pts</div>'
+    + '<div style="font-size:9.5px;color:var(--ink3);margin-bottom:8px;">'+(noms.length ? noms.join(' · ') : 'Aucun établissement sélectionné')+'</div>'
     + '<div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;margin-bottom:3px;"><span style="color:var(--ink3);">Stock</span><span style="color:var(--pp);">'+l.restant+' / '+l.quantite+'</span></div>'
     + '<div style="height:6px;background:var(--bg);border-radius:99px;overflow:hidden;"><div style="height:100%;width:'+pct+'%;background:'+(l.restant===0?'var(--re)':'var(--pp)')+';"></div></div>'
   + '</button>';
@@ -242,35 +336,45 @@ function screenMesLots(){
 }
 
 // ============ ÉCRAN : CRÉER / ÉDITER UN LOT (avec upload logo) ============
-var lotFormTitre = '', lotFormCategorie = 'sport_sante', lotFormDesc = '', lotFormPoints = 300, lotFormQuantite = 10, lotFormSurprise = false, lotFormEditId = null;
-function ouvrirCreerLot(){ lotFormTitre=''; lotFormCategorie='sport_sante'; lotFormDesc=''; lotFormPoints=300; lotFormQuantite=10; lotFormSurprise=false; lotFormEditId=null; }
+var lotFormTitre = '', lotFormCategorie = 'sport_sante', lotFormDesc = '', lotFormPoints = 300, lotFormQuantite = 10, lotFormSurprise = false, lotFormEditId = null, lotFormEtablissements = [];
+function ouvrirCreerLot(){ lotFormTitre=''; lotFormCategorie='sport_sante'; lotFormDesc=''; lotFormPoints=300; lotFormQuantite=10; lotFormSurprise=false; lotFormEditId=null; lotFormEtablissements=etablissementsChoisis.slice(); }
 function ouvrirEditerLot(id){
   var l = LOTS.filter(function(x){return x.id===id;})[0];
   if (!l) return;
   lotFormEditId = id; lotFormTitre = l.titre; lotFormCategorie = l.categorie; lotFormDesc = ''; lotFormPoints = l.points; lotFormQuantite = l.quantite; lotFormSurprise = l.surprise || false;
+  lotFormEtablissements = l.etablissements ? l.etablissements.slice() : etablissementsChoisis.slice();
+}
+function toggleLotEtablissement(id){
+  var i = lotFormEtablissements.indexOf(id);
+  if (i === -1) lotFormEtablissements.push(id); else lotFormEtablissements.splice(i, 1);
+  selectScreen(lotFormEditId ? 'editer-lot-'+lotFormEditId : 'creer-lot');
 }
 function toggleLotSurpriseForm(){ lotFormSurprise = !lotFormSurprise; selectScreen(lotFormEditId ? 'editer-lot-'+lotFormEditId : 'creer-lot'); }
 function majLotForm(champ, val){ window['lotForm'+champ] = val; selectScreen(current === 'creer-lot' || activeSub === 'creer-lot' ? 'creer-lot' : 'editer-lot-'+lotFormEditId); }
-function toggleLogoUpload(){ logoUploade = !logoUploade; selectScreen(lotFormEditId ? 'editer-lot-'+lotFormEditId : 'creer-lot'); }
 function enregistrerLot(){
+  if (!lotFormEtablissements.length){ alert('Choisis au moins un établissement où publier ce lot.'); return; }
   if (lotFormEditId) {
     var l = LOTS.filter(function(x){return x.id===lotFormEditId;})[0];
-    l.titre = lotFormTitre || l.titre; l.categorie = lotFormCategorie; l.points = lotFormPoints; l.surprise = lotFormSurprise;
+    l.titre = lotFormTitre || l.titre; l.categorie = lotFormCategorie; l.points = lotFormPoints; l.surprise = lotFormSurprise; l.etablissements = lotFormEtablissements.slice();
     var delta = lotFormQuantite - l.quantite; l.quantite = lotFormQuantite; l.restant = Math.max(0, l.restant + delta);
   } else {
-    LOTS.push({id:'l'+(LOTS.length+1), titre: lotFormTitre || 'Nouveau lot', categorie: lotFormCategorie, points: lotFormPoints, quantite: lotFormQuantite, restant: lotFormQuantite, surprise: lotFormSurprise, statut:'attente'});
+    LOTS.push({id:'l'+(LOTS.length+1), titre: lotFormTitre || 'Nouveau lot', categorie: lotFormCategorie, points: lotFormPoints, quantite: lotFormQuantite, restant: lotFormQuantite, surprise: lotFormSurprise, statut:'attente', etablissements: lotFormEtablissements.slice()});
   }
   selectScreen('mes-lots');
 }
 function screenLotForm(){
+  if (!lotFormEditId && !lotFormEtablissements.length && etablissementsChoisis.length) {
+    lotFormEtablissements = etablissementsChoisis.slice();
+  }
   var titreEcran = lotFormEditId ? 'Modifier le lot' : 'Nouveau lot';
   var html = '<div class="h-title">'+titreEcran+'</div>'
-    + '<span class="field-label">Logo du commerce <span style="color:var(--ink3);font-weight:400;text-transform:none;">— nouveauté proposée</span></span>'
-    + '<button onclick="toggleLogoUpload()" style="width:100%;border:1.5px dashed var(--ppln);background:var(--ppbg);border-radius:12px;padding:16px;text-align:center;font-family:inherit;cursor:pointer;margin-bottom:14px;">'
-      + (logoUploade
-          ? '<div style="width:44px;height:44px;border-radius:12px;background:var(--bl);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;margin:0 auto 6px;">A</div><span style="font-size:10.5px;font-weight:700;color:var(--gr);">Logo importé — touche pour changer</span>'
-          : icon(ICONS.upload,{w:20,stroke:'var(--pp)'}) + '<div style="font-size:10.5px;font-weight:700;color:var(--pp);margin-top:4px;">Toucher pour importer un logo</div><div style="font-size:9px;color:var(--ink3);margin-top:2px;">PNG carré, 512×512px conseillé</div>')
-    + '</button>'
+    + '<div class="row" style="background:var(--bg);border-radius:12px;padding:10px 12px;margin-bottom:14px;">'
+      + (entrepriseLogoUploade
+          ? '<div style="width:32px;height:32px;border-radius:9px;background:var(--bl);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;">'+NOM_ENTREPRISE[0]+'</div>'
+          : '<div style="width:32px;height:32px;border-radius:9px;background:var(--line);flex-shrink:0;"></div>')
+      + '<div style="flex:1;font-size:10.5px;color:var(--ink3);">Logo affiché sur ce lot : <b style="color:var(--ink2);">'+NOM_ENTREPRISE+'</b></div>'
+      + '<button onclick="selectScreen(\'profil\')" style="border:none;background:none;color:var(--pp);font-weight:800;font-size:10.5px;cursor:pointer;font-family:inherit;">Changer</button>'
+    + '</div>'
     + '<span class="field-label">Titre du lot</span><input type="text" value="'+lotFormTitre+'" oninput="lotFormTitre=this.value" placeholder="Ex : Une entrée"/>'
     + '<span class="field-label">Catégorie</span>'
     + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">'
@@ -284,6 +388,16 @@ function screenLotForm(){
     + '<label style="display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:11px;color:var(--ink3);font-weight:700;cursor:pointer;">'
       + '<input type="checkbox" onchange="toggleLotSurpriseForm()" '+(lotFormSurprise?'checked':'')+' style="accent-color:var(--pp);"/> Lot surprise (révélé seulement à la remise)'
     + '</label>'
+    + '<span class="field-label">Établissement(s) de publication</span>'
+    + '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px;">'
+      + ETABLISSEMENTS_DISPONIBLES.map(function(e){
+          var choisi = lotFormEtablissements.indexOf(e.id) !== -1;
+          return '<button onclick="toggleLotEtablissement(\''+e.id+'\')" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1.5px solid '+(choisi?'var(--ppln)':'var(--line)')+';background:'+(choisi?'var(--ppbg)':'white')+';border-radius:11px;padding:9px 12px;font-family:inherit;cursor:pointer;">'
+            + '<div style="flex:1;"><div style="font-weight:800;font-size:11.5px;">'+e.nom+'</div><div style="font-size:9.5px;color:var(--ink3);">'+e.ville+'</div></div>'
+            + (choisi ? icon(ICONS.check,{w:15,stroke:'var(--pp)'}) : '')
+          + '</button>';
+        }).join('')
+    + '</div>'
     + '<button onclick="enregistrerLot()" class="btn-primary">'+(lotFormEditId ? 'Enregistrer les modifications' : 'Envoyer pour validation')+'</button>';
   return html;
 }
@@ -343,13 +457,21 @@ function ouvrirPinModal(){ pinModalOuvert = true; nouveauPinSaisi=''; selectScre
 function fermerPinModal(){ pinModalOuvert = false; selectScreen('profil'); }
 function validerNouveauPin(){ if (nouveauPinSaisi.length>=4) { PIN_ACTUEL = nouveauPinSaisi; pinModalOuvert=false; selectScreen('profil'); } }
 function screenProfil(){
-  var html = '<div class="h-title">Aqua Splash</div>'
+  var html = '<div class="h-title">'+NOM_ENTREPRISE+'</div>'
+    + '<div class="row" style="background:var(--bg);border-radius:12px;padding:10px 12px;margin-bottom:10px;">'
+      + (entrepriseLogoUploade
+          ? '<div style="width:38px;height:38px;border-radius:10px;background:var(--bl);color:white;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex-shrink:0;">'+NOM_ENTREPRISE[0]+'</div>'
+          : '<div style="width:38px;height:38px;border-radius:10px;background:var(--line);flex-shrink:0;"></div>')
+      + '<div style="flex:1;font-size:10.5px;color:var(--ink3);">'+(entrepriseLogoUploade?'Logo importé':'Aucun logo importé')+'</div>'
+      + '<button onclick="toggleEntrepriseLogo()" style="border:none;background:none;color:var(--pp);font-weight:800;font-size:11px;cursor:pointer;font-family:inherit;">'+(entrepriseLogoUploade?'Changer':'Importer')+'</button>'
+    + '</div>'
     + '<div class="card" style="margin-bottom:10px;">'
       + '<div style="display:flex;justify-content:space-between;align-items:center;">'
         + '<div><div class="field-label" style="margin-bottom:2px;">Ton code PIN</div><div style="font-size:16px;font-weight:800;letter-spacing:.1em;">'+PIN_ACTUEL+'</div><div style="font-size:9.5px;color:var(--ink3);">Demandé à chaque décaissement</div></div>'
         + '<button onclick="ouvrirPinModal()" style="border:none;background:none;color:var(--pp);font-weight:800;font-size:11px;cursor:pointer;font-family:inherit;">Changer</button>'
       + '</div>'
     + '</div>'
+    + '<button onclick="selectScreen(\'gerer-etablissements\')" class="navlist-item" style="background:white;border:1px solid var(--line);margin-bottom:8px;">'+icon(ICONS.home,{w:16})+'<span>Mes établissements ('+etablissementsChoisis.length+')</span></button>'
     + '<button onclick="selectScreen(\'mdp-oublie\')" class="navlist-item" style="background:white;border:1px solid var(--line);margin-bottom:8px;">'+icon(ICONS.mail,{w:16})+'<span>Mot de passe oublié</span></button>'
     + '<button onclick="deconnecter()" class="navlist-item" style="background:white;border:1px solid var(--line);color:var(--re);">'+icon('M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9',{w:16,stroke:'var(--re)'})+'<span>Se déconnecter</span></button>';
 
@@ -365,6 +487,19 @@ function screenProfil(){
   }
   return html;
 }
+var ecranGererEtablissements = function(){
+  return '<div class="h-title">Mes établissements</div>'
+    + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:14px;">Tes lots ne sont visibles que dans les établissements sélectionnés ci-dessous.</div>'
+    + '<div style="display:flex;flex-direction:column;gap:6px;">'
+      + ETABLISSEMENTS_DISPONIBLES.map(function(e){
+          var choisi = etablissementsChoisis.indexOf(e.id) !== -1;
+          return '<button onclick="toggleEtablissementInscription(\''+e.id+'\')" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1.5px solid '+(choisi?'var(--ppln)':'var(--line)')+';background:'+(choisi?'var(--ppbg)':'white')+';border-radius:11px;padding:10px 12px;font-family:inherit;cursor:pointer;">'
+            + '<div style="flex:1;"><div style="font-weight:800;font-size:12px;">'+e.nom+'</div><div style="font-size:10px;color:var(--ink3);">'+e.ville+'</div></div>'
+            + (choisi ? icon(ICONS.check,{w:16,stroke:'var(--pp)'}) : '')
+          + '</button>';
+        }).join('')
+    + '</div>';
+};
 function deconnecter(){ partenaireConnecte = false; current = 'auth'; selectScreen('auth'); }
 
 // ============ NAVIGATION ============
@@ -376,7 +511,8 @@ var items = [
 var subScreens = {
   'auth': screenAuth,
   'mdp-oublie': screenMdpOublie,
-  'creer-lot': function(){ if(lotFormEditId!==null) ouvrirCreerLot(); return screenLotForm(); }
+  'creer-lot': function(){ if(lotFormEditId!==null) ouvrirCreerLot(); return screenLotForm(); },
+  'gerer-etablissements': ecranGererEtablissements
 };
 LOTS.forEach(function(l){ subScreens['editer-lot-'+l.id] = function(){ if(lotFormEditId!==l.id) ouvrirEditerLot(l.id); return screenLotForm(); }; });
 
