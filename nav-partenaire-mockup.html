@@ -404,7 +404,54 @@ function screenLotForm(){
 
 // ============ ÉCRAN : SCANNER (déstockage) ============
 var scanToken = '', scanPin = '', scanResultat = null, scanEnCours = false;
+var scanEtape = 'camera'; // camera -> flash -> billet-trouve -> verification -> resultat (ou 'manuel' pour la saisie de secours)
+var billetScanne = null; // {token, pseudo, lotId} du QR flashé
+var QR_UTILISES = []; // tokens déjà validés, pour empêcher une réutilisation du même QR
+var PSEUDOS_DEMO = ['Lilou','Marc','Nadir','Emma','TestDefi1'];
 function majScan(champ, val){ window['scan'+champ] = val; }
+function lancerFlashCamera(){
+  scanEtape = 'flash';
+  selectScreen('scanner');
+  setTimeout(function(){
+    var lotsDisponibles = LOTS.filter(function(l){ return l.statut==='valide' && l.restant>0; });
+    if (!lotsDisponibles.length){
+      scanResultat = {ok:false, erreur:'Aucun lot en stock à distribuer pour le moment.'};
+      scanEtape = 'resultat';
+      selectScreen('scanner');
+      return;
+    }
+    var lot = lotsDisponibles[Math.floor(Math.random()*lotsDisponibles.length)];
+    var pseudo = PSEUDOS_DEMO[Math.floor(Math.random()*PSEUDOS_DEMO.length)];
+    billetScanne = {token:'QR-'+Math.random().toString(36).slice(2,8).toUpperCase(), pseudo:pseudo, lotId:lot.id};
+    scanEtape = 'billet-trouve';
+    selectScreen('scanner');
+  }, 900);
+}
+function validerBilletScanne(){
+  if (!scanPin.trim()){ alert('Renseigne ton code PIN pour valider.'); return; }
+  if (QR_UTILISES.indexOf(billetScanne.token) !== -1) {
+    scanResultat = {ok:false, erreur:'Ce QR a déjà été utilisé.'};
+    scanEtape = 'resultat';
+    selectScreen('scanner');
+    return;
+  }
+  scanEtape = 'verification';
+  selectScreen('scanner');
+  setTimeout(function(){
+    if (scanPin !== PIN_ACTUEL) {
+      scanResultat = {ok:false, erreur:'Code PIN incorrect.'};
+    } else {
+      var l = LOTS.filter(function(x){return x.id===billetScanne.lotId;})[0];
+      if (l && l.restant > 0) l.restant -= 1;
+      QR_UTILISES.push(billetScanne.token);
+      scanResultat = {ok:true, pseudo:billetScanne.pseudo, lotTitre:l?l.titre:''};
+    }
+    scanEtape = 'resultat';
+    selectScreen('scanner');
+  }, 700);
+}
+function annulerBilletScanne(){ billetScanne=null; scanPin=''; scanEtape='camera'; selectScreen('scanner'); }
+function basculerSaisieManuelle(){ scanEtape = scanEtape==='manuel' ? 'camera' : 'manuel'; scanToken=''; scanPin=''; selectScreen('scanner'); }
 function validerScan(){
   scanEnCours = true;
   selectScreen('scanner');
@@ -414,14 +461,18 @@ function validerScan(){
       scanResultat = {ok:false, erreur:'Code PIN incorrect.'};
     } else if (scanToken.trim() === '') {
       scanResultat = {ok:false, erreur:'QR invalide.'};
+    } else if (QR_UTILISES.indexOf(scanToken.trim()) !== -1) {
+      scanResultat = {ok:false, erreur:'Ce QR a déjà été utilisé.'};
     } else {
       scanResultat = {ok:true, pseudo:'TestDefi1'};
       var l = LOTS[0]; if (l.restant > 0) l.restant -= 1; // déstockage effectif au retrait, pas à l'attribution
+      QR_UTILISES.push(scanToken.trim());
     }
+    scanEtape = 'resultat';
     selectScreen('scanner');
   }, 700);
 }
-function nouveauScan(){ scanToken=''; scanPin=''; scanResultat=null; selectScreen('scanner'); }
+function nouveauScan(){ scanToken=''; scanPin=''; scanResultat=null; billetScanne=null; scanEtape='camera'; selectScreen('scanner'); }
 function screenScanner(){
   if (scanEnCours) {
     return '<div style="text-align:center;padding-top:50px;">'
@@ -430,12 +481,12 @@ function screenScanner(){
       + '<div style="font-size:11px;color:var(--ink3);margin-top:14px;">Vérification…</div>'
     + '</div>';
   }
-  if (scanResultat) {
+  if (scanEtape === 'resultat' && scanResultat) {
     if (scanResultat.ok) {
       return '<div class="card" style="text-align:center;padding:26px 16px;animation:popin .2s ease;">'
         + '<div style="width:48px;height:48px;border-radius:50%;background:var(--grbg);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">'+icon(ICONS.check,{w:22,stroke:'var(--gr)'})+'</div>'
-        + '<div style="font-weight:800;font-size:13px;">Lot remis à '+scanResultat.pseudo+'</div>'
-        + '<div style="font-size:10.5px;color:var(--ink3);margin-top:4px;">Stock décrémenté automatiquement.</div>'
+        + '<div style="font-weight:800;font-size:13px;">'+(scanResultat.lotTitre?scanResultat.lotTitre+' remis':'Lot remis')+' à '+scanResultat.pseudo+'</div>'
+        + '<div style="font-size:10.5px;color:var(--ink3);margin-top:4px;">Stock décrémenté et QR invalidé — il ne pourra plus être réutilisé.</div>'
         + '<button onclick="nouveauScan()" class="btn-primary" style="margin-top:16px;">Scanner un autre QR</button>'
       + '</div>';
     }
@@ -445,10 +496,49 @@ function screenScanner(){
       + '<button onclick="nouveauScan()" class="btn-outline" style="margin-top:16px;">Réessayer</button>'
     + '</div>';
   }
+
+  if (scanEtape === 'flash' || scanEtape === 'verification') {
+    return '<div style="text-align:center;padding-top:50px;">'
+      + '<div style="width:44px;height:44px;border:3px solid var(--ppln);border-top-color:var(--pp);border-radius:50%;margin:0 auto;animation:spin .8s linear infinite;"></div>'
+      + '<style>@keyframes spin{to{transform:rotate(360deg)}}</style>'
+      + '<div style="font-size:11px;color:var(--ink3);margin-top:14px;">'+(scanEtape==='flash'?'Lecture du QR code…':'Vérification…')+'</div>'
+    + '</div>';
+  }
+
+  if (scanEtape === 'billet-trouve' && billetScanne) {
+    var lot = LOTS.filter(function(x){return x.id===billetScanne.lotId;})[0];
+    return '<div class="h-title">Billet trouvé</div>'
+      + '<div class="card" style="text-align:center;margin-bottom:12px;">'
+        + '<div style="width:44px;height:44px;border-radius:50%;background:var(--ppbg);color:var(--pp);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-weight:800;font-size:16px;">'+billetScanne.pseudo[0]+'</div>'
+        + '<div style="font-weight:800;font-size:13px;">'+(lot?lot.titre:'Lot')+'</div>'
+        + '<div style="font-size:10.5px;color:var(--ink3);margin-top:2px;">Pour le pseudo '+billetScanne.pseudo+'</div>'
+        + '<div style="font-size:9px;color:var(--ink3);margin-top:8px;font-family:monospace;">'+billetScanne.token+'</div>'
+      + '</div>'
+      + '<span class="field-label">Ton code PIN</span><input type="text" placeholder="Code à 4 chiffres" value="'+scanPin+'" oninput="majScan(\'Pin\',this.value)"/>'
+      + '<button onclick="validerBilletScanne()" class="btn-primary">Valider et déstocker</button>'
+      + '<button onclick="annulerBilletScanne()" class="btn-outline" style="margin-top:8px;">Annuler</button>';
+  }
+
+  if (scanEtape === 'manuel') {
+    return '<div class="h-title">Valider un lot</div>'
+      + '<span class="field-label">Code du billet</span><input type="text" placeholder="Colle le code ici" oninput="majScan(\'Token\',this.value)"/>'
+      + '<span class="field-label">Ton code PIN</span><input type="text" placeholder="Code à 4 chiffres" oninput="majScan(\'Pin\',this.value)"/>'
+      + '<button onclick="validerScan()" class="btn-primary">Valider et déstocker</button>'
+      + '<button onclick="basculerSaisieManuelle()" class="btn-outline" style="margin-top:8px;">Revenir au scanner caméra</button>';
+  }
+
+  // état par défaut : viseur caméra
   return '<div class="h-title">Valider un lot</div>'
-    + '<span class="field-label">Code du billet (ou scan QR)</span><input type="text" placeholder="Colle ou scanne le code ici" oninput="scanToken=this.value"/>'
-    + '<span class="field-label">Ton code PIN</span><input type="text" placeholder="Code à 4 chiffres" oninput="scanPin=this.value"/>'
-    + '<button onclick="validerScan()" class="btn-primary">Valider et déstocker</button>';
+    + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:14px;">Vise le QR code affiché sur le téléphone de l\'élève.</div>'
+    + '<div style="position:relative;width:100%;aspect-ratio:1;background:var(--ink);border-radius:16px;margin-bottom:16px;overflow:hidden;">'
+      + '<div style="position:absolute;top:16px;left:16px;width:32px;height:32px;border-top:3px solid white;border-left:3px solid white;border-radius:6px 0 0 0;"></div>'
+      + '<div style="position:absolute;top:16px;right:16px;width:32px;height:32px;border-top:3px solid white;border-right:3px solid white;border-radius:0 6px 0 0;"></div>'
+      + '<div style="position:absolute;bottom:16px;left:16px;width:32px;height:32px;border-bottom:3px solid white;border-left:3px solid white;border-radius:0 0 0 6px;"></div>'
+      + '<div style="position:absolute;bottom:16px;right:16px;width:32px;height:32px;border-bottom:3px solid white;border-right:3px solid white;border-radius:0 0 6px 0;"></div>'
+      + '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">'+icon(ICONS.scan,{w:34,stroke:'rgba(255,255,255,.5)'})+'</div>'
+    + '</div>'
+    + '<button onclick="lancerFlashCamera()" class="btn-primary">Scanner le QR code</button>'
+    + '<button onclick="basculerSaisieManuelle()" style="display:block;width:100%;text-align:center;border:none;background:none;color:var(--pp);font-weight:700;font-size:11px;padding:10px;font-family:inherit;cursor:pointer;">Ou saisir le code manuellement</button>';
 }
 
 // ============ ÉCRAN : PROFIL (PIN) ============
