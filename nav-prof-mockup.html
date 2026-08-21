@@ -109,7 +109,7 @@ var ICONS = {
   defiIcon:'M13 2 3 14h7l-1 8 10-12h-7z',
   classe:'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
   quiz:'M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z',
-  cagnotte:'M14.5 9.5A2.5 2.5 0 0 0 12 8.5h-1.5a2 2 0 0 0 0 4H13a2 2 0 0 1 0 4h-1.5A2.5 2.5 0 0 1 9 15M12 8V6m0 14v-2',
+  cagnotte:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z',
   reglages:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z',
   chevron:'M9 18l6-6-6-6', plus:'M12 5v14M5 12h14', upload:'M12 16V4m0 0L7 9m5-5 5 5M5 20h14', check:'M20 6 9 17l-5-5', sparkle:'M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z',
   book:'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15Z'
@@ -176,6 +176,14 @@ function genererQuestionsPourCours(){
   selectScreen('detail-cours');
 }
 function retirerQuestionCours(idx){ COURS_COURANT.questionsGenerees.splice(idx,1); selectScreen('detail-cours'); }
+var questionManuelleCoursOuverte = false;
+function ouvrirQuestionManuelleCours(){ questionManuelleCoursOuverte = true; questionCoursEnEdition = null; selectScreen('detail-cours'); }
+function enregistrerQuestionManuelleCours(texte, opts, bon){
+  if (!texte.trim() || opts.some(function(o){return !o.trim();})){ alert('Remplis la question et les 4 propositions.'); return; }
+  COURS_COURANT.questionsGenerees.push({q:texte, opts:opts, bon:bon, garder:true, origine:'manuel'});
+  questionManuelleCoursOuverte = false;
+  selectScreen('detail-cours');
+}
 function ouvrirEditionQuestionCours(idx){ questionCoursEnEdition = idx; selectScreen('detail-cours'); }
 function enregistrerEditionQuestionCours(idx, texte, opts, bon){
   COURS_COURANT.questionsGenerees[idx] = {q:texte, opts:opts, bon:bon, garder:true, origine:'cours'};
@@ -184,9 +192,9 @@ function enregistrerEditionQuestionCours(idx, texte, opts, bon){
 }
 function ajouterQuestionsBanque(){
   var aAjouter = COURS_COURANT.questionsGenerees.filter(function(q){return q.garder!==false;});
-  if (!aAjouter.length){ alert('Aucune question à ajouter — génère ou garde d\'abord des questions.'); return; }
-  aAjouter.forEach(function(q){ BANQUE_GENERALE.push({q:q.q, opts:q.opts, bon:q.bon, mat:COURS_COURANT.matiere}); });
-  derniereActionBanque = aAjouter.length+' question(s) ajoutée(s) à la banque partagée ('+COURS_COURANT.matiere+')';
+  if (!aAjouter.length){ alert('Aucune question à ajouter — génère ou ajoute d\'abord des questions ci-dessus.'); return; }
+  aAjouter.forEach(function(q){ BANQUE_GENERALE.push({q:q.q, opts:q.opts, bon:q.bon, mat:COURS_COURANT.matiere, dateAjout:"ajout\u00e9e \u00e0 l'instant depuis « "+COURS_COURANT.titre+" »", nbUtilisations:0, derniereUtilisation:null}); });
+  derniereActionBanque = aAjouter.length+' question(s) ajoutée(s) à la banque partagée ('+COURS_COURANT.matiere+') — réutilisables dans tout futur quiz, toutes classes confondues';
   selectScreen('detail-cours');
 }
 function creerQuizDepuisCours(){
@@ -232,7 +240,7 @@ function ajouterDepuisBanque(item){
 var apercuBanqueIndex = null;
 function ouvrirApercuBanque(i){ apercuBanqueIndex = i; selectScreen('apercu-banque'); }
 function ajouterEtRevenirBanque(i){
-  questionsQuiz.push({q:BANQUE_GENERALE[i].q, opts:BANQUE_GENERALE[i].opts.slice(), bon:BANQUE_GENERALE[i].bon, garder:true, origine:'banque'});
+  questionsQuiz.push({q:BANQUE_GENERALE[i].q, opts:BANQUE_GENERALE[i].opts.slice(), bon:BANQUE_GENERALE[i].bon, garder:true, origine:'banque', banqueRef:i});
   modeCreation = 'banque';
   selectScreen('nouveau-quiz');
 }
@@ -311,6 +319,13 @@ function publierEtOuvrirRoom(){
   QUESTIONS_MANCHE = retenues.map(function(q){ return {q:q.q, opts:q.opts.slice(), bon:q.bon}; });
   TOTAL_Q = QUESTIONS_MANCHE.length || 1;
   MATRICE_REPONSES = [];
+  retenues.forEach(function(q){
+    if (q.banqueRef!==undefined && BANQUE_GENERALE[q.banqueRef]){
+      var b = BANQUE_GENERALE[q.banqueRef];
+      b.nbUtilisations = (b.nbUtilisations||0)+1;
+      b.derniereUtilisation = "\u00e0 l'instant \u00b7 "+(titreQuiz||'Quiz sans titre');
+    }
+  });
   QUIZ_EN_COURS = {titre:titreQuiz||'Quiz sans titre', quand:"\u00e0 l'instant", questions:retenues.length, statut:'en cours', reponduPar:0, moyenne:'\u2014', matrice:null, questionsTexte:null, joueurs:null};
   if(!QUIZ_PAR_CLASSE[classeSelectionnee]) QUIZ_PAR_CLASSE[classeSelectionnee]=[];
   QUIZ_PAR_CLASSE[classeSelectionnee].unshift(QUIZ_EN_COURS);
@@ -695,7 +710,7 @@ function screenClasses(){
 var nomNouvelleClasse = '';
 function majNomClasse(v){ nomNouvelleClasse = v; }
 function creerClasse(){
-  if (!nomNouvelleClasse.trim()) return;
+  if (!nomNouvelleClasse.trim()){ alert('Donne un nom à la classe avant de cr\u00e9er la room (ex. \u00ab Tale Bac Pro Commerce \u00bb).'); return; }
   var id = 'c'+(CLASSES.length+1);
   var code = Math.floor(100000+Math.random()*900000).toString().replace(/(\d{3})(\d{3})/,'$1 $2');
   var nouvelleClasse = {id:id, nom:nomNouvelleClasse.trim(), code:code};
@@ -1069,7 +1084,19 @@ subScreens['detail-cours'] = function(){
   var html = '<div class="h-title">'+c.titre+'</div>'
     + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:12px;"><span class="badge" style="background:var(--ppbg);color:var(--pp);">'+c.matiere+'</span> \u00b7 '+c.quand+'</div>'
     + '<div class="card" style="margin-bottom:12px;"><div style="font-size:11px;line-height:1.6;color:var(--ink2);">'+c.contenu+'</div></div>'
-    + '<button onclick="genererQuestionsPourCours()" class="btn" style="margin-bottom:6px;">'+icon(ICONS.sparkle,{w:14,stroke:'white'})+' G\u00e9n\u00e9rer des questions sans IA</button>';
+    + '<div style="display:flex;gap:6px;margin-bottom:6px;">'
+      + '<button onclick="genererQuestionsPourCours()" class="btn" style="flex:1;">'+icon(ICONS.sparkle,{w:14,stroke:'white'})+' Générer sans IA</button>'
+      + '<button onclick="ouvrirQuestionManuelleCours()" class="btn-outline" style="flex:1;">'+icon(ICONS.plus,{w:14})+' Ajouter à la main</button>'
+    + '</div>';
+
+  if (questionManuelleCoursOuverte){
+    html += '<div class="card" style="margin-bottom:10px;">'
+      + '<span class="field-label">Question</span><input type="text" id="manuel-cours-q" placeholder="Ex : En quelle année les congés payés sont-ils instaurés ?"/>'
+      + '<span class="field-label">4 propositions (coche la bonne)</span>'
+      + [0,1,2,3].map(function(oi){return '<div class="row" style="margin-bottom:6px;"><input type="radio" name="manuel-cours-bon" value="'+oi+'" '+(oi===0?'checked':'')+'/><input type="text" id="manuel-cours-opt-'+oi+'" placeholder="Proposition '+(oi+1)+'" style="margin-bottom:0;flex:1;"/></div>';}).join('')
+      + '<button onclick="enregistrerQuestionManuelleCours(document.getElementById(\'manuel-cours-q\').value, [document.getElementById(\'manuel-cours-opt-0\').value,document.getElementById(\'manuel-cours-opt-1\').value,document.getElementById(\'manuel-cours-opt-2\').value,document.getElementById(\'manuel-cours-opt-3\').value], Number(document.querySelector(\'input[name=manuel-cours-bon]:checked\').value))" class="btn" style="margin-top:2px;">Ajouter cette question</button>'
+    + '</div>';
+  }
 
   if (derniereActionBanque){ html += '<div class="card" style="background:var(--grbg);border-color:#B7E4CE;margin-bottom:10px;"><div style="font-size:10px;color:var(--gr);font-weight:800;">'+derniereActionBanque+'</div></div>'; derniereActionBanque=null; }
 
@@ -1098,15 +1125,27 @@ subScreens['detail-cours'] = function(){
 subScreens['banque-questions'] = function(){
   var matieres = {};
   BANQUE_GENERALE.forEach(function(q){ (matieres[q.mat]=matieres[q.mat]||[]).push(q); });
-  return '<div class="h-title">Banque de questions</div>'
-    + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:14px;">'+BANQUE_GENERALE.length+' questions, issues de la classe mod\u00e8le \u00ab '+CLASSE_MODELE+' \u00bb et des cours ajout\u00e9s par les profs.</div>'
-    + Object.keys(matieres).map(function(m){
-        return '<div class="sec-title">'+m+' ('+matieres[m].length+')</div>'
-          + matieres[m].slice(0,4).map(function(q){
-              return '<div class="card" style="margin-bottom:6px;"><div style="font-weight:700;font-size:11px;">'+q.q+'</div></div>';
-            }).join('');
-      }).join('')
+  var recentes = BANQUE_GENERALE.filter(function(q){ return !!q.dateAjout; });
+  var html = '<div class="h-title">Banque de questions</div>'
+    + '<div style="font-size:10.5px;color:var(--ink3);margin-bottom:14px;">'+BANQUE_GENERALE.length+' questions, issues de la classe mod\u00e8le \u00ab '+CLASSE_MODELE+' \u00bb et des cours ajout\u00e9s par les profs.</div>';
+
+  if (recentes.length){
+    html += '<div class="sec-title">Ajouts r\u00e9cents ('+recentes.length+')</div>'
+      + recentes.slice(0,8).map(function(q){
+          var statut = q.nbUtilisations ? ('<span style="color:var(--gr);font-weight:700;">publi\u00e9e '+q.nbUtilisations+' fois \u2014 derni\u00e8re : '+q.derniereUtilisation+'</span>') : '<span style="color:var(--am);font-weight:700;">jamais encore publi\u00e9e</span>';
+          return '<div class="card" style="margin-bottom:6px;"><div style="font-weight:700;font-size:11px;margin-bottom:2px;">'+q.q+'</div><div style="font-size:9.5px;color:var(--ink3);">'+q.dateAjout+' \u00b7 '+statut+'</div></div>';
+        }).join('');
+  }
+
+  html += Object.keys(matieres).map(function(m){
+      return '<div class="sec-title" style="margin-top:14px;">'+m+' ('+matieres[m].length+')</div>'
+        + matieres[m].slice(0,4).map(function(q){
+            var statut = q.nbUtilisations ? '<div style="font-size:9px;color:var(--gr);font-weight:700;margin-top:2px;">publi\u00e9e '+q.nbUtilisations+' fois</div>' : (q.dateAjout ? '<div style="font-size:9px;color:var(--am);font-weight:700;margin-top:2px;">jamais encore publi\u00e9e</div>' : '');
+            return '<div class="card" style="margin-bottom:6px;"><div style="font-weight:700;font-size:11px;">'+q.q+'</div>'+statut+'</div>';
+          }).join('');
+    }).join('')
     + '<button onclick="modeCreation=\'banque\';selectScreen(\'nouveau-quiz\')" class="btn" style="margin-top:6px;">Créer un quiz depuis la banque</button>';
+  return html;
 };
 subScreens['distribution-manuelle'] = function(){
   return '<div class="h-title">Distribution manuelle</div>'
