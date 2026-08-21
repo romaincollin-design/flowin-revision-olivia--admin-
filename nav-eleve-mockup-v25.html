@@ -339,8 +339,11 @@ function toggleQuizMatiere(m) {
 function lancerSpin() {
   var actives = Object.keys(quizMatieres).filter(function(k){return quizMatieres[k];});
   var tirage = actives[Math.floor(Math.random()*actives.length)];
+  var prefixe = tirage.slice(0,4); // 'Géo' matche 'Géographie' dans FICHES
+  var idFiche = Object.keys(FICHES).filter(function(id){ return FICHES[id].mat.indexOf(prefixe)===0; })[0];
   document.querySelectorAll('[id="spin-resultat"]').forEach(function(el){
-    el.innerHTML = 'Thème tiré : <b style="color:var(--pp);">'+tirage+'</b> !';
+    el.innerHTML = 'Thème tiré : <b style="color:var(--pp);">'+tirage+'</b> !'
+      + (idFiche ? '<button onclick="selectScreen(\'quiz-fiche-'+idFiche+'\')" style="display:block;margin:12px auto 0;background:var(--pp);color:white;font-weight:800;font-size:11.5px;padding:9px 18px;border-radius:11px;border:none;font-family:inherit;cursor:pointer;">Jouer sur ce thème →</button>' : '<div style="font-size:10.5px;color:var(--ink3);margin-top:8px;">Pas encore de fiche jouable sur ce thème.</div>');
   });
 }
 function genererGradientRoue(actives, couleurs){
