@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Flowin Révision — Carrousel</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+  :root { --pp:#534AB7; --ppbg:#EEEDFE; --gold:#E0A800; --gr:#0E9E6E; --re:#D63050; --ink:#1B1B2B; --ink3:#8B8AA0; --bg:#F5F4FB; --line:#E4E2F2; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 24px 16px; }
+
+  .roles { display: flex; gap: 6px; margin-bottom: 18px; }
+  .role-btn { padding: 8px 16px; border-radius: 99px; font-size: 12.5px; font-weight: 700; border: 1px solid var(--line); background: #fff; color: var(--ink3); cursor: pointer; transition: all .15s; }
+  .role-btn.active { color: #fff; border-color: transparent; }
+
+  .phone { width: 320px; height: 560px; background: #fff; border-radius: 32px; box-shadow: 0 0 0 7px #1B1B2B, 0 0 0 10px #3a3a4a; overflow: hidden; position: relative; }
+  .notch { height: 22px; background: #1B1B2B; }
+  .track { display: flex; height: calc(100% - 22px - 46px); transition: transform .4s cubic-bezier(.65,0,.35,1); }
+  .slide { min-width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px 26px; position: relative; overflow: hidden; }
+  .slide::before { content:""; position:absolute; top:-60px; right:-60px; width:180px; height:180px; border-radius:50%; background: currentColor; opacity:.06; }
+
+  .icon-wrap { width: 92px; height: 92px; border-radius: 26px; display: flex; align-items: center; justify-content: center; margin-bottom: 26px; position: relative; box-shadow: 0 6px 0 rgba(0,0,0,.16), 0 10px 20px rgba(0,0,0,.12); animation: iconPop .5s cubic-bezier(.34,1.56,.64,1); }
+  .icon-wrap::after { content:""; position:absolute; inset:7px; border-radius:19px; border:2px solid rgba(255,255,255,.28); pointer-events:none; }
+  .icon-wrap i { font-size: 42px; color:#fff; line-height:1; }
+  @keyframes iconPop { 0%{ transform: scale(.7) rotate(-8deg); opacity:0; } 65%{ transform: scale(1.1) rotate(3deg); opacity:1; } 100%{ transform: scale(1) rotate(0); } }
+
+  .slide .tag { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--pp); margin-bottom: 10px; }
+  .slide h2 { font-size: 21px; font-weight: 800; color: var(--ink); margin-bottom: 10px; line-height: 1.25; }
+  .slide p { font-size: 13px; color: var(--ink3); line-height: 1.5; max-width: 240px; }
+  .slide .price { font-size: 24px; font-weight: 800; color: var(--pp); margin-top: 14px; }
+
+  .bottom { height: 46px; display: flex; align-items: center; justify-content: center; gap: 8px; border-top: 1px solid var(--line); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--line); transition: all .25s; }
+  .dot.active { width: 20px; border-radius: 4px; }
+
+  .nav-row { display: flex; align-items: center; gap: 16px; margin-top: 18px; }
+  .nav-btn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--ink); }
+  .swipe-hint { font-size: 11px; color: var(--ink3); margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<div class="roles" id="roles"></div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="track" id="track"></div>
+  <div class="bottom" id="dots"></div>
+</div>
+
+<div class="nav-row">
+  <button class="nav-btn" id="prev">‹</button>
+  <button class="nav-btn" id="next">›</button>
+</div>
+<div class="swipe-hint">Glisse ou utilise les flèches</div>
+
+<script>
+// Axe éditorial : jamais "facile" — toujours révision / jeu / entre amis / lots à gagner.
+// Pictos : Tabler Icons (traits cohérents), badges pleins façon Duolingo (ombre 3D, coins arrondis).
+var DATA = {
+  eleve: { label: "Élève", color: "#534AB7", slides: [
+    { tag: "Flowin Révision", icon: "ti-flame", bg: "var(--re)", title: "Arrête de scroller, viens réviser", text: "Chaque pause peut devenir des points. Ici, réviser rapporte plus qu'un scroll." },
+    { tag: "Système de points", icon: "ti-bolt", bg: "var(--gold)", title: "Revise comme t'as jamais révisé !", text: "Un point à chaque bonne réponse, un streak qui grimpe, une progression qui se voit." },
+    { tag: "Entre potes", icon: "ti-swords", bg: "var(--pp)", title: "Défie tes potes", text: "Mise tes points, lance un défi, rafle la mise." },
+    { tag: "Ta classe", icon: "ti-trophy", bg: "var(--gr)", title: "Challenge ta classe", text: "Affronte les autres classes, fais grimper ton groupe au classement." },
+    { tag: "Chaque semaine", icon: "ti-gift", bg: "var(--re)", title: "Reste au top, remporte les lots !", text: "De vrais lots à gagner, chaque semaine, rien que pour les meilleurs." },
+    { tag: "Ton pseudo, ton style", icon: "ti-mask", bg: "var(--pp)", title: "Choisis ton pseudo", text: "Personne ne connaît ton vrai nom. À toi de te faire un blase." }
+  ]},
+  prof: { label: "Prof", color: "#E0A800", slides: [
+    { tag: "Flowin Révision", icon: "ti-heart-handshake", bg: "var(--gold)", title: "Crée de la cohésion dans ta classe", text: "Un jeu de révision qui rassemble, pas qui isole." },
+    { tag: "Tout ton contenu", icon: "ti-books", bg: "var(--pp)", title: "Des cours, des quiz, des fiches de révision", text: "Colle ton cours, l'IA génère le quiz. Ou pioche directement dans la banque prête à l'emploi." },
+    { tag: "Émulation saine", icon: "ti-chart-bar", bg: "var(--gr)", title: "Un point par bonne réponse", text: "L'écart entre les meilleurs et les autres, visible, motivant." },
+    { tag: "Pilotage", icon: "ti-report-analytics", bg: "var(--re)", title: "Stats, évaluation, suivi", text: "La progression de chaque élève, classe entière, en un regard." },
+    { tag: "Challenge interclasse", icon: "ti-trophy", bg: "var(--gold)", title: "Ta classe reste au top, elle remporte le jackpot !", text: "Fais s'affronter tes classes, la motivation grimpe." },
+    { tag: "Plateforme dédiée", icon: "ti-mask", bg: "var(--pp)", title: "Un système jeu 100% anonyme", text: "Tes élèves s'inscrivent en pseudo. Aucune donnée personnelle exposée, tu vois juste un pseudo." },
+    { tag: "Offre", icon: "ti-tag", bg: "var(--gold)", title: "9,99 € / mois", text: "Sans engagement. Résilie quand tu veux.", price: true }
+  ]},
+  partenaire: { label: "Partenaire", color: "#D63050", slides: [
+    { tag: "Flowin Révision", icon: "ti-speakerphone", bg: "var(--re)", title: "Sponsorise, crée du trafic", text: "Une visibilité directe auprès d'un public lycéen." },
+    { tag: "100% anonyme", icon: "ti-mask", bg: "var(--pp)", title: "Un jeu qui rassemble", text: "Aucune donnée exposée. Juste des pseudos, une communauté, une bonne raison de jouer." },
+    { tag: "Cohésion", icon: "ti-users-group", bg: "var(--gr)", title: "Crée de la cohésion, fait monter le niveau !", text: "Une plateforme qui rassemble toute une classe autour d'un même objectif." },
+    { tag: "Ciblé", icon: "ti-target", bg: "var(--gold)", title: "Un public lycéen, local", text: "Les élèves de ton quartier, directement dans leur poche." },
+    { tag: "Rapide", icon: "ti-rocket", bg: "var(--re)", title: "Pas d'onboarding compliqué", text: "Tu t'inscris, tu publies un lot. C'est tout." },
+    { tag: "Autonome", icon: "ti-settings", bg: "var(--pp)", title: "Des lots qui s'auto-gèrent", text: "Stock, distribution, retrait — tout est automatique." },
+    { tag: "Participe à la progression", icon: "ti-leaf", bg: "var(--gr)", title: "Offre des lots qui ont du sens !", text: "Une plateforme qui contribue à la réussite et à l'évolution des jeunes." },
+    { tag: "Offre", icon: "ti-tag", bg: "var(--re)", title: "99 € / établissement", text: "Une fois la communauté élève acquise.", price: true }
+  ]}
+};
+
+var currentRole = "eleve", currentSlide = 0;
+
+function renderRoles() {
+  var el = document.getElementById("roles");
+  el.innerHTML = "";
+  Object.keys(DATA).forEach(function(k) {
+    var b = document.createElement("button");
+    b.className = "role-btn" + (k === currentRole ? " active" : "");
+    if (k === currentRole) { b.style.background = DATA[k].color; }
+    b.textContent = DATA[k].label;
+    b.onclick = function() { currentRole = k; currentSlide = 0; renderAll(); };
+    el.appendChild(b);
+  });
+}
+
+function renderTrack() {
+  var role = DATA[currentRole];
+  var track = document.getElementById("track");
+  track.innerHTML = role.slides.map(function(s) {
+    return '<div class="slide" style="color:' + s.bg + ';">' +
+      '<div class="icon-wrap" style="background:' + s.bg + ';"><i class="ti ' + s.icon + '"></i></div>' +
+      '<div class="tag">' + s.tag + '</div>' +
+      '<h2>' + s.title + '</h2>' +
+      '<p>' + s.text + '</p>' +
+      (s.price ? '' : '') +
+      '</div>';
+  }).join("");
+  track.style.transform = "translateX(-" + (currentSlide * 100) + "%)";
+
+  var dots = document.getElementById("dots");
+  dots.innerHTML = "";
+  role.slides.forEach(function(_, i) {
+    var d = document.createElement("div");
+    d.className = "dot" + (i === currentSlide ? " active" : "");
+    if (i === currentSlide) { d.style.background = role.color; }
+    dots.appendChild(d);
+  });
+}
+
+function renderAll() { renderRoles(); renderTrack(); }
+
+document.getElementById("prev").onclick = function() {
+  var n = DATA[currentRole].slides.length;
+  currentSlide = (currentSlide - 1 + n) % n;
+  renderTrack();
+};
+document.getElementById("next").onclick = function() {
+  var n = DATA[currentRole].slides.length;
+  currentSlide = (currentSlide + 1) % n;
+  renderTrack();
+};
+
+// Glisser au doigt / souris
+var track = document.getElementById("track");
+var startX = null;
+track.addEventListener("pointerdown", function(e) { startX = e.clientX; });
+track.addEventListener("pointerup", function(e) {
+  if (startX === null) return;
+  var diff = e.clientX - startX;
+  var n = DATA[currentRole].slides.length;
+  if (diff < -40) currentSlide = (currentSlide + 1) % n;
+  else if (diff > 40) currentSlide = (currentSlide - 1 + n) % n;
+  startX = null;
+  renderTrack();
+});
+
+renderAll();
+</script>
+</body>
+</html>

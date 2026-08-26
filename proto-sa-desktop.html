@@ -75,6 +75,8 @@ tr.link:hover td{background:var(--bg)}
       <a data-p="profs"><svg class="i" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5zM6 12v5c3 3 9 3 12 0v-5"/></svg>Professeurs</a>
       <a data-p="ligues"><svg class="i" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 4H4v2a3 3 0 0 0 3 3M17 4h3v2a3 3 0 0 1-3 3"/></svg>Classements &amp; ligues</a>
       <a data-p="partenaires"><svg class="i" viewBox="0 0 24 24"><path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7"/></svg>Partenaires &amp; lots</a>
+      <div class="sec">Marketing</div>
+      <a data-p="comm"><svg class="i" viewBox="0 0 24 24"><path d="M3 11v2a1 1 0 0 0 1 1h1l4 4V6L5 10H4a1 1 0 0 0-1 1zM15 8a3 3 0 0 1 0 6M18 5a7 7 0 0 1 0 12"/></svg>Communication</a>
       <div class="sec">Compte</div>
       <a data-p="params"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Paramètres</a>
     </nav>
@@ -119,7 +121,8 @@ var LOTS=[
  {nom:'Place de cinéma',partenaire:'Ciné Nice',statut:'en attente',qte:30,restant:30,etab:'Lycée Parc Impérial',type:'Loisir culturel',budget:210,nbEtabs:1}
 ];
 
-var CURETAB=0, CURELEVE=0, CURPROF=0;
+var CURETAB=0, CURELEVE=0, CURPROF=0, COMMTAB='carrousel';
+function setCommTab(id){COMMTAB=id;render();}
 function openEtab(i){CURETAB=i;go('etabdetail');}
 function openEleve(i){CURELEVE=i;go('elevedetail');}
 function openProf(i){CURPROF=i;go('profdetail');}
@@ -241,6 +244,23 @@ var PAGES={
  params:function(){return ''
   +'<div class="topbar"><div class="h1">Paramètres</div></div>'
   +'<div class="card"><h3>Accès</h3><div class="sub">Compte Super Admin — accès total, sans restriction, à tous les établissements, élèves, professeurs et partenaires.</div></div>';
+ },
+ comm:function(){
+  var MATS=[
+   {id:'carrousel',label:'Carrousel intro',src:'flowin-carrousel-intro.html'},
+   {id:'eleve',label:'Parcours Élève',src:'nav-eleve-mockup-v25.html'},
+   {id:'prof',label:'Parcours Prof',src:'nav-prof-mockup.html'},
+   {id:'partenaire',label:'Parcours Partenaire',src:'nav-partenaire-mockup.html'}
+  ];
+  var cur=MATS.filter(function(m){return m.id===COMMTAB;})[0]||MATS[0];
+  return ''
+   +'<div class="topbar"><div><div class="h1">Communication</div><div class="sub">Supports validés — carrousel de présentation et parcours réels (mobile)</div></div><a class="btn sec" href="'+cur.src+'" target="_blank" style="text-decoration:none">Ouvrir en plein écran</a></div>'
+   +'<div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">'+MATS.map(function(m){return '<div class="chip'+(m.id===COMMTAB?' on':'')+'" onclick="setCommTab(\''+m.id+'\')">'+m.label+'</div>';}).join('')+'</div>'
+   +'<div class="card" style="padding:0;overflow:hidden">'
+    +'<div style="display:flex;justify-content:center;background:var(--bg);padding:26px 0">'
+     +'<iframe src="'+cur.src+'" style="width:360px;height:720px;border:8px solid #14162A;border-radius:36px;background:#fff" title="'+cur.label+'"></iframe>'
+    +'</div>'
+   +'</div>';
  }
 };
 function render(){document.getElementById('main').innerHTML=(PAGES[PAGE]||PAGES.overview)();}
