@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowin Révision — Plaquette</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pp:#534AB7; --ppbg:#EEEDFE; --ppln:#CECBF6;
+    --gold:#E0A800; --am:#C27C0A; --ambg:#FBEEDA;
+    --gr:#0E9E6E; --grbg:#E3F7EF;
+    --re:#D63050; --rebg:#FBE7EC;
+    --bl:#1E6FCC;
+    --ink:#14162A; --ink2:#3D3F5C; --ink3:#6B7094;
+    --line:#E4E3F0; --bg:#F5F3FF; --surf:#FDFBFF;
+    --f:'DM Sans', system-ui, sans-serif;
+    --accent:#534AB7; --accent-bg:#EEEDFE; --accent-text:#534AB7; --btn-fg:#fff;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{ font-family:var(--f); background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; line-height:1.5; }
+  a{ color:inherit; text-decoration:none; }
+  svg{ display:block; }
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:6px; }
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; } }
+
+  /* ---------- Header + brand ---------- */
+  header{ position:sticky; top:0; z-index:40; background:rgba(245,243,255,.85); backdrop-filter:blur(12px); border-bottom:1px solid var(--line); }
+  .head-in{ max-width:1120px; margin:0 auto; padding:13px 22px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+  .brand{ display:flex; align-items:center; gap:11px; }
+  .brand .mark{ width:34px; height:34px; flex-shrink:0; filter:drop-shadow(0 3px 5px rgba(83,74,183,.22)); animation:markIn .5s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes markIn{ 0%{ transform:scale(.6) rotate(-10deg); opacity:0; } 70%{ transform:scale(1.08) rotate(3deg); opacity:1; } 100%{ transform:scale(1) rotate(0); } }
+  .wordmark{ line-height:1; }
+  .wordmark .w1{ font-weight:800; font-size:1.05rem; letter-spacing:-.02em; color:var(--ink); }
+  .wordmark .w2{ font-weight:800; font-size:1.05rem; letter-spacing:-.02em; color:var(--accent-text); transition:color .35s ease; }
+  .wordmark .tl{ display:block; font-size:.62rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--ink3); margin-top:3px; }
+
+  .switch{ display:flex; gap:6px; background:#fff; padding:5px; border-radius:99px; border:1px solid var(--line); }
+  .switch button{ font-family:inherit; border:none; background:transparent; cursor:pointer; font-weight:700; font-size:.8rem; color:var(--ink3); padding:8px 16px; border-radius:99px; transition:color .2s ease, background .25s ease; }
+  .switch button.active{ color:#fff; }
+  .head-cta{ font-weight:700; font-size:.85rem; color:#fff; background:var(--accent); padding:10px 18px; border-radius:12px; box-shadow:0 4px 0 rgba(0,0,0,.12); transition:transform .12s ease, box-shadow .12s ease, background .35s ease; }
+  .head-cta:hover{ transform:translateY(-2px); box-shadow:0 6px 0 rgba(0,0,0,.12); }
+
+  .stage{ max-width:1120px; margin:0 auto; padding:40px 22px 0; }
+
+  /* ---------- Hero ---------- */
+  .hero{ position:relative; display:grid; grid-template-columns:1.05fr .95fr; gap:48px; align-items:center; min-height:calc(100svh - 150px); padding-bottom:40px; }
+  .hero-watermark{ position:absolute; top:-30px; left:-70px; width:340px; height:340px; opacity:.05; pointer-events:none; z-index:0; }
+  .hero-copy, .phone-wrap{ position:relative; z-index:1; }
+  .eyebrow{ display:inline-flex; align-items:center; gap:8px; font-weight:800; font-size:.72rem; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-text); background:var(--accent-bg); padding:7px 13px; border-radius:99px; margin-bottom:20px; transition:color .35s ease, background .35s ease; }
+  h1{ font-weight:800; font-size:clamp(2.05rem, 4.6vw, 3.1rem); line-height:1.1; letter-spacing:-.015em; color:var(--ink); }
+  .hero-sub{ margin-top:18px; font-size:1.05rem; color:var(--ink2); max-width:46ch; }
+  .cta-row{ margin-top:30px; display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+  .btn{ font-family:inherit; font-weight:800; font-size:.95rem; padding:15px 26px; border-radius:14px; border:none; cursor:pointer; background:var(--accent); color:var(--btn-fg); display:inline-flex; align-items:center; gap:9px; box-shadow:0 5px 0 rgba(0,0,0,.12); transition:transform .12s ease, box-shadow .12s ease, background .35s ease; }
+  .btn:hover{ transform:translateY(-2px); box-shadow:0 7px 0 rgba(0,0,0,.12); }
+  .btn:active{ transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.12); }
+  .btn-ghost{ font-weight:700; font-size:.9rem; color:var(--ink2); border-bottom:1.5px solid var(--line); padding-bottom:2px; }
+  .btn-ghost:hover{ color:var(--accent-text); border-color:var(--accent); }
+  .hero-chips{ margin-top:36px; display:flex; gap:8px; flex-wrap:wrap; }
+  .hero-chip{ font-size:.74rem; font-weight:700; color:var(--ink2); background:#fff; border:1px solid var(--line); padding:8px 13px; border-radius:99px; }
+
+  /* ---------- Phone ---------- */
+  .phone-wrap{ display:flex; justify-content:center; }
+  .phone{ width:300px; height:600px; background:#fff; border-radius:34px; box-shadow:0 0 0 8px #1B1B2B, 0 0 0 11px #34344a, 0 24px 50px -20px rgba(27,27,43,.4); overflow:hidden; position:relative; }
+  .notch{ height:24px; background:#1B1B2B; position:relative; z-index:3; }
+  .notch::after{ content:''; position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:20px; background:#1B1B2B; border-radius:0 0 14px 14px; }
+  .screens{ position:relative; height:calc(100% - 24px - 54px); overflow:hidden; }
+  .screen{ position:absolute; inset:0; padding:16px 15px; overflow:hidden; background:#fff; opacity:0; z-index:1; transition:opacity .4s ease; }
+  .screen.active{ opacity:1; z-index:2; }
+  .bnav{ height:54px; border-top:1px solid var(--line); display:flex; background:#fff; position:relative; z-index:3; }
+  .bnav-item{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; color:var(--ink3); }
+  .bnav-item.on{ color:var(--accent); }
+  .bnav-item span{ font-size:8.5px; font-weight:700; }
+
+  .h-greet{ color:var(--ink3); font-size:12px; font-weight:700; }
+  .h-title{ font-size:18px; font-weight:800; margin:2px 0 12px; }
+  .card{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:12px; }
+  .row{ display:flex; align-items:center; gap:9px; }
+  .icon-sq{ border-radius:10px; display:flex; align-items:center; justify-content:center; color:#fff; flex-shrink:0; }
+  .kpi-row{ display:flex; gap:7px; margin-bottom:11px; }
+  .kpi{ flex:1; background:#fff; border:1px solid var(--line); border-radius:12px; padding:10px 6px; text-align:center; }
+  .kpi .v{ font-size:16px; font-weight:800; }
+  .kpi .l{ font-size:8px; font-weight:800; color:var(--ink3); text-transform:uppercase; letter-spacing:.04em; margin-top:1px; }
+  .sec-title{ font-size:12.5px; font-weight:800; margin-bottom:9px; }
+  .brique{ display:flex; align-items:center; gap:9px; padding:8px 0; }
+  .brique .t{ font-weight:800; font-size:11px; }
+  .brique .d{ font-size:9.5px; color:var(--ink3); }
+  .badge{ font-size:8.5px; font-weight:800; padding:3px 8px; border-radius:99px; }
+  .opt{ font-weight:700; font-size:10.5px; padding:8px 10px; border:1.5px solid var(--line); border-radius:9px; margin-bottom:6px; }
+  .opt.ok{ border-color:var(--gr); background:var(--grbg); color:#0A6F4E; }
+  .pts-pop{ font-size:26px; font-weight:800; color:var(--gr); text-align:center; margin:6px 0; }
+  .podium{ display:flex; align-items:flex-end; justify-content:center; gap:9px; margin:6px 0 12px; }
+  .pod{ text-align:center; width:62px; }
+  .pod .av{ width:26px; height:26px; border-radius:50%; color:#fff; font-weight:800; font-size:11px; display:flex; align-items:center; justify-content:center; margin:0 auto 3px; }
+  .pod .nm{ font-size:9px; font-weight:800; }
+  .pod .p{ font-size:8px; color:var(--ink3); }
+  .pod .bar{ border-radius:9px 9px 0 0; display:flex; justify-content:center; padding-top:3px; color:#fff; font-weight:800; font-size:12px; margin-top:3px; height:0; transition:height .7s cubic-bezier(.16,1,.3,1); }
+  .ligrow{ display:flex; align-items:center; gap:8px; padding:8px 10px; border-top:1px solid var(--line); }
+  .ligrow .r{ font-size:9px; font-weight:800; color:var(--ink3); width:12px; }
+  .ligrow .av{ width:22px; height:22px; border-radius:50%; background:var(--pp); color:#fff; font-size:9px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  .ligrow .nm{ flex:1; font-size:11px; font-weight:700; }
+  .ligrow .pt{ font-size:11px; font-weight:800; }
+  .ticket{ display:flex; align-items:center; gap:10px; border-radius:12px; overflow:hidden; background:#fff; border:1px solid var(--line); }
+  .ticket .stub{ width:52px; align-self:stretch; display:flex; align-items:center; justify-content:center; color:#fff; }
+  .qr{ width:118px; height:118px; margin:4px auto 10px; border-radius:12px; background:
+      repeating-linear-gradient(0deg,#1B1B2B 0 8px,transparent 8px 16px),
+      repeating-linear-gradient(90deg,#1B1B2B 0 8px,#fff 8px 16px); background-blend-mode:multiply; border:6px solid #1B1B2B; }
+  .chipline{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+  .chip{ font-size:9.5px; font-weight:700; color:var(--ink2); background:#fff; border:1.5px solid var(--line); padding:5px 10px; border-radius:99px; }
+  .chip.on{ border-color:var(--accent); background:var(--accent-bg); color:var(--accent-text); }
+  .dashbox{ border:1.5px dashed var(--ppln); background:var(--ppbg); border-radius:12px; padding:16px; text-align:center; }
+  .billet{ background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden; margin-bottom:12px; box-shadow:0 8px 20px -10px rgba(20,20,45,.18); }
+  .billet-logo{ padding:11px; text-align:center; border-bottom:2px dashed var(--line); }
+  .billet-logo .ph{ border:1.5px dashed var(--accent); background:var(--accent-bg); color:var(--accent-text); border-radius:8px; padding:9px; font-weight:800; font-size:10px; letter-spacing:.02em; }
+  .billet-body{ padding:12px; text-align:center; }
+  .billet-lot{ font-weight:800; font-size:12px; margin-bottom:8px; }
+  .billet .qr{ width:96px; height:96px; margin:0 auto 8px; }
+  .billet-meta{ font-size:8.5px; color:var(--ink3); font-family:monospace; letter-spacing:.03em; }
+
+  /* ---------- "C'est quoi" carousel ---------- */
+  .cestquoi{ padding:66px 0 30px; }
+  .cq-head{ text-align:center; margin-bottom:30px; }
+  .cq-head .eyebrow{ margin-bottom:14px; }
+  .cq-head h2{ font-size:clamp(1.5rem,3vw,2rem); font-weight:800; color:var(--ink); letter-spacing:-.01em; }
+  .carousel{ max-width:880px; margin:0 auto; overflow:hidden; }
+  .cq-track{ display:flex; transition:transform .45s cubic-bezier(.65,0,.35,1); }
+  .cq-slide{ min-width:100%; display:flex; flex-direction:column; align-items:center; text-align:center; padding:14px 20px 6px; }
+  .cq-icon{ width:88px; height:88px; border-radius:24px; display:flex; align-items:center; justify-content:center; margin-bottom:22px; box-shadow:0 6px 0 rgba(0,0,0,.16), 0 12px 24px rgba(0,0,0,.1); position:relative; }
+  .cq-icon::after{ content:''; position:absolute; inset:7px; border-radius:17px; border:2px solid rgba(255,255,255,.28); }
+  .cq-slide.animate .cq-icon{ animation:iconPop .55s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes iconPop{ 0%{ transform:scale(.7) rotate(-8deg); opacity:0; } 65%{ transform:scale(1.1) rotate(3deg); opacity:1; } 100%{ transform:scale(1) rotate(0); } }
+  .cq-tag{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--accent-text); margin-bottom:12px; }
+  .cq-slide h3{ font-size:1.5rem; font-weight:800; color:var(--ink); max-width:17ch; line-height:1.3; }
+  .cq-nav{ display:flex; align-items:center; justify-content:center; gap:18px; margin-top:26px; }
+  .cq-arrow{ width:40px; height:40px; border-radius:50%; border:1px solid var(--line); background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--ink); transition:border-color .2s ease; }
+  .cq-arrow:hover{ border-color:var(--accent); }
+  .cq-dots{ display:flex; gap:7px; }
+  .cq-dot{ width:8px; height:8px; border-radius:50%; background:var(--line); transition:width .25s ease, background .25s ease; }
+  .cq-dot.on{ width:22px; border-radius:4px; background:var(--accent); }
+
+  .proof{ max-width:880px; margin:14px auto 0; display:flex; justify-content:center; gap:26px; flex-wrap:wrap; }
+  .proof span{ font-size:.8rem; font-weight:700; color:var(--ink3); display:inline-flex; align-items:center; gap:7px; }
+  .proof span svg{ color:var(--accent); }
+
+  /* ---------- CTA band ---------- */
+  .ctaband{ margin:64px auto 0; max-width:1120px; }
+  .ctaband-in{ background:var(--accent); border-radius:28px; padding:52px 40px; text-align:center; color:#fff; transition:background .35s ease; position:relative; overflow:hidden; }
+  .ctaband-in::before{ content:''; position:absolute; top:-70px; right:-40px; width:220px; height:220px; border-radius:50%; background:rgba(255,255,255,.1); }
+  .ctaband-in::after{ content:''; position:absolute; bottom:-90px; left:-30px; width:240px; height:240px; border-radius:50%; background:rgba(255,255,255,.08); }
+  .cta-mark{ display:inline-flex; margin-bottom:18px; position:relative; filter:drop-shadow(0 4px 8px rgba(0,0,0,.18)); }
+  .ctaband h2{ font-size:clamp(1.6rem,3.4vw,2.3rem); font-weight:800; position:relative; letter-spacing:-.01em; }
+  .ctaband p{ margin-top:12px; opacity:.92; position:relative; font-size:1rem; }
+  .btn-invert{ margin-top:26px; background:#fff; color:var(--accent-text); box-shadow:0 5px 0 rgba(0,0,0,.18); position:relative; }
+  .btn-invert:hover{ box-shadow:0 7px 0 rgba(0,0,0,.18); }
+
+  footer{ max-width:1120px; margin:40px auto 0; padding:26px 22px; border-top:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; font-size:.75rem; color:var(--ink3); flex-wrap:wrap; gap:12px; }
+  footer .fbrand{ display:flex; align-items:center; gap:9px; font-weight:800; color:var(--ink2); }
+  footer .fbrand .mark{ width:24px; height:24px; }
+
+  @media (max-width:860px){
+    .hero{ grid-template-columns:1fr; gap:36px; min-height:0; padding-top:16px; text-align:center; }
+    .hero-copy{ order:2; }
+    .phone-wrap{ order:1; }
+    .hero-watermark{ display:none; }
+    .eyebrow, .hero-sub{ margin-left:auto; margin-right:auto; }
+    .cta-row, .hero-chips{ justify-content:center; }
+  }
+  @media (max-width:520px){
+    .switch{ order:3; width:100%; justify-content:center; }
+    .head-cta{ display:none; }
+    .phone{ width:270px; height:552px; }
+    .ctaband-in{ padding:40px 24px; }
+    .wordmark .tl{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-in">
+    <div class="brand">
+      <span class="mark" id="brandMark"></span>
+      <span class="wordmark"><span class="w1">Flowin</span> <span class="w2">Révision</span><span class="tl">Revise. Joue. Gagne.</span></span>
+    </div>
+    <div class="switch" id="switch"></div>
+    <a href="#cta" class="head-cta" id="headCta">Prendre contact</a>
+  </div>
+</header>
+
+<div class="stage">
+  <section class="hero">
+    <span class="hero-watermark" id="heroWatermark"></span>
+    <div class="hero-copy">
+      <span class="eyebrow" id="heroEyebrow"></span>
+      <h1 id="heroTitle"></h1>
+      <p class="hero-sub" id="heroSub"></p>
+      <div class="cta-row">
+        <button class="btn" id="heroBtn"></button>
+        <a href="#cestquoi" class="btn-ghost" id="heroLink"></a>
+      </div>
+      <div class="hero-chips" id="heroChips"></div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="screens" id="screens"></div>
+        <div class="bnav" id="bnav"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cestquoi" id="cestquoi">
+    <div class="cq-head">
+      <span class="eyebrow">Flowin Révision, c'est quoi ?</span>
+      <h2 id="cqHeadTitle"></h2>
+    </div>
+    <div class="carousel"><div class="cq-track" id="cqTrack"></div></div>
+    <div class="cq-nav">
+      <button class="cq-arrow" id="cqPrev" aria-label="Précédent"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="cq-dots" id="cqDots"></div>
+      <button class="cq-arrow" id="cqNext" aria-label="Suivant"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div>
+    <div class="proof">
+      <span><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Cours &amp; quiz réels — pas générés par IA</span>
+    </div>
+  </section>
+
+  <section class="ctaband" id="cta">
+    <div class="ctaband-in">
+      <span class="cta-mark" id="ctaMark"></span>
+      <h2 id="ctaTitle"></h2>
+      <p id="ctaSub"></p>
+      <button class="btn btn-invert" id="ctaBtn"></button>
+    </div>
+  </section>
+
+  <footer>
+    <span class="fbrand"><span class="mark" id="footMark"></span>Flowin Révision</span>
+    <span>Flowin Révision · 2026</span>
+  </footer>
+</div>
+
+<script>
+// ============ Logo / brand mark ============
+function logoMark(size, bg, fg){
+  return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    +'<rect x="1.5" y="1.5" width="29" height="29" rx="9" fill="'+bg+'"/>'
+    +'<g stroke="'+fg+'" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">'
+    +'<path d="M12 8.5V23.5"/>'
+    +'<path d="M12 11C15 8 18.5 12.6 22 10"/>'
+    +'<path d="M12 16.6C14.4 14.6 16.8 18 19.5 15.6"/>'
+    +'</g></svg>';
+}
+
+// ============ Icônes réelles (tracés identiques à l'app) ============
+var ICONS = {
+  home:'M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
+  book:'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z',
+  star:'M12 2 15 9l7 .5-5.5 4.5L18 21l-6-3.8L6 21l1.5-7L2 9.5 9 9z',
+  sword:'M21 3v5l-11 9-4 4-3-3 4-4 9-11zM5 13l6 6M14.3 17.3l3.7 3.7 3-3-3.7-3.7M10 5.5 8 3H3v5l3 2.5',
+  people:'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
+  trophy:'M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 4H4v2a3 3 0 0 0 3 3M17 4h3v2a3 3 0 0 1-3 3',
+  user:'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+  flame:'M12 12c2-2.96 0-7-1-8 0 3.038-1.773 4.741-3 6-1.226 1.26-2 3.24-2 5a6 6 0 1 0 12 0c0-1.532-1.056-3.94-2-5-1.786 3-2.791 3-4 2z',
+  gift:'M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7',
+  chevron:'M9 18l6-6-6-6',
+  classe:'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
+  cagnotte:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z',
+  reglages:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z',
+  scan:'M3 7V4a1 1 0 0 1 1-1h3M21 7V4a1 1 0 0 0-1-1h-3M3 17v3a1 1 0 0 0 1 1h3M21 17v3a1 1 0 0 1-1 1h-3M4 12h16',
+  check:'M20 6 9 17l-5-5',
+  heart:'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z',
+  hearthandshake:'M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7ZM12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66M18 15l-2-2M15 18l-2-2',
+  eye:'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  shieldcheck:'M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1zM9 12l2 2 4-4',
+  badgecheck:'M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76ZM9 12l2 2 4-4'
+};
+function svg(path, opt){ opt=opt||{}; var w=opt.w||20, st=opt.stroke||'#fff', sw=opt.sw||1.8, fill=opt.fill||'none';
+  return '<svg viewBox="0 0 24 24" width="'+w+'" height="'+w+'" fill="'+fill+'" stroke="'+st+'" stroke-width="'+sw+'" stroke-linecap="round" stroke-linejoin="round"><path d="'+path+'"/></svg>'; }
+
+// ============ Thèmes ============
+var VAR = {
+  eleve:{ accent:'#534AB7', bg:'#EEEDFE', text:'#534AB7', btnfg:'#fff' },
+  prof:{ accent:'#E0A800', bg:'#FBEEDA', text:'#B07C08', btnfg:'#1B1B2B' },
+  partenaire:{ accent:'#D63050', bg:'#FBE7EC', text:'#D63050', btnfg:'#fff' }
+};
+
+// ============ Contenu — copy validée (verbatim) + partenaire reformulé (valeurs/engagement) ============
+var DATA = {
+  eleve:{
+    label:'Élève',
+    eyebrow:'Pour les élèves',
+    title:"Revise comme t'as jamais révisé.",
+    sub:"Réviser devient un jeu : tu gagnes des points, tu défies tes amis, tu grimpes dans la ligue, et tu remportes de vrais lots.",
+    btn:'Rejoindre ma classe', link:'Comment ça marche ↓',
+    chips:['Des quiz sur tes cours','Challenge tes potes','Challenge ta classe'],
+    cqHead:'Ton jeu pour réviser.',
+    cta:{ title:'Rejoins le flow.', sub:"Scanne le QR de ta classe. À toi de jouer.", btn:'Rejoindre ma classe' },
+    bnav:[['home','Accueil',1],['book','Réviser',0],['star','Quiz',0],['sword','Défis',0],['trophy','Ligue',0]],
+    slides:[
+      { tag:'Flowin Révision', icon:'flame', bg:'var(--re)', title:"Revise comme t'as jamais révisé&nbsp;!" },
+      { tag:"L'objectif du jeu", icon:'people', bg:'var(--pp)', title:'Joue avec tes amis' },
+      { tag:'Chaque semaine', icon:'gift', bg:'var(--gold)', title:'Reste au top, remporte les lots&nbsp;!' },
+      { tag:'Ton pseudo', icon:'user', bg:'var(--gr)', title:'100% anonyme' }
+    ]
+  },
+  prof:{
+    label:'Prof',
+    eyebrow:'Pour les enseignants',
+    title:'Crée de la cohésion dans ta classe.',
+    sub:"Des cours, des quiz et des fiches réels — pas générés par une IA. Tu lances des défis, tu suis la progression, et tes élèves restent anonymes.",
+    btn:'Créer ma classe', link:'Découvrir la plateforme ↓',
+    chips:['Cours & quiz réels','Élèves 100% anonymes','Défis interclasses'],
+    cqHead:'Ta plateforme, pensée pour la classe.',
+    cta:{ title:'Crée ta classe, lance le premier défi.', sub:"Inscription libre, mise en place avec ton établissement.", btn:'Créer ma classe' },
+    bnav:[['home','Accueil',1],['classe','Classes',0],['cagnotte','Cagnotte',0],['reglages','Réglages',0]],
+    slides:[
+      { tag:'Flowin Révision', icon:'people', bg:'var(--gold)', title:'Crée de la cohésion dans ta classe' },
+      { tag:'Tout ton contenu', icon:'book', bg:'var(--pp)', title:'Des cours, des quiz, des fiches de révision' },
+      { tag:'Challenge interclasse', icon:'trophy', bg:'var(--gr)', title:'Ta classe reste au top, elle remporte le jackpot&nbsp;!' },
+      { tag:'Plateforme dédiée', icon:'user', bg:'var(--re)', title:'Un système jeu 100% anonyme' }
+    ]
+  },
+  partenaire:{
+    label:'Partenaire',
+    eyebrow:'Pour les partenaires',
+    title:'Sponsorisez un jeu qui fait monter le niveau.',
+    sub:"Un espace partenaire dédié : proposez vos offres en direct, sponsorisez des challenges en live, et contribuez au développement intellectuel des jeunes.",
+    btn:'Devenir partenaire', link:'En savoir plus ↓',
+    chips:['Espace partenaire dédié','Offres en direct','Challenges en live'],
+    cqHead:'Un partenariat qui a du sens.',
+    cta:{ title:'Devenez partenaire.', sub:"Associez votre marque à une action locale qui contribue au développement intellectuel des jeunes.", btn:'Devenir partenaire' },
+    bnav:[['home','Accueil',1],['gift','Lots',0],['scan','Remise',0],['reglages','Réglages',0]],
+    slides:[
+      { tag:'Espace dédié', icon:'home', bg:'var(--re)', title:"Un espace partenaire rien qu'à vous" },
+      { tag:'En direct', icon:'gift', bg:'var(--pp)', title:'Proposez vos offres en direct' },
+      { tag:'En live', icon:'trophy', bg:'var(--gold)', title:'Sponsorisez des challenges en live' },
+      { tag:'Votre impact', icon:'hearthandshake', bg:'var(--gr)', title:'Contribuez au développement intellectuel des jeunes' }
+    ]
+  }
+};
+
+// ============ Écrans du téléphone — fidèles à l'app ============
+function isq(bg,path,w){ return '<div class="icon-sq" style="width:36px;height:36px;background:'+bg+';">'+svg(path,{w:w||16,stroke:'#fff'})+'</div>'; }
+
+var SCREENS = {
+  eleve:[
+    '<div class="h-greet">Bonsoir Léa</div><div class="h-title">On révise ?</div>'
+    +'<div class="kpi-row">'
+      +'<div class="kpi"><div class="v" style="color:var(--gold)">9600</div><div class="l">Points</div></div>'
+      +'<div class="kpi"><div class="v" style="color:#F97316">4</div><div class="l">Streak</div></div>'
+      +'<div class="kpi"><div class="v" style="color:var(--pp)">12</div><div class="l">Quiz</div></div>'
+    +'</div>'
+    +'<div class="card" style="margin-bottom:10px;">'
+      +'<div class="sec-title">Tu révises, tu gagnes des points</div>'
+      +'<div class="brique">'+isq('var(--pp)',ICONS.book)+'<div><div class="t">Réviser mes cours</div><div class="d">23 fiches t\'attendent</div></div></div>'
+      +'<div class="brique">'+isq('var(--am)',ICONS.star)+'<div><div class="t">Quiz · Révise &amp; Gagne</div><div class="d">Tourne la roue, gagne des points</div></div></div>'
+      +'<div class="brique">'+isq('var(--re)',ICONS.sword)+'<div><div class="t">Défis multi-joueurs</div><div class="d">Parie tes points, rafle la mise</div></div></div>'
+    +'</div>'
+    +'<div style="font-size:9.5px;font-weight:800;color:var(--ink3);text-transform:uppercase;margin-bottom:6px;">3 lots à gagner ce mois-ci</div>'
+    +'<div class="ticket"><div class="stub" style="background:var(--bl);">'+svg(ICONS.gift,{w:18,stroke:'#fff'})+'</div><div style="padding:9px;"><div style="font-weight:800;font-size:11px;">Une entrée</div><div style="font-size:9.5px;color:var(--ink3);">Aqua Splash</div></div></div>',
+
+    '<div class="h-title">Quiz · Révise &amp; Gagne</div>'
+    +'<div class="card" style="margin-bottom:12px;">'
+      +'<div style="font-weight:800;font-size:11.5px;margin-bottom:10px;color:var(--pp);">Quelle institution vote les lois en France&nbsp;?</div>'
+      +'<div class="opt">Le Conseil constitutionnel</div>'
+      +'<div class="opt ok">Le Parlement</div>'
+      +'<div class="opt">La Cour de cassation</div>'
+    +'</div>'
+    +'<div class="pts-pop">+50 pts</div>'
+    +'<div style="text-align:center;font-size:10px;font-weight:800;color:var(--ink3);text-transform:uppercase;">Classement mis à jour</div>',
+
+    '<div class="h-title">Ma ligue</div>'
+    +'<div class="card" style="text-align:center;background:linear-gradient(150deg,#534AB7,#6E63D6);color:#fff;margin-bottom:14px;">'
+      +svg(ICONS.trophy,{w:26,stroke:'#fff'})
+      +'<div style="font-size:9px;font-weight:800;opacity:.85;text-transform:uppercase;margin-top:3px;">Palier actuel</div>'
+      +'<div style="font-size:18px;font-weight:800;">Platine</div><div style="font-size:11px;opacity:.9;">9600 pts</div>'
+    +'</div>'
+    +'<div class="podium">'
+      +'<div class="pod"><div class="av" style="background:#B0B4D6;">M</div><div class="nm">Maël</div><div class="p">8200 pts</div><div class="bar" data-h="40" style="background:#B0B4D6;">2</div></div>'
+      +'<div class="pod"><div class="av" style="background:var(--gold);">L</div><div class="nm">Léa</div><div class="p">9600 pts</div><div class="bar" data-h="56" style="background:var(--gold);">1</div></div>'
+      +'<div class="pod"><div class="av" style="background:#C98A4E;">S</div><div class="nm">Sofia</div><div class="p">7100 pts</div><div class="bar" data-h="30" style="background:#C98A4E;">3</div></div>'
+    +'</div>'
+    +'<div class="card" style="padding:0;overflow:hidden;">'
+      +'<div class="ligrow" style="border-top:none;"><span class="r">4</span><span class="av">N</span><span class="nm">Noah</span><span class="pt">6400 pts</span></div>'
+      +'<div class="ligrow"><span class="r">5</span><span class="av">I</span><span class="nm">Inès</span><span class="pt">5900 pts</span></div>'
+    +'</div>'
+  ],
+  prof:[
+    '<div class="h-greet">Bonjour</div><div class="h-title">Ta classe aujourd\'hui</div>'
+    +'<div class="kpi-row">'
+      +'<div class="kpi"><div class="v" style="color:var(--gold)">1360</div><div class="l">Pts restants</div></div>'
+      +'<div class="kpi"><div class="v" style="color:var(--pp)">640</div><div class="l">Dépensés</div></div>'
+      +'<div class="kpi"><div class="v" style="color:var(--bl)">380</div><div class="l">Terminale</div></div>'
+    +'</div>'
+    +'<button class="card" style="width:100%;text-align:left;display:flex;align-items:center;gap:9px;border:1.5px solid var(--ppln);background:var(--ppbg);margin-bottom:10px;">'
+      +isq('var(--pp)',ICONS.sword)+'<div style="flex:1;"><div style="font-weight:800;font-size:11.5px;color:var(--pp);">Lancer un défi interclasse</div><div style="font-size:9.5px;color:var(--ink3);">Ta classe reste au top, elle rafle le jackpot</div></div>'
+    +'</button>'
+    +'<div class="card"><div class="sec-title">Mes classes</div>'
+      +'<div class="brique">'+isq('var(--gold)',ICONS.classe)+'<div style="flex:1;"><div class="t">Terminale Bac Pro</div><div class="d">28 élèves · 380 pts distribués</div></div>'+svg(ICONS.chevron,{w:13,stroke:'var(--ink3)'})+'</div>'
+      +'<div class="brique">'+isq('var(--pp)',ICONS.classe)+'<div style="flex:1;"><div class="t">Première Bac Pro</div><div class="d">24 élèves · 260 pts distribués</div></div>'+svg(ICONS.chevron,{w:13,stroke:'var(--ink3)'})+'</div>'
+    +'</div>',
+
+    '<div class="h-title">Nouveau quiz</div>'
+    +'<div class="card" style="margin-bottom:12px;"><div style="font-size:9px;font-weight:800;color:var(--ink3);text-transform:uppercase;margin-bottom:4px;">Nom du quiz</div><div style="font-weight:800;font-size:13px;">Le jeu des puissances</div><div style="font-size:9.5px;color:var(--ink3);margin-top:2px;">Pour ta Terminale Bac Pro</div></div>'
+    +'<div class="chipline"><span class="chip on">Manuel</span><span class="chip">Banque</span><span class="chip">Import</span></div>'
+    +'<div class="card" style="margin-bottom:10px;"><div style="font-weight:800;font-size:11px;margin-bottom:6px;">Les acteurs de la mondialisation&nbsp;?</div>'
+      +'<div style="font-size:10px;color:var(--ink2);padding:2px 0;">1. Les États</div>'
+      +'<div style="font-size:10px;color:var(--ink2);padding:2px 0;">2. Les firmes multinationales</div>'
+      +'<div style="margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);"><span style="font-size:8.5px;font-weight:800;color:var(--gr);text-transform:uppercase;">Correction</span><div style="font-size:10.5px;font-weight:800;color:var(--gr);">Toutes ces réponses</div></div>'
+    +'</div>'
+    +'<div class="card" style="text-align:center;background:var(--gold);color:#1B1B2B;font-weight:800;font-size:12px;border:none;">Lancer le quiz</div>',
+
+    '<div class="h-title">Challenge interclasse</div>'
+    +'<div class="card" style="text-align:center;background:linear-gradient(150deg,#0E9E6E,#12B87F);color:#fff;margin-bottom:14px;">'
+      +svg(ICONS.trophy,{w:24,stroke:'#fff'})+'<div style="font-size:15px;font-weight:800;margin-top:4px;">Jackpot en jeu</div><div style="font-size:11px;opacity:.9;">1000 pts pour la classe gagnante</div>'
+    +'</div>'
+    +'<div class="card" style="margin-bottom:8px;"><div class="ligrow" style="padding:0;border:none;"><span class="av" style="background:var(--gold);">T</span><span class="nm">Terminale Bac Pro</span><span class="pt">720 pts</span></div><div style="height:8px;background:var(--ambg);border-radius:99px;margin-top:8px;overflow:hidden;"><div style="height:100%;width:82%;background:var(--gold);border-radius:99px;"></div></div></div>'
+    +'<div class="card"><div class="ligrow" style="padding:0;border:none;"><span class="av" style="background:var(--pp);">P</span><span class="nm">Première Bac Pro</span><span class="pt">610 pts</span></div><div style="height:8px;background:var(--ppbg);border-radius:99px;margin-top:8px;overflow:hidden;"><div style="height:100%;width:69%;background:var(--pp);border-radius:99px;"></div></div><div style="font-size:9px;font-weight:800;color:var(--ink3);margin-top:7px;">Classement mis à jour en temps réel</div></div>'
+  ],
+  partenaire:[
+    // 1 — Espace partenaire dédié : offres en direct + challenges en live
+    '<div class="h-title">Espace partenaire</div>'
+    +'<div class="dashbox" style="margin-bottom:10px;"><div style="font-weight:800;font-size:12px;color:var(--pp);">Votre logo ici</div><div style="font-size:9.5px;color:var(--ink3);margin-top:3px;">Affiché dans l\'espace récompenses des élèves</div></div>'
+    +'<div class="card row" style="margin-bottom:8px;"><div class="icon-sq" style="width:34px;height:34px;background:var(--re);">'+svg(ICONS.gift,{w:16,stroke:'#fff'})+'</div><div style="flex:1;"><div style="font-weight:800;font-size:11.5px;">Vos offres en direct</div><div style="font-size:9.5px;color:var(--ink3);">Proposez vos lots aux élèves en temps réel</div></div></div>'
+    +'<div class="card row"><div class="icon-sq" style="width:34px;height:34px;background:var(--pp);">'+svg(ICONS.trophy,{w:16,stroke:'#fff'})+'</div><div style="flex:1;"><div style="font-weight:800;font-size:11.5px;">Des challenges en live</div><div style="font-size:9.5px;color:var(--ink3);">Sponsorisez des défis en direct</div></div></div>',
+
+    // 2 — Mes lots
+    '<div class="h-title">Mes lots</div>'
+    +'<div class="card" style="margin-bottom:10px;text-align:center;">'
+      +'<div style="width:50px;height:50px;border-radius:14px;background:var(--rebg);display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">'+svg(ICONS.gift,{w:24,stroke:'var(--re)'})+'</div>'
+      +'<div style="font-weight:800;font-size:13px;">Une entrée Aqua Splash</div><div style="font-size:10px;color:var(--ink3);margin-top:2px;">Offerte à 3 gagnants ce mois-ci</div>'
+    +'</div>'
+    +'<div class="card row" style="margin-bottom:10px;"><div class="icon-sq" style="width:32px;height:32px;background:var(--gr);">'+svg(ICONS.check,{w:16,stroke:'#fff'})+'</div><div style="flex:1;"><div style="font-weight:800;font-size:11px;">Validé avant publication</div><div style="font-size:9.5px;color:var(--ink3);">Chaque lot est vérifié par l\'établissement</div></div></div>'
+    +'<div class="card" style="text-align:center;background:var(--re);color:#fff;font-weight:800;font-size:12px;border:none;">Proposer un nouveau lot</div>',
+
+    // 3 — Remettre un lot : le gagnant présente son BILLET (logo en haut + QR)
+    '<div class="h-title">Remettre un lot</div>'
+    +'<div class="billet">'
+      +'<div class="billet-logo"><div class="ph">Votre logo ici</div></div>'
+      +'<div class="billet-body">'
+        +'<div class="billet-lot">Une entrée · Aqua Splash</div>'
+        +'<div class="qr"></div>'
+        +'<div class="billet-meta">BILLET #00142 · Nova_42</div>'
+      +'</div>'
+    +'</div>'
+    +'<div class="card row"><div class="icon-sq" style="width:32px;height:32px;background:var(--gr);">'+svg(ICONS.check,{w:16,stroke:'#fff'})+'</div><div style="flex:1;"><div style="font-weight:800;font-size:11.5px;">Billet validé</div><div style="font-size:9.5px;color:var(--ink3);">Scannez le QR · remise en main propre</div></div><span class="badge" style="background:var(--grbg);color:#0A6F4E;">Lot remis</span></div>'
+  ]
+};
+
+// ============ State + render ============
+var role='eleve', cqIndex=0, screenIndex=0, screenTimer=null;
+
+function applyTheme(r){ var v=VAR[r];
+  var s=document.documentElement.style;
+  s.setProperty('--accent',v.accent); s.setProperty('--accent-bg',v.bg);
+  s.setProperty('--accent-text',v.text); s.setProperty('--btn-fg',v.btnfg);
+}
+function renderBrand(){
+  var a=VAR[role].accent;
+  var m=document.getElementById('brandMark'); m.innerHTML=logoMark(34,a,'#fff'); m.style.animation='none'; void m.offsetWidth; m.style.animation='';
+  document.getElementById('footMark').innerHTML=logoMark(24,a,'#fff');
+  document.getElementById('ctaMark').innerHTML=logoMark(46,'#fff',a);
+  document.getElementById('heroWatermark').innerHTML=logoMark(340,a,'#fff');
+}
+function renderSwitch(){
+  var el=document.getElementById('switch'); el.innerHTML='';
+  Object.keys(DATA).forEach(function(k){
+    var b=document.createElement('button');
+    b.textContent=DATA[k].label; b.className=(k===role?'active':'');
+    if(k===role){ b.style.background=VAR[k].accent; b.style.color=VAR[k].btnfg; }
+    b.onclick=function(){ role=k; cqIndex=0; screenIndex=0; renderAll(); };
+    el.appendChild(b);
+  });
+}
+function renderHero(){
+  var d=DATA[role];
+  document.getElementById('heroEyebrow').textContent=d.eyebrow;
+  document.getElementById('heroTitle').textContent=d.title;
+  document.getElementById('heroSub').textContent=d.sub;
+  document.getElementById('heroBtn').textContent=d.btn;
+  document.getElementById('heroLink').textContent=d.link;
+  var chips=document.getElementById('heroChips'); chips.innerHTML='';
+  d.chips.forEach(function(c){ var s=document.createElement('span'); s.className='hero-chip'; s.textContent=c; chips.appendChild(s); });
+  document.getElementById('cqHeadTitle').textContent=d.cqHead;
+  document.getElementById('ctaTitle').textContent=d.cta.title;
+  document.getElementById('ctaSub').textContent=d.cta.sub;
+  document.getElementById('ctaBtn').textContent=d.cta.btn;
+  document.getElementById('heroBtn').onclick=function(){ document.getElementById('cta').scrollIntoView({behavior:'smooth'}); };
+  document.getElementById('ctaBtn').onclick=function(){ document.getElementById('cta').scrollIntoView({behavior:'smooth'}); };
+}
+function renderBnav(){
+  var el=document.getElementById('bnav'); el.innerHTML='';
+  DATA[role].bnav.forEach(function(it){
+    var d=document.createElement('div');
+    d.className='bnav-item'+(it[2]?' on':'');
+    d.innerHTML=svg(ICONS[it[0]],{w:18,stroke: it[2]?VAR[role].accent:'#6B7094'})+'<span>'+it[1]+'</span>';
+    el.appendChild(d);
+  });
+}
+function renderScreens(){
+  var el=document.getElementById('screens'); el.innerHTML='';
+  SCREENS[role].forEach(function(html,i){
+    var s=document.createElement('div'); s.className='screen'+(i===0?' active':''); s.innerHTML=html; el.appendChild(s);
+  });
+  screenIndex=0; growPodium();
+  if(screenTimer) clearInterval(screenTimer);
+  screenTimer=setInterval(cycleScreen,3000);
+}
+function cycleScreen(){
+  var screens=document.querySelectorAll('#screens .screen'); if(!screens.length) return;
+  screens[screenIndex].classList.remove('active');
+  screenIndex=(screenIndex+1)%screens.length;
+  screens[screenIndex].classList.add('active'); growPodium();
+}
+function growPodium(){
+  var active=document.querySelector('#screens .screen.active'); if(!active) return;
+  active.querySelectorAll('.bar').forEach(function(bar){
+    bar.style.height='0px'; var h=bar.getAttribute('data-h');
+    setTimeout(function(){ bar.style.height=h+'px'; },80);
+  });
+}
+function renderCarousel(){
+  var d=DATA[role]; var track=document.getElementById('cqTrack');
+  track.innerHTML=d.slides.map(function(s){
+    return '<div class="cq-slide">'
+      +'<div class="cq-icon" style="background:'+s.bg+';">'+svg(ICONS[s.icon],{w:38,stroke:'#fff'})+'</div>'
+      +'<div class="cq-tag">'+s.tag+'</div><h3>'+s.title+'</h3></div>';
+  }).join('');
+  cqIndex=0; updateCarousel();
+}
+function updateCarousel(){
+  var track=document.getElementById('cqTrack');
+  track.style.transform='translateX(-'+(cqIndex*100)+'%)';
+  track.querySelectorAll('.cq-slide').forEach(function(sl,i){ sl.classList.toggle('animate',i===cqIndex); });
+  var dots=document.getElementById('cqDots'); dots.innerHTML='';
+  DATA[role].slides.forEach(function(_,i){ var dot=document.createElement('div'); dot.className='cq-dot'+(i===cqIndex?' on':''); dots.appendChild(dot); });
+}
+document.getElementById('cqPrev').onclick=function(){ var n=DATA[role].slides.length; cqIndex=(cqIndex-1+n)%n; updateCarousel(); };
+document.getElementById('cqNext').onclick=function(){ var n=DATA[role].slides.length; cqIndex=(cqIndex+1)%n; updateCarousel(); };
+(function(){ var track=document.getElementById('cqTrack'); var startX=null;
+  track.addEventListener('pointerdown',function(e){ startX=e.clientX; });
+  window.addEventListener('pointerup',function(e){ if(startX===null) return; var diff=e.clientX-startX; var n=DATA[role].slides.length;
+    if(diff<-40) cqIndex=(cqIndex+1)%n; else if(diff>40) cqIndex=(cqIndex-1+n)%n; startX=null; updateCarousel(); });
+})();
+
+function renderAll(){ applyTheme(role); renderBrand(); renderSwitch(); renderHero(); renderBnav(); renderScreens(); renderCarousel(); }
+renderAll();
+</script>
+</body>
+</html>
