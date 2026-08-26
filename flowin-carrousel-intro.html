@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Flowin Révision — Carrousel</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
   :root { --pp:#534AB7; --ppbg:#EEEDFE; --gold:#E0A800; --gr:#0E9E6E; --re:#D63050; --ink:#1B1B2B; --ink3:#8B8AA0; --bg:#F5F4FB; --line:#E4E2F2; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -21,11 +20,11 @@
 
   .icon-wrap { width: 92px; height: 92px; border-radius: 26px; display: flex; align-items: center; justify-content: center; margin-bottom: 26px; position: relative; box-shadow: 0 6px 0 rgba(0,0,0,.16), 0 10px 20px rgba(0,0,0,.12); animation: iconPop .5s cubic-bezier(.34,1.56,.64,1); }
   .icon-wrap::after { content:""; position:absolute; inset:7px; border-radius:19px; border:2px solid rgba(255,255,255,.28); pointer-events:none; }
-  .icon-wrap i { font-size: 42px; color:#fff; line-height:1; }
+  .icon-wrap svg { display:block; }
   @keyframes iconPop { 0%{ transform: scale(.7) rotate(-8deg); opacity:0; } 65%{ transform: scale(1.1) rotate(3deg); opacity:1; } 100%{ transform: scale(1) rotate(0); } }
 
   .slide .tag { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--pp); margin-bottom: 14px; }
-  .slide h2 { font-size: 25px; font-weight: 800; color: var(--ink); line-height: 1.3; max-width: 250px; }
+  .slide h2 { font-size: 23px; font-weight: 800; color: var(--ink); line-height: 1.32; max-width: 262px; }
 
   .bottom { height: 46px; display: flex; align-items: center; justify-content: center; gap: 8px; border-top: 1px solid var(--line); }
   .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--line); transition: all .25s; }
@@ -53,26 +52,40 @@
 <div class="swipe-hint">Glisse ou utilise les flèches</div>
 
 <script>
-// Axe éditorial : jamais "facile" — toujours révision / jeu / entre amis / lots à gagner.
-// Pictos : Tabler Icons (traits cohérents), badges pleins façon Duolingo (ombre 3D, coins arrondis).
+// Pictos : vraies icônes déjà utilisées dans l'app (nav-eleve/prof/partenaire-mockup.html), en SVG inline — zéro dépendance externe, zéro risque de rendu cassé.
+var ICONS = {
+  flame:  'M12 12c2-2.96 0-7-1-8 0 3.038-1.773 4.741-3 6-1.226 1.26-2 3.24-2 5a6 6 0 1 0 12 0c0-1.532-1.056-3.94-2-5-1.786 3-2.791 3-4 2z',
+  people: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
+  gift:   'M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7',
+  user:   'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+  trophy: 'M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 4H4v2a3 3 0 0 0 3 3M17 4h3v2a3 3 0 0 1-3 3',
+  book:   'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z',
+  home:   'M3 10l9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
+  bolt:   'M13 2 3 14h7l-1 8 10-12h-7z',
+  scan:   'M3 7V4a1 1 0 0 1 1-1h3M21 7V4a1 1 0 0 0-1-1h-3M3 17v3a1 1 0 0 0 1 1h3M21 17v3a1 1 0 0 1-1 1h-3M4 12h16'
+};
+function iconSvg(name) {
+  return '<svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="' + ICONS[name] + '"/></svg>';
+}
+
 var DATA = {
   eleve: { label: "Élève", color: "#534AB7", slides: [
-    { tag: "Flowin Révision", icon: "ti-flame", bg: "var(--re)", title: "Revise comme t'as jamais révisé !" },
-    { tag: "L'objectif du jeu", icon: "ti-users", bg: "var(--pp)", title: "Joue avec tes amis" },
-    { tag: "Chaque semaine", icon: "ti-gift", bg: "var(--gold)", title: "Reste au top, remporte les lots !" },
-    { tag: "Ton pseudo", icon: "ti-mask", bg: "var(--gr)", title: "100% anonyme" }
+    { tag: "Flowin Révision", icon: "flame", bg: "var(--re)", title: "Revise comme t'as jamais révisé&nbsp;!" },
+    { tag: "L'objectif du jeu", icon: "people", bg: "var(--pp)", title: "Joue avec tes amis" },
+    { tag: "Chaque semaine", icon: "gift", bg: "var(--gold)", title: "Reste au top, remporte les lots&nbsp;!" },
+    { tag: "Ton pseudo", icon: "user", bg: "var(--gr)", title: "100% anonyme" }
   ]},
   prof: { label: "Prof", color: "#E0A800", slides: [
-    { tag: "Flowin Révision", icon: "ti-heart-handshake", bg: "var(--gold)", title: "Crée de la cohésion dans ta classe" },
-    { tag: "Tout ton contenu", icon: "ti-books", bg: "var(--pp)", title: "Des cours, des quiz, des fiches de révision" },
-    { tag: "Challenge interclasse", icon: "ti-trophy", bg: "var(--gr)", title: "Ta classe reste au top, elle remporte le jackpot !" },
-    { tag: "Plateforme dédiée", icon: "ti-mask", bg: "var(--re)", title: "Un système jeu 100% anonyme" }
+    { tag: "Flowin Révision", icon: "people", bg: "var(--gold)", title: "Crée de la cohésion dans ta classe" },
+    { tag: "Tout ton contenu", icon: "book", bg: "var(--pp)", title: "Des cours, des quiz, des fiches de révision" },
+    { tag: "Challenge interclasse", icon: "trophy", bg: "var(--gr)", title: "Ta classe reste au top, elle remporte le jackpot&nbsp;!" },
+    { tag: "Plateforme dédiée", icon: "user", bg: "var(--re)", title: "Un système jeu 100% anonyme" }
   ]},
   partenaire: { label: "Partenaire", color: "#D63050", slides: [
-    { tag: "Flowin Révision", icon: "ti-speakerphone", bg: "var(--re)", title: "Sponsorise, crée du trafic" },
-    { tag: "100% anonyme", icon: "ti-mask", bg: "var(--pp)", title: "Un jeu qui rassemble" },
-    { tag: "Cohésion", icon: "ti-users-group", bg: "var(--gr)", title: "Crée de la cohésion, fait monter le niveau !" },
-    { tag: "Participe à la progression", icon: "ti-leaf", bg: "var(--gold)", title: "Offre des lots qui ont du sens !" }
+    { tag: "Flowin Révision", icon: "home", bg: "var(--re)", title: "Action locale" },
+    { tag: "100% anonyme", icon: "user", bg: "var(--pp)", title: "Un jeu qui fait monter le niveau" },
+    { tag: "Simplicité", icon: "bolt", bg: "var(--gold)", title: "Zéro onboarding" },
+    { tag: "Résultats", icon: "scan", bg: "var(--gr)", title: "Mesure le passage" }
   ]}
 };
 
@@ -96,7 +109,7 @@ function renderTrack() {
   var track = document.getElementById("track");
   track.innerHTML = role.slides.map(function(s) {
     return '<div class="slide" style="color:' + s.bg + ';">' +
-      '<div class="icon-wrap" style="background:' + s.bg + ';"><i class="ti ' + s.icon + '"></i></div>' +
+      '<div class="icon-wrap" style="background:' + s.bg + ';">' + iconSvg(s.icon) + '</div>' +
       '<div class="tag">' + s.tag + '</div>' +
       '<h2>' + s.title + '</h2>' +
       '</div>';
