@@ -24,10 +24,8 @@
   .icon-wrap i { font-size: 42px; color:#fff; line-height:1; }
   @keyframes iconPop { 0%{ transform: scale(.7) rotate(-8deg); opacity:0; } 65%{ transform: scale(1.1) rotate(3deg); opacity:1; } 100%{ transform: scale(1) rotate(0); } }
 
-  .slide .tag { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--pp); margin-bottom: 10px; }
-  .slide h2 { font-size: 21px; font-weight: 800; color: var(--ink); margin-bottom: 10px; line-height: 1.25; }
-  .slide p { font-size: 13px; color: var(--ink3); line-height: 1.5; max-width: 240px; }
-  .slide .price { font-size: 24px; font-weight: 800; color: var(--pp); margin-top: 14px; }
+  .slide .tag { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--pp); margin-bottom: 14px; }
+  .slide h2 { font-size: 25px; font-weight: 800; color: var(--ink); line-height: 1.3; max-width: 250px; }
 
   .bottom { height: 46px; display: flex; align-items: center; justify-content: center; gap: 8px; border-top: 1px solid var(--line); }
   .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--line); transition: all .25s; }
@@ -59,31 +57,22 @@
 // Pictos : Tabler Icons (traits cohérents), badges pleins façon Duolingo (ombre 3D, coins arrondis).
 var DATA = {
   eleve: { label: "Élève", color: "#534AB7", slides: [
-    { tag: "Flowin Révision", icon: "ti-flame", bg: "var(--re)", title: "Arrête de scroller, viens réviser", text: "Chaque pause peut devenir des points. Ici, réviser rapporte plus qu'un scroll." },
-    { tag: "Système de points", icon: "ti-bolt", bg: "var(--gold)", title: "Revise comme t'as jamais révisé !", text: "Un point à chaque bonne réponse, un streak qui grimpe, une progression qui se voit." },
-    { tag: "Entre potes", icon: "ti-swords", bg: "var(--pp)", title: "Défie tes potes", text: "Mise tes points, lance un défi, rafle la mise." },
-    { tag: "Ta classe", icon: "ti-trophy", bg: "var(--gr)", title: "Challenge ta classe", text: "Affronte les autres classes, fais grimper ton groupe au classement." },
-    { tag: "Chaque semaine", icon: "ti-gift", bg: "var(--re)", title: "Reste au top, remporte les lots !", text: "De vrais lots à gagner, chaque semaine, rien que pour les meilleurs." },
-    { tag: "Ton pseudo, ton style", icon: "ti-mask", bg: "var(--pp)", title: "Choisis ton pseudo", text: "Personne ne connaît ton vrai nom. À toi de te faire un blase." }
+    { tag: "Flowin Révision", icon: "ti-flame", bg: "var(--re)", title: "Revise comme t'as jamais révisé !" },
+    { tag: "L'objectif du jeu", icon: "ti-users", bg: "var(--pp)", title: "Joue avec tes amis" },
+    { tag: "Chaque semaine", icon: "ti-gift", bg: "var(--gold)", title: "Reste au top, remporte les lots !" },
+    { tag: "Ton pseudo", icon: "ti-mask", bg: "var(--gr)", title: "100% anonyme" }
   ]},
   prof: { label: "Prof", color: "#E0A800", slides: [
-    { tag: "Flowin Révision", icon: "ti-heart-handshake", bg: "var(--gold)", title: "Crée de la cohésion dans ta classe", text: "Un jeu de révision qui rassemble, pas qui isole." },
-    { tag: "Tout ton contenu", icon: "ti-books", bg: "var(--pp)", title: "Des cours, des quiz, des fiches de révision", text: "Colle ton cours, l'IA génère le quiz. Ou pioche directement dans la banque prête à l'emploi." },
-    { tag: "Émulation saine", icon: "ti-chart-bar", bg: "var(--gr)", title: "Un point par bonne réponse", text: "L'écart entre les meilleurs et les autres, visible, motivant." },
-    { tag: "Pilotage", icon: "ti-report-analytics", bg: "var(--re)", title: "Stats, évaluation, suivi", text: "La progression de chaque élève, classe entière, en un regard." },
-    { tag: "Challenge interclasse", icon: "ti-trophy", bg: "var(--gold)", title: "Ta classe reste au top, elle remporte le jackpot !", text: "Fais s'affronter tes classes, la motivation grimpe." },
-    { tag: "Plateforme dédiée", icon: "ti-mask", bg: "var(--pp)", title: "Un système jeu 100% anonyme", text: "Tes élèves s'inscrivent en pseudo. Aucune donnée personnelle exposée, tu vois juste un pseudo." },
-    { tag: "Offre", icon: "ti-tag", bg: "var(--gold)", title: "9,99 € / mois", text: "Sans engagement. Résilie quand tu veux.", price: true }
+    { tag: "Flowin Révision", icon: "ti-heart-handshake", bg: "var(--gold)", title: "Crée de la cohésion dans ta classe" },
+    { tag: "Tout ton contenu", icon: "ti-books", bg: "var(--pp)", title: "Des cours, des quiz, des fiches de révision" },
+    { tag: "Challenge interclasse", icon: "ti-trophy", bg: "var(--gr)", title: "Ta classe reste au top, elle remporte le jackpot !" },
+    { tag: "Plateforme dédiée", icon: "ti-mask", bg: "var(--re)", title: "Un système jeu 100% anonyme" }
   ]},
   partenaire: { label: "Partenaire", color: "#D63050", slides: [
-    { tag: "Flowin Révision", icon: "ti-speakerphone", bg: "var(--re)", title: "Sponsorise, crée du trafic", text: "Une visibilité directe auprès d'un public lycéen." },
-    { tag: "100% anonyme", icon: "ti-mask", bg: "var(--pp)", title: "Un jeu qui rassemble", text: "Aucune donnée exposée. Juste des pseudos, une communauté, une bonne raison de jouer." },
-    { tag: "Cohésion", icon: "ti-users-group", bg: "var(--gr)", title: "Crée de la cohésion, fait monter le niveau !", text: "Une plateforme qui rassemble toute une classe autour d'un même objectif." },
-    { tag: "Ciblé", icon: "ti-target", bg: "var(--gold)", title: "Un public lycéen, local", text: "Les élèves de ton quartier, directement dans leur poche." },
-    { tag: "Rapide", icon: "ti-rocket", bg: "var(--re)", title: "Pas d'onboarding compliqué", text: "Tu t'inscris, tu publies un lot. C'est tout." },
-    { tag: "Autonome", icon: "ti-settings", bg: "var(--pp)", title: "Des lots qui s'auto-gèrent", text: "Stock, distribution, retrait — tout est automatique." },
-    { tag: "Participe à la progression", icon: "ti-leaf", bg: "var(--gr)", title: "Offre des lots qui ont du sens !", text: "Une plateforme qui contribue à la réussite et à l'évolution des jeunes." },
-    { tag: "Offre", icon: "ti-tag", bg: "var(--re)", title: "99 € / établissement", text: "Une fois la communauté élève acquise.", price: true }
+    { tag: "Flowin Révision", icon: "ti-speakerphone", bg: "var(--re)", title: "Sponsorise, crée du trafic" },
+    { tag: "100% anonyme", icon: "ti-mask", bg: "var(--pp)", title: "Un jeu qui rassemble" },
+    { tag: "Cohésion", icon: "ti-users-group", bg: "var(--gr)", title: "Crée de la cohésion, fait monter le niveau !" },
+    { tag: "Participe à la progression", icon: "ti-leaf", bg: "var(--gold)", title: "Offre des lots qui ont du sens !" }
   ]}
 };
 
@@ -110,8 +99,6 @@ function renderTrack() {
       '<div class="icon-wrap" style="background:' + s.bg + ';"><i class="ti ' + s.icon + '"></i></div>' +
       '<div class="tag">' + s.tag + '</div>' +
       '<h2>' + s.title + '</h2>' +
-      '<p>' + s.text + '</p>' +
-      (s.price ? '' : '') +
       '</div>';
   }).join("");
   track.style.transform = "translateX(-" + (currentSlide * 100) + "%)";
